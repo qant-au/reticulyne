@@ -1,5 +1,4 @@
-// This is a development entry point for the app.
-// It is not used in production or included in the build.
+// This is an entry point for running the app in dev mode.
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import GlobalStyles from '@mui/material/GlobalStyles';

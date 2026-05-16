@@ -1,6 +1,23 @@
 import React, { useMemo } from 'react';
-import ReactQuill from 'react-quill-new';
+import ReactQuill, { Quill } from 'react-quill-new';
 import { Box } from '@mui/material';
+import {
+  ALLOWED_LINK_PROTOCOLS,
+  SANITIZED_URL,
+  sanitizeLinkUrl
+} from './sanitizeLinkUrl';
+
+// Module-level: restrict Quill's Link blot to safe URL protocols so
+// javascript:, data:, vbscript: etc. are replaced with about:blank in
+// both user-edited content and value-prop-supplied content.
+const QuillLink = Quill.import('formats/link') as {
+  sanitize: (url: string) => string;
+  PROTOCOL_WHITELIST: string[];
+  SANITIZED_URL: string;
+};
+QuillLink.PROTOCOL_WHITELIST = ALLOWED_LINK_PROTOCOLS;
+QuillLink.SANITIZED_URL = SANITIZED_URL;
+QuillLink.sanitize = sanitizeLinkUrl;
 
 interface Props {
   value?: string;

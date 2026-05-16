@@ -16,6 +16,11 @@
 # Graphify — generated knowledge-graph artefacts (HTML, JSON, MD report)
 /graphify-out
 
+# Third-pass review handoff — local-only files (per-pass instructions
+# and future-work backlog, both rewritten by each review pass).
+/NEXT_SESSION_BRIEF.md
+/TODO.md
+
 # production
 /dist
 /dist-docker

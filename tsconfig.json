@@ -10,13 +10,12 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
     "strict": true,
     "module": "es6",
     "moduleResolution": "node",
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "./dist", "./docs"],
+  "exclude": ["node_modules", "./dist", "./dist-docker", "./docs"],
   "include": [
     "**/*.ts",
     "**/*.tsx",

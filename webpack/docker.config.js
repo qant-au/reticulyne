@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/index-docker.tsx',
   target: 'web',
   output: {
-    path: path.resolve(__dirname, '../dist'),
+    path: path.resolve(__dirname, '../dist-docker'),
     filename: 'main.js',
   },
   module: {

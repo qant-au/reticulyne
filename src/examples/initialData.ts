@@ -1,10 +1,10 @@
 import { Colors, Icons, InitialData } from 'src/Isoflow';
-import { flattenCollections } from '@isoflow/isopacks/dist/utils';
-import isoflowIsopack from '@isoflow/isopacks/dist/isoflow';
-import awsIsopack from '@isoflow/isopacks/dist/aws';
-import gcpIsopack from '@isoflow/isopacks/dist/gcp';
-import azureIsopack from '@isoflow/isopacks/dist/azure';
-import kubernetesIsopack from '@isoflow/isopacks/dist/kubernetes';
+import { flattenCollections } from 'src/vendor/isopacks/utils';
+import isoflowIsopack from 'src/vendor/isopacks/isoflow';
+import awsIsopack from 'src/vendor/isopacks/aws';
+import gcpIsopack from 'src/vendor/isopacks/gcp';
+import azureIsopack from 'src/vendor/isopacks/azure';
+import kubernetesIsopack from 'src/vendor/isopacks/kubernetes';
 
 const isopacks = flattenCollections([
   isoflowIsopack,

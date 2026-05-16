@@ -12,14 +12,10 @@ export const useIconFiltering = () => {
   const filteredIcons = useMemo(() => {
     if (filter === '') return null;
 
-    const regex = new RegExp(filter, 'gi');
+    const needle = filter.toLowerCase();
 
     return icons.filter((icon: Icon) => {
-      if (!filter) {
-        return true;
-      }
-
-      return regex.test(icon.name);
+      return icon.name.toLowerCase().includes(needle);
     });
   }, [icons, filter]);
 

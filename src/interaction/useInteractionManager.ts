@@ -153,11 +153,43 @@ export const useInteractionManager = () => {
       });
     };
 
+    // Wheel/trackpad zoom: accumulate fractional steps so a single
+    // trackpad swipe (many small deltaY events at deltaMode=0) maps to
+    // one or two zoom steps instead of clamping straight to min/max,
+    // while a discrete mouse wheel click (deltaMode=1 line, one event)
+    // still produces exactly one step.
+    //
+    //   deltaMode=0 (pixel, trackpad / Magic Mouse): one step per
+    //     ~PIXELS_PER_STEP of accumulated deltaY.
+    //   deltaMode=1 (line, discrete wheel): one step per ~LINES_PER_STEP.
+    //   deltaMode=2 (page, rare): one step per page.
+    const PIXELS_PER_STEP = 100;
+    const LINES_PER_STEP = 1;
+    const PAGES_PER_STEP = 1;
+    let zoomBuffer = 0;
+
     const onScroll = (e: WheelEvent) => {
-      if (e.deltaY > 0) {
+      let stepDelta: number;
+      switch (e.deltaMode) {
+        case 1:
+          stepDelta = e.deltaY / LINES_PER_STEP;
+          break;
+        case 2:
+          stepDelta = e.deltaY / PAGES_PER_STEP;
+          break;
+        case 0:
+        default:
+          stepDelta = e.deltaY / PIXELS_PER_STEP;
+          break;
+      }
+      zoomBuffer += stepDelta;
+      while (zoomBuffer >= 1) {
         uiState.actions.decrementZoom();
-      } else {
+        zoomBuffer -= 1;
+      }
+      while (zoomBuffer <= -1) {
         uiState.actions.incrementZoom();
+        zoomBuffer += 1;
       }
     };
 

@@ -12,6 +12,7 @@ import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
+import { IsoflowErrorBoundary } from 'src/components/IsoflowErrorBoundary/IsoflowErrorBoundary';
 
 const App = ({
   initialData,
@@ -80,16 +81,19 @@ const App = ({
 };
 
 export const Isoflow = (props: IsoflowProps) => {
+  const { onError, errorFallback, ...appProps } = props;
   return (
-    <ThemeProvider theme={theme}>
-      <ModelProvider>
-        <SceneProvider>
-          <UiStateProvider>
-            <App {...props} />
-          </UiStateProvider>
-        </SceneProvider>
-      </ModelProvider>
-    </ThemeProvider>
+    <IsoflowErrorBoundary onError={onError} fallback={errorFallback}>
+      <ThemeProvider theme={theme}>
+        <ModelProvider>
+          <SceneProvider>
+            <UiStateProvider>
+              <App {...appProps} />
+            </UiStateProvider>
+          </SceneProvider>
+        </ModelProvider>
+      </ThemeProvider>
+    </IsoflowErrorBoundary>
   );
 };
 

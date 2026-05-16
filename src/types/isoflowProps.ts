@@ -1,3 +1,4 @@
+import type { ErrorInfo, ReactNode } from 'react';
 import type { EditorModeEnum, MainMenuOptions } from './common';
 import type { Model } from './model';
 import type { RendererProps } from './rendererProps';
@@ -16,4 +17,6 @@ export interface IsoflowProps {
   enableDebugTools?: boolean;
   editorMode?: keyof typeof EditorModeEnum;
   renderer?: RendererProps;
+  onError?: (error: Error, info: ErrorInfo) => void;
+  errorFallback?: ReactNode;
 }

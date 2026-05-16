@@ -6,6 +6,8 @@ A React component for drawing network diagrams.
 
 > **Fork note:** This is a maintained community fork of [isoflow](https://github.com/markmanx/isoflow) by Mark Mankarious, which is no longer actively maintained. Maintained by QANT Pty Ltd under the same MIT license.
 
+> **Development status:** This project is currently under active development. We are working through a period of significant modernisation — upgrading dependencies, improving build tooling, hardening security, and expanding the feature set. Things may change rapidly between releases during this phase. We intend to stabilise the codebase and open the project up to normal community contribution once that foundational work is complete.
+
 ## Key features
 
 - **Drag-and-drop editor** — Express your architecture with icons, regions and connectors.
@@ -92,9 +94,11 @@ The full list of known security advisories carried by this package — and the i
 
 Contact information to follow.
 
-## Found a bug or need support?
+## Contributing and support
 
-Please open an issue in this repository.
+The issue tracker and pull requests are closed while the project is in its initial modernisation phase. This isn't permanent — once the codebase has stabilised we plan to open both up and maintain the project as a normal open-source project.
+
+If you're interested in contributing or would like to get in touch in the meantime, feel free to reach out via GitHub.
 
 ## License
 

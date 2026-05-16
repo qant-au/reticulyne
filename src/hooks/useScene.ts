@@ -13,12 +13,14 @@ import { useModelStore } from 'src/stores/modelStore';
 import { useSceneStore } from 'src/stores/sceneStore';
 import * as reducers from 'src/stores/reducers';
 import type { State } from 'src/stores/reducers/types';
-import { getItemByIdOrThrow } from 'src/utils';
+import { generateId, getItemByIdOrThrow } from 'src/utils';
 import {
   CONNECTOR_DEFAULTS,
   RECTANGLE_DEFAULTS,
   TEXTBOX_DEFAULTS
 } from 'src/config';
+
+const DUPLICATE_TILE_OFFSET = { x: 1, y: 1 };
 
 export const useScene = () => {
   const model = useModelStore((state) => {
@@ -273,6 +275,98 @@ export const useScene = () => {
     [getState, setState, currentViewId]
   );
 
+  // Deep-clone the target item with a freshly-generated id and a small
+  // tile offset so the copy doesn't sit exactly on top of the original.
+  // Connectors are deliberately not duplicated yet — their anchors
+  // reference other items and the right semantics for "duplicate a
+  // connector pointing at the original anchors vs the copies" needs a
+  // UX decision.
+  const duplicateItem = useCallback(
+    (target: ItemReference) => {
+      const state = getState();
+      switch (target.type) {
+        case 'ITEM': {
+          const modelItem = getItemByIdOrThrow(state.model.items, target.id);
+          const viewItem = getItemByIdOrThrow(
+            currentView.items ?? [],
+            target.id
+          );
+          const newId = generateId();
+          const afterModel = reducers.createModelItem(
+            {
+              ...modelItem.value,
+              id: newId,
+              name: `${modelItem.value.name} (copy)`
+            },
+            state
+          );
+          const afterView = reducers.view({
+            action: 'CREATE_VIEWITEM',
+            payload: {
+              ...viewItem.value,
+              id: newId,
+              tile: {
+                x: viewItem.value.tile.x + DUPLICATE_TILE_OFFSET.x,
+                y: viewItem.value.tile.y + DUPLICATE_TILE_OFFSET.y
+              }
+            },
+            ctx: { viewId: currentViewId, state: afterModel }
+          });
+          setState(afterView);
+          return;
+        }
+        case 'TEXTBOX': {
+          const textBox = getItemByIdOrThrow(
+            currentView.textBoxes ?? [],
+            target.id
+          );
+          const newState = reducers.view({
+            action: 'CREATE_TEXTBOX',
+            payload: {
+              ...textBox.value,
+              id: generateId(),
+              tile: {
+                x: textBox.value.tile.x + DUPLICATE_TILE_OFFSET.x,
+                y: textBox.value.tile.y + DUPLICATE_TILE_OFFSET.y
+              }
+            },
+            ctx: { viewId: currentViewId, state }
+          });
+          setState(newState);
+          return;
+        }
+        case 'RECTANGLE': {
+          const rectangle = getItemByIdOrThrow(
+            currentView.rectangles ?? [],
+            target.id
+          );
+          const newState = reducers.view({
+            action: 'CREATE_RECTANGLE',
+            payload: {
+              ...rectangle.value,
+              id: generateId(),
+              from: {
+                x: rectangle.value.from.x + DUPLICATE_TILE_OFFSET.x,
+                y: rectangle.value.from.y + DUPLICATE_TILE_OFFSET.y
+              },
+              to: {
+                x: rectangle.value.to.x + DUPLICATE_TILE_OFFSET.x,
+                y: rectangle.value.to.y + DUPLICATE_TILE_OFFSET.y
+              }
+            },
+            ctx: { viewId: currentViewId, state }
+          });
+          setState(newState);
+          return;
+        }
+        default:
+          // CONNECTOR / CONNECTOR_ANCHOR: not supported (see comment above).
+          break;
+      }
+    },
+    [getState, setState, currentViewId, currentView]
+  );
+
   return {
     items,
     connectors,
@@ -295,6 +389,7 @@ export const useScene = () => {
     createRectangle,
     updateRectangle,
     deleteRectangle,
-    changeLayerOrder
+    changeLayerOrder,
+    duplicateItem
   };
 };

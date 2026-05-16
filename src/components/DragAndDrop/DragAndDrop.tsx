@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Box } from '@mui/material';
 import { Coords } from 'src/types';
 import { getTilePosition } from 'src/utils';

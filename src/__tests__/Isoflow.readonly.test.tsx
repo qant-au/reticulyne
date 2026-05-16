@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { render, cleanup, act } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from 'src/styles/theme';

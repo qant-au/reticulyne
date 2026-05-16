@@ -1,4 +1,3 @@
-import React from 'react';
 import Isoflow from 'src/Isoflow';
 import { initialData } from '../initialData';
 

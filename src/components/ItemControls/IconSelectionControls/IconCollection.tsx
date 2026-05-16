@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Divider, Stack, Typography, Button } from '@mui/material';
 import {
   ExpandMore as ChevronDownIcon,

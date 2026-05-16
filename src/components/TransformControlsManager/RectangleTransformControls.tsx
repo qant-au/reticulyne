@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useRectangle } from 'src/hooks/useRectangle';
 import { AnchorPosition } from 'src/types';
 import { useUiStateStore } from 'src/stores/uiStateStore';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box } from '@mui/material';
 import { Icon } from 'src/types';
 import { PROJECTED_TILE_SIZE } from 'src/config';

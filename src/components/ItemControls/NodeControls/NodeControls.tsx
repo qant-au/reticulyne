@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Box, Stack, Button } from '@mui/material';
 import {
   ChevronRight as ChevronRightIcon,

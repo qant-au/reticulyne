@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Box, Typography, Stack } from '@mui/material';
 import {
   PROJECTED_TILE_SIZE,

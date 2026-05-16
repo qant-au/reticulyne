@@ -1,4 +1,3 @@
-import React from 'react';
 import chroma from 'chroma-js';
 import { useTheme } from '@mui/material';
 import { IsoTileArea } from 'src/components/IsoTileArea/IsoTileArea';

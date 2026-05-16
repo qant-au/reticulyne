@@ -1,4 +1,3 @@
-import React from 'react';
 import { Slider, Box, TextField } from '@mui/material';
 import { ModelItem, ViewItem } from 'src/types';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditor';
@@ -54,7 +53,7 @@ export const NodeSettings = ({
             min={60}
             max={280}
             value={node.labelHeight}
-            onChange={(e, newHeight) => {
+            onChange={(_e, newHeight) => {
               const labelHeight = newHeight as number;
               onViewItemUpdated({ labelHeight });
             }}

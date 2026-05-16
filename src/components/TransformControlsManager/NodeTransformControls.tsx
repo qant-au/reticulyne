@@ -1,4 +1,3 @@
-import React from 'react';
 import { useViewItem } from 'src/hooks/useViewItem';
 import { TransformControls } from './TransformControls';
 

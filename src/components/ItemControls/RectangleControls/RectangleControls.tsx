@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box } from '@mui/material';
 import { useRectangle } from 'src/hooks/useRectangle';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';

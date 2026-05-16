@@ -1,4 +1,3 @@
-import React from 'react';
 import { useScene } from 'src/hooks/useScene';
 import { TextBox } from './TextBox';
 

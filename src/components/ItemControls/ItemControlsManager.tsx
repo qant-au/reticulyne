@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { IconSelectionControls } from 'src/components/ItemControls/IconSelectionControls/IconSelectionControls';

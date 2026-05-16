@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { toPx, CoordsUtils } from 'src/utils';
 import { useIsoProjection } from 'src/hooks/useIsoProjection';

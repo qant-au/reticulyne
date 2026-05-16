@@ -1,4 +1,3 @@
-import React from 'react';
 import { ViewItem } from 'src/types';
 import { Node } from './Node/Node';
 

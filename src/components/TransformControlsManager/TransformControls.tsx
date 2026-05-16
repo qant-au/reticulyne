@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Coords, AnchorPosition } from 'src/types';
 import { Svg } from 'src/components/Svg/Svg';
 import { TRANSFORM_CONTROLS_COLOR } from 'src/config';

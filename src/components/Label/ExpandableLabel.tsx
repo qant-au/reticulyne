@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Box } from '@mui/material';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { Gradient } from 'src/components/Gradient/Gradient';

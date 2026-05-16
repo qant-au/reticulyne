@@ -1,4 +1,3 @@
-import React from 'react';
 import { Connector, connectorStyleOptions } from 'src/types';
 import { Box, Slider, Select, MenuItem, TextField } from '@mui/material';
 import { useConnector } from 'src/hooks/useConnector';
@@ -48,7 +47,7 @@ export const ConnectorControls = ({ id }: Props) => {
           min={10}
           max={30}
           value={connector.width}
-          onChange={(e, newWidth) => {
+          onChange={(_e, newWidth) => {
             updateConnector(connector.id, { width: newWidth as number });
           }}
         />

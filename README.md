@@ -16,8 +16,10 @@ A React component for drawing network diagrams.
 ## Quick start
 
 ```bash
-npm install isoflow
+npm install @qant-au/isoflow
 ```
+
+This package is published to GitHub Packages, not the public npm registry. See **Installation** below for the `.npmrc` configuration consumers need.
 
 > **Note on icons:** Icon collections (AWS, Azure, GCP, Kubernetes, Isoflow) are now bundled directly in this package. The `@isoflow/isopacks` npm dependency is no longer required. If you were previously passing collections from `@isoflow/isopacks`, you can remove that dependency — or continue using it alongside your own custom collections, as the plugin system remains fully supported.
 

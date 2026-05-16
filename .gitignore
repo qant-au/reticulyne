@@ -18,7 +18,7 @@
 
 # Third-pass review handoff — local-only files (per-pass instructions
 # and future-work backlog, both rewritten by each review pass).
-/NEXT_SESSION_BRIEF.md
+/phase-3.md
 /TODO.md
 
 # production
@@ -36,3 +36,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/.env.graphify
+/phase-*.md
+/*backup

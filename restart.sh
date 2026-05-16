@@ -1,54 +1,93 @@
 #!/usr/bin/env bash
-# restart.sh — rebuild the standalone Isoflow Docker image, serve it
-# on http://localhost:2222, and (re-)sync the Graphify knowledge graph.
+# restart.sh — rebuild both standalone Isoflow Docker images, serve them
+# side-by-side, and (re-)sync the Graphify knowledge graph.
+#
+#   http://localhost:2222   isoflow            (single full-screen editor —
+#                                               just the Isoflow component)
+#   http://localhost:2223   isoflow-examples   (examples picker UI with the
+#                                               BasicEditor / DebugTools /
+#                                               ReadonlyMode menu)
 #
 # Usage:
-#   bash restart.sh           # rebuild & restart, wait for HTTP 200,
-#                             # then refresh + watch Graphify in bg
-#   PORT=3000 bash restart.sh # override host port (default 2222)
+#   bash restart.sh                       # rebuild & restart both, wait
+#                                         # for HTTP 200, run + watch
+#                                         # Graphify in background
+#   PORT=3000 bash restart.sh             # override editor port (default 2222)
+#   EXAMPLES_PORT=4000 bash restart.sh    # override examples port (default 2223)
 #   TAG=isoflow:dev bash restart.sh
-#   NO_GRAPHIFY=1 bash restart.sh   # skip Graphify steps entirely
+#   NO_EXAMPLES=1 bash restart.sh         # skip the examples container entirely
+#   NO_GRAPHIFY=1 bash restart.sh         # skip Graphify steps entirely
 #
-# Exits 0 once the editor responds on http://localhost:${PORT}/, or
-# non-zero on build/start/poll failure. The Graphify watcher continues
-# running in the background — PID + log path are printed before exit.
+# Exits 0 once both containers respond, or non-zero on build/start/poll
+# failure. The Graphify watcher continues running in the background.
 
 set -euo pipefail
 
 PORT="${PORT:-2222}"
+EXAMPLES_PORT="${EXAMPLES_PORT:-2223}"
 TAG="${TAG:-isoflow}"
+EXAMPLES_TAG="${EXAMPLES_TAG:-isoflow-examples}"
 NAME="${NAME:-isoflow}"
+EXAMPLES_NAME="${EXAMPLES_NAME:-isoflow-examples}"
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-30}"
+NO_EXAMPLES="${NO_EXAMPLES:-0}"
 NO_GRAPHIFY="${NO_GRAPHIFY:-0}"
 GRAPHIFY_LOG="${GRAPHIFY_LOG:-graphify-out/watch.log}"
 GRAPHIFY_PIDFILE="${GRAPHIFY_PIDFILE:-graphify-out/watch.pid}"
 
 cd "$(dirname "$0")"
 
-# ---- Docker: stop, build, start, wait for HTTP 200 ----
+# wait_for_http url label
+wait_for_http() {
+  local url="$1"
+  local label="$2"
+  local deadline=$(( $(date +%s) + TIMEOUT_SECONDS ))
+  while true; do
+    if curl --silent --fail --max-time 2 --output /dev/null "$url"; then
+      echo "==> $label is up at $url"
+      return 0
+    fi
+    if (( $(date +%s) >= deadline )); then
+      echo "ERROR: $label did not respond within ${TIMEOUT_SECONDS}s ($url)" >&2
+      return 1
+    fi
+    sleep 1
+  done
+}
+
+# ---- Container 1: isoflow (single-editor SPA, port 2222) ----
 echo "==> Stopping any prior \"$NAME\" container"
 docker rm -f "$NAME" >/dev/null 2>&1 || true
 
-echo "==> Building image \"$TAG\""
-docker build -t "$TAG" .
+echo "==> Building image \"$TAG\" (single-editor)"
+docker build -t "$TAG" -f Dockerfile .
 
 echo "==> Starting container \"$NAME\" on host port $PORT"
 docker run -d --rm --name "$NAME" -p "${PORT}:80" "$TAG" >/dev/null
 
-echo "==> Waiting for http://localhost:${PORT}/ (timeout: ${TIMEOUT_SECONDS}s)"
-deadline=$(( $(date +%s) + TIMEOUT_SECONDS ))
-while true; do
-  if curl --silent --fail --max-time 2 --output /dev/null "http://localhost:${PORT}/"; then
-    echo "==> Editor is up at http://localhost:${PORT}/"
-    break
-  fi
-  if (( $(date +%s) >= deadline )); then
-    echo "ERROR: editor did not respond within ${TIMEOUT_SECONDS}s" >&2
-    docker logs "$NAME" >&2 || true
+if ! wait_for_http "http://localhost:${PORT}/" "Editor"; then
+  docker logs "$NAME" >&2 || true
+  exit 1
+fi
+
+# ---- Container 2: isoflow-examples (examples picker UI, port 2223) ----
+if [[ "$NO_EXAMPLES" == "1" ]]; then
+  echo "==> Skipping examples container (NO_EXAMPLES=1)"
+else
+  echo "==> Stopping any prior \"$EXAMPLES_NAME\" container"
+  docker rm -f "$EXAMPLES_NAME" >/dev/null 2>&1 || true
+
+  echo "==> Building image \"$EXAMPLES_TAG\" (examples picker)"
+  docker build -t "$EXAMPLES_TAG" -f Dockerfile.examples .
+
+  echo "==> Starting container \"$EXAMPLES_NAME\" on host port $EXAMPLES_PORT"
+  docker run -d --rm --name "$EXAMPLES_NAME" -p "${EXAMPLES_PORT}:80" "$EXAMPLES_TAG" >/dev/null
+
+  if ! wait_for_http "http://localhost:${EXAMPLES_PORT}/" "Examples picker"; then
+    docker logs "$EXAMPLES_NAME" >&2 || true
     exit 1
   fi
-  sleep 1
-done
+fi
 
 # ---- Graphify: incremental update + background watcher ----
 # Graphify (https://github.com/safishamsi/graphify) is an optional Python
@@ -91,4 +130,8 @@ else
   echo "    Tail with: tail -f $GRAPHIFY_LOG"
 fi
 
-echo "==> Done. Editor: http://localhost:${PORT}/"
+echo "==> Done."
+echo "    Editor:           http://localhost:${PORT}/"
+if [[ "$NO_EXAMPLES" != "1" ]]; then
+  echo "    Examples picker:  http://localhost:${EXAMPLES_PORT}/"
+fi

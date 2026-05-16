@@ -24,6 +24,7 @@
 # production
 /dist
 /dist-docker
+/dist-docker-examples
 
 # misc
 .DS_Store

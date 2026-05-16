@@ -44,14 +44,15 @@
   "scripts": {
     "start": "webpack serve --config ./webpack/dev.config.js",
     "dev": "nodemon --watch ./src/ -e ts,tsx --exec npm run build",
-    "clean": "rm -rf dist dist-docker",
+    "clean": "rm -rf dist dist-docker dist-docker-examples",
     "build": "npm run clean && webpack --config ./webpack/prod.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "test": "jest",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium",
     "lint": "tsc --noEmit && eslint ./src",
     "lint:fix": "eslint --fix ./src",
-    "docker:build": "rm -rf dist-docker && webpack --config ./webpack/docker.config.js"
+    "docker:build": "rm -rf dist-docker && webpack --config ./webpack/docker.config.js",
+    "docker:examples:build": "rm -rf dist-docker-examples && webpack --config ./webpack/docker-examples.config.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

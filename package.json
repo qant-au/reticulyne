@@ -1,12 +1,16 @@
 {
-  "name": "isoflow",
+  "name": "@qant-au/isoflow",
   "version": "1.1.1",
   "private": false,
   "description": "An open-source React component for drawing network diagrams.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/markmanx/isoflow.git"
+    "url": "https://github.com/qant-au/isoflow.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "restricted"
   },
   "main": "./dist/index.js",
   "types": "./dist/Isoflow.d.ts",

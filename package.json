@@ -14,6 +14,25 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/Isoflow.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/Isoflow.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./standalone": {
+      "types": "./dist/standaloneExports.d.ts",
+      "import": "./dist/standaloneExports.js",
+      "require": "./dist/standaloneExports.js",
+      "default": "./dist/standaloneExports.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "*.css",
+    "**/GlobalStyles.*"
+  ],
   "files": [
     "dist",
     "README.md",

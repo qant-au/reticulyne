@@ -20,13 +20,24 @@ A React component for drawing network diagrams.
 - A bundler that can consume CommonJS or ESM (Webpack, Vite, Rollup, Parcel, esbuild, Next.js, etc.).
 - Authentication to **GitHub Packages** in order to install — see *Installation* below.
 
-## Quick start
+## Installation
 
-```bash
-npm install @qant-au/isoflow
-```
+This package is published to **GitHub Packages**, not the public npm registry. Consumers need to point their package manager at the scoped registry and authenticate with a GitHub token.
 
-This package is published to GitHub Packages, not the public npm registry. See **Installation** below for the `.npmrc` configuration consumers need.
+1. Create a [personal access token](https://github.com/settings/tokens) (classic) with the `read:packages` scope. If you publish from CI, use the workflow's `GITHUB_TOKEN` instead.
+2. Add the following to a `.npmrc` file in your project (or `~/.npmrc` globally):
+
+   ```ini
+   @qant-au:registry=https://npm.pkg.github.com
+   //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+   ```
+
+3. Export the token in your shell (`export GITHUB_TOKEN=ghp_...`) or set it as a CI secret. Do **not** commit the token to source.
+4. Install:
+
+   ```bash
+   npm install @qant-au/isoflow
+   ```
 
 > **Note on icons:** Icon collections (AWS, Azure, GCP, Kubernetes, Isoflow) are now bundled directly in this package. The `@isoflow/isopacks` npm dependency is no longer required. If you were previously passing collections from `@isoflow/isopacks`, you can remove that dependency — or continue using it alongside your own custom collections, as the plugin system remains fully supported.
 

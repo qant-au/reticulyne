@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { theme } from 'src/styles/theme';
-import { IsoflowProps } from 'src/types';
+import { IsoflowProps, ModelStore } from 'src/types';
 import { setWindowCursor, modelFromModelStore } from 'src/utils';
 import { useModelStore, ModelProvider } from 'src/stores/modelStore';
 import { SceneProvider } from 'src/stores/sceneStore';
@@ -106,8 +106,39 @@ const useIsoflow = () => {
     return state.actions;
   });
 
+  // Track the current editorMode in a ref so the gated `set` below
+  // always sees the latest value, even when the consumer captures the
+  // returned Model.set into a long-lived closure.
+  const editorMode = useUiStateStore((state) => {
+    return state.editorMode;
+  });
+  const editorModeRef = useRef(editorMode);
+  editorModeRef.current = editorMode;
+
+  const Model = useMemo<ModelStore['actions']>(() => {
+    const gatedSet: ModelStore['actions']['set'] = ((
+      ...args: Parameters<ModelStore['actions']['set']>
+    ) => {
+      if (editorModeRef.current !== 'EDITABLE') {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `[isoflow] Refusing model mutation in editorMode="${editorModeRef.current}". ` +
+              `Set editorMode="EDITABLE" to allow mutations through useIsoflow().Model.set.`
+          );
+        }
+        return;
+      }
+      return ModelActions.set(...args);
+    }) as ModelStore['actions']['set'];
+
+    return {
+      get: ModelActions.get,
+      set: gatedSet
+    };
+  }, [ModelActions]);
+
   return {
-    Model: ModelActions,
+    Model,
     uiState: uiStateActions,
     rendererEl
   };

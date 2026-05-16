@@ -42,7 +42,7 @@ export const MainMenu = () => {
   );
 
   const gotoUrl = useCallback((url: string) => {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }, []);
 
   const { load } = initialDataManager;

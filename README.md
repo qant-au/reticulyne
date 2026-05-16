@@ -41,6 +41,17 @@ This package is published to **GitHub Packages**, not the public npm registry. C
 
 > **Note on icons:** Icon collections (AWS, Azure, GCP, Kubernetes, Isoflow) are now bundled directly in this package. The `@isoflow/isopacks` npm dependency is no longer required. If you were previously passing collections from `@isoflow/isopacks`, you can remove that dependency — or continue using it alongside your own custom collections, as the plugin system remains fully supported.
 
+## Security model
+
+Isoflow renders node and connector **descriptions** as HTML. The bundled rich-text editor sanitises URL protocols at write time (`http`, `https`, `mailto`, `tel` only; everything else is replaced with `about:blank`), but it does **not** strip arbitrary HTML elements.
+
+Two implications for consumers:
+
+- **`initialData` is trusted input.** If your application loads diagrams from an untrusted source (user-uploaded JSON, third-party API, content stored before this fork's protocol-sanitisation landed), sanitise every item's `description` field with DOMPurify (or equivalent) **before** passing it into `<Isoflow initialData={...} />`. The editor does not re-sanitise existing HTML on hydration.
+- **`onModelUpdated` emits HTML, not Markdown.** The payload includes raw rich-text HTML for descriptions. If you persist the model to a backend and later display it outside Isoflow (in a list view, an email digest, etc.), apply the same sanitisation policy your trust boundary requires for any user-generated HTML.
+
+The full list of known security advisories carried by this package — and the in-source mitigations applied to each — is in [`SECURITY.md`](./SECURITY.md).
+
 ## Project maintainer
 
 Contact information to follow.

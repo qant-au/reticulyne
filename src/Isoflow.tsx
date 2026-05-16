@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { theme } from 'src/styles/theme';
-import { IsoflowProps, ModelStore } from 'src/types';
+import type { InitialData, IsoflowProps, Model, ModelStore } from 'src/types';
 import { setWindowCursor, modelFromModelStore } from 'src/utils';
 import { useModelStore, ModelProvider } from 'src/stores/modelStore';
 import { SceneProvider } from 'src/stores/sceneStore';
@@ -130,6 +130,8 @@ const useIsoflow = () => {
   const editorModeRef = useRef(editorMode);
   editorModeRef.current = editorMode;
 
+  const initialDataManager = useInitialDataManager();
+
   const Model = useMemo<ModelStore['actions']>(() => {
     const gatedSet: ModelStore['actions']['set'] = ((
       ...args: Parameters<ModelStore['actions']['set']>
@@ -152,10 +154,46 @@ const useIsoflow = () => {
     };
   }, [ModelActions]);
 
+  // Documented imperative methods. Prefer these in consumer code; the
+  // `Model` and `uiState` escape hatches below stay available for the
+  // small number of cases that need direct zustand access.
+  const getModel = useCallback((): Model => {
+    return modelFromModelStore(ModelActions.get());
+  }, [ModelActions]);
+
+  const loadModel = useCallback(
+    (data: InitialData): void => {
+      if (editorModeRef.current !== 'EDITABLE') {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `[isoflow] Refusing loadModel call in editorMode="${editorModeRef.current}". ` +
+              `Set editorMode="EDITABLE" to allow programmatic loads.`
+          );
+        }
+        return;
+      }
+      initialDataManager.load(data);
+    },
+    [initialDataManager]
+  );
+
+  const setEditorMode = uiStateActions.setEditorMode;
+  const setZoom = uiStateActions.setZoom;
+  const incrementZoom = uiStateActions.incrementZoom;
+  const decrementZoom = uiStateActions.decrementZoom;
+
   return {
+    // Documented imperative API.
+    getModel,
+    loadModel,
+    setEditorMode,
+    setZoom,
+    incrementZoom,
+    decrementZoom,
+    rendererEl,
+    // Escape hatches. Prefer the documented methods above.
     Model,
-    uiState: uiStateActions,
-    rendererEl
+    uiState: uiStateActions
   };
 };
 

@@ -130,7 +130,7 @@ CSS is injected at runtime via Emotion (an Isoflow dependency, not a peer). No s
 
 ## Security model
 
-See the dedicated [Security model](../README.md#security-model) section in the top-level README, plus [`../SECURITY.md`](../SECURITY.md) for the residual-advisory ledger. The two rules that matter for embedders:
+See the [Security](../README.md#security) section in the top-level README, plus [`../SECURITY.md`](../SECURITY.md) for the residual-advisory ledger. The two rules that matter for embedders:
 
 1. `initialData.items[].description` is rendered as HTML. Sanitise consumer-supplied historic content before passing it in.
 2. `onModelUpdated`'s payload contains those HTML strings verbatim. Anywhere it's displayed outside Isoflow, apply your usual HTML-sanitisation policy.

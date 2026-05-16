@@ -49,11 +49,22 @@ const App = ({
     };
   }, []);
 
+  // Stash the latest onModelUpdated in a ref so the model-watching
+  // effect below doesn't refire when the consumer passes a fresh inline
+  // function on every render. Without this, a high-render-rate host
+  // would call back on every parent render even when the model is
+  // unchanged.
+  const onModelUpdatedRef = useRef(onModelUpdated);
   useEffect(() => {
-    if (!initialDataManager.isReady || !onModelUpdated) return;
+    onModelUpdatedRef.current = onModelUpdated;
+  }, [onModelUpdated]);
 
-    onModelUpdated(model);
-  }, [model, initialDataManager.isReady, onModelUpdated]);
+  useEffect(() => {
+    if (!initialDataManager.isReady) return;
+    const cb = onModelUpdatedRef.current;
+    if (!cb) return;
+    cb(model);
+  }, [model, initialDataManager.isReady]);
 
   useEffect(() => {
     uiStateActions.setEnableDebugTools(enableDebugTools);

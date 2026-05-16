@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInteractionManager } from 'src/interaction/useInteractionManager';
+import { useKeyboardShortcuts } from 'src/interaction/useKeyboardShortcuts';
 import { Grid } from 'src/components/Grid/Grid';
 import { Cursor } from 'src/components/Cursor/Cursor';
 import { Nodes } from 'src/components/SceneLayers/Nodes/Nodes';
@@ -29,6 +30,7 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
   });
   const { setInteractionsElement } = useInteractionManager();
   const { items, rectangles, connectors, textBoxes } = useScene();
+  useKeyboardShortcuts();
 
   useEffect(() => {
     if (!containerRef.current || !interactionsRef.current) return;

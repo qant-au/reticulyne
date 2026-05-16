@@ -45,6 +45,24 @@ export const exportAsJSON = (model: Model) => {
 };
 
 export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
+  // Wait for any pending web-font loads before rasterising. Without
+  // this, html-to-image may capture node labels rendered in the
+  // browser's fallback font (different glyph metrics → truncated or
+  // wrong-width text) when the user triggers export before the
+  // configured font has streamed in. Falls back to an immediate
+  // resolution on browsers that don't expose document.fonts.
+  if (
+    typeof document !== 'undefined' &&
+    document.fonts &&
+    typeof document.fonts.ready?.then === 'function'
+  ) {
+    try {
+      await document.fonts.ready;
+    } catch {
+      // Best-effort; proceed with whatever fonts are currently loaded.
+    }
+  }
+
   const imageData = await toPng(el, {
     ...size,
     cacheBust: true

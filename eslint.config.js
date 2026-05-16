@@ -15,6 +15,8 @@ module.exports = tseslint.config(
       'docs/**',
       'webpack/**',
       'src/vendor/**',
+      'src/__tests__/mocks/**',
+      'src/__tests__/jest.setup.js',
       '*.config.js'
     ]
   },

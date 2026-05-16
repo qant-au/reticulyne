@@ -42,7 +42,7 @@
     "start": "webpack serve --config ./webpack/dev.config.js",
     "dev": "nodemon --watch ./src/ -e ts,tsx --exec npm run build",
     "clean": "rm -rf dist dist-docker",
-    "build": "npm run clean && webpack --config ./webpack/prod.config.js && tsc --declaration --emitDeclarationOnly && tsc-alias",
+    "build": "npm run clean && webpack --config ./webpack/prod.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "test": "jest",
     "lint": "tsc --noEmit && eslint ./src",
     "lint:fix": "eslint --fix ./src",

@@ -38,6 +38,19 @@ export const ContextMenuManager = ({ anchorEl }: Props) => {
         zoom
       )}
       menuItems={[
+        ...(contextMenu.item.type === 'ITEM' ||
+        contextMenu.item.type === 'TEXTBOX' ||
+        contextMenu.item.type === 'RECTANGLE'
+          ? [
+              {
+                label: 'Duplicate',
+                onClick: () => {
+                  scene.duplicateItem(contextMenu.item);
+                  onClose();
+                }
+              }
+            ]
+          : []),
         {
           label: 'Send backward',
           onClick: () => {

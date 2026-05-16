@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box } from '@mui/material';
 import { useScene } from 'src/hooks/useScene';
 import { ColorSwatch } from './ColorSwatch';

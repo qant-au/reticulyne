@@ -1,4 +1,3 @@
-import React from 'react';
 import { ProjectionOrientationEnum } from 'src/types';
 import {
   Box,
@@ -44,7 +43,7 @@ export const TextBoxControls = ({ id }: Props) => {
           min={0.3}
           max={0.9}
           value={textBox.fontSize}
-          onChange={(e, newSize) => {
+          onChange={(_e, newSize) => {
             updateTextBox(textBox.id, { fontSize: newSize as number });
           }}
         />
@@ -53,7 +52,7 @@ export const TextBoxControls = ({ id }: Props) => {
         <ToggleButtonGroup
           value={textBox.orientation}
           exclusive
-          onChange={(e, orientation) => {
+          onChange={(_e, orientation) => {
             if (textBox.orientation === orientation || orientation === null)
               return;
 

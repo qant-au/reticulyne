@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { theme } from 'src/styles/theme';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { RectangleTransformControls } from './RectangleTransformControls';
 import { TextBoxTransformControls } from './TextBoxTransformControls';

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Box, Select, MenuItem, useTheme } from '@mui/material';
 import { BasicEditor } from './BasicEditor/BasicEditor';
 import { DebugTools } from './DebugTools/DebugTools';

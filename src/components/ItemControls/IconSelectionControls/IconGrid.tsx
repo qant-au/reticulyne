@@ -1,4 +1,3 @@
-import React from 'react';
 import { Icon as IconI } from 'src/types';
 import { Grid } from '@mui/material';
 import { Icon } from './Icon';

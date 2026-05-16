@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Coords } from 'src/types';
 import { useTheme, Box } from '@mui/material';
 import { getIsoProjectionCss } from 'src/utils';

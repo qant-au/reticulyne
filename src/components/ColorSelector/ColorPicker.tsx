@@ -3,7 +3,6 @@ import {
   MuiColorInput,
   MuiColorInputProps
 } from 'mui-color-input';
-import React from 'react';
 import { ColorSwatch } from './ColorSwatch';
 
 type Props = Omit<MuiColorInputProps, 'ref'>;

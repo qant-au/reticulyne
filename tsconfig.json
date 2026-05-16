@@ -11,6 +11,8 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "module": "es6",
     "moduleResolution": "node",
     "skipLibCheck": true

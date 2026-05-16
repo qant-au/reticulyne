@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { PROJECTED_TILE_SIZE } from 'src/config';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTheme, Box } from '@mui/material';
 import { UNPROJECTED_TILE_SIZE } from 'src/config';
 import {

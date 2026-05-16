@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInteractionManager } from 'src/interaction/useInteractionManager';

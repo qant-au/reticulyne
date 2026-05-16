@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import type { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { Connector } from './Connector';

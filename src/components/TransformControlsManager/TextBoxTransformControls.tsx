@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { getTextBoxEndTile } from 'src/utils';
 import { useTextBox } from 'src/hooks/useTextBox';
 import { TransformControls } from './TransformControls';

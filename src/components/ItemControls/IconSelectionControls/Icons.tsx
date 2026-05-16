@@ -1,4 +1,3 @@
-import React from 'react';
 import { Grid } from '@mui/material';
 import { IconCollectionStateWithIcons, Icon } from 'src/types';
 import { IconCollection } from './IconCollection';

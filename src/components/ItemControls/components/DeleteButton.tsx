@@ -1,4 +1,3 @@
-import React from 'react';
 import { DeleteOutlined as DeleteIcon } from '@mui/icons-material';
 import { Button } from '@mui/material';
 

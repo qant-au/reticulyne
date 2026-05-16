@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button as MuiButton, SxProps } from '@mui/material';
 import {
   ExpandMore as ReadMoreIcon,

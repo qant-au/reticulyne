@@ -12,6 +12,9 @@
     "registry": "https://npm.pkg.github.com/",
     "access": "restricted"
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "main": "./dist/index.js",
   "types": "./dist/Isoflow.d.ts",
   "exports": {

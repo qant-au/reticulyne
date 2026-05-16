@@ -9,14 +9,17 @@ A React component for drawing network diagrams.
 ## Key features
 
 - **Drag-and-drop editor** — Express your architecture with icons, regions and connectors.
-- **Extensible icon system** — Create your own icon library, or use plugins for existing libraries including AWS, Azure, GCP, Kubernetes, and more.
+- **Bundled icon collections** — AWS, Azure, GCP, Kubernetes, and Isoflow icons are included out of the box. No separate icon package required.
+- **Extensible icon system** — Bring your own icons by passing any collection that conforms to the `ProcessedCollection` interface. The plugin architecture is preserved and open for community use.
 - **Export options** — Export diagrams as code or images.
 
 ## Quick start
 
 ```bash
-npm install isoflow @isoflow/isopacks
+npm install isoflow
 ```
+
+> **Note on icons:** Icon collections (AWS, Azure, GCP, Kubernetes, Isoflow) are now bundled directly in this package. The `@isoflow/isopacks` npm dependency is no longer required. If you were previously passing collections from `@isoflow/isopacks`, you can remove that dependency — or continue using it alongside your own custom collections, as the plugin system remains fully supported.
 
 ## Project maintainer
 

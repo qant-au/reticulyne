@@ -17,6 +17,10 @@
     "src/vendor/**",
     "src/**/__tests__/**",
     "src/**/*.test.ts",
-    "src/**/*.test.tsx"
+    "src/**/*.test.tsx",
+    "e2e/**",
+    "playwright.config.ts",
+    "playwright-out/**",
+    "playwright-report/**"
   ]
 }

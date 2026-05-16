@@ -41,6 +41,42 @@ This package is published to **GitHub Packages**, not the public npm registry. C
 
 > **Note on icons:** Icon collections (AWS, Azure, GCP, Kubernetes, Isoflow) are now bundled directly in this package. The `@isoflow/isopacks` npm dependency is no longer required. If you were previously passing collections from `@isoflow/isopacks`, you can remove that dependency — or continue using it alongside your own custom collections, as the plugin system remains fully supported.
 
+## Tests
+
+The repo runs two test surfaces:
+
+| Suite | Runner | Command |
+|---|---|---|
+| Unit + component | Jest (jsdom) | `npm test` |
+| End-to-end (browser) | Playwright (Chromium) | `npm run test:e2e` |
+
+Playwright drives a real browser against the standalone Docker container served by `bash restart.sh`. First-time setup on a fresh clone:
+
+```bash
+npm ci                          # installs @playwright/test
+npm run test:e2e:install        # one-time Chromium binary download (~100MB)
+bash restart.sh                 # start the container at http://localhost:2222
+npm run test:e2e                # run e2e specs
+```
+
+Override the target URL with `PLAYWRIGHT_BASE_URL=https://staging.example.com npm run test:e2e`. Specs live under `e2e/`; Playwright outputs (traces, videos, HTML reports) are written to `playwright-out/` and `playwright-report/`, both gitignored.
+
+## Knowledge graph (Graphify)
+
+[Graphify](https://github.com/safishamsi/graphify) builds an interactive knowledge graph of this repo for coding-assistant integrations (Claude Code, Cursor, Gemini). Optional — `bash restart.sh` runs it if installed, skips with a clear message if not.
+
+One-time install:
+
+```bash
+uv tool install graphifyy        # recommended
+# or: pipx install graphifyy
+# or: pip install graphifyy
+```
+
+`restart.sh` then runs `graphify update .` (incremental) and spawns `graphify watch .` in the background (logs to `graphify-out/watch.log`, PID in `graphify-out/watch.pid`). All Graphify output is written to `graphify-out/` and is gitignored. The `.graphifyignore` file controls what gets indexed — edit it the same way you'd edit `.gitignore`.
+
+To skip Graphify on a single invocation: `NO_GRAPHIFY=1 bash restart.sh`.
+
 ## Security model
 
 Isoflow renders node and connector **descriptions** as HTML. The bundled rich-text editor sanitises URL protocols at write time (`http`, `https`, `mailto`, `tel` only; everything else is replaced with `about:blank`), but it does **not** strip arbitrary HTML elements.

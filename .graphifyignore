@@ -1,0 +1,38 @@
+# See https://github.com/safishamsi/graphify — same syntax as .gitignore.
+# Files matched here are excluded from the knowledge graph index.
+
+# Build outputs and generated artefacts.
+node_modules/
+dist/
+dist-docker/
+coverage/
+playwright-out/
+playwright-report/
+test-results/
+graphify-out/
+
+# Tooling caches.
+.git/
+.claude/
+.vscode/
+.codesandbox/
+
+# Lockfiles + binary blobs.
+package-lock.json
+yarn.lock
+*.min.js
+*.map
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.woff
+*.woff2
+*.ttf
+*.ico
+*.pdf
+
+# Docs site (separate npm workspace).
+docs/.next/
+docs/node_modules/

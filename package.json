@@ -47,12 +47,15 @@
     "clean": "rm -rf dist dist-docker",
     "build": "npm run clean && webpack --config ./webpack/prod.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "test": "jest",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium",
     "lint": "tsc --noEmit && eslint ./src",
     "lint:fix": "eslint --fix ./src",
     "docker:build": "rm -rf dist-docker && webpack --config ./webpack/docker.config.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.5.2",

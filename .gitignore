@@ -8,6 +8,14 @@
 # testing
 /coverage
 
+# Playwright (e2e) — generated reports, traces, videos, screenshots
+/playwright-out
+/playwright-report
+/test-results
+
+# Graphify — generated knowledge-graph artefacts (HTML, JSON, MD report)
+/graphify-out
+
 # production
 /dist
 /dist-docker

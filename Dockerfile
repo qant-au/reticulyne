@@ -1,29 +1,25 @@
-# Use the official Node.js runtime as the base image
+# syntax=docker/dockerfile:1.7
+
 FROM node:22-alpine AS build
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# Copy lockfile + manifest first so the dependency install layer is cached
+# against package-lock.json content rather than busted by every source change.
+COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm install
+# Use `npm ci` for deterministic installs that fail closed on lockfile drift.
+RUN npm ci
 
-# Copy the entire application code to the container
+# Now copy the rest of the source. Build context is shaped by .dockerignore.
 COPY . .
 
-# Build the React app for production
 RUN npm run docker:build
 
-# Use Nginx as the production server
 FROM nginx:alpine
 
-# Copy the built React app to Nginx's web server directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Expose port 80 for the Nginx server
 EXPOSE 80
 
-# Start Nginx when the container runs
 CMD ["nginx", "-g", "daemon off;"]

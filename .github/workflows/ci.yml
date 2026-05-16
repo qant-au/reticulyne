@@ -30,5 +30,22 @@ jobs:
 
       - run: npm run build
 
-      - name: Verify pack
-        run: npm pack --dry-run
+      - name: Verify pack contents
+        # Assert the published tarball only contains expected top-level
+        # paths. A drifted `files` field or a `tsconfig.build.json`
+        # exclude regression would otherwise silently ship test
+        # fixtures, vendor code, or example components.
+        run: |
+          npm pack --dry-run --json > pack-report.json
+          node -e "
+            const r = JSON.parse(require('fs').readFileSync('pack-report.json', 'utf8'));
+            const files = (r[0]?.files ?? []).map((f) => f.path);
+            const allowedTop = new Set(['dist', 'README.md', 'LICENSE', 'package.json']);
+            const offenders = files.filter((p) => !allowedTop.has(p.split('/')[0]));
+            if (offenders.length) {
+              console.error('Unexpected files in published tarball:');
+              offenders.forEach((f) => console.error('  ' + f));
+              process.exit(1);
+            }
+            console.log('pack contents OK — ' + files.length + ' files, all under allowed roots');
+          "

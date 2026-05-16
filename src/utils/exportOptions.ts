@@ -1,4 +1,4 @@
-import domtoimage from 'dom-to-image';
+import { toPng } from 'html-to-image';
 import FileSaver from 'file-saver';
 import { Model, Size } from '../types';
 
@@ -45,7 +45,7 @@ export const exportAsJSON = (model: Model) => {
 };
 
 export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
-  const imageData = await domtoimage.toPng(el, {
+  const imageData = await toPng(el, {
     ...size,
     cacheBust: true
   });

@@ -13,6 +13,13 @@ A React component for drawing network diagrams.
 - **Extensible icon system** — Bring your own icons by passing any collection that conforms to the `ProcessedCollection` interface. The plugin architecture is preserved and open for community use.
 - **Export options** — Export diagrams as code or images.
 
+## Requirements
+
+- **React** 17, 18, or 19 (declared as a peer dependency) and a matching `react-dom`.
+- **Node.js** 22 LTS for development against this repository (see `.nvmrc`). Consumers are not subject to this — the published package is browser-targeted.
+- A bundler that can consume CommonJS or ESM (Webpack, Vite, Rollup, Parcel, esbuild, Next.js, etc.).
+- Authentication to **GitHub Packages** in order to install — see *Installation* below.
+
 ## Quick start
 
 ```bash

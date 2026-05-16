@@ -18,6 +18,11 @@ RUN npm run docker:build
 
 FROM nginx:alpine
 
+# Replace the stock nginx site config with one that ships SPA-fallback,
+# security headers, gzip, and cache rules tuned for hashed asset bundles.
+RUN rm -f /etc/nginx/conf.d/default.conf
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+
 COPY --from=build /app/dist-docker /usr/share/nginx/html
 
 EXPOSE 80

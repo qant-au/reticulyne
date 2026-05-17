@@ -79,7 +79,12 @@ else
   docker rm -f "$EXAMPLES_NAME" >/dev/null 2>&1 || true
 
   echo "==> Building image \"$EXAMPLES_TAG\" (examples picker)"
-  docker build -t "$EXAMPLES_TAG" -f Dockerfile.examples .
+  # Both variants share Dockerfile; the examples variant is selected
+  # via build args. Defaults in the Dockerfile match the main variant.
+  docker build -t "$EXAMPLES_TAG" \
+    --build-arg WEBPACK_SCRIPT=docker:examples:build \
+    --build-arg DIST_DIR=dist-docker-examples \
+    -f Dockerfile .
 
   echo "==> Starting container \"$EXAMPLES_NAME\" on host port $EXAMPLES_PORT"
   # Container listens on 8080 internally (nginx-unprivileged base; see BLD3-05).

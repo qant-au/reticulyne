@@ -57,6 +57,6 @@ The CSP above is only applied by the standalone Docker image. A consumer embeddi
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (fourth-pass review, `sunny-bentley`):
+Current counts (v4.0.0):
 - `npm audit --omit=dev`: 2 low — both in the `quill` chain documented above.
-- `npm audit` (including dev): 2 low — same two entries; no dev-only advisories remain after the third-pass `DEP3-02` (jest stack) and `DEP3-03` (webpack-dev-server) bumps closed them. The CI pipeline gates on `npm audit --omit=dev --audit-level=moderate`; the two low-severity entries above are below the threshold by design.
+- `npm audit` (including dev): 2 low — same two entries; no dev-only advisories remain. The CI pipeline gates on `npm audit --omit=dev --audit-level=moderate`; the two low-severity entries above are below the threshold by design.

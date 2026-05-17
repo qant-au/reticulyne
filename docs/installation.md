@@ -46,14 +46,46 @@ pnpm add @qant-au/isoflow
 
 ## Peer dependencies
 
-You need React and react-dom in your application. The package declares peers `react >= 18`
-and `react-dom >= 18` and is tested against React 19.
+`@qant-au/isoflow@2` externalises its UI / state / theming stack so consumers can share a
+single copy with their own app instead of bundling duplicates. You need to install these
+yourself alongside the library:
 
 ```bash
-npm install react react-dom
+npm install \
+  @qant-au/isoflow \
+  react react-dom \
+  @mui/material @mui/icons-material \
+  @emotion/react @emotion/styled \
+  zustand
 ```
 
+| Peer | Range | Notes |
+|---|---|---|
+| `react` | `>=18` | Tested against React 19. |
+| `react-dom` | `>=18` | Tested against React 19. |
+| `@mui/material` | `^5.18.0` | MUI v5 line. A future fork release will move to MUI v9. |
+| `@mui/icons-material` | `^5.18.0` | Same major as `@mui/material`. |
+| `@emotion/react` | `^11.14.0` | Required by MUI's CSS-in-JS engine. |
+| `@emotion/styled` | `^11.14.1` | Required by MUI's CSS-in-JS engine. |
+| `zustand` | `^5.0.13` | Used internally by the library; sharing a copy with the consumer's own zustand store is supported. |
+
+npm 7+ auto-installs declared peer deps, so a fresh `npm install @qant-au/isoflow` will pull
+them in. If you're on npm 6 or you want explicit lockfile entries, install them directly.
+
 No CSS imports are required — styles are injected at runtime by Emotion.
+
+## Migrating from v1
+
+If you were on `@qant-au/isoflow@1.x` (which bundled MUI / Emotion / Zustand internally),
+the upgrade to v2 is:
+
+1. `npm install @mui/material @mui/icons-material @emotion/react @emotion/styled zustand`
+   in your application (the version ranges above are the tested baselines).
+2. If your application was already using any of these — congratulations, you now share a
+   single copy and your bundle drops by ~270 KB.
+3. If your application was *not* using these and you pinned different versions, ensure
+   the versions you install fall within the ranges above. Mismatched MUI majors will
+   error at provider context lookup.
 
 ## Bundler
 

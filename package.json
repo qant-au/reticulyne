@@ -1,6 +1,6 @@
 {
   "name": "@qant-au/isoflow",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": false,
   "description": "An open-source React component for drawing network diagrams.",
   "license": "MIT",
@@ -58,8 +58,8 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@eslint/js": "^9.39.4",
-    "@mui/icons-material": "^7.3.11",
-    "@mui/material": "^7.3.11",
+    "@mui/icons-material": "^9.0.1",
+    "@mui/material": "^9.0.1",
     "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^16.3.0",
@@ -114,8 +114,8 @@
   "peerDependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^5.18.0",
-    "@mui/material": "^5.18.0",
+    "@mui/icons-material": "^9.0.0",
+    "@mui/material": "^9.0.0",
     "react": ">=18",
     "react-dom": ">=18",
     "zustand": "^5.0.13"

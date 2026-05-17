@@ -42,15 +42,19 @@ const installFakeRO = () => {
     }
   }
 
-  (globalThis as unknown as { ResizeObserver: typeof ResizeObserver }).ResizeObserver =
-    FakeResizeObserver as unknown as typeof ResizeObserver;
+  (
+    globalThis as unknown as { ResizeObserver: typeof ResizeObserver }
+  ).ResizeObserver = FakeResizeObserver as unknown as typeof ResizeObserver;
 
   return instances;
 };
 
 const makeElement = (width: number, height: number) => {
   const el = document.createElement('div');
-  Object.defineProperty(el, 'clientWidth', { value: width, configurable: true });
+  Object.defineProperty(el, 'clientWidth', {
+    value: width,
+    configurable: true
+  });
   Object.defineProperty(el, 'clientHeight', {
     value: height,
     configurable: true

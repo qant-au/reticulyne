@@ -37,7 +37,12 @@ export const ConnectorLabel = ({ connector }: Props) => {
           borderRadius: 2
         }}
       >
-        <Typography color="text.secondary" variant="body2">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {connector.description}
         </Typography>
       </Label>

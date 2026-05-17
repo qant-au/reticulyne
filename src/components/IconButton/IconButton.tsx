@@ -44,16 +44,24 @@ export const IconButton = ({
       <Button
         variant="text"
         onClick={onClick}
-        sx={{
-          borderRadius: 0,
-          height: theme.customVars.toolMenu.height,
-          width: theme.customVars.toolMenu.height,
-          maxWidth: '100%',
-          minWidth: 'auto',
-          bgcolor: isActive ? 'primary.light' : undefined,
-          p: 0,
-          m: 0
-        }}
+        sx={[
+          {
+            borderRadius: 0,
+            height: theme.customVars.toolMenu.height,
+            width: theme.customVars.toolMenu.height,
+            maxWidth: '100%',
+            minWidth: 'auto',
+            p: 0,
+            m: 0
+          },
+          isActive
+            ? {
+                bgcolor: 'primary.light'
+              }
+            : {
+                bgcolor: null
+              }
+        ]}
       >
         <Box
           sx={{

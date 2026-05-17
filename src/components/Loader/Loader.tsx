@@ -9,13 +9,27 @@ interface Props {
 export const Loader = ({ size = 1, color = 'primary', isInline }: Props) => {
   return (
     <Box
-      sx={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: isInline ? 'auto' : '100%',
-        height: isInline ? 'auto' : '100%'
-      }}
+      sx={[
+        {
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        },
+        isInline
+          ? {
+              width: 'auto'
+            }
+          : {
+              width: '100%'
+            },
+        isInline
+          ? {
+              height: 'auto'
+            }
+          : {
+              height: '100%'
+            }
+      ]}
     >
       <CircularProgress size={size * 20} color={color} />
     </Box>

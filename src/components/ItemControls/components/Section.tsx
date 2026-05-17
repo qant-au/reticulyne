@@ -20,9 +20,11 @@ export const Section = ({ children, sx, title }: Props) => {
         {title && (
           <Typography
             variant="body2"
-            color="text.secondary"
-            textTransform="uppercase"
-            pb={1}
+            sx={{
+              color: 'text.secondary',
+              textTransform: 'uppercase',
+              pb: 1
+            }}
           >
             {title}
           </Typography>

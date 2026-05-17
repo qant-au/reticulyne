@@ -39,7 +39,12 @@ export const ZoomControls = () => {
               minWidth: toPx(60)
             }}
           >
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {Math.ceil(zoom * 100)}%
             </Typography>
           </Box>

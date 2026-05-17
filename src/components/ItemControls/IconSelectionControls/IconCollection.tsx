@@ -35,17 +35,21 @@ export const IconCollection = ({
         }}
       >
         <Stack
-          sx={{ width: '100%' }}
           direction="row"
           spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%'
+          }}
         >
           <Typography
             variant="body2"
-            color="text.secondary"
-            textTransform="uppercase"
-            fontWeight={600}
+            sx={{
+              color: 'text.secondary',
+              textTransform: 'uppercase',
+              fontWeight: 600
+            }}
           >
             {id}
           </Typography>
@@ -57,7 +61,6 @@ export const IconCollection = ({
         </Stack>
       </Button>
       <Divider />
-
       {isExpanded && (
         <IconGrid icons={icons} onMouseDown={onMouseDown} onClick={onClick} />
       )}

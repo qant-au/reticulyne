@@ -7,7 +7,14 @@
 // is now `position - origin` and connectorPathTileToGlobal is
 // `origin + tile` (its inverse).
 
-import { Coords, Connector, ConnectorAnchor, Rect, View } from 'src/types';
+import {
+  Coords,
+  Connector,
+  ConnectorAnchor,
+  ConnectorDirection,
+  Rect,
+  View
+} from 'src/types';
 import { CONNECTOR_SEARCH_OFFSET, UNPROJECTED_TILE_SIZE } from 'src/config';
 import { CoordsUtils } from './CoordsUtils';
 import { findPath } from './pathfinder';
@@ -165,13 +172,16 @@ export const getConnectorsByViewItem = (
   });
 };
 
-export const getConnectorDirectionIcon = (connectorTiles: Coords[]) => {
-  if (connectorTiles.length < 2) return null;
-
-  const iconTile = connectorTiles[connectorTiles.length - 2];
-  const lastTile = connectorTiles[connectorTiles.length - 1];
-
-  let rotation;
+// Compute the SVG-pixel position and rotation for a direction-arrow
+// rendered AT `iconTile`, pointing at `lastTile`. Pure function — no
+// knowledge of which end of the connector this is. Used twice by
+// getConnectorDirectionIcon below (once for the end-of-path arrow,
+// once for the start-of-path arrow when BOTH or END_TO_START is set).
+const computeArrowFromTwoTiles = (
+  iconTile: Coords,
+  lastTile: Coords
+): { x: number; y: number; rotation: number } => {
+  let rotation = 0;
 
   if (lastTile.x > iconTile.x) {
     if (lastTile.y > iconTile.y) {
@@ -208,4 +218,44 @@ export const getConnectorDirectionIcon = (connectorTiles: Coords[]) => {
     y: iconTile.y * UNPROJECTED_TILE_SIZE + UNPROJECTED_TILE_SIZE / 2,
     rotation
   };
+};
+
+// Returns the set of direction-arrow icons to render on a connector,
+// derived from the connector's `direction` field (FEA4-02).
+//
+//   * 'START_TO_END' — one arrow at tiles[N-2] pointing at tiles[N-1]
+//                       (the historic behaviour).
+//   * 'END_TO_START' — one arrow at tiles[1] pointing at tiles[0].
+//   * 'BOTH'         — both of the above.
+//   * 'NONE'         — empty array.
+//
+// Returns an empty array when there aren't enough path tiles to derive
+// any arrow (< 2 tiles). The renderer maps over the result, so an empty
+// array is the natural "no arrows" representation.
+export const getConnectorDirectionIcon = (
+  connectorTiles: Coords[],
+  direction: ConnectorDirection = 'START_TO_END'
+): Array<{ x: number; y: number; rotation: number }> => {
+  if (direction === 'NONE') return [];
+  if (connectorTiles.length < 2) return [];
+
+  const renderEndArrow = direction === 'START_TO_END' || direction === 'BOTH';
+  const renderStartArrow = direction === 'END_TO_START' || direction === 'BOTH';
+
+  const icons: Array<{ x: number; y: number; rotation: number }> = [];
+
+  if (renderEndArrow) {
+    icons.push(
+      computeArrowFromTwoTiles(
+        connectorTiles[connectorTiles.length - 2],
+        connectorTiles[connectorTiles.length - 1]
+      )
+    );
+  }
+
+  if (renderStartArrow) {
+    icons.push(computeArrowFromTwoTiles(connectorTiles[1], connectorTiles[0]));
+  }
+
+  return icons;
 };

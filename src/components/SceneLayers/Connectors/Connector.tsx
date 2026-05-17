@@ -72,9 +72,9 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
     isSelected
   ]);
 
-  const directionIcon = useMemo(() => {
-    return getConnectorDirectionIcon(connector.path.tiles);
-  }, [connector.path.tiles]);
+  const directionIcons = useMemo(() => {
+    return getConnectorDirectionIcon(connector.path.tiles, connector.direction);
+  }, [connector.path.tiles, connector.direction]);
 
   const connectorWidthPx = useMemo(() => {
     return (UNPROJECTED_TILE_SIZE / 100) * connector.width;
@@ -135,18 +135,20 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
           );
         })}
 
-        {directionIcon && (
-          <g transform={`translate(${directionIcon.x}, ${directionIcon.y})`}>
-            <g transform={`rotate(${directionIcon.rotation})`}>
-              <polygon
-                fill="black"
-                stroke={theme.palette.common.white}
-                strokeWidth={4}
-                points="17.58,17.01 0,-17.01 -17.58,17.01"
-              />
+        {directionIcons.map((icon, i) => {
+          return (
+            <g key={i} transform={`translate(${icon.x}, ${icon.y})`}>
+              <g transform={`rotate(${icon.rotation})`}>
+                <polygon
+                  fill="black"
+                  stroke={theme.palette.common.white}
+                  strokeWidth={4}
+                  points="17.58,17.01 0,-17.01 -17.58,17.01"
+                />
+              </g>
             </g>
-          </g>
-        )}
+          );
+        })}
       </Svg>
     </Box>
   );

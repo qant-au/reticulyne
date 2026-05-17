@@ -108,6 +108,23 @@ Any modern bundler can consume the package: webpack, Vite, Rollup, Parcel, esbui
 The package ships both CJS and ESM entries from the same file (webpack-built UMD). A
 dedicated ESM build is a planned follow-up.
 
+## Browser support
+
+The published bundle is compiled against the `browserslist` declared in `package.json`:
+
+```json
+"production": [">0.2%", "not dead", "not op_mini all"]
+```
+
+Practically that's the current and previous major of every evergreen browser — recent
+Chrome / Edge / Firefox / Safari (including iOS Safari 14+ and Android Chrome on modern
+versions of the platform). Internet Explorer, Opera Mini, and any vendor-discontinued
+browser are excluded.
+
+If your application needs to target older browsers, transpile the package output yourself
+in your consuming build (e.g. run Babel against `node_modules/@qant-au/isoflow/dist`).
+Most consumers don't need to — the targets above cover ~99% of global traffic.
+
 ## Verify
 
 Render the component in your app and confirm it mounts — see [quickstart.md](quickstart.md)

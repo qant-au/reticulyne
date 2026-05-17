@@ -17,16 +17,15 @@ import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
 import { ExportImageDialog } from '../ExportImageDialog/ExportImageDialog';
 
-const ToolsEnum = {
-  MAIN_MENU: 'MAIN_MENU',
-  ZOOM_CONTROLS: 'ZOOM_CONTROLS',
-  TOOL_MENU: 'TOOL_MENU',
-  ITEM_CONTROLS: 'ITEM_CONTROLS',
-  VIEW_TITLE: 'VIEW_TITLE'
-} as const;
+type ToolName =
+  | 'MAIN_MENU'
+  | 'ZOOM_CONTROLS'
+  | 'TOOL_MENU'
+  | 'ITEM_CONTROLS'
+  | 'VIEW_TITLE';
 
 interface EditorModeMapping {
-  [k: string]: (keyof typeof ToolsEnum)[];
+  [k: string]: ToolName[];
 }
 
 const EDITOR_MODE_MAPPING: EditorModeMapping = {

@@ -115,6 +115,22 @@ Callable from any component rendered **inside** `<Isoflow>`. Returns:
 
 A worked round-trip example is in [embedding.md](embedding.md#imperative-api-useisoflow).
 
+### Failure modes
+
+`useIsoflow()` reads from the same Zustand stores (`ModelProvider`, `SceneProvider`,
+`UiStateProvider`) that the `<Isoflow>` component installs. Calling it from a component
+**outside** the `<Isoflow>` subtree throws synchronously:
+
+```
+Missing Model provider in the tree. Wrap your component in <ModelProvider>.
+```
+
+(The exact provider name depends on which store is reached first — `Model`, `Scene`, or
+`UiState`.) This is a programming error rather than a runtime condition you can catch
+gracefully: ensure every `useIsoflow()` consumer is rendered as a descendant of an
+`<Isoflow>` element. React's error-boundary path will catch the throw, but it's
+clearer to keep the call sites inside the subtree.
+
 ## Re-exported helpers
 
 The package also re-exports from `src/standaloneExports.ts`:

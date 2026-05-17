@@ -22,7 +22,7 @@ import {
   normalisePositionFromOrigin,
   connectorPathTileToGlobal,
   getConnectorPath
-} from '../renderer';
+} from 'src/utils';
 import { CONNECTOR_SEARCH_OFFSET } from 'src/config';
 import type { ConnectorAnchor, View } from 'src/types';
 

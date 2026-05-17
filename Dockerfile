@@ -24,18 +24,22 @@ COPY . .
 
 RUN npm run docker:build
 
-FROM nginx:1.30-alpine
+# nginx-unprivileged variant — runs as the `nginx` user (uid 101) and
+# listens on 8080 out of the box, so the container ships without ever
+# starting a root-owned process. The pinned tag (1.30) matches the
+# nginx stable line we pinned in the standard image previously.
+FROM nginxinc/nginx-unprivileged:1.30-alpine
 
 # Replace the stock nginx site config with one that ships SPA-fallback,
 # security headers, gzip, and cache rules tuned for hashed asset bundles.
-RUN rm -f /etc/nginx/conf.d/default.conf
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+# `--chown` keeps the ownership consistent with the rest of the image.
+COPY --chown=nginx:nginx docker/nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=build /app/dist-docker /usr/share/nginx/html
+COPY --from=build --chown=nginx:nginx /app/dist-docker /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://127.0.0.1/ || exit 1
+    CMD wget --quiet --tries=1 --spider http://127.0.0.1:8080/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

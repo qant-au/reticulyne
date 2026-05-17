@@ -1,4 +1,4 @@
-import React, { createContext, useRef, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { createStore, useStore } from 'zustand';
 import { ModelStore } from 'src/types';
 import { INITIAL_DATA } from 'src/config';
@@ -23,19 +23,11 @@ interface ProviderProps {
   children: React.ReactNode;
 }
 
-// TODO: Typings below are pretty gnarly due to the way Zustand works.
-// see https://github.com/pmndrs/zustand/discussions/1180#discussioncomment-3439061
 export const ModelProvider = ({ children }: ProviderProps) => {
-  const storeRef = useRef<ReturnType<typeof initialState>>();
-
-  if (!storeRef.current) {
-    storeRef.current = initialState();
-  }
+  const [store] = useState(initialState);
 
   return (
-    <ModelContext.Provider value={storeRef.current}>
-      {children}
-    </ModelContext.Provider>
+    <ModelContext.Provider value={store}>{children}</ModelContext.Provider>
   );
 };
 

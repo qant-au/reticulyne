@@ -128,7 +128,9 @@ const useIsoflow = () => {
     return state.editorMode;
   });
   const editorModeRef = useRef(editorMode);
-  editorModeRef.current = editorMode;
+  useEffect(() => {
+    editorModeRef.current = editorMode;
+  }, [editorMode]);
 
   const initialDataManager = useInitialDataManager();
 

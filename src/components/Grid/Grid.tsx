@@ -9,9 +9,9 @@ import { SizeUtils } from 'src/utils/SizeUtils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 
 export const Grid = () => {
-  const elementRef = useRef<HTMLDivElement>(null);
-  const { size } = useResizeObserver(elementRef.current);
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const [element, setElement] = useState<HTMLDivElement | null>(null);
+  const { size } = useResizeObserver(element);
+  const isFirstRenderRef = useRef(true);
   const scroll = useUiStateStore((state) => {
     return state.scroll;
   });
@@ -20,25 +20,23 @@ export const Grid = () => {
   });
 
   useEffect(() => {
-    if (!elementRef.current) return;
+    if (!element) return;
 
     const tileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
-    const elSize = elementRef.current.getBoundingClientRect();
+    const elSize = element.getBoundingClientRect();
     const backgroundPosition: Size = {
       width: elSize.width / 2 + scroll.position.x + tileSize.width / 2,
       height: elSize.height / 2 + scroll.position.y
     };
 
-    gsap.to(elementRef.current, {
-      duration: isFirstRender ? 0 : 0.25,
+    gsap.to(element, {
+      duration: isFirstRenderRef.current ? 0 : 0.25,
       backgroundSize: `${tileSize.width}px ${tileSize.height * 2}px`,
       backgroundPosition: `${backgroundPosition.width}px ${backgroundPosition.height}px`
     });
 
-    if (isFirstRender) {
-      setIsFirstRender(false);
-    }
-  }, [scroll, zoom, isFirstRender, size]);
+    isFirstRenderRef.current = false;
+  }, [scroll, zoom, size, element]);
 
   return (
     <Box
@@ -53,7 +51,7 @@ export const Grid = () => {
       }}
     >
       <Box
-        ref={elementRef}
+        ref={setElement}
         sx={{
           position: 'absolute',
           width: '100%',

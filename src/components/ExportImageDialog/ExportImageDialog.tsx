@@ -105,6 +105,9 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   };
 
   useEffect(() => {
+    // Invalidate the cached PNG when an input that affects it changes;
+    // the user must re-run the async generate step to repopulate it.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setImageData(undefined);
   }, [showGrid, backgroundColor]);
 

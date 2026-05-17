@@ -1,0 +1,211 @@
+// Connector-specific helpers: anchor resolution, pathfinding,
+// coordinate-system conversion between search-area-local and world
+// tiles, and the direction-arrow helper used by the renderer.
+//
+// Extracted from src/utils/renderer.ts under QUA4-07. The coordinate
+// system was straightened out in BUG4-01 — normalisePositionFromOrigin
+// is now `position - origin` and connectorPathTileToGlobal is
+// `origin + tile` (its inverse).
+
+import { Coords, Connector, ConnectorAnchor, Rect, View } from 'src/types';
+import { CONNECTOR_SEARCH_OFFSET, UNPROJECTED_TILE_SIZE } from 'src/config';
+import { CoordsUtils } from './CoordsUtils';
+import { findPath } from './pathfinder';
+import { getItemByIdOrThrow } from './common';
+import { getBoundingBox, getBoundingBoxSize, sortByPosition } from './geometry';
+
+export const getAllAnchors = (connectors: Connector[]) => {
+  return connectors.reduce((acc, connector) => {
+    return [...acc, ...connector.anchors];
+  }, [] as ConnectorAnchor[]);
+};
+
+export const getAnchorTile = (anchor: ConnectorAnchor, view: View): Coords => {
+  if (anchor.ref.item) {
+    const viewItem = getItemByIdOrThrow(view.items, anchor.ref.item).value;
+    return viewItem.tile;
+  }
+
+  if (anchor.ref.anchor) {
+    const allAnchors = getAllAnchors(view.connectors ?? []);
+    const nextAnchor = getItemByIdOrThrow(allAnchors, anchor.ref.anchor).value;
+
+    return getAnchorTile(nextAnchor, view);
+  }
+
+  if (anchor.ref.tile) {
+    return anchor.ref.tile;
+  }
+
+  throw new Error('Could not get anchor tile.');
+};
+
+interface NormalisePositionFromOrigin {
+  position: Coords;
+  origin: Coords;
+}
+
+export const normalisePositionFromOrigin = ({
+  position,
+  origin
+}: NormalisePositionFromOrigin) => {
+  // Subtract the origin from the position — the conventional way to
+  // express a position in a local coordinate system. Used by
+  // getConnectorPath() to express anchor world-coords in search-area-
+  // local coords before handing them to the pathfinder.
+  return CoordsUtils.subtract(position, origin);
+};
+
+interface GetConnectorPath {
+  anchors: ConnectorAnchor[];
+  view: View;
+}
+
+export const getConnectorPath = ({
+  anchors,
+  view
+}: GetConnectorPath): {
+  tiles: Coords[];
+  rectangle: Rect;
+} => {
+  if (anchors.length < 2)
+    throw new Error(
+      `Connector needs at least two anchors (receieved: ${anchors.length})`
+    );
+
+  const anchorPosition = anchors.map((anchor) => {
+    return getAnchorTile(anchor, view);
+  });
+
+  const searchArea = getBoundingBox(anchorPosition, CONNECTOR_SEARCH_OFFSET);
+
+  const sorted = sortByPosition(searchArea);
+  const searchAreaSize = getBoundingBoxSize(searchArea);
+  // Conventional low-to-high rectangle: `from` is the minimum corner of
+  // the search-area bounding box (= the bottom-left tile in iso-tile
+  // coordinates, including the CONNECTOR_SEARCH_OFFSET expansion) and
+  // `to` is the maximum corner. Previous releases stored these
+  // high-to-low, which forced normalisePositionFromOrigin /
+  // connectorPathTileToGlobal / the SVG renderer to all use mirrored
+  // arithmetic; Connector.tsx then carried a `transform: 'scale(-1, 1)'`
+  // hack to flip the rendered path back to world orientation. The
+  // hack is gone now — see BUG4-01.
+  const rectangle = {
+    from: { x: sorted.lowX, y: sorted.lowY },
+    to: { x: sorted.highX, y: sorted.highY }
+  };
+
+  const positionsNormalisedFromSearchArea = anchorPosition.map((position) => {
+    return normalisePositionFromOrigin({
+      position,
+      origin: rectangle.from
+    });
+  });
+
+  const tiles = positionsNormalisedFromSearchArea.reduce<Coords[]>(
+    (acc, position, i) => {
+      if (i === 0) return acc;
+
+      const prev = positionsNormalisedFromSearchArea[i - 1];
+      const path = findPath({
+        from: prev,
+        to: position,
+        gridSize: searchAreaSize
+      });
+
+      return [...acc, ...path];
+    },
+    []
+  );
+
+  return { tiles, rectangle };
+};
+
+export const connectorPathTileToGlobal = (
+  tile: Coords,
+  origin: Coords
+): Coords => {
+  // Inverse of normalisePositionFromOrigin: given a tile in the
+  // search-area-local coordinate system, add the origin (= the
+  // rectangle's `from` corner, which already accounts for the
+  // CONNECTOR_SEARCH_OFFSET) to recover the world coord.
+  return CoordsUtils.add(origin, tile);
+};
+
+export const getAnchorAtTile = (tile: Coords, anchors: ConnectorAnchor[]) => {
+  return anchors.find((anchor) => {
+    return Boolean(
+      anchor.ref.tile && CoordsUtils.isEqual(anchor.ref.tile, tile)
+    );
+  });
+};
+
+export const getAnchorParent = (anchorId: string, connectors: Connector[]) => {
+  const connector = connectors.find((con) => {
+    return con.anchors.find((anchor) => {
+      return anchor.id === anchorId;
+    });
+  });
+
+  if (!connector) {
+    throw new Error(`Could not find connector with anchor id ${anchorId}`);
+  }
+
+  return connector;
+};
+
+export const getConnectorsByViewItem = (
+  viewItemId: string,
+  connectors: Connector[]
+) => {
+  return connectors.filter((connector) => {
+    return connector.anchors.find((anchor) => {
+      return anchor.ref.item === viewItemId;
+    });
+  });
+};
+
+export const getConnectorDirectionIcon = (connectorTiles: Coords[]) => {
+  if (connectorTiles.length < 2) return null;
+
+  const iconTile = connectorTiles[connectorTiles.length - 2];
+  const lastTile = connectorTiles[connectorTiles.length - 1];
+
+  let rotation;
+
+  if (lastTile.x > iconTile.x) {
+    if (lastTile.y > iconTile.y) {
+      rotation = 135;
+    } else if (lastTile.y < iconTile.y) {
+      rotation = 45;
+    } else {
+      rotation = 90;
+    }
+  }
+
+  if (lastTile.x < iconTile.x) {
+    if (lastTile.y > iconTile.y) {
+      rotation = -135;
+    } else if (lastTile.y < iconTile.y) {
+      rotation = -45;
+    } else {
+      rotation = -90;
+    }
+  }
+
+  if (lastTile.x === iconTile.x) {
+    if (lastTile.y > iconTile.y) {
+      rotation = 180;
+    } else if (lastTile.y < iconTile.y) {
+      rotation = 0;
+    } else {
+      rotation = -90;
+    }
+  }
+
+  return {
+    x: iconTile.x * UNPROJECTED_TILE_SIZE + UNPROJECTED_TILE_SIZE / 2,
+    y: iconTile.y * UNPROJECTED_TILE_SIZE + UNPROJECTED_TILE_SIZE / 2,
+    rotation
+  };
+};

@@ -220,12 +220,13 @@ describe('useScene', () => {
       expect(updated?.name).toBe('renamed');
     });
 
-    test('deleteModelItem removes the model item (locks in current reducer behaviour)', () => {
+    test('deleteModelItem splices the model item out of the array', () => {
       const slot = setup();
+      const beforeLength = slot.current.getModel().items.length;
       // Sanity: node1 is present in both the model and the active view.
       expect(
         slot.current.getModel().items.some((i) => {
-          return i?.id === 'node1';
+          return i.id === 'node1';
         })
       ).toBe(true);
       expect(
@@ -238,17 +239,23 @@ describe('useScene', () => {
         slot.current.scene.deleteModelItem('node1');
       });
 
-      // Note: the current reducer uses `delete arr[i]` which leaves a
-      // sparse-array hole rather than splicing. We use optional
-      // chaining so the assertion is robust to either implementation —
-      // what we actually care about is that node1 is gone, not the
-      // array shape. If the reducer is later fixed to splice, this
-      // test continues to pass.
+      // The reducer must `splice` (not `delete arr[i]`). The array's
+      // length decreases by one and the result contains no
+      // undefined holes. BUG4-02 fixed an outlier `delete` that
+      // left sparse-array holes; this assertion locks the fixed
+      // contract.
+      const after = slot.current.getModel().items;
+      expect(after).toHaveLength(beforeLength - 1);
       expect(
-        slot.current.getModel().items.some((i) => {
-          return i?.id === 'node1';
+        after.some((i) => {
+          return i.id === 'node1';
         })
       ).toBe(false);
+      expect(
+        after.every((i) => {
+          return i !== undefined;
+        })
+      ).toBe(true);
     });
   });
 

@@ -12,7 +12,7 @@ import * as reducers from 'src/stores/reducers';
 import { useModelStore } from 'src/stores/modelStore';
 import { useView } from 'src/hooks/useView';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { modelSchema } from 'src/schemas/model';
+import { initialDataSchema } from 'src/schemas/model';
 
 export const useInitialDataManager = () => {
   const [isReady, setIsReady] = useState(false);
@@ -34,7 +34,7 @@ export const useInitialDataManager = () => {
 
       setIsReady(false);
 
-      const validationResult = modelSchema.safeParse(_initialData);
+      const validationResult = initialDataSchema.safeParse(_initialData);
 
       if (!validationResult.success) {
         // TODO: let's get better at reporting error messages here (starting with how we present them to users)

@@ -16,20 +16,41 @@ module.exports = {
       type: 'commonjs2'
     }
   },
-  externals: {
-    react: {
-      commonjs: 'react',
-      commonjs2: 'react',
-      amd: 'React',
-      root: 'React'
+  externals: [
+    // Explicit object form for React + ReactDOM keeps the UMD/AMD
+    // global names (`React`, `ReactDOM`) for any consumer that loads
+    // the bundle as a script tag.
+    {
+      react: {
+        commonjs: 'react',
+        commonjs2: 'react',
+        amd: 'React',
+        root: 'React'
+      },
+      'react-dom': {
+        commonjs: 'react-dom',
+        commonjs2: 'react-dom',
+        amd: 'ReactDOM',
+        root: 'ReactDOM'
+      }
     },
-    'react-dom': {
-      commonjs: 'react-dom',
-      commonjs2: 'react-dom',
-      amd: 'ReactDOM',
-      root: 'ReactDOM'
+    // Function form to match every subpath of MUI / Emotion / Zustand
+    // (e.g. `@mui/material/styles`, `@emotion/styled/base`,
+    // `zustand/shallow`) without enumerating each one. Externalising
+    // these — they're declared as peer-deps in package.json — keeps
+    // the bundle small and lets the consumer share a single copy with
+    // their own app. See PRF3-01 + docs/embedding.md.
+    ({ request }, callback) => {
+      if (
+        /^@mui\//.test(request) ||
+        /^@emotion\//.test(request) ||
+        /^zustand(\/.*)?$/.test(request)
+      ) {
+        return callback(null, 'commonjs ' + request);
+      }
+      callback();
     }
-  },
+  ],
   module: {
     rules: [
       {

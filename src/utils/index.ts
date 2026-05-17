@@ -14,3 +14,4 @@ export * from './hitTest';
 export * from './fitToView';
 export * from './exportOptions';
 export * from './model';
+export * from './editorModeMapping';

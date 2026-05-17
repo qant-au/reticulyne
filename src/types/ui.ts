@@ -146,6 +146,7 @@ export interface UiState {
   mouse: Mouse;
   rendererEl: HTMLDivElement | null;
   enableDebugTools: boolean;
+  showTitleBar: boolean | undefined;
 }
 
 export interface UiStateActions {
@@ -166,6 +167,7 @@ export interface UiStateActions {
   setMouse: (mouse: Mouse) => void;
   setRendererEl: (el: HTMLDivElement) => void;
   setEnableDebugTools: (enabled: boolean) => void;
+  setShowTitleBar: (show: boolean | undefined) => void;
 }
 
 export type UiStateStore = UiState & {

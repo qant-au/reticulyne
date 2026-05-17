@@ -57,6 +57,9 @@ export const UiOverlay = () => {
   const editorMode = useUiStateStore((state) => {
     return state.editorMode;
   });
+  const showTitleBar = useUiStateStore((state) => {
+    return state.showTitleBar;
+  });
   const rendererEl = useUiStateStore((state) => {
     return state.rendererEl;
   });
@@ -94,7 +97,7 @@ export const UiOverlay = () => {
           itemControls={itemControls}
         />
         <TitleBar
-          visible={availableTools.includes('VIEW_TITLE')}
+          visible={showTitleBar ?? availableTools.includes('VIEW_TITLE')}
           appPadding={appPadding}
           rendererSize={rendererSize}
           title={title}

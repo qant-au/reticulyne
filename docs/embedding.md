@@ -27,6 +27,17 @@ npm install \
   zustand
 ```
 
+### GitHub Packages authentication
+
+The package is published to GitHub Packages, not the public npm registry. Before installing, add the following to your project's `.npmrc` (create the file at the project root if it does not exist):
+
+```
+@qant-au:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+Replace `YOUR_GITHUB_TOKEN` with a [GitHub personal access token](https://github.com/settings/tokens) that has the `read:packages` scope. The token only needs read access — it is used to pull the package, not to publish. Keep the token out of source control (add `.npmrc` to `.gitignore` if the token is embedded, or use an environment variable: `_authToken=${GITHUB_TOKEN}`). Once the `.npmrc` is in place, `npm install` resolves `@qant-au/isoflow` normally.
+
 `@qant-au/isoflow@3` requires **MUI v9** (v2 required MUI v5). If your application already uses MUI v9 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and v1 → v2 → v3 migration notes.
 
 ## Component props (`<Isoflow>`)

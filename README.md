@@ -30,7 +30,7 @@ Reference material lives under [`docs/`](docs/README.md):
 ## Requirements
 
 - **React** 18 or 19 (peer dependency) and a matching `react-dom`.
-- **MUI v5**, **Emotion**, and **Zustand** as peer dependencies (v2 onwards — see [Installation](#installation)). v1 bundled these internally; v2 externalises them so consumers share a single copy.
+- **MUI v9**, **Emotion**, and **Zustand** as peer dependencies (v3 onwards — see [Installation](#installation)). v1 bundled MUI/Emotion/Zustand internally; v2 externalised them as peer-deps at MUI v5; v3 bumps the peer-dep range to MUI v9.
 - **Node.js** 22 LTS for development against this repository (`.nvmrc`). Consumers are not subject to this — the published package is browser-targeted.
 - A bundler that can consume CommonJS or ESM (webpack, Vite, Rollup, Parcel, esbuild, Next.js).
 - Authentication to **GitHub Packages** to install — see [docs/installation.md](docs/installation.md).

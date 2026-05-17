@@ -8,7 +8,7 @@ import {
   DataObject as ExportJsonIcon,
   ImageOutlined as ExportImageIcon,
   FolderOpen as FolderOpenIcon,
-  DeleteOutline as DeleteOutlineIcon
+  DeleteOutlined as DeleteOutlineIcon
 } from '@mui/icons-material';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
@@ -127,10 +127,12 @@ export const MainMenu = () => {
         sx={{
           mt: 2
         }}
-        MenuListProps={{
-          sx: {
-            minWidth: '250px',
-            py: 0
+        slotProps={{
+          list: {
+            sx: {
+              minWidth: '250px',
+              py: 0
+            }
           }
         }}
       >

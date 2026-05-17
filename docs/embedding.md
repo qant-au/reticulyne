@@ -16,7 +16,7 @@ The default export is the `Isoflow` React component. The named export `useIsoflo
 
 ## Required peer dependencies (v2 onwards)
 
-`@qant-au/isoflow@2` externalises its UI / state / theming stack. Install these alongside the library:
+`@qant-au/isoflow@2+` externalises its UI / state / theming stack. Install these alongside the library:
 
 ```bash
 npm install \
@@ -27,7 +27,7 @@ npm install \
   zustand
 ```
 
-If your application already uses MUI v5 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and a v1 → v2 migration note.
+`@qant-au/isoflow@3` requires **MUI v9** (v2 required MUI v5). If your application already uses MUI v9 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and v1 → v2 → v3 migration notes.
 
 ## Component props (`<Isoflow>`)
 

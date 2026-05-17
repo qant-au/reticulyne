@@ -16,7 +16,7 @@ The following `npm audit` advisories are knowingly carried in the published pack
 - **Mitigation in source:** two layered defences, both inside `src/components/MarkdownEditor/`:
   1. `sanitizeLinkUrl.ts` overrides Quill's `Link.sanitize` at module load to reject `javascript:`, `data:`, `vbscript:`, `file:`, and `blob:` URL protocols (including percent-encoded variants). The override runs on both user-typed links and any value-prop-supplied HTML, since Quill's `clipboard.convert` parses incoming HTML through the same Blot registration.
   2. `MarkdownEditor.tsx` configures the editor with `formats={['bold', 'italic', 'underline', 'strike', 'link']}`. Quill drops formats it doesn't recognise during clipboard paste, so a pasted `<img>`, `<iframe>`, `<script>`, or `<style>` is stripped on its way in. **This allowlist is load-bearing for the mitigation.** Widening it (e.g. adding `'image'` or `'video'`) reopens vectors the current design closes and must be paired with a re-assessment of this advisory.
-- **Residual risk:** the advisory's exploit path is HTML clipboard pasting that constructs an XSS payload outside the `<a>` blot, e.g. via `<iframe>` or `<svg>` namespaces. Consumers loading `initialData` from untrusted sources should sanitise the `description` field of every model item with DOMPurify (or equivalent) before passing it in. This contract is documented in [`docs/embedding.md`](docs/embedding.md) once the embedding guide lands.
+- **Residual risk:** the advisory's exploit path is HTML clipboard pasting that constructs an XSS payload outside the `<a>` blot, e.g. via `<iframe>` or `<svg>` namespaces. Consumers loading `initialData` from untrusted sources should sanitise the `description` field of every model item with DOMPurify (or equivalent) before passing it in. The full embedder contract — including a runnable DOMPurify example — is in [`docs/embedding.md`](docs/embedding.md#security-model), and the consumer-facing summary is in [`README.md`](README.md#security).
 - **Closes when:** an upstream `quill@>=2.0.4` ships with the patch, or this fork moves to a different rich-text editor (e.g. TipTap or Lexical). Tracked as **DEP-04 / DEP-04-follow-up** in the productionisation plan.
 
 ### `webpack-dev-server` — XSS source-code disclosure
@@ -29,10 +29,34 @@ The following `npm audit` advisories are knowingly carried in the published pack
 - **Severity (audit):** low, **dev-only** (`jest-environment-jsdom → jsdom`).
 - **Status:** **closed by `DEP3-02`** (third-pass). `jest@^30`, `jest-environment-jsdom@^30`, and `jsdom@^29` now resolve the advisory chain. Kept in this ledger as a historical entry; `npm audit` no longer reports it.
 
+## Standalone Docker image — accepted CSP trade-offs
+
+The standalone Docker image (built from this repository, served by nginx — see [`docker/nginx.conf`](docker/nginx.conf)) ships with a Content-Security-Policy header. Two clauses are knowingly relaxed; the others are tight. This section exists so the trade-off survives future edits to the nginx config.
+
+### `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`
+
+- **Why `'unsafe-inline'`?** Isoflow's styling stack is Emotion + MUI v9, both of which inject `<style>` tags at runtime as components mount. A strict `style-src 'self'` would block every Emotion-injected rule and the editor would render unstyled. A nonce-based policy is in principle possible but is not supported out of the box by Emotion's runtime injector.
+- **Why is the risk contained?** Inline *styles* cannot execute script. The CSS-injection surface lets an attacker re-skin the page (or, with a carefully-crafted CSS-leak primitive, exfiltrate measurable state from the same origin), but not break out of CSS into JavaScript. The XSS-execution path that would matter — inline `<script>` — is still closed by `script-src 'self'`.
+- **Why `https://fonts.googleapis.com`?** The standalone editor uses Google Fonts (Roboto). The corresponding font-file fetch is allowed by `font-src https://fonts.gstatic.com data:`.
+- **Closes when:** Emotion (or whichever CSS-in-JS layer we use at the time) supports nonce- or hash-based style injection out of the box, *and* MUI's emit path follows. Until then, this clause stays.
+
+### `script-src 'self'`
+
+Tight by design. No inline scripts, no `eval`, no third-party CDN. This is the clause that contains the residual XSS risk from the `quill` advisory above: even if a payload lands in a `description` field and renders into the DOM, it cannot fetch or execute anything from off-origin.
+
+### `img-src 'self' data: blob: https://isoflow.io https://static.isoflow.io`
+
+- `data:` and `blob:` are required for the in-bundle SVG icon packs and for the export-to-PNG path (which renders into a `blob:` URL before downloading).
+- `https://isoflow.io` / `https://static.isoflow.io` are the historical hosting origins for the icon-pack image assets. They remain in the allowlist for upstream-icon compatibility; removing them would break any external icon collection that references them.
+
+### Embedders inheriting a strict CSP
+
+The CSP above is only applied by the standalone Docker image. A consumer embedding `<Isoflow>` inside another React app inherits *that app's* CSP. Because Emotion injects styles at runtime, the host policy must permit it — typically `style-src 'self' 'unsafe-inline'` (or a nonce equivalent). The `script-src` clause can stay as strict as the rest of your app needs.
+
 ## Versioning of these notes
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (third-pass review, `jaunty-whisper`):
+Current counts (fourth-pass review, `sunny-bentley`):
 - `npm audit --omit=dev`: 2 low — both in the `quill` chain documented above.
-- `npm audit` (including dev): 7 — the 2 above plus the `webpack-dev-server` moderate and the `jsdom`-chain low (4 entries: `@tootallnate/once`, `http-proxy-agent`, `jsdom`, `jest-environment-jsdom`). The dev-only entries will be closed by the Stage 3 dep bumps tracked as `DEP3-02` (jest stack) and `DEP3-03` (webpack-dev-server).
+- `npm audit` (including dev): 2 low — same two entries; no dev-only advisories remain after the third-pass `DEP3-02` (jest stack) and `DEP3-03` (webpack-dev-server) bumps closed them. The CI pipeline gates on `npm audit --omit=dev --audit-level=moderate`; the two low-severity entries above are below the threshold by design.

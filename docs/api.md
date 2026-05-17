@@ -23,7 +23,7 @@ Every prop is optional.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `initialData` | `InitialData` | empty model | Diagram to hydrate on mount. Validated against `modelSchema` (Zod). Invalid data triggers a `window.alert` and the editor renders empty. |
+| `initialData` | `InitialData` | empty model | Diagram to hydrate on mount. Validated against `modelSchema` (Zod). On rejection the editor renders empty and the failure is routed to `onValidationError` (or `console.error` if that prop is omitted). |
 | `mainMenuOptions` | `MainMenuOptions` | full menu | Whitelist of main-menu entries. Pass `[]` to hide the main menu entirely. |
 | `onModelUpdated` | `(model: Model) => void` | `undefined` | Called whenever the model changes. Callback identity does **not** need to be memoised — the component stores it in a ref. |
 | `width` | `number \| string` | `'100%'` | Forwarded to the root `<Box>`'s `sx`. Numbers are treated as px; strings pass through verbatim. |
@@ -33,6 +33,7 @@ Every prop is optional.
 | `renderer` | `RendererProps` | `undefined` | Forwarded to the internal `Renderer`. Currently `{ showGrid?: boolean; backgroundColor?: string }`. |
 | `onError` | `(error: Error, info: ErrorInfo) => void` | `undefined` | Invoked by the internal `IsoflowErrorBoundary` when a render error escapes. Pipe to your telemetry. |
 | `errorFallback` | `ReactNode` | default fallback box | Override the "Editor failed to load" fallback rendered when the error boundary catches. |
+| `onValidationError` | `(issues: ZodIssue[]) => void` | `undefined` | Invoked when `initialData` (or a `useIsoflow().loadModel(...)` payload) fails schema validation. Receives the array of Zod issues. When omitted, the failure is logged to `console.error` instead. Earlier versions popped a `window.alert`; that has been replaced by this contract. Callback identity does **not** need to be memoised — the hook stores it in a ref. |
 
 ## `editorMode`
 
@@ -92,8 +93,9 @@ type Model = {
 };
 ```
 
-The full Zod schemas live in `src/schemas/` and are re-exported from the package. Pass
-anything invalid and the editor alerts at mount and renders the empty default.
+The full Zod schemas live in `src/schemas/` and are re-exported from the package. If validation
+fails, the editor renders the empty default and the issue array is routed to
+`onValidationError` (or to `console.error` when that prop is omitted).
 
 ## `useIsoflow()` — imperative hook
 

@@ -1,4 +1,5 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import type { ZodIssue } from 'zod';
 import { InitialData, IconCollectionState } from 'src/types';
 import { INITIAL_DATA, INITIAL_SCENE_STATE } from 'src/config';
 import {
@@ -14,7 +15,20 @@ import { useView } from 'src/hooks/useView';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { initialDataSchema } from 'src/schemas/model';
 
-export const useInitialDataManager = () => {
+interface UseInitialDataManagerOptions {
+  /**
+   * Invoked when `load()` is called with a value that does not match
+   * `initialDataSchema`. The argument is the array of Zod issues from
+   * the failed parse. When omitted, the hook falls back to
+   * `console.error` so the failure is still visible in dev tools
+   * without interrupting the consumer's page with a modal.
+   */
+  onValidationError?: (issues: ZodIssue[]) => void;
+}
+
+export const useInitialDataManager = ({
+  onValidationError
+}: UseInitialDataManagerOptions = {}) => {
   const [isReady, setIsReady] = useState(false);
   const prevInitialData = useRef<InitialData | undefined>(undefined);
   const model = useModelStore((state) => {
@@ -28,6 +42,15 @@ export const useInitialDataManager = () => {
   });
   const { changeView } = useView();
 
+  // Stash the latest validation-error callback in a ref so `load`'s
+  // useCallback identity stays stable across consumer re-renders that
+  // pass a fresh inline closure each time. Same pattern as
+  // onModelUpdatedRef in Isoflow.tsx.
+  const onValidationErrorRef = useRef(onValidationError);
+  useEffect(() => {
+    onValidationErrorRef.current = onValidationError;
+  }, [onValidationError]);
+
   const load = useCallback(
     (_initialData: InitialData) => {
       if (!_initialData || prevInitialData.current === _initialData) return;
@@ -37,10 +60,21 @@ export const useInitialDataManager = () => {
       const validationResult = initialDataSchema.safeParse(_initialData);
 
       if (!validationResult.success) {
-        // TODO: let's get better at reporting error messages here (starting with how we present them to users)
-        // - not in console but in a modal
-        console.log(validationResult.error.issues);
-        window.alert('There is an error in your model.');
+        const cb = onValidationErrorRef.current;
+        if (cb) {
+          cb(validationResult.error.issues);
+        } else {
+          // Fallback: surface in the console (visible in dev tools)
+          // but do not pop a window.alert — a library popping native
+          // modals breaks every embedder's UX. The consumer can pass
+          // an `onValidationError` callback (forwarded from the
+          // <Isoflow onValidationError={...} /> prop) to route this
+          // into their own error-reporting pipeline.
+          console.error(
+            '[isoflow] initialData failed schema validation:',
+            validationResult.error.issues
+          );
+        }
         return;
       }
 

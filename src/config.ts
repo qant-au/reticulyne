@@ -94,13 +94,16 @@ export const INITIAL_SCENE_STATE = {
   connectors: {},
   textBoxes: {}
 };
+// Default-on menu items. LINK.DISCORD and LINK.GITHUB are intentionally
+// off by default — they point at upstream markmanx/isoflow's URLs (the
+// Discord especially is an upstream-leak risk for embedded consumers).
+// Both enum members stay defined in MainMenuOptions so consumers that
+// explicitly want them can opt in via the `mainMenuOptions` prop.
 export const MAIN_MENU_OPTIONS: MainMenuOptions = [
   'ACTION.OPEN',
   'EXPORT.JSON',
   'EXPORT.PNG',
   'ACTION.CLEAR_CANVAS',
-  'LINK.DISCORD',
-  'LINK.GITHUB',
   'VERSION'
 ];
 

@@ -1,55 +1,33 @@
-import { useCallback, useMemo, useState } from 'react';
-import { Box, useTheme, Typography, Stack } from '@mui/material';
-import { ChevronRight } from '@mui/icons-material';
-import { EditorModeEnum } from 'src/types';
-import { UiElement } from 'components/UiElement/UiElement';
-import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
-import { DragAndDrop } from 'src/components/DragAndDrop/DragAndDrop';
-import { ItemControlsManager } from 'src/components/ItemControls/ItemControlsManager';
-import { ToolMenu } from 'src/components/ToolMenu/ToolMenu';
+// Top-level overlay container.
+//
+// Reads every piece of editor state that any overlay block needs,
+// derives the `availableTools` allowlist from the current editor
+// mode, and threads concrete props down to four focused children:
+//
+//   * ToolbarSlots — the four corner-positioned controls (MainMenu,
+//     ToolMenu, ZoomControls, ItemControlsManager).
+//   * TitleBar — the bottom-center title + current-view-name strip.
+//   * DebugPanel — the optional bottom-left debug overlay.
+//   * DialogLayer — the place-icon ghost, the export-image dialog,
+//     and the context-menu anchor + manager.
+//
+// Split out under QUA4-10. EDITOR_MODE_MAPPING + getEditorModeMapping
+// have moved to src/utils/editorModeMapping.ts.
+
+import { useCallback, useMemo } from 'react';
+import { Box, useTheme } from '@mui/material';
+import { getEditorModeMapping } from 'src/utils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { MainMenu } from 'src/components/MainMenu/MainMenu';
-import { ZoomControls } from 'src/components/ZoomControls/ZoomControls';
-import { DebugUtils } from 'src/components/DebugUtils/DebugUtils';
-import { useResizeObserver } from 'src/hooks/useResizeObserver';
-import { ContextMenuManager } from 'src/components/ContextMenu/ContextMenuManager';
 import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
-import { ExportImageDialog } from '../ExportImageDialog/ExportImageDialog';
-
-type ToolName =
-  | 'MAIN_MENU'
-  | 'ZOOM_CONTROLS'
-  | 'TOOL_MENU'
-  | 'ITEM_CONTROLS'
-  | 'VIEW_TITLE';
-
-interface EditorModeMapping {
-  [k: string]: ToolName[];
-}
-
-const EDITOR_MODE_MAPPING: EditorModeMapping = {
-  [EditorModeEnum.EDITABLE]: [
-    'ITEM_CONTROLS',
-    'ZOOM_CONTROLS',
-    'TOOL_MENU',
-    'MAIN_MENU',
-    'VIEW_TITLE'
-  ],
-  [EditorModeEnum.EXPLORABLE_READONLY]: ['ZOOM_CONTROLS', 'VIEW_TITLE'],
-  [EditorModeEnum.NON_INTERACTIVE]: []
-};
-
-const getEditorModeMapping = (editorMode: keyof typeof EditorModeEnum) => {
-  const availableUiFeatures = EDITOR_MODE_MAPPING[editorMode];
-
-  return availableUiFeatures;
-};
+import { useResizeObserver } from 'src/hooks/useResizeObserver';
+import { ToolbarSlots } from './ToolbarSlots';
+import { TitleBar } from './TitleBar';
+import { DebugPanel } from './DebugPanel';
+import { DialogLayer } from './DialogLayer';
 
 export const UiOverlay = () => {
   const theme = useTheme();
-  const [contextMenuAnchor, setContextMenuAnchor] =
-    useState<HTMLDivElement | null>(null);
   const { appPadding } = theme.customVars;
   const spacing = useCallback(
     (multiplier: number) => {
@@ -57,6 +35,7 @@ export const UiOverlay = () => {
     },
     [theme]
   );
+
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
@@ -75,20 +54,26 @@ export const UiOverlay = () => {
   const itemControls = useUiStateStore((state) => {
     return state.itemControls;
   });
-  const { currentView } = useScene();
   const editorMode = useUiStateStore((state) => {
     return state.editorMode;
   });
-  const availableTools = useMemo(() => {
-    return getEditorModeMapping(editorMode);
-  }, [editorMode]);
   const rendererEl = useUiStateStore((state) => {
     return state.rendererEl;
   });
+
+  const { currentView } = useScene();
   const title = useModelStore((state) => {
     return state.title;
   });
   const { size: rendererSize } = useResizeObserver(rendererEl);
+
+  const availableTools = useMemo(() => {
+    return getEditorModeMapping(editorMode);
+  }, [editorMode]);
+
+  const onCloseDialog = useCallback(() => {
+    uiStateActions.setDialog(null);
+  }, [uiStateActions]);
 
   return (
     <>
@@ -101,155 +86,33 @@ export const UiOverlay = () => {
           left: 0
         }}
       >
-        {availableTools.includes('ITEM_CONTROLS') && itemControls && (
-          <UiElement
-            sx={{
-              position: 'absolute',
-              width: '360px',
-              overflowY: 'scroll',
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-            style={{
-              left: appPadding.x,
-              top: appPadding.y * 2 + spacing(2),
-              maxHeight: rendererSize.height - appPadding.y * 6
-            }}
-          >
-            <ItemControlsManager />
-          </UiElement>
-        )}
-
-        {availableTools.includes('TOOL_MENU') && (
-          <Box
-            sx={{
-              position: 'absolute',
-              transform: 'translateX(-100%)'
-            }}
-            style={{
-              left: rendererSize.width - appPadding.x,
-              top: appPadding.y
-            }}
-          >
-            <ToolMenu />
-          </Box>
-        )}
-
-        {availableTools.includes('ZOOM_CONTROLS') && (
-          <Box
-            sx={{
-              position: 'absolute',
-              transformOrigin: 'bottom left'
-            }}
-            style={{
-              top: rendererSize.height - appPadding.y * 2,
-              left: appPadding.x
-            }}
-          >
-            <ZoomControls />
-          </Box>
-        )}
-
-        {availableTools.includes('MAIN_MENU') && (
-          <Box
-            sx={{
-              position: 'absolute'
-            }}
-            style={{
-              top: appPadding.y,
-              left: appPadding.x
-            }}
-          >
-            <MainMenu />
-          </Box>
-        )}
-
-        {availableTools.includes('VIEW_TITLE') && (
-          <Box
-            sx={{
-              position: 'absolute',
-              display: 'flex',
-              justifyContent: 'center',
-              transform: 'translateX(-50%)',
-              pointerEvents: 'none'
-            }}
-            style={{
-              left: rendererSize.width / 2,
-              top: rendererSize.height - appPadding.y * 2,
-              width: rendererSize.width - 500,
-              height: appPadding.y
-            }}
-          >
-            <UiElement
-              sx={{
-                display: 'inline-flex',
-                px: 2,
-                alignItems: 'center',
-                height: '100%'
-              }}
-            >
-              <Stack
-                direction="row"
-                sx={{
-                  alignItems: 'center'
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontWeight: 600,
-                    color: 'text.secondary'
-                  }}
-                >
-                  {title}
-                </Typography>
-                <ChevronRight />
-                <Typography
-                  sx={{
-                    fontWeight: 600,
-                    color: 'text.secondary'
-                  }}
-                >
-                  {currentView.name}
-                </Typography>
-              </Stack>
-            </UiElement>
-          </Box>
-        )}
-
-        {enableDebugTools && (
-          <UiElement
-            sx={{
-              position: 'absolute',
-              width: 350,
-              transform: 'translateY(-100%)'
-            }}
-            style={{
-              maxWidth: `calc(${rendererSize.width} - ${appPadding.x * 2}px)`,
-              left: appPadding.x,
-              top: rendererSize.height - appPadding.y * 2 - spacing(1)
-            }}
-          >
-            <DebugUtils />
-          </UiElement>
-        )}
-      </Box>
-      {mode.type === 'PLACE_ICON' && mode.id && (
-        <SceneLayer disableAnimation>
-          <DragAndDrop iconId={mode.id} tile={mouse.position.tile} />
-        </SceneLayer>
-      )}
-      {dialog === 'EXPORT_IMAGE' && (
-        <ExportImageDialog
-          onClose={() => {
-            return uiStateActions.setDialog(null);
-          }}
+        <ToolbarSlots
+          availableTools={availableTools}
+          appPadding={appPadding}
+          spacing={spacing}
+          rendererSize={rendererSize}
+          itemControls={itemControls}
         />
-      )}
-      <SceneLayer>
-        <Box ref={setContextMenuAnchor} />
-        <ContextMenuManager anchorEl={contextMenuAnchor ?? undefined} />
-      </SceneLayer>
+        <TitleBar
+          visible={availableTools.includes('VIEW_TITLE')}
+          appPadding={appPadding}
+          rendererSize={rendererSize}
+          title={title}
+          currentViewName={currentView.name ?? ''}
+        />
+        <DebugPanel
+          visible={enableDebugTools}
+          appPadding={appPadding}
+          spacing={spacing}
+          rendererSize={rendererSize}
+        />
+      </Box>
+      <DialogLayer
+        mode={mode}
+        mouseTile={mouse.position.tile}
+        dialog={dialog}
+        onCloseDialog={onCloseDialog}
+      />
     </>
   );
 };

@@ -31,17 +31,12 @@ export const ModelProvider = ({ children }: ProviderProps) => {
   );
 };
 
-export function useModelStore<T>(
-  selector: (state: ModelStore) => T,
-  equalityFn?: (left: T, right: T) => boolean
-) {
+export function useModelStore<T>(selector: (state: ModelStore) => T) {
   const store = useContext(ModelContext);
 
   if (store === null) {
     throw new Error('Missing provider in the tree');
   }
 
-  const value = useStore(store, selector, equalityFn);
-
-  return value;
+  return useStore(store, selector);
 }

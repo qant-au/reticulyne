@@ -17,6 +17,7 @@ import {
   FormControlLabel,
   Typography
 } from '@mui/material';
+import { useShallow } from 'zustand/shallow';
 import { useModelStore } from 'src/stores/modelStore';
 import {
   exportAsImage,
@@ -50,9 +51,11 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const model = useModelStore((state): Omit<ModelStore, 'actions'> => {
-    return modelFromModelStore(state);
-  });
+  const model = useModelStore(
+    useShallow((state): Omit<ModelStore, 'actions'> => {
+      return modelFromModelStore(state);
+    })
+  );
 
   const unprojectedBounds = useMemo(() => {
     return getUnprojectedBounds();

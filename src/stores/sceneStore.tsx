@@ -31,17 +31,12 @@ export const SceneProvider = ({ children }: ProviderProps) => {
   );
 };
 
-export function useSceneStore<T>(
-  selector: (state: SceneStore) => T,
-  equalityFn?: (left: T, right: T) => boolean
-) {
+export function useSceneStore<T>(selector: (state: SceneStore) => T) {
   const store = useContext(SceneContext);
 
   if (store === null) {
     throw new Error('Missing provider in the tree');
   }
 
-  const value = useStore(store, selector, equalityFn);
-
-  return value;
+  return useStore(store, selector);
 }

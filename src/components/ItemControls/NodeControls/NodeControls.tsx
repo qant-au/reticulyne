@@ -19,12 +19,7 @@ interface Props {
   id: string;
 }
 
-const ModeOptions = {
-  SETTINGS: 'SETTINGS',
-  CHANGE_ICON: 'CHANGE_ICON'
-} as const;
-
-type Mode = keyof typeof ModeOptions;
+type Mode = 'SETTINGS' | 'CHANGE_ICON';
 
 export const NodeControls = ({ id }: Props) => {
   const [mode, setMode] = useState<Mode>('SETTINGS');

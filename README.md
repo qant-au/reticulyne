@@ -8,6 +8,22 @@ A React component for drawing network diagrams.
 
 > **Development status:** This project is currently under active development. We are working through a period of significant modernisation — upgrading dependencies, improving build tooling, hardening security, and expanding the feature set. Things may change rapidly between releases during this phase. We intend to stabilise the codebase and open the project up to normal community contribution once that foundational work is complete.
 
+## Recent work (the `sunny-bentley` fourth-pass review)
+
+The fork has been through a structured review-and-modernisation pass during v4.x development. High-level overview (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, and `FEA4` task-ID prefixes; the residual backlog lives in [TODO.md](TODO.md)):
+
+- **Security & supply-chain.** Embedder-side sanitisation contract documented in full ([Security](#security) section below and [docs/embedding.md](docs/embedding.md)). CI gated on `npm audit --omit=dev --audit-level=moderate`. nginx CSP trade-offs captured in [SECURITY.md](SECURITY.md).
+- **Test surface.** Grew from 13 suites / 83 cases to **24 suites / 180 cases**. The hook layer, every interaction-mode handler, the connector coordinate system, and the PDF export are now covered.
+- **Refactors.** Split the 777-line `src/utils/renderer.ts` into seven concern-focused modules; consolidated three Zustand stores behind a `createContextualStore<T>` factory; reshaped `UiOverlay` into four focused children; extracted three hooks out of `MainMenu`.
+- **Bug fixes.** Corrected the connector path coordinate system at source (removing a self-flagged `transform: scale(-1, 1)` CSS hack) and fixed a `deleteModelItem` reducer that left sparse-array holes.
+- **New features.**
+  - Title banners on every inspector panel ("Edit object" / "Edit line" / etc.) — FEA4-01.
+  - Connector direction arrows with four states (start→end / end→start / both / none) — FEA4-02.
+  - Branding polish — Discord link removed, GitHub link defaulted on, menu vocabulary tidied (`Export as Image` / `Clear`), v4.0.0 bump — FEA4-03.
+  - Client-side **Export as PDF** via jsPDF — FEA4-04.
+
+A roadmap for the next round of embedding-facing features (title-bar disable, icon-pack filtering, `onSave` callback) is sketched out in [docs/embedding-roadmap.md](docs/embedding-roadmap.md) for a future session to pick up.
+
 ## Documentation
 
 Reference material lives under [`docs/`](docs/README.md):
@@ -25,7 +41,7 @@ Reference material lives under [`docs/`](docs/README.md):
 - **Drag-and-drop editor** — Express your architecture with icons, regions and connectors.
 - **Extensible icon system** — Bring your own collections via the `ProcessedCollection` interface; see [docs/isopacks.md](docs/isopacks.md) for the contract. The standalone Docker container ships with the AWS, Azure, GCP, Kubernetes, and Isoflow icon collections pre-loaded.
 - **Editor modes** — Editable, explorable-readonly, and non-interactive modes for embedding in viewers, dashboards, or full editors.
-- **Export options** — Export diagrams as JSON or PNG from the main menu.
+- **Export options** — Export diagrams as JSON, PNG, or PDF from the main menu. PDF generation is client-side via jsPDF (no network call).
 
 ## Requirements
 

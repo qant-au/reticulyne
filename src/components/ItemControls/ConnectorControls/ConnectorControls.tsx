@@ -5,6 +5,7 @@ import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { ControlsContainer } from '../components/ControlsContainer';
+import { Header } from '../components/Header';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 
@@ -20,7 +21,7 @@ export const ConnectorControls = ({ id }: Props) => {
   const { updateConnector, deleteConnector } = useScene();
 
   return (
-    <ControlsContainer>
+    <ControlsContainer header={<Header title="Edit line" />}>
       <Section>
         <TextField
           label="Description"

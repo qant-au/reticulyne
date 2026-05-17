@@ -4,6 +4,7 @@ import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { ControlsContainer } from '../components/ControlsContainer';
+import { Header } from '../components/Header';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 
@@ -19,7 +20,7 @@ export const RectangleControls = ({ id }: Props) => {
   const { updateRectangle, deleteRectangle } = useScene();
 
   return (
-    <ControlsContainer>
+    <ControlsContainer header={<Header title="Edit rectangle" />}>
       <Section>
         <ColorSelector
           onChange={(color) => {

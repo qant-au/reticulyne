@@ -1,13 +1,16 @@
-const path = require('path');
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const webpack = require('webpack');
+// Production library build. Used by `npm run build`. Emits the
+// CommonJS bundles under `dist/` that get shipped in the GitHub-
+// Packages tarball.
 
-module.exports = {
+const path = require('path');
+const { merge } = require('webpack-merge');
+const base = require('./base.config.js');
+
+module.exports = merge(base, {
   mode: 'production',
-  target: 'web',
   entry: {
     'index': './src/Isoflow.tsx',
-    '/standaloneExports': './src/standaloneExports.ts',
+    '/standaloneExports': './src/standaloneExports.ts'
   },
   // Emit separate `.map` files alongside the bundle.  Webpack appends a
   // `//# sourceMappingURL=...` comment to each emitted .js, so a
@@ -63,32 +66,5 @@ module.exports = {
       }
       callback();
     }
-  ],
-  module: {
-    rules: [
-      {
-        test: /\.(ts|tsx)$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader']
-      },
-      {
-        test: /\.svg$/,
-        type: 'asset/inline'
-      }
-    ]
-  },
-  plugins: [
-    new webpack.DefinePlugin({
-      PACKAGE_VERSION: JSON.stringify(require("../package.json").version),
-      REPOSITORY_URL: JSON.stringify(require("../package.json").repository.url),
-    })
-  ],
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-    plugins: [new TsconfigPathsPlugin({ extensions: ['.tsx', '.ts', '.js'] })]
-  }
-};
+  ]
+});

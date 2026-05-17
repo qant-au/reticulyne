@@ -1,13 +1,16 @@
+// Dev server (webpack-dev-server). Used by `npm start`. Serves the
+// examples-picker SPA (src/index.tsx) on port 3000 with eval-cheap-
+// source-map for fast incremental rebuilds.
+
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const webpack = require('webpack');
+const { merge } = require('webpack-merge');
+const base = require('./base.config.js');
 
-module.exports = {
+module.exports = merge(base, {
   mode: 'development',
   entry: './src/index.tsx',
   devtool: 'eval-cheap-source-map',
-  target: 'web',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'build')
@@ -22,35 +25,9 @@ module.exports = {
     ],
     port: 3000
   },
-  module: {
-    rules: [
-      {
-        test: /\.(ts|tsx)$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader']
-      },
-        
-        {
-          test: /\.svg$/i,
-          type: 'asset/inline'
-        }
-    ]
-  },
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-    plugins: [new TsconfigPathsPlugin({ extensions: ['.tsx', '.ts', '.js'] })]
-  },
   plugins: [
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, '../src/index.html')
-    }),
-    new webpack.DefinePlugin({
-      PACKAGE_VERSION: JSON.stringify(require("../package.json").version),
-      REPOSITORY_URL: JSON.stringify(require("../package.json").repository.url),
     })
   ]
-};
+});

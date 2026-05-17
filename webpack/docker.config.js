@@ -1,45 +1,26 @@
+// Standalone Docker SPA — main editor variant. Built by
+// `npm run docker:build`; used by docker/Dockerfile to produce the
+// `isoflow` nginx image (port 2222 on the host via restart.sh).
+//
+// Entry point is src/index-docker.tsx, which mounts a full-screen
+// <Isoflow> with no examples picker. No source maps — see the
+// rationale in prod.config.js.
+
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const webpack = require('webpack');
+const { merge } = require('webpack-merge');
+const base = require('./base.config.js');
 
-module.exports = {
+module.exports = merge(base, {
   mode: 'production',
   entry: './src/index-docker.tsx',
-  target: 'web',
   output: {
     path: path.resolve(__dirname, '../dist-docker'),
-    filename: 'main.js',
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(ts|tsx)$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader']
-      },
-        
-        {
-          test: /\.svg$/i,
-          type: 'asset/inline'
-        }
-    ]
+    filename: 'main.js'
   },
   plugins: [
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, '../src/index.html')
-    }),
-    new webpack.DefinePlugin({
-      PACKAGE_VERSION: JSON.stringify(require("../package.json").version),
-      REPOSITORY_URL: JSON.stringify(require("../package.json").repository.url),
     })
-  ],
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-    plugins: [new TsconfigPathsPlugin({ extensions: ['.tsx', '.ts', '.js'] })]
-  }
-};
+  ]
+});

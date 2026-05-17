@@ -9,6 +9,19 @@ module.exports = {
     'index': './src/Isoflow.tsx',
     '/standaloneExports': './src/standaloneExports.ts',
   },
+  // Emit separate `.map` files alongside the bundle.  Webpack appends a
+  // `//# sourceMappingURL=...` comment to each emitted .js, so a
+  // consumer that imports `@qant-au/isoflow` and triggers an error
+  // gets a readable stack pointing at TypeScript source rather than
+  // the minified bundle.  The .map files ship inside `dist/` (which
+  // is already in the `files` allowlist in package.json) and are
+  // covered by the pack-contents CI check at .github/workflows/ci.yml.
+  //
+  // The Docker SPA builds (docker.config.js / docker-examples.config.js)
+  // deliberately do NOT enable this — those bundles are served by
+  // nginx and a sourceMappingURL there would let any visitor of the
+  // deployed editor inspect the entire TypeScript source.
+  devtool: 'source-map',
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name].js',

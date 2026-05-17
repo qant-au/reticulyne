@@ -48,14 +48,18 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
     return connector.anchors.map((anchor) => {
       const position = getAnchorTile(anchor, currentView);
 
+      // Anchor position in SVG-local coords = world-anchor minus the
+      // rectangle's bottom-left corner (the search-area origin). The
+      // operand order matches the new low-to-high rectangle
+      // convention; see BUG4-01 / normalisePositionFromOrigin.
       return {
         id: anchor.id,
         x:
-          (connector.path.rectangle.from.x - position.x) *
+          (position.x - connector.path.rectangle.from.x) *
             UNPROJECTED_TILE_SIZE +
           drawOffset.x,
         y:
-          (connector.path.rectangle.from.y - position.y) *
+          (position.y - connector.path.rectangle.from.y) *
             UNPROJECTED_TILE_SIZE +
           drawOffset.y
       };
@@ -90,15 +94,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
 
   return (
     <Box style={css}>
-      <Svg
-        style={{
-          // TODO: The original x coordinates of each tile seems to be calculated wrongly.
-          // They are mirrored along the x-axis.  The hack below fixes this, but we should
-          // try to fix this issue at the root of the problem (might have further implications).
-          transform: 'scale(-1, 1)'
-        }}
-        viewboxSize={pxSize}
-      >
+      <Svg viewboxSize={pxSize}>
         <polyline
           points={pathString}
           stroke={theme.palette.common.white}

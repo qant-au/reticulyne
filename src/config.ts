@@ -113,16 +113,18 @@ export const INITIAL_SCENE_STATE = {
   connectors: {},
   textBoxes: {}
 };
-// Default-on menu items. LINK.DISCORD and LINK.GITHUB are intentionally
-// off by default — they point at upstream markmanx/isoflow's URLs (the
-// Discord especially is an upstream-leak risk for embedded consumers).
-// Both enum members stay defined in MainMenuOptions so consumers that
-// explicitly want them can opt in via the `mainMenuOptions` prop.
+// Default-on menu items. LINK.GITHUB is included because the package.json
+// repository URL now points at this fork (https://github.com/qant-au/isoflow),
+// so the link goes to the live source — no upstream-leak risk. LINK.DISCORD
+// was removed entirely under FEA4-03: the only Discord channel that ever
+// lived in this menu was upstream markmanx/isoflow's, and the fork
+// deliberately carries no upstream-project branding.
 export const MAIN_MENU_OPTIONS: MainMenuOptions = [
   'ACTION.OPEN',
   'EXPORT.JSON',
   'EXPORT.PNG',
   'ACTION.CLEAR_CANVAS',
+  'LINK.GITHUB',
   'VERSION'
 ];
 

@@ -52,20 +52,21 @@ The data-layer guard lives inside `useIsoflow`. Calling `useIsoflow().Model.set(
 ## `mainMenuOptions`
 
 Pass an array of identifiers — only the listed entries appear in the main menu. Pass `[]`
-to hide the menu entirely. Default: every option shown.
+to hide the menu entirely. Default: every option marked **default-on** below.
 
-| Identifier | What it does |
-|---|---|
-| `'ACTION.OPEN'` | Load a previously-exported JSON file. |
-| `'EXPORT.JSON'` | Download the current model as JSON. |
-| `'EXPORT.PNG'` | Render the current view to PNG and download. |
-| `'ACTION.CLEAR_CANVAS'` | Wipe items + views back to an empty scene. |
-| `'LINK.GITHUB'` | External link button (legacy upstream icon). |
-| `'LINK.DISCORD'` | External link button (legacy upstream icon). |
-| `'VERSION'` | Shows the running package version. |
+| Identifier | Default? | What it does |
+|---|---|---|
+| `'ACTION.OPEN'` | on | Load a previously-exported JSON file. |
+| `'EXPORT.JSON'` | on | Download the current model as JSON. |
+| `'EXPORT.PNG'` | on | Render the current view to PNG and download. |
+| `'ACTION.CLEAR_CANVAS'` | on | Wipe items + views back to an empty scene. |
+| `'LINK.GITHUB'` | off | External link button — opens this fork's GitHub repo URL. Opt in via `mainMenuOptions`. |
+| `'LINK.DISCORD'` | off | External link button — points at upstream `markmanx/isoflow`'s Discord. Opt in via `mainMenuOptions` only if you want to surface upstream's community. |
+| `'VERSION'` | on | Shows the running package version. |
 
-`'LINK.GITHUB'` and `'LINK.DISCORD'` still appear in the menu enum but point at upstream
-URLs — most embedders will want to exclude them with a custom `mainMenuOptions` list.
+`'LINK.GITHUB'` and `'LINK.DISCORD'` are off-by-default because their URLs target the
+upstream fork's resources, not the embedder's. Both remain in the enum so consumers can
+explicitly opt in by listing them in `mainMenuOptions`.
 
 ## `InitialData`
 

@@ -8,10 +8,21 @@ The repository ships a self-contained Docker image that serves the editor as a s
 
 A two-stage build:
 
-1. **Build stage** (`node:22-alpine`): `npm ci` then `npm run docker:build` (webpack production build, output → `dist-docker/`).
-2. **Runtime stage** (`nginx:alpine`): the `dist-docker/` directory copied into `/usr/share/nginx/html`, served by nginx with a custom site config (`docker/nginx.conf`).
+1. **Build stage** (`node:22.22-alpine`): `npm ci` then `npm run docker:build` (webpack production build, output → `dist-docker/`).
+2. **Runtime stage** (`nginxinc/nginx-unprivileged:1.30-alpine`): the `dist-docker/` directory copied into `/usr/share/nginx/html`, served by nginx with a custom site config (`docker/nginx.conf`).
 
-Image footprint after the multi-stage build: a few MB of static assets plus nginx, no Node.js at runtime.
+Image footprint after the multi-stage build: a few MB of static assets plus nginx, no Node.js at runtime. The runtime stage runs as the non-root `nginx` user (uid 101) and listens on port **8080** inside the container; host port mapping happens in `restart.sh` (or in your own `docker run -p`).
+
+## Two images, one config
+
+The repo actually ships **two** standalone images, both built from the same `docker/nginx.conf` and the same `nginxinc/nginx-unprivileged` runtime base. `restart.sh` runs both side-by-side by default:
+
+| Container | Tag | Dockerfile | Webpack entry | Host port (default) | What it serves |
+|---|---|---|---|---|---|
+| `isoflow` | `isoflow` | `Dockerfile` | `src/index-docker.tsx` | `2222` | Single full-screen `<Isoflow>` component. Intended for production-shaped deployments where the editor IS the page. |
+| `isoflow-examples` | `isoflow-examples` | `Dockerfile.examples` | `src/index.tsx` | `2223` | Examples-picker UI with the BasicEditor / DebugTools / ReadonlyMode menu. Useful for showcasing the embedding modes and for hand-testing in a browser. |
+
+Skip the examples container with `NO_EXAMPLES=1 bash restart.sh` if you only want the main editor up. Both images use the same hardened nginx config — security headers, CSP, gzip, cache discipline apply identically.
 
 ## Build and run
 
@@ -22,26 +33,32 @@ bash restart.sh
 ```
 
 That script:
-1. Stops and removes any prior `isoflow` container.
-2. Rebuilds the image (`docker build -t isoflow .`).
-3. Starts the container detached on host port `2222`.
-4. Polls `http://localhost:2222/` until 200 OK (timeout 30s).
+1. Stops and removes any prior `isoflow` / `isoflow-examples` containers.
+2. Rebuilds both images (`docker build -t isoflow -f Dockerfile .` and `... -f Dockerfile.examples`).
+3. Starts both containers detached on host ports `2222` and `2223`, mapping each to the container's `8080`.
+4. Polls each URL until 200 OK (timeout 30s).
+5. (If Graphify is installed) runs `graphify update .` then `graphify watch .` in the background to keep the knowledge graph current.
 
 Environment overrides for non-default workflows:
 
 ```bash
-PORT=3000 bash restart.sh
+PORT=3000 bash restart.sh                      # override main editor host port
+EXAMPLES_PORT=4000 bash restart.sh             # override examples picker host port
 TAG=isoflow:dev bash restart.sh
 NAME=isoflow-staging bash restart.sh
+NO_EXAMPLES=1 bash restart.sh                  # skip the examples container
+NO_GRAPHIFY=1 bash restart.sh                  # skip the Graphify update + watch
 TIMEOUT_SECONDS=60 bash restart.sh
 ```
 
 Or run the docker commands by hand:
 
 ```bash
-docker build -t isoflow .
-docker run -d --rm --name isoflow -p 2222:80 isoflow
+docker build -t isoflow -f Dockerfile .
+docker run -d --rm --name isoflow -p 2222:8080 isoflow
 ```
+
+(Note the internal port `8080`, not `80` — see "What's in the image" above.)
 
 ## What's on the wire
 
@@ -53,6 +70,7 @@ The custom nginx config (`docker/nginx.conf`) ships:
 - **Security headers** (applied to every response):
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: no-referrer-when-downgrade`
+  - `X-Frame-Options: SAMEORIGIN` (legacy fallback — modern browsers honour the CSP `frame-ancestors` directive below)
   - `Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()`
   - `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://isoflow.io https://static.isoflow.io; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'`
 - **`server_tokens off`** so the nginx version isn't disclosed.
@@ -66,7 +84,7 @@ The Dockerfile declares a `HEALTHCHECK`:
 
 ```
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://127.0.0.1/ || exit 1
+    CMD wget --quiet --tries=1 --spider http://127.0.0.1:8080/ || exit 1
 ```
 
 `docker inspect --format '{{json .State.Health}}' <container>` reports the status. Compose/k8s/ECS use the same signal.

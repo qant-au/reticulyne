@@ -33,8 +33,8 @@ export const Label = ({
         <Box
           component="svg"
           viewBox={`0 0 ${CONNECTOR_DOT_SIZE} ${labelHeight}`}
-          width={CONNECTOR_DOT_SIZE}
           sx={{
+            width: CONNECTOR_DOT_SIZE,
             position: 'absolute',
             top: -labelHeight,
             left: -CONNECTOR_DOT_SIZE / 2
@@ -52,7 +52,6 @@ export const Label = ({
           />
         </Box>
       )}
-
       <Box
         ref={contentRef}
         sx={{

@@ -179,7 +179,12 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
               </Box>
             </>
           )}
-          <Stack alignItems="center" spacing={2}>
+          <Stack
+            spacing={2}
+            sx={{
+              alignItems: 'center'
+            }}
+          >
             {imageData && (
               <Box
                 component="img"
@@ -223,7 +228,12 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
               </Box>
             </Box>
             {imageData && (
-              <Stack sx={{ width: '100%' }} alignItems="flex-end">
+              <Stack
+                sx={{
+                  alignItems: 'flex-end',
+                  width: '100%'
+                }}
+              >
                 <Stack direction="row" spacing={2}>
                   <Button variant="text" onClick={onClose}>
                     Cancel

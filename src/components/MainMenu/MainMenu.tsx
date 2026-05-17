@@ -117,7 +117,6 @@ export const MainMenu = () => {
   return (
     <UiElement>
       <IconButton Icon={<MenuIcon />} name="Main menu" onClick={onToggleMenu} />
-
       <Menu
         anchorEl={anchorEl}
         open={isMainMenuOpen}
@@ -194,7 +193,12 @@ export const MainMenu = () => {
 
               {mainMenuOptions.includes('VERSION') && (
                 <MenuItem>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
                     Isoflow v{PACKAGE_VERSION}
                   </Typography>
                 </MenuItem>

@@ -17,16 +17,28 @@ export const ColorSwatch = ({ hex, onClick, isActive }: Props) => {
     >
       <Box>
         <Box
-          sx={{
-            border: '1px solid',
-            borderColor: 'grey.600',
-            bgcolor: hex,
-            width: 28,
-            height: 28,
-            trasformOrigin: 'center',
-            transform: `scale(${isActive ? 1.25 : 1})`,
-            borderRadius: '100%'
-          }}
+          sx={[
+            {
+              border: '1px solid',
+              borderColor: 'grey.600',
+              bgcolor: hex,
+              width: 28,
+              height: 28,
+              trasformOrigin: 'center',
+              borderRadius: '100%'
+            },
+            isActive
+              ? {
+                  transform: {
+                    transform: 1.25
+                  }
+                }
+              : {
+                  transform: {
+                    transform: 1
+                  }
+                }
+          ]}
         />
       </Box>
     </Button>

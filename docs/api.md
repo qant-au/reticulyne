@@ -59,15 +59,17 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 |---|---|---|
 | `'ACTION.OPEN'` | on | Load a previously-exported JSON file. |
 | `'EXPORT.JSON'` | on | Download the current model as JSON. |
-| `'EXPORT.PNG'` | on | Render the current view to PNG and download. |
-| `'ACTION.CLEAR_CANVAS'` | on | Wipe items + views back to an empty scene. |
-| `'LINK.GITHUB'` | off | External link button — opens this fork's GitHub repo URL. Opt in via `mainMenuOptions`. |
-| `'LINK.DISCORD'` | off | External link button — points at upstream `markmanx/isoflow`'s Discord. Opt in via `mainMenuOptions` only if you want to surface upstream's community. |
+| `'EXPORT.PNG'` | on | Render the current view to PNG and download. (Menu label: "Export as Image".) |
+| `'EXPORT.PDF'` | on | Render the current view to PNG and embed it in a single-page A4 PDF, then download. All client-side via jsPDF — no network call. Added in v4.0.0. |
+| `'ACTION.CLEAR_CANVAS'` | on | Wipe items + views back to an empty scene. (Menu label: "Clear".) |
+| `'LINK.GITHUB'` | on | External link button — opens this fork's GitHub repo (`https://github.com/qant-au/isoflow`). |
 | `'VERSION'` | on | Shows the running package version. |
 
-`'LINK.GITHUB'` and `'LINK.DISCORD'` are off-by-default because their URLs target the
-upstream fork's resources, not the embedder's. Both remain in the enum so consumers can
-explicitly opt in by listing them in `mainMenuOptions`.
+The `'LINK.DISCORD'` identifier from earlier versions has been removed in v4.0.0 — it
+only ever pointed at upstream `markmanx/isoflow`'s Discord, and the fork no longer
+surfaces upstream-project branding. Consumers that previously opted in with
+`mainMenuOptions: ['LINK.DISCORD', ...]` will see a TypeScript error and should drop the
+identifier.
 
 ## `InitialData`
 

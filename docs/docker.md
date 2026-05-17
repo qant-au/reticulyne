@@ -13,16 +13,18 @@ A two-stage build:
 
 Image footprint after the multi-stage build: a few MB of static assets plus nginx, no Node.js at runtime. The runtime stage runs as the non-root `nginx` user (uid 101) and listens on port **8080** inside the container; host port mapping happens in `restart.sh` (or in your own `docker run -p`).
 
-## Two images, one config
+## Two images, one Dockerfile
 
-The repo actually ships **two** standalone images, both built from the same `docker/nginx.conf` and the same `nginxinc/nginx-unprivileged` runtime base. `restart.sh` runs both side-by-side by default:
+The repo ships **two** standalone image variants, both built from a single `Dockerfile` parameterised via two build args (`WEBPACK_SCRIPT` and `DIST_DIR`). `restart.sh` runs both side-by-side by default:
 
-| Container | Tag | Dockerfile | Webpack entry | Host port (default) | What it serves |
-|---|---|---|---|---|---|
-| `isoflow` | `isoflow` | `Dockerfile` | `src/index-docker.tsx` | `2222` | Single full-screen `<Isoflow>` component. Intended for production-shaped deployments where the editor IS the page. |
-| `isoflow-examples` | `isoflow-examples` | `Dockerfile.examples` | `src/index.tsx` | `2223` | Examples-picker UI with the BasicEditor / DebugTools / ReadonlyMode menu. Useful for showcasing the embedding modes and for hand-testing in a browser. |
+| Container | Tag | Webpack entry | Host port (default) | What it serves |
+|---|---|---|---|---|
+| `isoflow` | `isoflow` | `src/index-docker.tsx` | `2222` | Single full-screen `<Isoflow>` component. Intended for production-shaped deployments where the editor IS the page. |
+| `isoflow-examples` | `isoflow-examples` | `src/index.tsx` | `2223` | Examples-picker UI with the BasicEditor / DebugTools / ReadonlyMode menu. Useful for showcasing the embedding modes and for hand-testing in a browser. |
 
-Skip the examples container with `NO_EXAMPLES=1 bash restart.sh` if you only want the main editor up. Both images use the same hardened nginx config — security headers, CSP, gzip, cache discipline apply identically.
+The Dockerfile defaults match the main editor variant. The examples variant is selected at build time via `--build-arg WEBPACK_SCRIPT=docker:examples:build --build-arg DIST_DIR=dist-docker-examples` (which `restart.sh` does automatically). Both variants use the same `docker/nginx.conf` and the same `nginxinc/nginx-unprivileged:1.30-alpine` runtime base, so security headers, CSP, gzip, and cache discipline apply identically.
+
+Skip the examples container with `NO_EXAMPLES=1 bash restart.sh` if you only want the main editor up.
 
 ## Build and run
 
@@ -34,7 +36,7 @@ bash restart.sh
 
 That script:
 1. Stops and removes any prior `isoflow` / `isoflow-examples` containers.
-2. Rebuilds both images (`docker build -t isoflow -f Dockerfile .` and `... -f Dockerfile.examples`).
+2. Rebuilds both images from the single `Dockerfile` — defaults give the main editor; the examples variant is built with `--build-arg WEBPACK_SCRIPT=docker:examples:build --build-arg DIST_DIR=dist-docker-examples`.
 3. Starts both containers detached on host ports `2222` and `2223`, mapping each to the container's `8080`.
 4. Polls each URL until 200 OK (timeout 30s).
 5. (If Graphify is installed) runs `graphify update .` then `graphify watch .` in the background to keep the knowledge graph current.
@@ -54,8 +56,16 @@ TIMEOUT_SECONDS=60 bash restart.sh
 Or run the docker commands by hand:
 
 ```bash
-docker build -t isoflow -f Dockerfile .
+# Main editor:
+docker build -t isoflow .
 docker run -d --rm --name isoflow -p 2222:8080 isoflow
+
+# Examples picker:
+docker build \
+  --build-arg WEBPACK_SCRIPT=docker:examples:build \
+  --build-arg DIST_DIR=dist-docker-examples \
+  -t isoflow-examples .
+docker run -d --rm --name isoflow-examples -p 2223:8080 isoflow-examples
 ```
 
 (Note the internal port `8080`, not `80` — see "What's in the image" above.)

@@ -340,7 +340,11 @@ export const normalisePositionFromOrigin = ({
   position,
   origin
 }: NormalisePositionFromOrigin) => {
-  return CoordsUtils.subtract(origin, position);
+  // Subtract the origin from the position — the conventional way to
+  // express a position in a local coordinate system. Used by
+  // getConnectorPath() to express anchor world-coords in search-area-
+  // local coords before handing them to the pathfinder.
+  return CoordsUtils.subtract(position, origin);
 };
 
 interface GetConnectorPath {
@@ -368,9 +372,18 @@ export const getConnectorPath = ({
 
   const sorted = sortByPosition(searchArea);
   const searchAreaSize = getBoundingBoxSize(searchArea);
+  // Conventional low-to-high rectangle: `from` is the minimum corner of
+  // the search-area bounding box (= the bottom-left tile in iso-tile
+  // coordinates, including the CONNECTOR_SEARCH_OFFSET expansion) and
+  // `to` is the maximum corner. Previous releases stored these
+  // high-to-low, which forced normalisePositionFromOrigin /
+  // connectorPathTileToGlobal / the SVG renderer to all use mirrored
+  // arithmetic; Connector.tsx then carried a `transform: 'scale(-1, 1)'`
+  // hack to flip the rendered path back to world orientation. The
+  // hack is gone now — see BUG4-01.
   const rectangle = {
-    from: { x: sorted.highX, y: sorted.highY },
-    to: { x: sorted.lowX, y: sorted.lowY }
+    from: { x: sorted.lowX, y: sorted.lowY },
+    to: { x: sorted.highX, y: sorted.highY }
   };
 
   const positionsNormalisedFromSearchArea = anchorPosition.map((position) => {
@@ -421,10 +434,11 @@ export const connectorPathTileToGlobal = (
   tile: Coords,
   origin: Coords
 ): Coords => {
-  return CoordsUtils.subtract(
-    CoordsUtils.subtract(origin, CONNECTOR_SEARCH_OFFSET),
-    CoordsUtils.subtract(tile, CONNECTOR_SEARCH_OFFSET)
-  );
+  // Inverse of normalisePositionFromOrigin: given a tile in the
+  // search-area-local coordinate system, add the origin (= the
+  // rectangle's `from` corner, which already accounts for the
+  // CONNECTOR_SEARCH_OFFSET) to recover the world coord.
+  return CoordsUtils.add(origin, tile);
 };
 
 export const getTextBoxEndTile = (textBox: TextBox, size: Size) => {

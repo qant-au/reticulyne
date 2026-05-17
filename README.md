@@ -51,7 +51,32 @@ npm install \
 
 ## Security
 
-Isoflow renders node and connector descriptions as HTML. The bundled rich-text editor sanitises URL protocols at write time, but does **not** strip arbitrary HTML elements. If your application hydrates diagrams from untrusted input (consumer-uploaded JSON, third-party APIs), sanitise the `description` field of every item before passing it into `<Isoflow initialData={...} />`. See [docs/embedding.md](docs/embedding.md#security-model) for the full embed-side contract and [SECURITY.md](SECURITY.md) for the residual-advisory ledger.
+**Read this if you ever pass user-influenced data into `initialData`.**
+
+Isoflow renders node and connector `description` fields as HTML through a Quill-based rich-text editor. The library ships with an in-source mitigation for the `quill@2.0.3` XSS advisory ([`GHSA-v3m3-f69x-jf25`](https://github.com/advisories/GHSA-v3m3-f69x-jf25)) — but it is **narrow** and consumer responsibility starts where it ends:
+
+- ✅ **What the library does for you.** A module-load override of Quill's `Link` blot rejects `javascript:`, `data:`, `vbscript:`, `file:`, and `blob:` URL protocols (including percent-encoded variants) on every `<a href>` Quill touches. This covers both user-typed links and `value`-prop HTML re-parsed through Quill's clipboard converter. The editor is also locked to a small `formats` allowlist (`bold`, `italic`, `underline`, `strike`, `link`) — Quill drops unknown tags it sees during paste.
+- ❌ **What the library does NOT do for you.** It does not strip arbitrary HTML elements from the `description` string before that string ever reaches Quill. If your application hydrates `initialData` from an untrusted source (consumer-uploaded JSON, third-party API, a database row originally populated by an end user), constructs like `<iframe srcdoc="...">`, `<svg onload="...">`, `<img src=x onerror="...">`, or `<style>` injections can land in the DOM.
+
+**The rule:** treat every `items[].description` you pass into `<Isoflow initialData={...} />` (and every description that comes back through `onModelUpdated`, before rendering it anywhere else) the way you'd treat any other user-provided HTML. The standard remediation is [DOMPurify](https://github.com/cure53/DOMPurify):
+
+```tsx
+import DOMPurify from 'dompurify';
+
+const safeInitialData = {
+  ...rawInitialData,
+  items: rawInitialData.items.map((item) => {
+    return {
+      ...item,
+      description: DOMPurify.sanitize(item.description ?? '')
+    };
+  })
+};
+
+<Isoflow initialData={safeInitialData} />;
+```
+
+The full embed-side contract — including read/write asymmetry and the `onModelUpdated` round-trip — is in [docs/embedding.md](docs/embedding.md#security-model). The residual-advisory ledger lives in [SECURITY.md](SECURITY.md).
 
 ## Project maintainer
 

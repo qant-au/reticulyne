@@ -145,10 +145,68 @@ CSS is injected at runtime via Emotion (an Isoflow dependency, not a peer). No s
 
 ## Security model
 
-See the [Security](../README.md#security) section in the top-level README, plus [`../SECURITY.md`](../SECURITY.md) for the residual-advisory ledger. The two rules that matter for embedders:
+The top-level [README §Security](../README.md#security) carries the short version. This section is the full embed-side contract. Pair it with [`../SECURITY.md`](../SECURITY.md), which tracks accepted residual advisories.
 
-1. `initialData.items[].description` is rendered as HTML. Sanitise consumer-supplied historic content before passing it in.
-2. `onModelUpdated`'s payload contains those HTML strings verbatim. Anywhere it's displayed outside Isoflow, apply your usual HTML-sanitisation policy.
+### What's rendered as HTML
+
+Only one field on the model is HTML: `Model.items[].description`. Everything else (titles, names, ids, view metadata, colours, icon urls) is plain string / structured data and is rendered through React's text-node escaping. Connector and view-item *names* are likewise plain text.
+
+The `description` field is rendered through a Quill `ReactQuill` instance ([`src/components/MarkdownEditor/MarkdownEditor.tsx`](../src/components/MarkdownEditor/MarkdownEditor.tsx)). Quill writes the string into a contenteditable `<div>`, so it executes the same HTML the browser would execute given that input.
+
+### What the library does for you
+
+1. **Quill `Link` blot override** ([`src/components/MarkdownEditor/sanitizeLinkUrl.ts`](../src/components/MarkdownEditor/sanitizeLinkUrl.ts)). Installed at module load, applied to every `<a href>` Quill touches. Allowed protocols: `http`, `https`, `mailto`, `tel`. Forbidden protocols (replaced with `about:blank`): `javascript`, `data`, `vbscript`, `file`, `blob` — including percent-encoded variants such as `javascript%3a`. Covers both user-typed links and `value`-prop HTML re-parsed through Quill's clipboard converter.
+2. **Formats allowlist.** The editor is configured with `formats={['bold', 'italic', 'underline', 'strike', 'link']}`. Quill drops registered formats it doesn't recognise during clipboard paste — so an `<img>`, `<iframe>`, or `<script>` arriving via *paste* is stripped on its way into the editor. **Do not widen this allowlist** (e.g. by adding `'image'` or `'video'`) without re-evaluating the security model: those formats reopen vectors this design currently closes.
+3. **JSON validation.** Both the `initialData` prop and the in-editor "open JSON file" flow run every model through `initialDataSchema.safeParse()` (Zod) before any state mutation. Cross-references (view items must exist in model items, connector anchors must reference valid items) are also validated. This protects you from malformed data but **does not sanitise HTML in the `description` field** — Zod has no opinion on HTML.
+
+### What the library does NOT do for you
+
+The mitigations above protect Quill's *input* path. They do not run on the `description` string between when you put it on the prop and when Quill renders it. Specifically:
+
+- HTML elements outside the small toolbar allowlist that are present in the `description` *value* you pass in are rendered as-is by Quill. `<iframe srcdoc="...">`, `<svg onload="...">`, `<img src=x onerror="...">`, `<style>...</style>`, `<form>`, and similar live elements survive.
+- Inline-handler attributes (`onclick`, `onmouseover`, `onerror`, `onload`, …) on otherwise-allowed tags are not stripped.
+- `onModelUpdated` returns the model with `description` strings exactly as Quill produced them. If you display those descriptions anywhere outside of Isoflow (preview pane, search results, PDF export), the contract is the same.
+
+### The rule for embedders
+
+**Treat every `items[].description` you receive from a user (or from any system a user can influence) as untrusted HTML, and sanitise it before it crosses the `<Isoflow>` boundary.** The standard tool is [DOMPurify](https://github.com/cure53/DOMPurify); any HTML sanitiser with a strict allowlist works.
+
+```tsx
+import DOMPurify from 'dompurify';
+import Isoflow from '@qant-au/isoflow';
+
+// Match the editor's own allowlist so a round-trip through Isoflow is lossless.
+const SANITISE_OPTIONS: DOMPurify.Config = {
+  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'a'],
+  ALLOWED_ATTR: ['href', 'target', 'rel']
+};
+
+const sanitised = {
+  ...rawInitialData,
+  items: rawInitialData.items.map((item) => {
+    return {
+      ...item,
+      description: DOMPurify.sanitize(item.description ?? '', SANITISE_OPTIONS)
+    };
+  })
+};
+
+<Isoflow
+  initialData={sanitised}
+  onModelUpdated={(model) => {
+    // The same rule applies on the way out — anything downstream of
+    // `onModelUpdated` that re-renders descriptions should re-sanitise.
+    persistToBackend(model);
+  }}
+/>;
+```
+
+If your `description` content only ever comes from already-trusted sources (a fixed configuration file, internal admin tooling without third-party input), the sanitisation step is optional. If you're not sure, sanitise.
+
+### Other notes
+
+- **Standalone Docker image.** The standalone editor (see [`docker.md`](docker.md)) loads no diagrams from untrusted sources by default — the user types directly into the running editor. The nginx CSP it ships is `script-src 'self'; object-src 'none'; frame-ancestors 'self'` (full policy in [`../docker/nginx.conf`](../docker/nginx.conf)), which contains a typed-XSS payload to the local origin and blocks script execution from anywhere else. The `style-src 'unsafe-inline'` allowance is required by Emotion/MUI and is documented in [`../SECURITY.md`](../SECURITY.md).
+- **Embedding inside another app with a strict CSP.** Isoflow inherits the host page's CSP. Because Emotion injects styles at runtime, you'll need `style-src 'unsafe-inline'` (or a nonce-based equivalent) in the host policy. `script-src` can stay tight.
 
 ## Globals and side effects on import
 

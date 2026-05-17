@@ -21,10 +21,11 @@
 import {
   normalisePositionFromOrigin,
   connectorPathTileToGlobal,
-  getConnectorPath
+  getConnectorPath,
+  getConnectorDirectionIcon
 } from 'src/utils';
-import { CONNECTOR_SEARCH_OFFSET } from 'src/config';
-import type { ConnectorAnchor, View } from 'src/types';
+import { CONNECTOR_SEARCH_OFFSET, UNPROJECTED_TILE_SIZE } from 'src/config';
+import type { ConnectorAnchor, Coords, View } from 'src/types';
 
 const makeView = (itemTiles: { id: string; x: number; y: number }[]): View => {
   return {
@@ -161,6 +162,101 @@ describe('connector coordinate system', () => {
         x: 0 + CONNECTOR_SEARCH_OFFSET.x,
         y: 3 + CONNECTOR_SEARCH_OFFSET.y
       });
+    });
+  });
+
+  // FEA4-02: connector direction-arrow control. The arrow icon shape
+  // is now driven by the connector's `direction` field; the renderer
+  // maps over the returned array. These cases lock the four-state
+  // contract so the rendered arrows track the user's selection.
+  describe('getConnectorDirectionIcon (FEA4-02)', () => {
+    const horizontalTiles: Coords[] = [
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
+      { x: 3, y: 0 }
+    ];
+
+    test('defaults to START_TO_END when no direction is supplied', () => {
+      const icons = getConnectorDirectionIcon(horizontalTiles);
+      expect(icons).toHaveLength(1);
+      // Arrow lives at tiles[N-2] = (2, 0) and points east (rotation 90°).
+      expect(icons[0]).toEqual({
+        x: 2 * UNPROJECTED_TILE_SIZE + UNPROJECTED_TILE_SIZE / 2,
+        y: 0 * UNPROJECTED_TILE_SIZE + UNPROJECTED_TILE_SIZE / 2,
+        rotation: 90
+      });
+    });
+
+    test('START_TO_END returns one arrow at tiles[N-2] pointing at tiles[N-1]', () => {
+      const icons = getConnectorDirectionIcon(horizontalTiles, 'START_TO_END');
+      expect(icons).toHaveLength(1);
+      expect(icons[0].x).toBe(
+        2 * UNPROJECTED_TILE_SIZE + UNPROJECTED_TILE_SIZE / 2
+      );
+      expect(icons[0].rotation).toBe(90);
+    });
+
+    test('END_TO_START returns one arrow at tiles[1] rotated 180° from the end-arrow', () => {
+      const endIcons = getConnectorDirectionIcon(
+        horizontalTiles,
+        'START_TO_END'
+      );
+      const startIcons = getConnectorDirectionIcon(
+        horizontalTiles,
+        'END_TO_START'
+      );
+      expect(startIcons).toHaveLength(1);
+      // Arrow lives at tiles[1] = (1, 0).
+      expect(startIcons[0].x).toBe(
+        1 * UNPROJECTED_TILE_SIZE + UNPROJECTED_TILE_SIZE / 2
+      );
+      // Rotation: end arrow points east (+90°), start arrow points
+      // west (−90°) — same axis, opposite direction.
+      expect(startIcons[0].rotation).toBe(-90);
+      expect(startIcons[0].rotation).toBe(-endIcons[0].rotation);
+    });
+
+    test('BOTH returns two arrows — one at each end', () => {
+      const icons = getConnectorDirectionIcon(horizontalTiles, 'BOTH');
+      expect(icons).toHaveLength(2);
+      // The end-arrow (START_TO_END semantics) is first, the
+      // start-arrow second — order matches the order computed inside
+      // getConnectorDirectionIcon.
+      expect(icons[0].rotation).toBe(90);
+      expect(icons[1].rotation).toBe(-90);
+    });
+
+    test('NONE returns an empty array', () => {
+      const icons = getConnectorDirectionIcon(horizontalTiles, 'NONE');
+      expect(icons).toEqual([]);
+    });
+
+    test('returns an empty array for paths with fewer than 2 tiles', () => {
+      expect(getConnectorDirectionIcon([], 'START_TO_END')).toEqual([]);
+      expect(getConnectorDirectionIcon([{ x: 0, y: 0 }], 'BOTH')).toEqual([]);
+    });
+
+    test('a 2-tile path produces a valid arrow for each non-NONE direction', () => {
+      const tiles: Coords[] = [
+        { x: 0, y: 0 },
+        { x: 0, y: 1 }
+      ];
+      // START_TO_END: at tiles[0] pointing south (rotation 180°).
+      const endOnly = getConnectorDirectionIcon(tiles, 'START_TO_END');
+      expect(endOnly).toHaveLength(1);
+      expect(endOnly[0].rotation).toBe(180);
+
+      // END_TO_START: at tiles[1] pointing north (rotation 0°).
+      const startOnly = getConnectorDirectionIcon(tiles, 'END_TO_START');
+      expect(startOnly).toHaveLength(1);
+      expect(startOnly[0].rotation).toBe(0);
+
+      // BOTH: both, in [end, start] order.
+      const both = getConnectorDirectionIcon(tiles, 'BOTH');
+      expect(both).toHaveLength(2);
+      expect(both[0].rotation).toBe(180);
+      expect(both[1].rotation).toBe(0);
     });
   });
 });

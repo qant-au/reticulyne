@@ -358,6 +358,28 @@ describe('useScene', () => {
       expect(updated?.width).toBe(25);
     });
 
+    test('updateConnector round-trips the direction field (FEA4-02)', () => {
+      const slot = setup();
+
+      act(() => {
+        slot.current.scene.updateConnector('connector1', { direction: 'BOTH' });
+      });
+
+      const updated = slot.current.scene.connectors.find((c) => {
+        return c.id === 'connector1';
+      });
+      expect(updated?.direction).toBe('BOTH');
+
+      // Switching to NONE persists too.
+      act(() => {
+        slot.current.scene.updateConnector('connector1', { direction: 'NONE' });
+      });
+      const reUpdated = slot.current.scene.connectors.find((c) => {
+        return c.id === 'connector1';
+      });
+      expect(reUpdated?.direction).toBe('NONE');
+    });
+
     test('deleteConnector removes the entry', () => {
       const slot = setup();
 

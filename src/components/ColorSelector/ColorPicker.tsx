@@ -1,25 +1,41 @@
-import {
-  MuiColorButtonProps,
-  MuiColorInput,
-  MuiColorInputProps
-} from 'mui-color-input';
+import { Box } from '@mui/material';
 import { ColorSwatch } from './ColorSwatch';
 
-type Props = Omit<MuiColorInputProps, 'ref'>;
+interface Props {
+  value: string;
+  onChange: (value: string) => void;
+}
 
-const ColorButtonElement = ({ bgColor, onClick }: MuiColorButtonProps) => {
-  return <ColorSwatch hex={bgColor} onClick={onClick} />;
-};
 export const ColorPicker = ({ value, onChange }: Props) => {
   return (
-    <MuiColorInput
-      size="small"
-      variant="standard"
-      format="hex"
-      value={value}
-      onChange={onChange}
-      InputProps={{ disableUnderline: true, type: 'hidden' }}
-      Adornment={ColorButtonElement}
-    />
+    <Box
+      sx={{
+        position: 'relative',
+        display: 'inline-block',
+        width: 40,
+        height: 40
+      }}
+    >
+      <ColorSwatch hex={value} onClick={undefined} />
+      <Box
+        component="input"
+        type="color"
+        value={value}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          onChange(e.target.value);
+        }}
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          opacity: 0,
+          padding: 0,
+          border: 'none',
+          background: 'none',
+          cursor: 'pointer'
+        }}
+      />
+    </Box>
   );
 };

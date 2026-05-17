@@ -29,7 +29,7 @@ Reference material lives under [`docs/`](docs/README.md):
 
 ## Requirements
 
-- **React** 17, 18, or 19 (peer dependency) and a matching `react-dom`.
+- **React** 18 or 19 (peer dependency) and a matching `react-dom`.
 - **Node.js** 22 LTS for development against this repository (`.nvmrc`). Consumers are not subject to this — the published package is browser-targeted.
 - A bundler that can consume CommonJS or ESM (webpack, Vite, Rollup, Parcel, esbuild, Next.js).
 - Authentication to **GitHub Packages** to install — see [docs/installation.md](docs/installation.md).

@@ -124,7 +124,7 @@ function RemoteLoader({ diagramId }: { diagramId: string }) {
 
 ## Peer dependencies
 
-The package declares `react` and `react-dom` as peers with the range `>=17`. The component is tested against React 18.3. React 19 is in scope for a follow-on release (tracked under `DEP-08`).
+The package declares `react` and `react-dom` as peers with the range `>=18` and is tested against React 19.
 
 CSS is injected at runtime via Emotion (an Isoflow dependency, not a peer). No stylesheet imports are required from the consumer side.
 

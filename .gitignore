@@ -39,3 +39,6 @@ yarn-error.log*
 /.env.graphify
 /phase-*.md
 /*backup
+
+# IDE state — local-only, not shared via git
+/.idea

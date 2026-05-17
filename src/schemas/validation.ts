@@ -103,7 +103,7 @@ export const validateConnectorAnchor = (
   if (anchor.ref.item) {
     try {
       getItemByIdOrThrow(ctx.view.items, anchor.ref.item);
-    } catch (e) {
+    } catch (_e) {
       issues.push({
         type: 'INVALID_ANCHOR_TO_VIEW_ITEM_REF',
         params: {
@@ -156,7 +156,7 @@ export const validateConnector = (
   if (connector.color) {
     try {
       getItemByIdOrThrow(ctx.model.colors, connector.color);
-    } catch (e) {
+    } catch (_e) {
       issues.push({
         type: 'INVALID_CONNECTOR_COLOR_REF',
         params: {
@@ -206,7 +206,7 @@ export const validateRectangle = (
   if (rectangle.color) {
     try {
       getItemByIdOrThrow(ctx.model.colors, rectangle.color);
-    } catch (e) {
+    } catch (_e) {
       issues.push({
         type: 'INVALID_RECTANGLE_COLOR_REF',
         params: {
@@ -254,7 +254,7 @@ export const validateView = (view: View, ctx: { model: Model }): Issue[] => {
   view.items.forEach((viewItem) => {
     try {
       getItemByIdOrThrow(ctx.model.items, viewItem.id);
-    } catch (e) {
+    } catch (_e) {
       issues.push({
         type: 'INVALID_VIEW_ITEM_TO_MODEL_ITEM_REF',
         params: {
@@ -282,7 +282,7 @@ export const validateModelItem = (
 
   try {
     getItemByIdOrThrow(ctx.model.icons, modelItem.icon);
-  } catch (e) {
+  } catch (_e) {
     issues.push({
       type: 'INVALID_MODEL_TO_ICON_REF',
       params: {

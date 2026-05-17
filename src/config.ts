@@ -15,6 +15,24 @@ import { customVars } from './styles/theme';
 
 // TODO: This file could do with better organisation and convention for easier reading.
 export const UNPROJECTED_TILE_SIZE = 100;
+
+// Bounding-box ratio of a unit tile AFTER the isometric projection
+// applied by getIsoMatrix() in src/utils/projection.ts.
+//
+// The iso matrix is [0.707, -0.409, 0.707, 0.409, 0, -0.816] in CSS
+// `matrix(a, b, c, d, e, f)` form. A unit square with corners at
+// (0,0), (1,0), (1,1), (0,1) projects to:
+//   * (0,0) → (0,         -0.816)
+//   * (1,0) → (0.707,     -1.225)
+//   * (1,1) → (1.414,     -0.816)
+//   * (0,1) → (0.707,     -0.407)
+// giving an x-span of 1.414 (2 × |matrix[0]|) and a y-span of 0.818
+// (2 × |matrix[3]|).
+//
+// The values below are those spans rounded up to the nearest
+// thousandth — kept as named constants (rather than re-derived per
+// render) so PROJECTED_TILE_SIZE doesn't accumulate floating-point
+// drift across the many zoom-multiplications that happen each frame.
 export const TILE_PROJECTION_MULTIPLIERS: Size = {
   width: 1.415,
   height: 0.819

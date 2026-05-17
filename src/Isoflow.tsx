@@ -24,7 +24,8 @@ const App = ({
   onValidationError,
   enableDebugTools = false,
   editorMode = 'EDITABLE',
-  renderer
+  renderer,
+  showTitleBar
 }: IsoflowProps) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -46,6 +47,10 @@ const App = ({
     uiStateActions.setEditorMode(editorMode);
     uiStateActions.setMainMenuOptions(mainMenuOptions);
   }, [editorMode, uiStateActions, mainMenuOptions]);
+
+  useEffect(() => {
+    uiStateActions.setShowTitleBar(showTitleBar);
+  }, [showTitleBar, uiStateActions]);
 
   useEffect(() => {
     return () => {

@@ -21,6 +21,14 @@ export interface IsoflowProps {
   onError?: (error: Error, info: ErrorInfo) => void;
   errorFallback?: ReactNode;
   /**
+   * Override the title-bar visibility. When `undefined` (default), the
+   * title bar follows the editor-mode allowlist —
+   * `EDITABLE` / `EXPLORABLE_READONLY` show it, `NON_INTERACTIVE` hides it.
+   * Pass `false` to force-hide it in every mode. Pass `true` to
+   * force-show it in every mode.
+   */
+  showTitleBar?: boolean;
+  /**
    * Optional callback fired when `initialData` (or a fresh
    * `loadModel()` payload from `useIsoflow`) fails schema validation.
    * Receives the array of Zod issues from the failed parse.

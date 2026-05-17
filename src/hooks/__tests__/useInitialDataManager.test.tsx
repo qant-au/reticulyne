@@ -18,10 +18,10 @@ type Slot = {
   getView: () => string;
 };
 
-// Write to the slot during render (rather than from a useEffect) so the
-// test reads the latest values from the most recent render commit
-// without an extra round-trip through React's effect queue.
-const HookProbe = ({ slot }: { slot: { current: Slot | null } }) => {
+// Calling a callback prop during render is the cleanest way to expose
+// the hook surface to the test without violating the React-Compiler-
+// style immutability rules that forbid mutating parameter properties.
+const HookProbe = ({ onCapture }: { onCapture: (s: Slot) => void }) => {
   const { load, clear, isReady } = useInitialDataManager();
   const modelActions = useModelStore((state) => {
     return state.actions;
@@ -30,7 +30,7 @@ const HookProbe = ({ slot }: { slot: { current: Slot | null } }) => {
     return state.view;
   });
 
-  slot.current = {
+  onCapture({
     load,
     clear,
     isReady,
@@ -40,17 +40,17 @@ const HookProbe = ({ slot }: { slot: { current: Slot | null } }) => {
     getView: () => {
       return view;
     }
-  };
+  });
 
   return null;
 };
 
-const Harness = ({ slot }: { slot: { current: Slot | null } }) => {
+const Harness = ({ onCapture }: { onCapture: (s: Slot) => void }) => {
   return (
     <ModelProvider>
       <SceneProvider>
         <UiStateProvider>
-          <HookProbe slot={slot} />
+          <HookProbe onCapture={onCapture} />
         </UiStateProvider>
       </SceneProvider>
     </ModelProvider>
@@ -58,14 +58,20 @@ const Harness = ({ slot }: { slot: { current: Slot | null } }) => {
 };
 
 const renderHarness = (): { current: Slot } => {
-  const slot: { current: Slot | null } = { current: null };
+  const ref: { current: Slot | null } = { current: null };
   act(() => {
-    render(<Harness slot={slot} />);
+    render(
+      <Harness
+        onCapture={(s) => {
+          ref.current = s;
+        }}
+      />
+    );
   });
-  if (slot.current === null) {
+  if (ref.current === null) {
     throw new Error('Harness did not capture the hook API.');
   }
-  return slot as { current: Slot };
+  return ref as { current: Slot };
 };
 
 describe('useInitialDataManager', () => {
@@ -73,11 +79,9 @@ describe('useInitialDataManager', () => {
   let logSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    alertSpy = jest
-      .spyOn(window, 'alert')
-      .mockImplementation(() => {
-        return undefined;
-      });
+    alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {
+      return undefined;
+    });
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {
       return undefined;
     });
@@ -206,7 +210,9 @@ describe('useInitialDataManager', () => {
     // clear() loads INITIAL_DATA which has an empty views array;
     // the auto-create branch then creates exactly one fresh view.
     expect(slot.current.getModel().views.length).toBe(1);
-    expect(slot.current.getModel().views[0].id).not.toBe(fixtureModel.views[0].id);
+    expect(slot.current.getModel().views[0].id).not.toBe(
+      fixtureModel.views[0].id
+    );
     expect(slot.current.getModel().icons).toEqual(savedIcons);
     expect(slot.current.getModel().colors).toEqual(savedColors);
   });

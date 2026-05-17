@@ -63,7 +63,8 @@ echo "==> Building image \"$TAG\" (single-editor)"
 docker build -t "$TAG" -f Dockerfile .
 
 echo "==> Starting container \"$NAME\" on host port $PORT"
-docker run -d --rm --name "$NAME" -p "${PORT}:80" "$TAG" >/dev/null
+# Container listens on 8080 internally (nginx-unprivileged base; see BLD3-05).
+docker run -d --rm --name "$NAME" -p "${PORT}:8080" "$TAG" >/dev/null
 
 if ! wait_for_http "http://localhost:${PORT}/" "Editor"; then
   docker logs "$NAME" >&2 || true
@@ -81,7 +82,8 @@ else
   docker build -t "$EXAMPLES_TAG" -f Dockerfile.examples .
 
   echo "==> Starting container \"$EXAMPLES_NAME\" on host port $EXAMPLES_PORT"
-  docker run -d --rm --name "$EXAMPLES_NAME" -p "${EXAMPLES_PORT}:80" "$EXAMPLES_TAG" >/dev/null
+  # Container listens on 8080 internally (nginx-unprivileged base; see BLD3-05).
+  docker run -d --rm --name "$EXAMPLES_NAME" -p "${EXAMPLES_PORT}:8080" "$EXAMPLES_TAG" >/dev/null
 
   if ! wait_for_http "http://localhost:${EXAMPLES_PORT}/" "Examples picker"; then
     docker logs "$EXAMPLES_NAME" >&2 || true

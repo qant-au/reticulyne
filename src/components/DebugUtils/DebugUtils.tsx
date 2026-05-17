@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+import { useShallow } from 'zustand/shallow';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
@@ -6,9 +7,9 @@ import { LineItem } from './LineItem';
 
 export const DebugUtils = () => {
   const uiState = useUiStateStore(
-    ({ scroll, mouse, zoom, mode, rendererEl }) => {
+    useShallow(({ scroll, mouse, zoom, mode, rendererEl }) => {
       return { scroll, mouse, zoom, mode, rendererEl };
-    }
+    })
   );
   const scene = useScene();
   const { size: rendererSize } = useResizeObserver(uiState.rendererEl);

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { useShallow } from 'zustand/shallow';
 import { Menu, Typography, Divider, Card } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -19,9 +20,11 @@ import { MenuItem } from './MenuItem';
 
 export const MainMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const model = useModelStore((state) => {
-    return modelFromModelStore(state);
-  });
+  const model = useModelStore(
+    useShallow((state) => {
+      return modelFromModelStore(state);
+    })
+  );
   const isMainMenuOpen = useUiStateStore((state) => {
     return state.isMainMenuOpen;
   });

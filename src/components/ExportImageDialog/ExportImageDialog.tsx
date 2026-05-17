@@ -39,8 +39,8 @@ interface Props {
 }
 
 export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
-  const containerRef = useRef<HTMLDivElement>();
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const currentView = useUiStateStore((state) => {
     return state.view;
   });

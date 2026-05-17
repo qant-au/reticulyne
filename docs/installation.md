@@ -46,8 +46,8 @@ pnpm add @qant-au/isoflow
 
 ## Peer dependencies
 
-You need React and react-dom in your application. The package declares peers `react >= 17`
-and `react-dom >= 17`. It is tested against React 18.3; React 19 is on the roadmap.
+You need React and react-dom in your application. The package declares peers `react >= 18`
+and `react-dom >= 18` and is tested against React 19.
 
 ```bash
 npm install react react-dom

@@ -5,7 +5,7 @@
 # Dockerfile but builds + serves the examples bundle. Runs alongside
 # the main `isoflow` container.
 
-FROM node:22-alpine AS build
+FROM node:22.22-alpine AS build
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ COPY . .
 
 RUN npm run docker:examples:build
 
-FROM nginx:alpine
+FROM nginx:1.30-alpine
 
 # Same hardened nginx config as the main image — SPA fallback, security
 # headers, gzip, cache discipline.

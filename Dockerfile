@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:22-alpine AS build
+FROM node:22.22-alpine AS build
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ COPY . .
 
 RUN npm run docker:build
 
-FROM nginx:alpine
+FROM nginx:1.30-alpine
 
 # Replace the stock nginx site config with one that ships SPA-fallback,
 # security headers, gzip, and cache rules tuned for hashed asset bundles.

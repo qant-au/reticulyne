@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Box, useTheme, Typography, Stack } from '@mui/material';
 import { ChevronRight } from '@mui/icons-material';
 import { EditorModeEnum } from 'src/types';
@@ -49,7 +49,8 @@ const getEditorModeMapping = (editorMode: keyof typeof EditorModeEnum) => {
 
 export const UiOverlay = () => {
   const theme = useTheme();
-  const contextMenuAnchorRef = useRef();
+  const [contextMenuAnchor, setContextMenuAnchor] =
+    useState<HTMLDivElement | null>(null);
   const { appPadding } = theme.customVars;
   const spacing = useCallback(
     (multiplier: number) => {
@@ -235,8 +236,8 @@ export const UiOverlay = () => {
       )}
 
       <SceneLayer>
-        <Box ref={contextMenuAnchorRef} />
-        <ContextMenuManager anchorEl={contextMenuAnchorRef.current} />
+        <Box ref={setContextMenuAnchor} />
+        <ContextMenuManager anchorEl={contextMenuAnchor ?? undefined} />
       </SceneLayer>
     </>
   );

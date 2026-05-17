@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { Box, SxProps } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -16,7 +16,7 @@ export const SceneLayer = ({
   sx,
   disableAnimation
 }: Props) => {
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRenderRef = useRef(true);
   const elementRef = useRef<HTMLDivElement>(null);
 
   const scroll = useUiStateStore((state) => {
@@ -30,16 +30,14 @@ export const SceneLayer = ({
     if (!elementRef.current) return;
 
     gsap.to(elementRef.current, {
-      duration: disableAnimation || isFirstRender ? 0 : 0.25,
+      duration: disableAnimation || isFirstRenderRef.current ? 0 : 0.25,
       translateX: scroll.position.x,
       translateY: scroll.position.y,
       scale: zoom
     });
 
-    if (isFirstRender) {
-      setIsFirstRender(false);
-    }
-  }, [zoom, scroll, disableAnimation, isFirstRender]);
+    isFirstRenderRef.current = false;
+  }, [zoom, scroll, disableAnimation]);
 
   return (
     <Box

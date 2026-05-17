@@ -69,16 +69,12 @@ module.exports = tseslint.config(
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-unused-vars': 'off',
       'react/jsx-key': 'warn',
-      // The following rules ship in eslint-plugin-react-hooks v6+ as part of
-      // its React-Compiler-style analysis. They flag genuine smells (refs-
-      // during-render, setState-in-effect, setState-from-useMemo) but every
-      // hit in this codebase is pre-existing. Downgraded from error to warn
-      // here so the upgrade lands cleanly; the actual rewrites are scoped to
-      // the React 19 migration (DEP-11), where the related store pattern is
-      // already due for revisit.
-      'react-hooks/refs': 'warn',
-      'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/set-state-in-render': 'warn'
+      // eslint-plugin-react-hooks v6+ React-Compiler-style analysis. Enforced
+      // at `error` after the QUA-03 cleanup pass that prepared the codebase
+      // for React 19.
+      'react-hooks/refs': 'error',
+      'react-hooks/set-state-in-effect': 'error',
+      'react-hooks/set-state-in-render': 'error'
     }
   },
   {

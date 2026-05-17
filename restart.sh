@@ -37,6 +37,25 @@ GRAPHIFY_PIDFILE="${GRAPHIFY_PIDFILE:-graphify-out/watch.pid}"
 
 cd "$(dirname "$0")"
 
+# Clean up our containers on SIGINT / SIGTERM. The wait_for_http
+# polling loops below are the most common interrupt point — if the
+# user ^Cs while the script is waiting for a slow start, the
+# half-started containers would otherwise stay running until the next
+# `restart.sh` invocation (which would then trip over them with a
+# "name already in use" error). The trap only fires on signal-based
+# interrupts, not on normal exit, so the success path leaves the
+# containers running — which is the whole point of the script.
+cleanup_on_interrupt() {
+  echo
+  echo "==> Caught interrupt — stopping any containers we started"
+  docker rm -f "$NAME" >/dev/null 2>&1 || true
+  if [[ "$NO_EXAMPLES" != "1" ]]; then
+    docker rm -f "$EXAMPLES_NAME" >/dev/null 2>&1 || true
+  fi
+  exit 130
+}
+trap cleanup_on_interrupt INT TERM
+
 # wait_for_http url label
 wait_for_http() {
   local url="$1"

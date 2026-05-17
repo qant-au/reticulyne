@@ -27,8 +27,7 @@ The following `npm audit` advisories are knowingly carried in the published pack
 ### `jsdom@<24` chain — `@tootallnate/once`, `http-proxy-agent`
 
 - **Severity (audit):** low, **dev-only** (`jest-environment-jsdom → jsdom`).
-- **Reachable in:** Jest tests only.
-- **Mitigation:** N/A in production. The fix path is a major jest-environment-jsdom upgrade, picked up alongside the Jest / Testing-Library currency pass.
+- **Status:** **closed by `DEP3-02`** (third-pass). `jest@^30`, `jest-environment-jsdom@^30`, and `jsdom@^29` now resolve the advisory chain. Kept in this ledger as a historical entry; `npm audit` no longer reports it.
 
 ## Versioning of these notes
 

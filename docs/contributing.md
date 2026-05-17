@@ -102,6 +102,21 @@ Output lands in `graphify-out/` (gitignored). The `.graphifyignore` file control
 indexed — edit it the same way you'd edit `.gitignore`. Skip Graphify on a single
 invocation with `NO_GRAPHIFY=1 bash restart.sh`.
 
+**Where to start when working on unfamiliar code.** Both maintainers and any
+AI-assistant agents should consult these in order before grep-walking the
+tree:
+
+1. `graphify-out/GRAPH_REPORT.md` — natural-language overview of modules,
+   communities, and god nodes. Fastest way to get oriented.
+2. `graphify-out/graph.json` — the queryable graph (nodes / edges /
+   communities). Use it to answer "what reaches X" / "what depends on Y"
+   before doing a blind grep.
+3. `graphify-out/graph.html` — interactive visualisation. Open in a
+   browser when text-only reading isn't enough.
+
+The Graphify-first workflow is also codified in [CLAUDE.md](../CLAUDE.md)
+at the repo root, which is auto-loaded by Claude Code sessions.
+
 ## License
 
 MIT — copyright QANT Pty Ltd. See [LICENSE](../LICENSE).

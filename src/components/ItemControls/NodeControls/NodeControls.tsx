@@ -11,6 +11,7 @@ import { useViewItem } from 'src/hooks/useViewItem';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { ControlsContainer } from '../components/ControlsContainer';
+import { Header } from '../components/Header';
 import { Icons } from '../IconSelectionControls/Icons';
 import { NodeSettings } from './NodeSettings/NodeSettings';
 import { Section } from '../components/Section';
@@ -37,7 +38,7 @@ export const NodeControls = ({ id }: Props) => {
   }, []);
 
   return (
-    <ControlsContainer>
+    <ControlsContainer header={<Header title="Edit object" />}>
       <Box
         sx={{
           bgcolor: (theme) => {

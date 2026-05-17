@@ -12,6 +12,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { getIsoProjectionCss } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
 import { ControlsContainer } from '../components/ControlsContainer';
+import { Header } from '../components/Header';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 
@@ -27,7 +28,7 @@ export const TextBoxControls = ({ id }: Props) => {
   const { updateTextBox, deleteTextBox } = useScene();
 
   return (
-    <ControlsContainer>
+    <ControlsContainer header={<Header title="Edit text" />}>
       <Section>
         <TextField
           value={textBox.content}

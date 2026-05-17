@@ -1,5 +1,6 @@
 import { toPng } from 'html-to-image';
 import FileSaver from 'file-saver';
+import { jsPDF } from 'jspdf';
 import { Model, Size } from '../types';
 
 export const generateGenericFilename = (extension: string) => {
@@ -69,4 +70,65 @@ export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
   });
 
   return imageData;
+};
+
+/**
+ * Render the current canvas to a PNG (via the existing exportAsImage
+ * path) and embed it in a single-page PDF that gets downloaded
+ * client-side. Used by the MainMenu's "Export as PDF" entry.
+ *
+ * Client-side only: this never makes a network call. The PDF is built
+ * in-browser by jsPDF and saved via FileSaver. The page orientation
+ * (portrait vs landscape) follows the rendered image's aspect ratio
+ * so the diagram fills the page in whichever orientation matches it
+ * better. Page size is fixed to A4; the image is scaled to fit the
+ * page while preserving aspect ratio, with a small uniform margin.
+ *
+ * Added under FEA4-04 of the fourth-pass review.
+ */
+export const exportAsPdf = async (el: HTMLDivElement, size?: Size) => {
+  const imageDataUrl = await exportAsImage(el, size);
+
+  // The img object lets us read the rendered PNG's natural pixel
+  // dimensions without parsing the data-URL ourselves.
+  const img = new Image();
+  img.src = imageDataUrl;
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => {
+      resolve();
+    };
+    img.onerror = () => {
+      reject(new Error('Failed to load the rendered image.'));
+    };
+  });
+
+  const orientation: 'portrait' | 'landscape' =
+    img.naturalWidth > img.naturalHeight ? 'landscape' : 'portrait';
+
+  // A4 in mm; jsPDF lets us pick units explicitly.
+  const doc = new jsPDF({
+    orientation,
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 10;
+  const availableWidth = pageWidth - margin * 2;
+  const availableHeight = pageHeight - margin * 2;
+
+  // Scale-to-fit while preserving aspect ratio.
+  const widthRatio = availableWidth / img.naturalWidth;
+  const heightRatio = availableHeight / img.naturalHeight;
+  const scale = Math.min(widthRatio, heightRatio);
+  const drawWidth = img.naturalWidth * scale;
+  const drawHeight = img.naturalHeight * scale;
+  const offsetX = (pageWidth - drawWidth) / 2;
+  const offsetY = (pageHeight - drawHeight) / 2;
+
+  doc.addImage(imageDataUrl, 'PNG', offsetX, offsetY, drawWidth, drawHeight);
+
+  const blob = doc.output('blob');
+  downloadFile(blob, generateGenericFilename('pdf'));
 };

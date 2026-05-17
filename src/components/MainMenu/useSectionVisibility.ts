@@ -3,11 +3,12 @@
 // the array of enum identifiers the consumer wants visible).
 //
 // The MainMenu component branches on three sections: action items
-// (Open / Export / Clear), external link items (GitHub / Discord),
-// and the version footer. Each lights up when at least one of its
-// matching identifiers is present.
+// (Open / Export / Clear), external link items (GitHub), and the
+// version footer. Each lights up when at least one of its matching
+// identifiers is present.
 //
-// Extracted from MainMenu.tsx under QUA4-09.
+// Extracted from MainMenu.tsx under QUA4-09. Updated under FEA4-03 to
+// drop the Discord reference from the rationale comment.
 
 import { useMemo } from 'react';
 import { useUiStateStore } from 'src/stores/uiStateStore';

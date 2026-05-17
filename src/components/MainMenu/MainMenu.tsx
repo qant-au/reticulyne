@@ -5,6 +5,7 @@ import {
   GitHub as GitHubIcon,
   DataObject as ExportJsonIcon,
   ImageOutlined as ExportImageIcon,
+  PictureAsPdfOutlined as ExportPdfIcon,
   FolderOpen as FolderOpenIcon,
   DeleteOutlined as DeleteOutlineIcon
 } from '@mui/icons-material';
@@ -15,6 +16,7 @@ import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { MenuItem } from './MenuItem';
 import { useImportFile } from './useImportFile';
 import { useExportJson } from './useExportJson';
+import { useExportPdf } from './useExportPdf';
 import { useSectionVisibility } from './useSectionVisibility';
 
 export const MainMenu = () => {
@@ -32,6 +34,7 @@ export const MainMenu = () => {
 
   const onOpenModel = useImportFile();
   const onExportAsJSON = useExportJson();
+  const onExportAsPdf = useExportPdf();
   const sectionVisibility = useSectionVisibility();
 
   const onToggleMenu = useCallback(
@@ -98,6 +101,12 @@ export const MainMenu = () => {
           {mainMenuOptions.includes('EXPORT.PNG') && (
             <MenuItem onClick={onExportAsImage} Icon={<ExportImageIcon />}>
               Export as Image
+            </MenuItem>
+          )}
+
+          {mainMenuOptions.includes('EXPORT.PDF') && (
+            <MenuItem onClick={onExportAsPdf} Icon={<ExportPdfIcon />}>
+              Export as PDF
             </MenuItem>
           )}
 

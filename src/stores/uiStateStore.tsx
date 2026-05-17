@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
-import { createStore, useStore } from 'zustand';
+import { createStore } from 'zustand';
 import {
   CoordsUtils,
   incrementZoom,
@@ -8,8 +7,9 @@ import {
 } from 'src/utils';
 import { UiStateStore } from 'src/types';
 import { INITIAL_UI_STATE } from 'src/config';
+import { createContextualStore } from './createContextualStore';
 
-const initialState = () => {
+const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
   return createStore<UiStateStore>((set, get) => {
     return {
       zoom: INITIAL_UI_STATE.zoom,
@@ -95,31 +95,7 @@ const initialState = () => {
       }
     };
   });
-};
+}, 'UiState');
 
-const UiStateContext = createContext<ReturnType<typeof initialState> | null>(
-  null
-);
-
-interface ProviderProps {
-  children: React.ReactNode;
-}
-
-export const UiStateProvider = ({ children }: ProviderProps) => {
-  const [store] = useState(initialState);
-
-  return (
-    <UiStateContext.Provider value={store}>{children}</UiStateContext.Provider>
-  );
-};
-
-export function useUiStateStore<T>(selector: (state: UiStateStore) => T) {
-  const store = useContext(UiStateContext);
-
-  if (store === null) {
-    throw new Error('Missing provider in the tree');
-  }
-
-  const value = useStore(store, selector);
-  return value;
-}
+export const UiStateProvider = Provider;
+export const useUiStateStore = useStore;

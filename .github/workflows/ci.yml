@@ -24,6 +24,18 @@ jobs:
 
       - run: npm ci
 
+      - name: Audit production dependencies
+        # Fail CI on any moderate-or-higher advisory in the production
+        # dependency graph. Low-severity advisories are reported by
+        # `npm audit` but allowed through the gate; the accepted set is
+        # listed in SECURITY.md and must be re-audited there before any
+        # new low-severity entry is allowed to land.
+        #
+        # `--omit=dev` excludes devDependencies so a transitive jest /
+        # webpack-dev-server advisory doesn't block the build — those
+        # are tracked separately in SECURITY.md.
+        run: npm audit --omit=dev --audit-level=moderate
+
       - run: npm run lint
 
       - run: npm test

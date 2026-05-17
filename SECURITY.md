@@ -20,9 +20,7 @@ The following `npm audit` advisories are knowingly carried in the published pack
 ### `webpack-dev-server` — XSS source-code disclosure
 
 - **Severity (audit):** moderate, **dev-only** (`devDependencies` chain).
-- **Reachable in:** `npm start` development server only. Not shipped in `dist/` or the Docker image.
-- **Mitigation:** not relevant to consumers — the published package contains no dev-server code. Developers running `npm start` should not point untrusted browsers at the resulting localhost port.
-- **Closes when:** the Webpack 5 / dev-server stack is upgraded in a future Stage 3 dependency pass.
+- **Status:** **closed by `DEP3-03`** (third-pass). `webpack-dev-server@^5` resolves GHSA-9jgg-88mc-972h and GHSA-4v9v-hfq4-rm2v. Kept here as a historical entry; `npm audit` no longer reports it.
 
 ### `jsdom@<24` chain — `@tootallnate/once`, `http-proxy-agent`
 

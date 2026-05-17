@@ -74,7 +74,12 @@ module.exports = tseslint.config(
       // for React 19.
       'react-hooks/refs': 'error',
       'react-hooks/set-state-in-effect': 'error',
-      'react-hooks/set-state-in-render': 'error'
+      'react-hooks/set-state-in-render': 'error',
+      // The classic dependency-array check. Promoted from the
+      // plugin's `recommended` default of `warn` to `error` to match
+      // the three sibling rules above — the codebase currently
+      // passes with zero hits, so this just locks the invariant in.
+      'react-hooks/exhaustive-deps': 'error'
     }
   },
   {

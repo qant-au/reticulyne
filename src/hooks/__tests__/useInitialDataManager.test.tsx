@@ -9,6 +9,7 @@ import { useInitialDataManager } from '../useInitialDataManager';
 import { INITIAL_DATA } from 'src/config';
 import { model as fixtureModel } from 'src/fixtures/model';
 import type { InitialData, Model } from 'src/types';
+import type { ZodIssue } from 'zod';
 
 type Slot = {
   load: ReturnType<typeof useInitialDataManager>['load'];
@@ -21,8 +22,14 @@ type Slot = {
 // Calling a callback prop during render is the cleanest way to expose
 // the hook surface to the test without violating the React-Compiler-
 // style immutability rules that forbid mutating parameter properties.
-const HookProbe = ({ onCapture }: { onCapture: (s: Slot) => void }) => {
-  const { load, clear, isReady } = useInitialDataManager();
+const HookProbe = ({
+  onCapture,
+  onValidationError
+}: {
+  onCapture: (s: Slot) => void;
+  onValidationError?: (issues: ZodIssue[]) => void;
+}) => {
+  const { load, clear, isReady } = useInitialDataManager({ onValidationError });
   const modelActions = useModelStore((state) => {
     return state.actions;
   });
@@ -45,23 +52,35 @@ const HookProbe = ({ onCapture }: { onCapture: (s: Slot) => void }) => {
   return null;
 };
 
-const Harness = ({ onCapture }: { onCapture: (s: Slot) => void }) => {
+const Harness = ({
+  onCapture,
+  onValidationError
+}: {
+  onCapture: (s: Slot) => void;
+  onValidationError?: (issues: ZodIssue[]) => void;
+}) => {
   return (
     <ModelProvider>
       <SceneProvider>
         <UiStateProvider>
-          <HookProbe onCapture={onCapture} />
+          <HookProbe
+            onCapture={onCapture}
+            onValidationError={onValidationError}
+          />
         </UiStateProvider>
       </SceneProvider>
     </ModelProvider>
   );
 };
 
-const renderHarness = (): { current: Slot } => {
+const renderHarness = (opts?: {
+  onValidationError?: (issues: ZodIssue[]) => void;
+}): { current: Slot } => {
   const ref: { current: Slot | null } = { current: null };
   act(() => {
     render(
       <Harness
+        onValidationError={opts?.onValidationError}
         onCapture={(s) => {
           ref.current = s;
         }}
@@ -76,20 +95,22 @@ const renderHarness = (): { current: Slot } => {
 
 describe('useInitialDataManager', () => {
   let alertSpy: jest.SpyInstance;
-  let logSpy: jest.SpyInstance;
+  let errorSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    // Spy on alert so we can prove the legacy modal behaviour is gone;
+    // spy on console.error so we can prove the new fallback path runs.
     alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {
       return undefined;
     });
-    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {
+    errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {
       return undefined;
     });
   });
 
   afterEach(() => {
     alertSpy.mockRestore();
-    logSpy.mockRestore();
+    errorSpy.mockRestore();
     cleanup();
   });
 
@@ -105,6 +126,7 @@ describe('useInitialDataManager', () => {
     expect(slot.current.getModel().views).toEqual(fixtureModel.views);
     expect(slot.current.isReady).toBe(true);
     expect(alertSpy).not.toHaveBeenCalled();
+    expect(errorSpy).not.toHaveBeenCalled();
   });
 
   test('activates the first view by default', () => {
@@ -142,7 +164,7 @@ describe('useInitialDataManager', () => {
     expect(slot.current.getView()).toBe('view2');
   });
 
-  test('rejects invalid data and alerts the user', () => {
+  test('rejects invalid data via the console.error fallback (no window.alert)', () => {
     const slot = renderHarness();
     const beforeTitle = slot.current.getModel().title;
 
@@ -153,10 +175,90 @@ describe('useInitialDataManager', () => {
       } as unknown as InitialData);
     });
 
-    expect(alertSpy).toHaveBeenCalledWith('There is an error in your model.');
+    // The legacy window.alert path is gone — library code popping a
+    // native modal in the consumer's page was the whole point of Q-2.
+    expect(alertSpy).not.toHaveBeenCalled();
+    // Fallback when no onValidationError is provided: surface the
+    // failure in the console with a recognisable prefix.
+    expect(errorSpy).toHaveBeenCalled();
+    expect(errorSpy.mock.calls[0][0]).toMatch(/\[isoflow\]/);
     expect(slot.current.isReady).toBe(false);
     // Model store should not have been touched on rejection.
     expect(slot.current.getModel().title).toBe(beforeTitle);
+  });
+
+  test('routes validation failures to onValidationError when supplied (no fallback to console.error)', () => {
+    const onValidationError = jest.fn();
+    const slot = renderHarness({ onValidationError });
+
+    act(() => {
+      slot.current.load({
+        title: 'broken'
+      } as unknown as InitialData);
+    });
+
+    expect(onValidationError).toHaveBeenCalledTimes(1);
+    const issues = onValidationError.mock.calls[0][0];
+    expect(Array.isArray(issues)).toBe(true);
+    expect(issues.length).toBeGreaterThan(0);
+    // ZodIssue has at least a `code` and `path` we can lean on.
+    expect(issues[0]).toEqual(
+      expect.objectContaining({ code: expect.any(String) })
+    );
+
+    // The callback claimed the failure so the fallback shouldn't fire.
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(alertSpy).not.toHaveBeenCalled();
+    expect(slot.current.isReady).toBe(false);
+  });
+
+  test('a re-rendered onValidationError with fresh closure identity still receives the latest issues', () => {
+    // Regression guard for the ref-stash pattern: load()'s useCallback
+    // identity must stay stable even as the caller passes a fresh
+    // onValidationError closure on every render, but the LATEST
+    // closure must be the one that runs on rejection.
+    const calls: ZodIssue[][] = [];
+    const first = jest.fn();
+    const second = jest.fn((issues: ZodIssue[]) => {
+      calls.push(issues);
+    });
+
+    const ref: { current: Slot | null } = { current: null };
+    let rerender: ((onErr: (issues: ZodIssue[]) => void) => void) | null = null;
+
+    act(() => {
+      const { rerender: rr } = render(
+        <Harness
+          onValidationError={first}
+          onCapture={(s) => {
+            ref.current = s;
+          }}
+        />
+      );
+      rerender = (onErr) => {
+        rr(
+          <Harness
+            onValidationError={onErr}
+            onCapture={(s) => {
+              ref.current = s;
+            }}
+          />
+        );
+      };
+    });
+
+    // Swap to the second callback BEFORE triggering the failure.
+    act(() => {
+      rerender!(second);
+    });
+
+    act(() => {
+      ref.current!.load({ title: 'broken' } as unknown as InitialData);
+    });
+
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
+    expect(calls).toHaveLength(1);
   });
 
   test('auto-creates a view when initialData.views is empty', () => {

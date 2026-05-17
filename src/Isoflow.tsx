@@ -21,6 +21,7 @@ const App = ({
   width = '100%',
   height = '100%',
   onModelUpdated,
+  onValidationError,
   enableDebugTools = false,
   editorMode = 'EDITABLE',
   renderer
@@ -28,7 +29,7 @@ const App = ({
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const initialDataManager = useInitialDataManager();
+  const initialDataManager = useInitialDataManager({ onValidationError });
   const model = useModelStore(
     useShallow((state) => {
       return modelFromModelStore(state);

@@ -1,6 +1,6 @@
 {
   "name": "@qant-au/isoflow",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "private": false,
   "description": "An open-source React component for drawing network diagrams.",
   "license": "MIT",
@@ -55,7 +55,11 @@
     "docker:examples:build": "rm -rf dist-docker-examples && webpack --config ./webpack/docker-examples.config.js"
   },
   "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@eslint/js": "^9.39.4",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.18.0",
     "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^16.3.0",
@@ -93,13 +97,10 @@
     "typescript-eslint": "^8.59.3",
     "webpack": "^5.106.2",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.2.4"
+    "webpack-dev-server": "^5.2.4",
+    "zustand": "^5.0.13"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^5.18.0",
-    "@mui/material": "^5.18.0",
     "chroma-js": "^3.2.0",
     "file-saver": "^2.0.5",
     "gsap": "^3.15.0",
@@ -108,12 +109,16 @@
     "pathfinding": "^0.4.18",
     "react-quill-new": "^3.8.3",
     "uuid": "^11.1.1",
-    "zod": "^4.4.3",
-    "zustand": "^5.0.13"
+    "zod": "^4.4.3"
   },
   "peerDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.18.0",
     "react": ">=18",
-    "react-dom": ">=18"
+    "react-dom": ">=18",
+    "zustand": "^5.0.13"
   },
   "browserslist": {
     "production": [

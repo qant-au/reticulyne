@@ -30,6 +30,7 @@ Reference material lives under [`docs/`](docs/README.md):
 ## Requirements
 
 - **React** 18 or 19 (peer dependency) and a matching `react-dom`.
+- **MUI v5**, **Emotion**, and **Zustand** as peer dependencies (v2 onwards — see [Installation](#installation)). v1 bundled these internally; v2 externalises them so consumers share a single copy.
 - **Node.js** 22 LTS for development against this repository (`.nvmrc`). Consumers are not subject to this — the published package is browser-targeted.
 - A bundler that can consume CommonJS or ESM (webpack, Vite, Rollup, Parcel, esbuild, Next.js).
 - Authentication to **GitHub Packages** to install — see [docs/installation.md](docs/installation.md).
@@ -40,7 +41,12 @@ This package is published to GitHub Packages, not the public npm registry. Full 
 
 ```bash
 # After configuring .npmrc and exporting $GITHUB_TOKEN:
-npm install @qant-au/isoflow
+npm install \
+  @qant-au/isoflow \
+  react react-dom \
+  @mui/material @mui/icons-material \
+  @emotion/react @emotion/styled \
+  zustand
 ```
 
 ## Security

@@ -14,6 +14,21 @@ import Isoflow, { useIsoflow } from '@qant-au/isoflow';
 
 The default export is the `Isoflow` React component. The named export `useIsoflow` is the imperative hook (only callable inside `<Isoflow>`'s subtree). Standalone exports (schemas, reducers, types) are also re-exported from the default entrypoint.
 
+## Required peer dependencies (v2 onwards)
+
+`@qant-au/isoflow@2` externalises its UI / state / theming stack. Install these alongside the library:
+
+```bash
+npm install \
+  @qant-au/isoflow \
+  react react-dom \
+  @mui/material @mui/icons-material \
+  @emotion/react @emotion/styled \
+  zustand
+```
+
+If your application already uses MUI v5 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and a v1 → v2 migration note.
+
 ## Component props (`<Isoflow>`)
 
 All props are optional. The component renders a fully-functional editor with sensible defaults.

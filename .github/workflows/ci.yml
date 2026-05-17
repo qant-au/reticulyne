@@ -49,3 +49,76 @@ jobs:
             }
             console.log('pack contents OK — ' + files.length + ' files, all under allowed roots');
           "
+
+  # End-to-end (Playwright) — label-gated.
+  #
+  # Runs only when the triggering commit message (push) or PR title
+  # (pull_request) contains the literal string `[run e2e]`. The intent
+  # is opt-in: most PRs don't touch the editor's interactive surface,
+  # so paying ~3 minutes per run is reserved for the changes that do.
+  # The job builds the isoflow Docker image, starts it on the runner,
+  # and points Playwright at it.
+  e2e:
+    runs-on: ubuntu-latest
+    needs: build
+    if: >-
+      (github.event_name == 'push' && contains(github.event.head_commit.message, '[run e2e]')) ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[run e2e]'))
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build isoflow Docker image
+        run: docker build -t isoflow .
+
+      - name: Start isoflow container
+        run: |
+          docker run -d --rm --name isoflow -p 2222:8080 isoflow
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:2222/ > /dev/null; then
+              echo "isoflow container responding on :2222"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "isoflow container did not respond within 30s" >&2
+          docker logs isoflow >&2 || true
+          exit 1
+
+      - name: Run Playwright tests
+        run: npm run test:e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:2222
+
+      - name: Stop isoflow container
+        if: always()
+        run: docker rm -f isoflow || true
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            playwright-out/
+          retention-days: 7

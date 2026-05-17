@@ -1,8 +1,7 @@
 # Embedding roadmap — FEA5 series
 
 This document is a forward-looking specification for the next round of
-embedding-facing features on `<Isoflow>`. It was written at the end of the
-fourth-pass (`sunny-bentley`) review for a future session to execute against.
+embedding-facing features on `<Isoflow>`, for a future session to execute against.
 
 Each section below describes one feature: the motivation, the prop / API
 addition, the integration points across the codebase, the test additions,
@@ -18,7 +17,7 @@ the commit history under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, and
 
 ## Context
 
-During the fourth-pass review the user asked for four embedding-time
+During v4.x development four embedding-time
 controls that go beyond what `<Isoflow>` currently exposes:
 
 1. The ability to hide / restrict main-menu items when embedding the
@@ -197,7 +196,7 @@ supplying `onSave`).
 ## Documentation-only follow-up (no FEA ID)
 
 The existing `mainMenuOptions` prop covers most of the user's "Item 1"
-ask from the fourth-pass review (show / hide menu entries from the
+ask (show / hide menu entries from the
 host). The mechanism is documented at [docs/api.md](api.md) and is
 already type-safe. The follow-up here is a worked **embedding-pattern
 example** in [docs/embedding.md](embedding.md) showing the common

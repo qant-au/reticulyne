@@ -8,9 +8,9 @@ A React component for drawing network diagrams.
 
 > **Development status:** This project is currently under active development. We are working through a period of significant modernisation — upgrading dependencies, improving build tooling, hardening security, and expanding the feature set. Things may change rapidly between releases during this phase. We intend to stabilise the codebase and open the project up to normal community contribution once that foundational work is complete.
 
-## Recent work (the `sunny-bentley` fourth-pass review)
+## v4.x development history
 
-The fork has been through a structured review-and-modernisation pass during v4.x development. High-level overview (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, and `FEA4` task-ID prefixes; the residual backlog lives in [TODO.md](TODO.md)):
+High-level overview of what landed during the v4 modernisation work (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, and `FEA4` task-ID prefixes):
 
 - **Security & supply-chain.** Embedder-side sanitisation contract documented in full ([Security](#security) section below and [docs/embedding.md](docs/embedding.md)). CI gated on `npm audit --omit=dev --audit-level=moderate`. nginx CSP trade-offs captured in [SECURITY.md](SECURITY.md).
 - **Test surface.** Grew from 13 suites / 83 cases to **24 suites / 180 cases**. The hook layer, every interaction-mode handler, the connector coordinate system, and the PDF export are now covered.

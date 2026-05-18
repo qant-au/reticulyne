@@ -19,17 +19,27 @@ type Slot = {
   getView: () => string;
 };
 
+type HarnessOpts = {
+  onValidationError?: (issues: ZodIssue[]) => void;
+  iconCollections?: { allow?: string[]; deny?: string[] };
+};
+
 // Calling a callback prop during render is the cleanest way to expose
 // the hook surface to the test without violating the React-Compiler-
 // style immutability rules that forbid mutating parameter properties.
 const HookProbe = ({
   onCapture,
-  onValidationError
+  onValidationError,
+  iconCollections
 }: {
   onCapture: (s: Slot) => void;
   onValidationError?: (issues: ZodIssue[]) => void;
+  iconCollections?: { allow?: string[]; deny?: string[] };
 }) => {
-  const { load, clear, isReady } = useInitialDataManager({ onValidationError });
+  const { load, clear, isReady } = useInitialDataManager({
+    onValidationError,
+    iconCollections
+  });
   const modelActions = useModelStore((state) => {
     return state.actions;
   });
@@ -54,10 +64,12 @@ const HookProbe = ({
 
 const Harness = ({
   onCapture,
-  onValidationError
+  onValidationError,
+  iconCollections
 }: {
   onCapture: (s: Slot) => void;
   onValidationError?: (issues: ZodIssue[]) => void;
+  iconCollections?: { allow?: string[]; deny?: string[] };
 }) => {
   return (
     <ModelProvider>
@@ -66,6 +78,7 @@ const Harness = ({
           <HookProbe
             onCapture={onCapture}
             onValidationError={onValidationError}
+            iconCollections={iconCollections}
           />
         </UiStateProvider>
       </SceneProvider>
@@ -73,14 +86,13 @@ const Harness = ({
   );
 };
 
-const renderHarness = (opts?: {
-  onValidationError?: (issues: ZodIssue[]) => void;
-}): { current: Slot } => {
+const renderHarness = (opts?: HarnessOpts): { current: Slot } => {
   const ref: { current: Slot | null } = { current: null };
   act(() => {
     render(
       <Harness
         onValidationError={opts?.onValidationError}
+        iconCollections={opts?.iconCollections}
         onCapture={(s) => {
           ref.current = s;
         }}
@@ -292,6 +304,47 @@ describe('useInitialDataManager', () => {
 
     // No re-processing => model.views object identity is preserved.
     expect(slot.current.getModel().views).toBe(firstViewsRef);
+  });
+
+  test('iconCollections.deny removes matching icons from the store', () => {
+    const slot = renderHarness({ iconCollections: { deny: ['AWS'] } });
+
+    // Minimal model: no items, no cross-references, just two icons in two
+    // different collections. Auto-create kicks in for the empty views array.
+    const dataWithCollections: InitialData = {
+      ...INITIAL_DATA,
+      title: 'TestIcons',
+      icons: [
+        {
+          id: 'aws-ec2',
+          name: 'EC2',
+          url: 'https://example.com/ec2.svg',
+          collection: 'aws'
+        },
+        {
+          id: 'gcp-gke',
+          name: 'GKE',
+          url: 'https://example.com/gke.svg',
+          collection: 'gcp'
+        }
+      ]
+    };
+
+    act(() => {
+      slot.current.load(dataWithCollections);
+    });
+
+    const storedIcons = slot.current.getModel().icons;
+    expect(
+      storedIcons.find((i) => {
+        return i.id === 'aws-ec2';
+      })
+    ).toBeUndefined();
+    expect(
+      storedIcons.find((i) => {
+        return i.id === 'gcp-gke';
+      })
+    ).toBeDefined();
   });
 
   test('clear() resets items / views while preserving icons + colors', () => {

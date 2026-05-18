@@ -64,6 +64,40 @@ export const categoriseIcons = (icons: Icon[]) => {
   return categories;
 };
 
+export const filterIconsByCollection = (
+  icons: Icon[],
+  filter?: { allow?: string[]; deny?: string[] }
+): Icon[] => {
+  if (!filter) return icons;
+  const { allow, deny } = filter;
+
+  let result = icons;
+
+  if (allow && allow.length > 0) {
+    const allowLower = allow.map((s) => {
+      return s.toLowerCase();
+    });
+    result = result.filter((icon) => {
+      return icon.collection !== undefined
+        ? allowLower.includes(icon.collection.toLowerCase())
+        : true;
+    });
+  }
+
+  if (deny && deny.length > 0) {
+    const denyLower = deny.map((s) => {
+      return s.toLowerCase();
+    });
+    result = result.filter((icon) => {
+      return icon.collection !== undefined
+        ? !denyLower.includes(icon.collection.toLowerCase())
+        : true;
+    });
+  }
+
+  return result;
+};
+
 export const getStartingMode = (
   editorMode: keyof typeof EditorModeEnum
 ): Mode => {

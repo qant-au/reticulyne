@@ -6,6 +6,7 @@ import {
   getFitToViewParams,
   CoordsUtils,
   categoriseIcons,
+  filterIconsByCollection,
   generateId,
   getItemByIdOrThrow
 } from 'src/utils';
@@ -24,10 +25,17 @@ interface UseInitialDataManagerOptions {
    * without interrupting the consumer's page with a modal.
    */
   onValidationError?: (issues: ZodIssue[]) => void;
+  /**
+   * Filter which icon collections reach the model store. Applied
+   * post-validation before icons are committed to state. When omitted,
+   * every icon in the validated data passes through unchanged.
+   */
+  iconCollections?: { allow?: string[]; deny?: string[] };
 }
 
 export const useInitialDataManager = ({
-  onValidationError
+  onValidationError,
+  iconCollections
 }: UseInitialDataManagerOptions = {}) => {
   const [isReady, setIsReady] = useState(false);
   const prevInitialData = useRef<InitialData | undefined>(undefined);
@@ -50,6 +58,11 @@ export const useInitialDataManager = ({
   useEffect(() => {
     onValidationErrorRef.current = onValidationError;
   }, [onValidationError]);
+
+  const iconCollectionsRef = useRef(iconCollections);
+  useEffect(() => {
+    iconCollectionsRef.current = iconCollections;
+  }, [iconCollections]);
 
   const load = useCallback(
     (_initialData: InitialData) => {
@@ -78,7 +91,13 @@ export const useInitialDataManager = ({
         return;
       }
 
-      const initialData = _initialData;
+      const initialData = {
+        ..._initialData,
+        icons: filterIconsByCollection(
+          _initialData.icons,
+          iconCollectionsRef.current
+        )
+      };
 
       if (initialData.views.length === 0) {
         const updates = reducers.view({

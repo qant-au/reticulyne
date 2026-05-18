@@ -25,12 +25,16 @@ const App = ({
   enableDebugTools = false,
   editorMode = 'EDITABLE',
   renderer,
-  showTitleBar
+  showTitleBar,
+  iconCollections
 }: IsoflowProps) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const initialDataManager = useInitialDataManager({ onValidationError });
+  const initialDataManager = useInitialDataManager({
+    onValidationError,
+    iconCollections
+  });
   const model = useModelStore(
     useShallow((state) => {
       return modelFromModelStore(state);

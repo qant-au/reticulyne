@@ -21,6 +21,15 @@ export interface IsoflowProps {
   onError?: (error: Error, info: ErrorInfo) => void;
   errorFallback?: ReactNode;
   /**
+   * Filter the icon collections that reach the editor. Matches on
+   * `Icon.collection` case-insensitively. If `allow` is supplied, only
+   * icons whose collection matches one of the entries pass through. If
+   * `deny` is supplied, icons whose collection matches are dropped. Both
+   * can be combined (allow runs first, then deny refines the survivors).
+   * When omitted, every icon in `initialData.icons` passes through unchanged.
+   */
+  iconCollections?: { allow?: string[]; deny?: string[] };
+  /**
    * Override the title-bar visibility. When `undefined` (default), the
    * title bar follows the editor-mode allowlist —
    * `EDITABLE` / `EXPLORABLE_READONLY` show it, `NON_INTERACTIVE` hides it.

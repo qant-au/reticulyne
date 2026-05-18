@@ -47,7 +47,9 @@ All props are optional. The component renders a fully-functional editor with sen
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `initialData` | `InitialData` | `INITIAL_DATA` (empty model) | Diagram contents to hydrate on mount. Validated against `modelSchema` (Zod). On rejection the editor renders empty and the failure is routed to `onValidationError` (or `console.error` if that prop is omitted). |
-| `mainMenuOptions` | `MainMenuOptions` | full menu | Whitelist of main-menu items. Pass `[]` to hide the main menu entirely. |
+| `mainMenuOptions` | `MainMenuOptions` | full menu | Whitelist of main-menu items. Pass `[]` to hide the main menu entirely. See [Controlling UI visibility](#controlling-ui-visibility). |
+| `showTitleBar` | `boolean` | `undefined` (follows editorMode) | Override title-bar visibility. `false` = always hidden; `true` = always shown; omitted = controlled by editor mode (`EDITABLE` / `EXPLORABLE_READONLY` show it, `NON_INTERACTIVE` hides it). |
+| `iconCollections` | `{ allow?: string[]; deny?: string[] }` | `undefined` (no filtering) | Filter icon collections by name (case-insensitive). `allow` keeps only matched collections; `deny` removes matched collections. Both can be combined. When omitted, all icons from `initialData.icons` pass through. |
 | `onModelUpdated` | `(model: Model) => void` | `undefined` | Callback invoked whenever the model changes. Callback identity does **not** need to be memoised — the component stores it in a ref to avoid identity churn. |
 | `width` | `number \| string` | `'100%'` | Width passed to the root `Box`. Numbers are treated as px; strings are passed verbatim (e.g. `'640px'`, `'50vw'`). |
 | `height` | `number \| string` | `'100%'` | Height passed to the root `Box`. Same semantics as `width`. |
@@ -86,6 +88,90 @@ The renderer uses a `ResizeObserver` on its DOM root, so it responds to layout c
 | `NON_INTERACTIVE` | None | None visible | Rejected |
 
 The data-layer guard is enforced inside `useIsoflow` — calling `useIsoflow().Model.set(...)` or `useIsoflow().loadModel(...)` from outside `EDITABLE` mode is a silent no-op (with a dev-mode `console.warn`). Read access via `getModel()` is always allowed.
+
+## Controlling UI visibility
+
+All visibility controls are **opt-in restrictions** — omitting a prop always produces the full default behaviour. You only pass a prop when you want to narrow or override it.
+
+### Main menu items — `mainMenuOptions`
+
+Pass an array of the items you want to show. Omit the prop to get the full default menu. Pass `[]` to hide the main menu entirely.
+
+Available values (`MainMenuOptionsEnum`):
+
+| Value | What it renders |
+|---|---|
+| `'ACTION.OPEN'` | Open a diagram from a local JSON file |
+| `'EXPORT.JSON'` | Download the current model as JSON |
+| `'EXPORT.PNG'` | Export the diagram as a PNG image |
+| `'EXPORT.PDF'` | Export the diagram as a PDF |
+| `'ACTION.CLEAR_CANVAS'` | Clear all items from the current view |
+| `'LINK.GITHUB'` | Link to the GitHub repository |
+| `'VERSION'` | Display the library version number |
+
+```tsx
+// Show only export options — hide open/clear/links/version
+<Isoflow mainMenuOptions={['EXPORT.PDF', 'EXPORT.PNG']} />
+
+// Hide the main menu completely
+<Isoflow mainMenuOptions={[]} />
+```
+
+### Title bar — `showTitleBar`
+
+The bottom-centre strip shows `"Project title › View name"`. By default it follows the editor mode: visible in `EDITABLE` and `EXPLORABLE_READONLY`, hidden in `NON_INTERACTIVE`. Override it independently with `showTitleBar`:
+
+```tsx
+// Always hide — regardless of editorMode
+<Isoflow showTitleBar={false} />
+
+// Always show — even in NON_INTERACTIVE
+<Isoflow showTitleBar={true} editorMode="NON_INTERACTIVE" />
+
+// Default (omit the prop) — controlled by editorMode
+<Isoflow />
+```
+
+### Icon collections — `iconCollections`
+
+> **Note:** icons are not bundled with the library. They must be supplied by the host application via `initialData.icons`. Each icon can carry a `collection` name (e.g. `"AWS"`, `"Azure"`, `"my-app"`). The `iconCollections` prop lets you filter which collections reach the editor without pre-processing `initialData` yourself.
+
+When omitted, every icon in `initialData.icons` passes through unchanged. Collection names are matched **case-insensitively** (`"AWS"` matches `"aws"`). Icons whose `collection` field is `undefined` are treated as "uncategorised" and always pass through both filters.
+
+```tsx
+// Deny-list: keep everything except AWS and GCP icons
+<Isoflow
+  initialData={myData}
+  iconCollections={{ deny: ['AWS', 'GCP'] }}
+/>
+
+// Allow-list: show only icons from your custom collection
+<Isoflow
+  initialData={myData}
+  iconCollections={{ allow: ['my-app'] }}
+/>
+
+// Both: allow-list runs first, then deny-list refines the survivors
+<Isoflow
+  initialData={myData}
+  iconCollections={{ allow: ['my-app', 'shared'], deny: ['shared-legacy'] }}
+/>
+```
+
+### Combined example
+
+A typical embedded deployment that shows only what the host needs:
+
+```tsx
+<Isoflow
+  initialData={diagramFromBackend}
+  editorMode="EDITABLE"
+  mainMenuOptions={['EXPORT.PDF', 'EXPORT.PNG']}
+  showTitleBar={false}
+  iconCollections={{ deny: ['AWS', 'GCP', 'Azure', 'Kubernetes'] }}
+  onModelUpdated={(model) => saveToBackend(model)}
+/>
+```
 
 ## Callback: `onModelUpdated`
 

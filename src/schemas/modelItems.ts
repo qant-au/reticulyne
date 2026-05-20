@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { id, constrainedStrings } from './common';
+import { id, constrainedStrings, SCHEMA_LIMITS } from './common';
 
 export const modelItemSchema = z
   .object({
@@ -10,4 +10,6 @@ export const modelItemSchema = z
   })
   .strict();
 
-export const modelItemsSchema = z.array(modelItemSchema);
+export const modelItemsSchema = z
+  .array(modelItemSchema)
+  .max(SCHEMA_LIMITS.ITEMS);

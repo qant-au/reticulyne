@@ -21,6 +21,33 @@ export const coords = z
   })
   .strict();
 
+// Defence-in-depth array caps applied across the schemas (SEC5-02).
+// Per-array choice rationale:
+//   - VIEWS:        bigger than any realistic multi-view diagram, small
+//                   enough that the cross-ref O(n*m) joins in
+//                   validation.ts stay milliseconds-scale.
+//   - ITEMS / VIEW_ITEMS: a 5k-node diagram is already at the upper
+//                   bound of legibility; doubling that gives headroom.
+//   - CONNECTORS / RECTANGLES / TEXT_BOXES: scales with items; matches.
+//   - ICONS:        a custom palette of a few hundred plus the bundled
+//                   isopacks (AWS alone is ~1.5k icons) tops out below
+//                   5k in practice.
+//   - COLORS:       the colour picker UI breaks down well before 100.
+//   - ANCHORS:      a single connector with hundreds of waypoints is
+//                   already a UX failure; 100 is generous.
+export const SCHEMA_LIMITS = {
+  VIEWS: 1_000,
+  ITEMS: 10_000,
+  VIEW_ITEMS: 10_000,
+  CONNECTORS: 5_000,
+  RECTANGLES: 5_000,
+  TEXT_BOXES: 5_000,
+  ICONS: 5_000,
+  COLORS: 100,
+  ANCHORS: 100,
+  ICON_URL_MAX: 8_192
+};
+
 export const id = z.string();
 export const color = z.string();
 

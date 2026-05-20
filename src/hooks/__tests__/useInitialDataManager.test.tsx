@@ -306,6 +306,35 @@ describe('useInitialDataManager', () => {
     expect(slot.current.getModel().views).toBe(firstViewsRef);
   });
 
+  test('short-circuits same-reference reload even when the pipeline mutates the model (BUG5-02 regression)', () => {
+    // Stronger guard than the same-views-identity check above: when
+    // initialData has an empty views array, the load pipeline auto-
+    // creates a view with a fresh generateId(). If the dedupe guard is
+    // dead (the symptom: prevInitialData.current was set to the post-
+    // filter spread, never matched a future input), the second load
+    // re-runs the pipeline and the view's id changes. With the guard
+    // alive, the view's id is stable across identical-reference calls.
+    const slot = renderHarness();
+    const emptyViews: InitialData = {
+      ...INITIAL_DATA,
+      items: [],
+      views: []
+    };
+
+    act(() => {
+      slot.current.load(emptyViews);
+    });
+    const firstViewId = slot.current.getModel().views[0].id;
+    expect(slot.current.isReady).toBe(true);
+
+    act(() => {
+      slot.current.load(emptyViews);
+    });
+    const secondViewId = slot.current.getModel().views[0].id;
+
+    expect(secondViewId).toBe(firstViewId);
+  });
+
   test('iconCollections.deny removes matching icons from the store', () => {
     const slot = renderHarness({ iconCollections: { deny: ['AWS'] } });
 

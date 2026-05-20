@@ -1,139 +1,38 @@
 # Embedding roadmap — FEA5 series
 
-This document is a forward-looking specification for the next round of
-embedding-facing features on `<Isoflow>`, for a future session to execute against.
+This document is a forward-looking specification for the remaining
+embedding-facing feature on `<Isoflow>`, for a future session to execute against.
 
-Each section below describes one feature: the motivation, the prop / API
-addition, the integration points across the codebase, the test additions,
-and the documentation updates. Each feature is independent — the three
-can land in any order, in three separate commits.
+It describes the feature: the motivation, the prop / API addition, the
+integration points across the codebase, the test additions, and the
+documentation updates.
 
 For context on the work that's _already_ landed (and on which this roadmap
 depends), see the `Recent work` section in [../README.md](../README.md) and
-the commit history under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, and
-`FEA4` task-ID prefixes.
+the commit history under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`,
+`FEA4`, and `FEA5` task-ID prefixes.
 
 ---
 
 ## Context
 
-During v4.x development four embedding-time
-controls that go beyond what `<Isoflow>` currently exposes:
+During v4.x development four embedding-time controls were identified
+that go beyond what `<Isoflow>` originally exposed:
 
-1. The ability to hide / restrict main-menu items when embedding the
-   component into a host application — **partially covered already** by
-   the existing `mainMenuOptions` prop. The unfinished piece is a Save
-   callback that hands the model back to the host, plus a documentation
-   refresh.
-2. The ability to disable the bottom-centre title bar (the
-   `<TitleBar>` component built under QUA4-10).
-3. The ability to filter the bundled icon collections — allow-list or
-   deny-list by collection name, case-insensitive.
-4. The ability to hide the examples-picker dropdown ("Basic editor /
-   Debug tools / Read-only mode"). **No library change is needed for
-   this** — that dropdown only exists in `src/examples/index.tsx`, which
-   is the dev-mode examples-picker entry (port 2223). The `<Isoflow>`
-   component embedded as a library never renders it; the standalone
-   Docker editor (port 2222) doesn't render it either. The user can
-   already get a clean embedded experience by pointing their build at
-   the main editor entry. This roadmap therefore covers only items
-   1-3.
+1. **Hide / restrict main-menu items** — covered by the existing
+   `mainMenuOptions` prop. The remaining piece is a Save callback that
+   hands the model back to the host (this is FEA5-03 below).
+2. **Disable the bottom-centre title bar** — **landed** as FEA5-01
+   (`showTitleBar` prop).
+3. **Filter bundled icon collections** — **landed** as FEA5-02
+   (`iconCollections` prop).
+4. **Hide the examples-picker dropdown** — no library change needed;
+   that dropdown only exists in `src/examples/index.tsx` (the
+   dev-mode entry on port 2223). The embedded `<Isoflow>` library
+   never renders it, and the standalone Docker editor (port 2222)
+   doesn't either.
 
-The three features below are sized for a single follow-up session
-(~3-4 hours total): smallest blast radius first.
-
----
-
-## FEA5-01 — `showTitleBar?: boolean` prop
-
-**Motivation.** The title-bar is currently driven by an
-editor-mode-based allowlist (`availableTools.includes('VIEW_TITLE')`).
-That means consumers who want a clean canvas without "Project
-title › View name" at the bottom have to either drop into
-`'NON_INTERACTIVE'` mode (which also strips pan + zoom) or accept the
-title. They need an independent override.
-
-**Public API.** A new optional prop on `<Isoflow>`:
-
-```ts
-interface IsoflowProps {
-  // ...existing fields...
-  /**
-   * Override the title-bar visibility. When undefined (default), the
-   * title bar follows the editor-mode allowlist —
-   * EDITABLE / EXPLORABLE_READONLY show it, NON_INTERACTIVE hides it.
-   * When `true`, force-shown in every mode. When `false`, force-hidden
-   * in every mode.
-   */
-  showTitleBar?: boolean;
-}
-```
-
-**Touch points.**
-
-- [src/types/isoflowProps.ts](isoflowProps.ts is not here — the actual path is `src/types/isoflowProps.ts`) — declare the prop.
-- [src/Isoflow.tsx](../src/Isoflow.tsx) — thread the prop from `App` props through to the UiOverlay (probably via the existing ui-state store: add `showTitleBar` to the `UiState` shape, wire `uiStateActions.setShowTitleBar` analogous to `setEditorMode`, call it from the App `useEffect` that already sets editor mode).
-- [src/components/UiOverlay/UiOverlay.tsx](../src/components/UiOverlay/UiOverlay.tsx) — adjust the existing `visible={availableTools.includes('VIEW_TITLE')}` prop on `<TitleBar>` to honour the override: `visible={showTitleBar ?? availableTools.includes('VIEW_TITLE')}`.
-
-**Tests.** Extend [src/__tests__/Isoflow.smoke.test.tsx](../src/__tests__/Isoflow.smoke.test.tsx) with three new mounts: `showTitleBar={true}` in NON_INTERACTIVE (must show), `showTitleBar={false}` in EDITABLE (must hide), `showTitleBar={undefined}` in EXPLORABLE_READONLY (must show — fallback). Assert via `screen.queryByText` against the model's title.
-
-**Docs.** [docs/api.md](api.md) — add `showTitleBar` row to the props table. [docs/embedding.md](embedding.md) — one paragraph noting the precedence: explicit prop overrides editor-mode default.
-
-**Estimate.** ~45 minutes.
-
----
-
-## FEA5-02 — `iconCollections?: { allow?, deny? }` filtering prop
-
-**Motivation.** The Docker editor and every example loads five bundled
-icon packs (AWS, Azure, GCP, Kubernetes, Isoflow) into
-`initialData.icons`. A consumer who embeds Isoflow in a domain-specific
-app (the user named their airport-management application) doesn't
-want the AWS / GCP / Azure / Kubernetes icons — they want only their
-custom collection. Today the consumer can pre-filter `initialData.icons`
-before passing it in, but it's undocumented and clunky.
-
-**Public API.** A new optional prop:
-
-```ts
-interface IsoflowProps {
-  // ...existing fields...
-  /**
-   * Filter the bundled icon collections that survive into the editor.
-   * Matches on `Icon.collection` case-insensitively. If `allow` is
-   * supplied, only icons whose collection matches one of the entries
-   * pass through. If `deny` is supplied, icons whose collection matches
-   * are dropped. Both can be supplied together (allow first, then
-   * deny). When omitted, no filtering — every icon in
-   * `initialData.icons` passes through.
-   */
-  iconCollections?: {
-    allow?: string[];
-    deny?: string[];
-  };
-}
-```
-
-**Touch points.**
-
-- [src/types/isoflowProps.ts](../src/types/isoflowProps.ts) — declare the prop.
-- [src/Isoflow.tsx](../src/Isoflow.tsx) — accept and forward to `useInitialDataManager`.
-- [src/hooks/useInitialDataManager.ts](../src/hooks/useInitialDataManager.ts) — extend the existing `UseInitialDataManagerOptions` interface (which already carries `onValidationError`). Apply the filter post-validation, before `model.actions.set(initialData)` — i.e. after the schema-shape gate but before the icons land in the store. New helper `filterIconsByCollection(icons, { allow?, deny? })` lives in [src/utils/common.ts](../src/utils/common.ts) next to `categoriseIcons`.
-
-**Filter semantics** (worked example):
-- Icons in `initialData.icons` with `.collection` ∈ `{"aws","gcp","custom-icons"}`.
-- Consumer passes `iconCollections: { deny: ["AWS", "GCP"] }`.
-- Result: only the `"custom-icons"` icons reach the store. (Case-insensitive — `"AWS"` matches `"aws"`.)
-
-If both `allow` and `deny` are supplied, the allow-list filters first, then the deny-list removes anything still present. (`deny` is a refinement on top of `allow`.)
-
-**Tests.** New file [src/utils/__tests__/iconCollections.test.ts](../src/utils/__tests__/iconCollections.test.ts) (or appended to `common.test.ts`) — pure-function tests for `filterIconsByCollection`. Five cases: allow-only, deny-only, both, case-insensitivity, no-prop = passthrough.
-
-Plus one integration case in [src/hooks/__tests__/useInitialDataManager.test.tsx](../src/hooks/__tests__/useInitialDataManager.test.tsx) that mounts with `iconCollections={{ deny: ["AWS"] }}` against a fixture that includes AWS icons and asserts they're gone from `getModel().icons` after load.
-
-**Docs.** [docs/api.md](api.md) — add the row + a small worked example. [docs/embedding.md](embedding.md) — note that this is _additive_ to the existing "pre-filter `initialData.icons` yourself" path; both work.
-
-**Estimate.** ~1 hour.
+Only FEA5-03 remains.
 
 ---
 
@@ -177,7 +76,7 @@ supplying `onSave`).
 
 **Tests.** Extend [src/__tests__/Isoflow.readonly.test.tsx](../src/__tests__/Isoflow.readonly.test.tsx) (or add a new dedicated `Isoflow.save.test.tsx`) with: `onSave` supplied + `'ACTION.SAVE'` in mainMenuOptions → click "Save" → callback fires with the current model. `onSave` missing → menu entry not rendered. `'ACTION.SAVE'` not in `mainMenuOptions` → menu entry not rendered regardless.
 
-**Docs.** [docs/api.md](api.md) — `onSave` prop row + `'ACTION.SAVE'` enum row. [docs/embedding.md](embedding.md) — a worked example showing the host pattern:
+**Docs.** [docs/api.md](api.md) — `onSave` prop row + `'ACTION.SAVE'` enum row. [docs/embedding.md](embedding.md) — extend the existing "Controlling UI visibility" section with an `onSave` worked example showing the host pattern:
 
 ```tsx
 <Isoflow
@@ -193,43 +92,6 @@ supplying `onSave`).
 
 ---
 
-## Documentation-only follow-up (no FEA ID)
-
-The existing `mainMenuOptions` prop covers most of the user's "Item 1"
-ask (show / hide menu entries from the
-host). The mechanism is documented at [docs/api.md](api.md) and is
-already type-safe. The follow-up here is a worked **embedding-pattern
-example** in [docs/embedding.md](embedding.md) showing the common
-"host-controlled save + selective export" pattern, something like:
-
-```tsx
-<Isoflow
-  initialData={diagram}
-  mainMenuOptions={[
-    'ACTION.SAVE',      // requires FEA5-03
-    'EXPORT.PDF',
-    'EXPORT.PNG'
-    // explicitly omitting EXPORT.JSON, ACTION.OPEN, ACTION.CLEAR_CANVAS,
-    // LINK.GITHUB, VERSION — none of those make sense inside a hosted
-    // editor whose state lives in the parent application.
-  ]}
-  onSave={(model) => {
-    saveDiagramToBackend(model);
-  }}
-  showTitleBar={false}   // requires FEA5-01
-  iconCollections={{     // requires FEA5-02
-    deny: ['AWS', 'GCP', 'Azure', 'Kubernetes']
-    // keeps only the consumer's custom icons and the Isoflow defaults
-  }}
-/>
-```
-
-This example is the natural documentation hook for all three FEA5
-features. Once FEA5-01/02/03 are landed, add the example to
-`docs/embedding.md` as a final "FEA5 lands" docs commit.
-
----
-
 ## Out of scope (deliberately deferred)
 
 - **Examples-picker dropdown hide.** Only in the dev-container entry; not part of the embedded library. No prop needed.
@@ -239,18 +101,12 @@ features. Once FEA5-01/02/03 are landed, add the example to
 
 ---
 
-## Verification plan (per feature)
+## Verification plan
 
-After each FEA5 commit:
+After the FEA5-03 commit:
 
 - `npm run lint` clean (`tsc --noEmit && eslint ./src`).
 - `npx jest` — every existing test plus the new cases for the feature.
 - `bash restart.sh` — manual smoke check via the dev container (port 2222 / 2223) confirming the new prop behaves as documented.
 - `npm pack --dry-run` — pack-contents CI check still under allowed roots.
-
-After all three FEA5 commits:
-
-- A docs commit landing the worked embedding example in
-  `docs/embedding.md`.
-- README's "Recent work" section gains a one-line entry pointing at the
-  FEA5 commits.
+- The README's "Recent work" section gains a one-line entry pointing at the FEA5-03 commit, completing the FEA5 series alongside the existing FEA5-01 / FEA5-02 entries.

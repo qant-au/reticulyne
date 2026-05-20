@@ -186,4 +186,29 @@ describe('useResizeObserver', () => {
     unmount();
     expect(ros[0].disconnect).toHaveBeenCalled();
   });
+
+  test('transitioning the element prop from set to null disconnects the previous observer (QUA5-01)', () => {
+    // Reproduces the leak: consumer calls useResizeObserver(el) and
+    // later rerenders with useResizeObserver(null) (a ref-callback
+    // commonly receives null when the observed subtree unmounts).
+    // Before QUA5-01 the effect only acted on truthy `el`, so the
+    // observer bound to the original element stayed alive until the
+    // consumer itself unmounted.
+    const ros = installFakeRO();
+    const first = makeElement(120, 80);
+
+    const { rerender } = renderHook(
+      ({ el }: { el: HTMLElement | null }) => {
+        return useResizeObserver(el ?? undefined);
+      },
+      { initialProps: { el: first } as { el: HTMLElement | null } }
+    );
+
+    expect(ros).toHaveLength(1);
+    expect(ros[0].disconnect).not.toHaveBeenCalled();
+
+    rerender({ el: null });
+
+    expect(ros[0].disconnect).toHaveBeenCalled();
+  });
 });

@@ -32,8 +32,18 @@ export const useResizeObserver = (el?: HTMLElement | null) => {
   }, [disconnect]);
 
   useEffect(() => {
-    if (el) observe(el);
-  }, [observe, el]);
+    if (el) {
+      observe(el);
+    } else {
+      // When the watched element transitions from set to null (e.g. a
+      // ref-callback receives null on unmount of the observed subtree),
+      // tear down the previous observer instead of leaving it bound to
+      // the now-stale element. Without this, the prior observer
+      // outlived the rebinding and only got cleaned up on the consumer
+      // unmounting.
+      disconnect();
+    }
+  }, [observe, el, disconnect]);
 
   return {
     size,

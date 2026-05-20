@@ -73,4 +73,28 @@ describe('PlaceIcon mode', () => {
     expect(state.scene.createModelItem).not.toHaveBeenCalled();
     expect(state.scene.createViewItem).not.toHaveBeenCalled();
   });
+
+  test('mouseup outside the renderer cancels placement instead of dropping an icon on the UI (BUG5-07)', () => {
+    // Reproduces the UX bug: select an icon, drag toward the canvas,
+    // release on the MUI toolbar. Before BUG5-07, mouseup ignored
+    // isRendererInteraction and created a model item at whatever
+    // canvas tile happened to be under the cursor when the release
+    // event fired. The user dropped onto a UI control and got a
+    // stray icon on the canvas.
+    const state = makeState({
+      mode: { type: 'PLACE_ICON', showCursor: true, id: 'icon-1' },
+      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 3, y: 5 } } },
+      isRendererInteraction: false
+    });
+
+    PlaceIcon.mouseup?.(state);
+
+    expect(state.scene.createModelItem).not.toHaveBeenCalled();
+    expect(state.scene.createViewItem).not.toHaveBeenCalled();
+    // Placement mode still resets so the user can try again from a
+    // fresh state without leaving the icon "armed".
+    expect(lastModeChange(state)).toEqual(
+      expect.objectContaining({ type: 'PLACE_ICON', id: null })
+    );
+  });
 });

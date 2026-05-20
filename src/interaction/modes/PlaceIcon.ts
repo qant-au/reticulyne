@@ -23,10 +23,17 @@ export const PlaceIcon: ModeActions = {
       uiState.actions.setItemControls(null);
     }
   },
-  mouseup: ({ uiState, scene }) => {
+  mouseup: ({ uiState, scene, isRendererInteraction }) => {
     if (uiState.mode.type !== 'PLACE_ICON') return;
 
-    if (uiState.mode.id !== null) {
+    if (uiState.mode.id !== null && isRendererInteraction) {
+      // Only commit a placement when the release happens inside the
+      // renderer surface. Without this gate, releasing the mouse on
+      // the MUI toolbar (or any other overlay) still created a model
+      // item at `uiState.mouse.position.tile` — the user dropped onto
+      // a UI control and got a stray icon on the canvas. Compare to
+      // TextBox.mouseup which uses the same gate to delete the in-
+      // progress textbox on out-of-renderer release.
       const modelItemId = generateId();
 
       scene.createModelItem({

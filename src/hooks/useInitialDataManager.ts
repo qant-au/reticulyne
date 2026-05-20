@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import type { ZodIssue } from 'zod';
 import { InitialData, IconCollectionState } from 'src/types';
 import { INITIAL_DATA, INITIAL_SCENE_STATE } from 'src/config';
@@ -60,9 +60,28 @@ export const useInitialDataManager = ({
   }, [onValidationError]);
 
   const iconCollectionsRef = useRef(iconCollections);
+  // Stringify the filter spec for a stable identity dep. Hosts
+  // typically pass `iconCollections` as an inline literal that
+  // reinstantiates every render, so the raw object is unsafe to depend
+  // on directly (infinite re-load loop). Allow- and deny-lists are
+  // always small string arrays — stringify cost is negligible.
+  const iconCollectionsKey = useMemo(() => {
+    return JSON.stringify(iconCollections ?? null);
+  }, [iconCollections]);
+  const iconCollectionsKeyRef = useRef(iconCollectionsKey);
   useEffect(() => {
     iconCollectionsRef.current = iconCollections;
-  }, [iconCollections]);
+    if (iconCollectionsKeyRef.current !== iconCollectionsKey) {
+      // Filter spec actually changed — invalidate the dedupe guard so
+      // the next load() with the same _initialData reference
+      // reprocesses with the new filter. Without this, a runtime
+      // change to `iconCollections` (e.g. toggling AWS visibility in
+      // the host UI) had no effect until `initialData`'s reference
+      // also changed — see BUG5-06.
+      prevInitialData.current = undefined;
+      iconCollectionsKeyRef.current = iconCollectionsKey;
+    }
+  }, [iconCollections, iconCollectionsKey]);
 
   const load = useCallback(
     (_initialData: InitialData) => {
@@ -167,6 +186,11 @@ export const useInitialDataManager = ({
   return {
     load,
     clear,
-    isReady
+    isReady,
+    // Stable-identity dep callers can include in their load-effect deps
+    // so a runtime change to the filter spec re-triggers the load
+    // pipeline. Stringified internally — see comment by
+    // `iconCollectionsKey` above.
+    iconCollectionsKey
   };
 };

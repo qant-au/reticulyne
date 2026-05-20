@@ -376,6 +376,93 @@ describe('useInitialDataManager', () => {
     ).toBeDefined();
   });
 
+  test('iconCollections change at runtime invalidates the dedupe guard so the next load re-filters (BUG5-06)', () => {
+    // Reproduces the contract violation: changing the iconCollections
+    // prop should re-apply the filter on the next load() with the same
+    // initialData reference. Before BUG5-06 the ref captured the new
+    // spec but the dedupe guard (BUG5-02) short-circuited the reload,
+    // so the filter only ever applied on first mount.
+    const dataWithCollections: InitialData = {
+      ...INITIAL_DATA,
+      title: 'TestIcons',
+      icons: [
+        {
+          id: 'aws-ec2',
+          name: 'EC2',
+          url: 'https://example.com/ec2.svg',
+          collection: 'aws'
+        },
+        {
+          id: 'gcp-gke',
+          name: 'GKE',
+          url: 'https://example.com/gke.svg',
+          collection: 'gcp'
+        }
+      ]
+    };
+
+    const ref: { current: Slot | null } = { current: null };
+    let rerender:
+      | ((spec: { allow?: string[]; deny?: string[] }) => void)
+      | null = null;
+
+    act(() => {
+      const { rerender: rr } = render(
+        <Harness
+          iconCollections={{ deny: ['AWS'] }}
+          onCapture={(s) => {
+            ref.current = s;
+          }}
+        />
+      );
+      rerender = (spec) => {
+        rr(
+          <Harness
+            iconCollections={spec}
+            onCapture={(s) => {
+              ref.current = s;
+            }}
+          />
+        );
+      };
+    });
+
+    // First load with deny:['AWS'] — only gcp icon survives.
+    act(() => {
+      ref.current!.load(dataWithCollections);
+    });
+    expect(
+      ref
+        .current!.getModel()
+        .icons.map((i) => {
+          return i.id;
+        })
+        .sort()
+    ).toEqual(['gcp-gke']);
+
+    // Swap the filter spec at runtime to deny:['GCP'] — re-render
+    // sends the new prop in, useInitialDataManager invalidates the
+    // dedupe guard.
+    act(() => {
+      rerender!({ deny: ['GCP'] });
+    });
+
+    // Same initialData reference — load() must reprocess because the
+    // filter changed.
+    act(() => {
+      ref.current!.load(dataWithCollections);
+    });
+
+    expect(
+      ref
+        .current!.getModel()
+        .icons.map((i) => {
+          return i.id;
+        })
+        .sort()
+    ).toEqual(['aws-ec2']);
+  });
+
   test('clear() resets items / views while preserving icons + colors', () => {
     const slot = renderHarness();
 

@@ -25,7 +25,7 @@ High-level overview of what landed during the v4 modernisation work (full detail
   - `showTitleBar` prop to override title-bar visibility — FEA5-01.
   - `iconCollections` allow/deny filter prop for bundled icon packs — FEA5-02.
 
-A remaining roadmap item — host-save `onSave` callback (FEA5-03) — is sketched out in [docs/embedding-roadmap.md](docs/embedding-roadmap.md) for a future session to pick up.
+The forward-looking FEA5 roadmap has now landed in full — see the `Controlling UI visibility` and `Host-managed save` sections in [docs/embedding.md](docs/embedding.md) for the contracts.
 
 ## Documentation
 

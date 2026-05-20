@@ -26,7 +26,8 @@ const App = ({
   editorMode = 'EDITABLE',
   renderer,
   showTitleBar,
-  iconCollections
+  iconCollections,
+  onSave
 }: IsoflowProps) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -60,6 +61,15 @@ const App = ({
   useEffect(() => {
     uiStateActions.setShowTitleBar(showTitleBar);
   }, [showTitleBar, uiStateActions]);
+
+  // Stash the host's onSave callback on the UI-state store so the
+  // MainMenu's "Save" entry (FEA5-03) can read it without prop-
+  // drilling. Identity churn is acceptable here — the only subscriber
+  // is the MainMenu, and only the entry's render branch (`onSave
+  // !== undefined`) is reactive in practice.
+  useEffect(() => {
+    uiStateActions.setOnSave(onSave);
+  }, [onSave, uiStateActions]);
 
   useEffect(() => {
     return () => {

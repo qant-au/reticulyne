@@ -1,5 +1,5 @@
 import { Coords, EditorModeEnum, MainMenuOptions } from './common';
-import { Icon } from './model';
+import { Icon, Model } from './model';
 import { ItemReference } from './scene';
 
 interface AddItemControls {
@@ -147,6 +147,13 @@ export interface UiState {
   rendererEl: HTMLDivElement | null;
   enableDebugTools: boolean;
   showTitleBar: boolean | undefined;
+  // Host-supplied save callback (FEA5-03). The MainMenu's
+  // 'ACTION.SAVE' entry renders only when this is defined, and the
+  // click handler hands the current model snapshot back to the host
+  // via this function. Stored on the store rather than in component
+  // state so the MainMenu (a child of the App) can read it through
+  // the existing zustand subscription path.
+  onSave: ((model: Model) => void) | undefined;
 }
 
 export interface UiStateActions {
@@ -168,6 +175,7 @@ export interface UiStateActions {
   setRendererEl: (el: HTMLDivElement) => void;
   setEnableDebugTools: (enabled: boolean) => void;
   setShowTitleBar: (show: boolean | undefined) => void;
+  setOnSave: (onSave: ((model: Model) => void) | undefined) => void;
 }
 
 export type UiStateStore = UiState & {

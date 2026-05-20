@@ -18,3 +18,12 @@ if (typeof globalThis.TextEncoder === 'undefined') {
 if (typeof globalThis.TextDecoder === 'undefined') {
   globalThis.TextDecoder = TextDecoder;
 }
+
+// React 18+ uses this flag to detect when act(...) is required
+// around state updates. @testing-library/react sets it on import,
+// but tests that exercise MUI components scheduling async timer
+// effects (Tooltip, Transition, etc.) still emit noisy "current
+// testing environment is not configured to support act(...)" warnings
+// without this global set explicitly. Setting it here keeps the
+// whole suite quiet without per-test boilerplate.
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;

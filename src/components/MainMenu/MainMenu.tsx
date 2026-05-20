@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Menu, Typography, Divider, Card } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -7,7 +7,8 @@ import {
   ImageOutlined as ExportImageIcon,
   PictureAsPdfOutlined as ExportPdfIcon,
   FolderOpen as FolderOpenIcon,
-  DeleteOutlined as DeleteOutlineIcon
+  DeleteOutlined as DeleteOutlineIcon,
+  SaveOutlined as SaveIcon
 } from '@mui/icons-material';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
@@ -17,6 +18,7 @@ import { MenuItem } from './MenuItem';
 import { useImportFile } from './useImportFile';
 import { useExportJson } from './useExportJson';
 import { useExportPdf } from './useExportPdf';
+import { useSaveModel } from './useSaveModel';
 import { useSectionVisibility } from './useSectionVisibility';
 
 export const MainMenu = () => {
@@ -27,6 +29,9 @@ export const MainMenu = () => {
   const mainMenuOptions = useUiStateStore((state) => {
     return state.mainMenuOptions;
   });
+  const onSave = useUiStateStore((state) => {
+    return state.onSave;
+  });
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
@@ -35,7 +40,27 @@ export const MainMenu = () => {
   const onOpenModel = useImportFile();
   const onExportAsJSON = useExportJson();
   const onExportAsPdf = useExportPdf();
+  const onSaveModel = useSaveModel();
   const sectionVisibility = useSectionVisibility();
+
+  // FEA5-03: warn when the host opts into the Save entry without
+  // wiring the callback. The entry is suppressed below regardless,
+  // but the diagnostic helps the host notice the misconfiguration.
+  const warnedMissingOnSaveRef = useRef(false);
+  useEffect(() => {
+    if (
+      mainMenuOptions.includes('ACTION.SAVE') &&
+      !onSave &&
+      !warnedMissingOnSaveRef.current
+    ) {
+      warnedMissingOnSaveRef.current = true;
+      console.warn(
+        '[isoflow] mainMenuOptions includes "ACTION.SAVE" but no onSave callback ' +
+          'was passed to <Isoflow>. The Save menu entry will not render until both ' +
+          'are wired.'
+      );
+    }
+  }, [mainMenuOptions, onSave]);
 
   const onToggleMenu = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -89,6 +114,12 @@ export const MainMenu = () => {
           {mainMenuOptions.includes('ACTION.OPEN') && (
             <MenuItem onClick={onOpenModel} Icon={<FolderOpenIcon />}>
               Open
+            </MenuItem>
+          )}
+
+          {mainMenuOptions.includes('ACTION.SAVE') && onSave && (
+            <MenuItem onClick={onSaveModel} Icon={<SaveIcon />}>
+              Save
             </MenuItem>
           )}
 

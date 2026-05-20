@@ -31,6 +31,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       itemControls: null,
       enableDebugTools: false,
       showTitleBar: undefined,
+      onSave: undefined,
       actions: {
         setView: (view) => {
           set({ view });
@@ -92,6 +93,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setShowTitleBar: (showTitleBar) => {
           set({ showTitleBar });
+        },
+        setOnSave: (onSave) => {
+          set({ onSave });
         },
         setRendererEl: (el) => {
           set({ rendererEl: el });

@@ -160,6 +160,29 @@ Changing `iconCollections` at runtime re-applies the filter on the next load —
 />
 ```
 
+### Host-managed save — `onSave` + `'ACTION.SAVE'`
+
+The default `'EXPORT.JSON'` menu entry downloads a `.json` file to the user's disk — useful for ad-hoc archival, but rarely what a host application wants. For a hosted editor whose state lives in the parent application, the natural save path is "hand the model back to the host" — register an `'ACTION.SAVE'` entry in `mainMenuOptions` and pass an `onSave` callback:
+
+```tsx
+<Isoflow
+  initialData={diagramFromBackend}
+  mainMenuOptions={['ACTION.SAVE', 'EXPORT.PDF']}
+  onSave={(model) => {
+    return postToBackend(model);
+  }}
+/>
+```
+
+The Save menu entry only renders when BOTH conditions hold:
+
+- `'ACTION.SAVE'` is listed in `mainMenuOptions`, AND
+- the `onSave` prop is supplied.
+
+Listing `'ACTION.SAVE'` without supplying `onSave` logs a one-shot `console.warn` so the misconfiguration is visible in dev. Supplying `onSave` without listing `'ACTION.SAVE'` is silent — useful when the host wants the callback armed for a future menu config change.
+
+Callback identity does not need to be memoised. The component stores the latest `onSave` in the UI-state store and reads it at click time, so passing a fresh inline closure on every render is fine.
+
 ### Combined example
 
 A typical embedded deployment that shows only what the host needs:
@@ -168,12 +191,15 @@ A typical embedded deployment that shows only what the host needs:
 <Isoflow
   initialData={diagramFromBackend}
   editorMode="EDITABLE"
-  mainMenuOptions={['EXPORT.PDF', 'EXPORT.PNG']}
+  mainMenuOptions={['ACTION.SAVE', 'EXPORT.PDF', 'EXPORT.PNG']}
   showTitleBar={false}
   iconCollections={{ deny: ['AWS', 'GCP', 'Azure', 'Kubernetes'] }}
-  onModelUpdated={(model) => saveToBackend(model)}
+  onSave={(model) => saveToBackend(model)}
+  onModelUpdated={(model) => updateLocalDraft(model)}
 />
 ```
+
+`onSave` fires explicitly when the user clicks Save; `onModelUpdated` fires on every model change. Most hosts will use one or the other — `onSave` for an explicit-save workflow, `onModelUpdated` for autosave-on-every-change.
 
 ## Callback: `onModelUpdated`
 

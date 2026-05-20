@@ -50,4 +50,20 @@ export interface IsoflowProps {
    * about validation regressions reaching production.
    */
   onValidationError?: (issues: ZodIssue[]) => void;
+  /**
+   * Invoked when the user clicks the "Save" menu entry. Receives the
+   * current model snapshot. The host application is responsible for
+   * persisting it however it wants — POSTing to a backend, queueing
+   * for sync, etc.
+   *
+   * When omitted, the `'ACTION.SAVE'` menu entry is suppressed even
+   * if it's listed in `mainMenuOptions`. Conversely, supplying
+   * `onSave` does nothing on its own — the host must also list
+   * `'ACTION.SAVE'` in `mainMenuOptions` for the menu entry to
+   * appear.
+   *
+   * Callback identity does not need to be memoised — the component
+   * stores it in the UI-state store and reads it at click time.
+   */
+  onSave?: (model: Model) => void;
 }

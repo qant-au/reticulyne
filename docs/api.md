@@ -34,6 +34,7 @@ Every prop is optional.
 | `onError` | `(error: Error, info: ErrorInfo) => void` | `undefined` | Invoked by the internal `IsoflowErrorBoundary` when a render error escapes. Pipe to your telemetry. |
 | `errorFallback` | `ReactNode` | default fallback box | Override the "Editor failed to load" fallback rendered when the error boundary catches. |
 | `onValidationError` | `(issues: ZodIssue[]) => void` | `undefined` | Invoked when `initialData` (or a `useIsoflow().loadModel(...)` payload) fails schema validation. Receives the array of Zod issues. When omitted, the failure is logged to `console.error` instead. Earlier versions popped a `window.alert`; that has been replaced by this contract. Callback identity does **not** need to be memoised — the hook stores it in a ref. |
+| `onSave` | `(model: Model) => void` | `undefined` | Invoked when the user clicks the **Save** menu entry. Receives the current model snapshot — the host persists it however it wants. The Save entry only renders when (a) `'ACTION.SAVE'` appears in `mainMenuOptions` AND (b) `onSave` is supplied; listing `'ACTION.SAVE'` without `onSave` logs a one-shot `console.warn` so the misconfiguration is visible in dev. |
 
 ## `editorMode`
 
@@ -58,6 +59,7 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 | Identifier | Default? | What it does |
 |---|---|---|
 | `'ACTION.OPEN'` | on | Load a previously-exported JSON file. |
+| `'ACTION.SAVE'` | off | Render a **Save** menu entry that fires the `onSave` prop with the current model. Only appears when both `'ACTION.SAVE'` is listed AND the `onSave` prop is supplied. Off-by-default because there's no useful behaviour without a host callback. Added in v4.1.0. |
 | `'EXPORT.JSON'` | on | Download the current model as JSON. |
 | `'EXPORT.PNG'` | on | Render the current view to PNG and download. (Menu label: "Export as Image".) |
 | `'EXPORT.PDF'` | on | Render the current view to PNG and embed it in a single-page A4 PDF, then download. All client-side via jsPDF — no network call. Added in v4.0.0. |

@@ -21,6 +21,14 @@ declare global {
     __ISOFLOW_E2E__?: {
       initialData?: InitialData;
       editorMode?: keyof typeof EditorModeEnum;
+      /**
+       * When true, wrap the editor in a scrolling parent taller than
+       * the viewport. Exercises the BUG5-09 wheel-preventDefault fix
+       * for embedders mounted inside a scrollable host. Production
+       * deployments leave this undefined; the wrapper only appears in
+       * the e2e suite.
+       */
+      scrollParent?: boolean;
     };
   }
 }
@@ -32,9 +40,33 @@ const initialData = e2eConfig?.initialData ?? {
   colors
 };
 const editorMode = e2eConfig?.editorMode;
+const scrollParent = e2eConfig?.scrollParent ?? false;
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
+);
+
+// Default shell — the editor fills the viewport, matching the
+// production Docker deployment shape. The scrollParent branch wraps
+// the editor in an outer Box that's twice the viewport height with
+// overflow:auto, so the BUG5-09 e2e fixture can verify the wheel
+// listener's preventDefault keeps the outer Box's scroll position
+// pinned at zero while the user zooms the canvas.
+const Shell = scrollParent ? (
+  <Box
+    data-testid="scroll-parent"
+    sx={{ width: '100vw', height: '100vh', overflow: 'auto' }}
+  >
+    <Box sx={{ width: '100vw', height: '200vh' }}>
+      <Box sx={{ width: '100vw', height: '100vh' }}>
+        <Isoflow initialData={initialData} editorMode={editorMode} />
+      </Box>
+    </Box>
+  </Box>
+) : (
+  <Box sx={{ width: '100vw', height: '100vh' }}>
+    <Isoflow initialData={initialData} editorMode={editorMode} />
+  </Box>
 );
 
 root.render(
@@ -46,8 +78,6 @@ root.render(
         }
       }}
     />
-    <Box sx={{ width: '100vw', height: '100vh' }}>
-      <Isoflow initialData={initialData} editorMode={editorMode} />
-    </Box>
+    {Shell}
   </React.StrictMode>
 );

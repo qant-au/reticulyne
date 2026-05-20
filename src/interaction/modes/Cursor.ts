@@ -140,7 +140,24 @@ export const Cursor: ModeActions = {
   },
   mousedown,
   mouseup: ({ uiState, isRendererInteraction }) => {
-    if (uiState.mode.type !== 'CURSOR' || !isRendererInteraction) return;
+    if (uiState.mode.type !== 'CURSOR') return;
+
+    // Mouseup outside the renderer (toolbar, scrollbar, off-window):
+    // the inspector/item-controls panel handles its own click targets,
+    // so don't reach in and override its selection. But we MUST still
+    // clear any stashed mousedownItem — otherwise the next mousemove
+    // back into the renderer promotes to DRAG_ITEMS with no button
+    // held, dragging the item until the user clicks again.
+    if (!isRendererInteraction) {
+      if (uiState.mode.mousedownItem) {
+        uiState.actions.setMode(
+          produce(uiState.mode, (draft) => {
+            draft.mousedownItem = null;
+          })
+        );
+      }
+      return;
+    }
 
     if (uiState.mode.mousedownItem) {
       if (uiState.mode.mousedownItem.type === 'ITEM') {

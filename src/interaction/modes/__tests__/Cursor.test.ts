@@ -174,7 +174,7 @@ describe('Cursor mode', () => {
       expect(state.uiState.actions.setItemControls).toHaveBeenCalledWith(null);
     });
 
-    test('mouseup outside the renderer is ignored', () => {
+    test('mouseup outside the renderer with no stashed item is a no-op', () => {
       const state = makeState({
         mode: { type: 'CURSOR', showCursor: true, mousedownItem: null },
         isRendererInteraction: false
@@ -182,6 +182,41 @@ describe('Cursor mode', () => {
 
       Cursor.mouseup?.(state);
       expect(state.uiState.actions.setMode).not.toHaveBeenCalled();
+      expect(state.uiState.actions.setItemControls).not.toHaveBeenCalled();
+    });
+
+    test('mouseup outside the renderer with a stashed item clears mousedownItem (BUG5-03 regression)', () => {
+      // Reproduces the stuck-drag UX bug: mousedown on a tile, drag
+      // off the canvas, release on the MUI toolbar (or off the
+      // window). Before BUG5-03 the guard short-circuited the entire
+      // handler, leaving mousedownItem set. The next mousemove back
+      // into the renderer would promote to DRAG_ITEMS with no button
+      // held — the item then followed the cursor until the user
+      // clicked.
+      const state = makeState({
+        mode: {
+          type: 'CURSOR',
+          showCursor: true,
+          mousedownItem: { type: 'ITEM', id: 'node1' }
+        },
+        isRendererInteraction: false
+      });
+
+      Cursor.mouseup?.(state);
+
+      // The stashed mousedownItem must be cleared so the next
+      // mousemove can't promote to DRAG_ITEMS.
+      const next = lastModeChange(state);
+      expect(next).toEqual(
+        expect.objectContaining({
+          type: 'CURSOR',
+          mousedownItem: null
+        })
+      );
+
+      // But we must NOT reach into the inspector — toolbar clicks
+      // manage their own selection.
+      expect(state.uiState.actions.setItemControls).not.toHaveBeenCalled();
     });
   });
 });

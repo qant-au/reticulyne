@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { getItemByIdOrThrow } from 'src/utils';
+import { DEFAULT_COLOR } from 'src/config';
 import { useScene } from 'src/hooks/useScene';
 
 export const useColor = (colorId?: string) => {
@@ -7,14 +7,18 @@ export const useColor = (colorId?: string) => {
 
   const color = useMemo(() => {
     if (colorId === undefined) {
-      if (colors.length > 0) {
-        return colors[0];
-      }
-
-      throw new Error('No colors available.');
+      // Empty palette is valid input (colors is unbounded zod-side); fall
+      // back to the built-in DEFAULT_COLOR rather than throwing, which
+      // would surface through IsoflowErrorBoundary and replace the
+      // whole editor with the failure UI.
+      return colors[0] ?? DEFAULT_COLOR;
     }
 
-    return getItemByIdOrThrow(colors, colorId).value;
+    const found = colors.find((c) => {
+      return c.id === colorId;
+    });
+
+    return found ?? colors[0] ?? DEFAULT_COLOR;
   }, [colorId, colors]);
 
   return color;

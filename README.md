@@ -24,6 +24,7 @@ High-level overview of what landed during the v4 modernisation work (full detail
   - Client-side **Export as PDF** via jsPDF — FEA4-04.
   - `showTitleBar` prop to override title-bar visibility — FEA5-01.
   - `iconCollections` allow/deny filter prop for bundled icon packs — FEA5-02.
+  - `onSave` callback + `'ACTION.SAVE'` main-menu entry for host-managed save — FEA5-03 (v4.1.0).
 
 The forward-looking FEA5 roadmap has now landed in full — see the `Controlling UI visibility` and `Host-managed save` sections in [docs/embedding.md](docs/embedding.md) for the contracts.
 

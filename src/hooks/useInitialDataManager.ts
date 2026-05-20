@@ -112,7 +112,12 @@ export const useInitialDataManager = ({
         Object.assign(initialData, updates.model);
       }
 
-      prevInitialData.current = initialData;
+      // Stash the original input reference so the next call with the
+      // same `_initialData` reference short-circuits at the line 69
+      // guard. Stashing the post-filter spread would make the guard
+      // dead code — that spread is a fresh object built on line 94 and
+      // never `===` to any future caller-supplied input.
+      prevInitialData.current = _initialData;
       model.actions.set(initialData);
 
       const view = getItemByIdOrThrow(

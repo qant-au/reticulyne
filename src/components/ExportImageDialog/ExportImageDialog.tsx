@@ -73,7 +73,12 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
 
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      exportAsImage(containerRef.current as HTMLDivElement)
+      // Guard against the dialog unmounting during the 2s debounce:
+      // containerRef.current goes to null and `toPng(null)` throws
+      // inside html-to-image. exportError would also setState on an
+      // unmounted tree.
+      if (!containerRef.current) return;
+      exportAsImage(containerRef.current)
         .then((data) => {
           return setImageData(data);
         })
@@ -82,6 +87,17 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
           setExportError(true);
         });
     }, 2000);
+  }, []);
+
+  // Clear the pending debounced export on unmount so the timer can't
+  // fire after the dialog closes. Without this, closing the dialog
+  // within 2s of the last onModelUpdated leaked the timer (and would
+  // have called setImageData on an unmounted React tree if the
+  // exportAsImage step hadn't been gated above).
+  useEffect(() => {
+    return () => {
+      clearTimeout(debounceRef.current);
+    };
   }, []);
 
   const downloadFile = useCallback(() => {

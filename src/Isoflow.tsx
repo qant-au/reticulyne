@@ -41,11 +41,16 @@ const App = ({
     })
   );
 
-  const { load } = initialDataManager;
+  const { load, iconCollectionsKey } = initialDataManager;
 
   useEffect(() => {
     load({ ...INITIAL_DATA, ...initialData });
-  }, [initialData, load]);
+    // `iconCollectionsKey` is included so a runtime change to the
+    // `iconCollections` prop retriggers the load pipeline and the
+    // filter actually re-applies. Without it, the dedupe guard inside
+    // useInitialDataManager short-circuits on the same `initialData`
+    // reference (BUG5-06).
+  }, [initialData, load, iconCollectionsKey]);
 
   useEffect(() => {
     uiStateActions.setEditorMode(editorMode);

@@ -138,6 +138,8 @@ The bottom-centre strip shows `"Project title › View name"`. By default it fol
 
 When omitted, every icon in `initialData.icons` passes through unchanged. Collection names are matched **case-insensitively** (`"AWS"` matches `"aws"`). Icons whose `collection` field is `undefined` are treated as "uncategorised" and always pass through both filters.
 
+Changing `iconCollections` at runtime re-applies the filter on the next load — passing a new spec causes `<Isoflow>` to re-run the model pipeline against the same `initialData` reference, so the filter actually takes effect without the host having to also rebuild `initialData`. Allow/deny array contents are compared by value, so an inline literal like `iconCollections={{ deny: ['AWS'] }}` is fine to pass on every render.
+
 ```tsx
 // Deny-list: keep everything except AWS and GCP icons
 <Isoflow

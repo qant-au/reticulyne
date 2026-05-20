@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { id } from './common';
+import { id, SCHEMA_LIMITS } from './common';
 
 export const colorSchema = z
   .object({
@@ -8,4 +8,4 @@ export const colorSchema = z
   })
   .strict();
 
-export const colorsSchema = z.array(colorSchema);
+export const colorsSchema = z.array(colorSchema).max(SCHEMA_LIMITS.COLORS);

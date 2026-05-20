@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { coords, id, constrainedStrings } from './common';
+import { coords, id, constrainedStrings, SCHEMA_LIMITS } from './common';
 
 export const connectorStyleOptions = ['SOLID', 'DOTTED', 'DASHED'] as const;
 
@@ -32,6 +32,6 @@ export const connectorSchema = z
     width: z.number().optional(),
     style: z.enum(connectorStyleOptions).optional(),
     direction: z.enum(connectorDirectionOptions).optional(),
-    anchors: z.array(anchorSchema)
+    anchors: z.array(anchorSchema).max(SCHEMA_LIMITS.ANCHORS)
   })
   .strict();

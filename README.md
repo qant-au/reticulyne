@@ -10,19 +10,22 @@ A React component for drawing network diagrams.
 
 ## v4.x development history
 
-High-level overview of what landed during the v4 modernisation work (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, and `FEA4` task-ID prefixes):
+High-level overview of what landed during the v4 modernisation work (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, `FEA4`, `FEA5`, `BUG5`, `SEC5`, and `QUA5` task-ID prefixes):
 
 - **Security & supply-chain.** Embedder-side sanitisation contract documented in full ([Security](#security) section below and [docs/embedding.md](docs/embedding.md)). CI gated on `npm audit --omit=dev --audit-level=moderate`. nginx CSP trade-offs captured in [SECURITY.md](SECURITY.md).
-- **Test surface.** Grew from 13 suites / 83 cases to **24 suites / 180 cases**. The hook layer, every interaction-mode handler, the connector coordinate system, and the PDF export are now covered.
+- **Test surface.** Grew from 13 suites / 83 cases to **31 suites / 217 cases**. The hook layer, every interaction-mode handler, the connector coordinate system, the PDF export, and the schema bounds are now covered.
 - **Refactors.** Split the 777-line `src/utils/renderer.ts` into seven concern-focused modules; consolidated three Zustand stores behind a `createContextualStore<T>` factory; reshaped `UiOverlay` into four focused children; extracted three hooks out of `MainMenu`.
-- **Bug fixes.** Corrected the connector path coordinate system at source (removing a self-flagged `transform: scale(-1, 1)` CSS hack) and fixed a `deleteModelItem` reducer that left sparse-array holes.
+- **Bug fixes.** Corrected the connector path coordinate system at source (removing a self-flagged `transform: scale(-1, 1)` CSS hack), fixed a `deleteModelItem` reducer that left sparse-array holes, and (5th-pass) closed scene-cache leaks in `deleteConnector` / `deleteTextBox`, a dead dedupe guard in `useInitialDataManager`, a stuck-drag after mouseup outside the renderer, render-time throws on sparse `colors` / dangling icon refs, silent JSON-import failures, an ignored runtime `iconCollections` prop change, a stray-icon-on-toolbar bug in `PlaceIcon`, a debounce-timer leak in the export-image dialog, an embedder wheel-scroll leak, and a `useResizeObserver` cleanup gap — BUG5-01..09, QUA5-01.
+- **Security hardening (5th-pass).** Bounded tile coordinates in the schema to cap the pathfinder grid (SEC5-01) and added per-array + per-string caps across every input schema as defence-in-depth against host-side DoS via crafted `initialData` (SEC5-02).
 - **New features.**
   - Title banners on every inspector panel ("Edit object" / "Edit line" / etc.) — FEA4-01.
   - Connector direction arrows with four states (start→end / end→start / both / none) — FEA4-02.
   - Branding polish — Discord link removed, GitHub link defaulted on, menu vocabulary tidied (`Export as Image` / `Clear`), v4.0.0 bump — FEA4-03.
   - Client-side **Export as PDF** via jsPDF — FEA4-04.
+  - `showTitleBar` prop to override title-bar visibility — FEA5-01.
+  - `iconCollections` allow/deny filter prop for bundled icon packs — FEA5-02.
 
-A roadmap for the next round of embedding-facing features (title-bar disable, icon-pack filtering, `onSave` callback) is sketched out in [docs/embedding-roadmap.md](docs/embedding-roadmap.md) for a future session to pick up.
+A remaining roadmap item — host-save `onSave` callback (FEA5-03) — is sketched out in [docs/embedding-roadmap.md](docs/embedding-roadmap.md) for a future session to pick up.
 
 ## Documentation
 

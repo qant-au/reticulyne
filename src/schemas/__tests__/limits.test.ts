@@ -59,4 +59,20 @@ describe('SEC5-02 schema array + url bounds', () => {
     const exactlyOne = [{ id: 'i', name: 'x', url: 'data:image/svg+xml,' }];
     expect(iconsSchema.safeParse(exactlyOne).success).toBe(true);
   });
+
+  test('iconSchema accepts the bundled isoflow isopack URL size range', () => {
+    // Regression guard for the v4.0.2/v4.1.0 ICON_URL_MAX regression:
+    // the previous 8 KB cap rejected 16 icons in the bundled isoflow
+    // isopack (largest ~32 KB). 64 KB now covers all bundled packs
+    // with headroom for moderately larger illustrations.
+    const realisticBigUrl = `data:image/svg+xml;base64,${'A'.repeat(35_000)}`;
+    expect(realisticBigUrl.length).toBeGreaterThan(8_192);
+    expect(realisticBigUrl.length).toBeLessThan(SCHEMA_LIMITS.ICON_URL_MAX);
+    const result = iconSchema.safeParse({
+      id: 'big',
+      name: 'Big',
+      url: realisticBigUrl
+    });
+    expect(result.success).toBe(true);
+  });
 });

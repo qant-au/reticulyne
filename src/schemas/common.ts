@@ -45,7 +45,12 @@ export const SCHEMA_LIMITS = {
   ICONS: 5_000,
   COLORS: 100,
   ANCHORS: 100,
-  ICON_URL_MAX: 8_192
+  // Sized for `data:image/svg+xml;base64,...` URLs of moderately
+  // complex SVG illustrations. The bundled isoflow isopack ships
+  // 16 icons whose base64 payloads exceed 8 KB (the largest is
+  // ~32 KB), so 8 KB was too tight and rejected real data —
+  // 65 KB gives ~2× headroom over the current upper bound.
+  ICON_URL_MAX: 65_536
 };
 
 export const id = z.string();

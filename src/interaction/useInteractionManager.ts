@@ -169,6 +169,14 @@ export const useInteractionManager = () => {
     let zoomBuffer = 0;
 
     const onScroll = (e: WheelEvent) => {
+      // Prevent the host page from scrolling while the user is
+      // zooming the diagram. The standalone editor hides this with a
+      // page-level `overflow: 'hidden'`, but embedders that mount
+      // <Isoflow> inside a scrollable parent would see the parent
+      // scroll on every wheel tick — see BUG5-09. Requires
+      // `passive: false` on addEventListener (set below).
+      e.preventDefault();
+
       let stepDelta: number;
       switch (e.deltaMode) {
         case 1:
@@ -200,7 +208,10 @@ export const useInteractionManager = () => {
     el.addEventListener('touchstart', onTouchStart);
     el.addEventListener('touchmove', onTouchMove);
     el.addEventListener('touchend', onTouchEnd);
-    uiState.rendererEl?.addEventListener('wheel', onScroll);
+    // passive: false is required for preventDefault() to take effect —
+    // Chrome treats wheel listeners as passive by default and ignores
+    // preventDefault on passive listeners.
+    uiState.rendererEl?.addEventListener('wheel', onScroll, { passive: false });
 
     return () => {
       el.removeEventListener('mousemove', onMouseEvent);

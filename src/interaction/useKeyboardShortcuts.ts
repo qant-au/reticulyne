@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { getItemByIdOrThrow } from 'src/utils';
+import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
+import { getItemByIdOrThrow, generateId } from 'src/utils';
+import { TEXTBOX_DEFAULTS } from 'src/config';
 import type { ItemReference } from 'src/types';
 
 const NUDGE_STEP = 1;
@@ -15,6 +17,18 @@ const isEditableFocus = (target: EventTarget | null): boolean => {
   return false;
 };
 
+// FEA5-02: keyboard shortcuts that match the conventions of modern
+// canvas editors (Figma / Miro / Excalidraw / tldraw).
+//
+// Single-letter tool switches (V/S/H/A/R/C/T) plus zoom hotkeys
+// (+ / - / 0 / 1 / F). Tool switches and duplicate fire only in
+// EDITABLE mode; zoom + fit-to-view fire in any mode that allows
+// zooming (EDITABLE and EXPLORABLE_READONLY).
+//
+// Tool letters intentionally double up on Ctrl/Cmd-chord variants
+// (Ctrl+C copy, Ctrl+V paste, Ctrl+D duplicate). We dispatch the
+// chord handler only when the modifier is held, and the bare letter
+// only when it's NOT held — so the conventions don't collide.
 export const useKeyboardShortcuts = () => {
   const editorMode = useUiStateStore((state) => {
     return state.editorMode;
@@ -25,6 +39,9 @@ export const useKeyboardShortcuts = () => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
+  const mousePosition = useUiStateStore((state) => {
+    return state.mouse.position.tile;
+  });
   const {
     deleteViewItem,
     deleteTextBox,
@@ -33,8 +50,11 @@ export const useKeyboardShortcuts = () => {
     updateViewItem,
     updateTextBox,
     updateRectangle,
+    duplicateItem,
+    createTextBox,
     currentView
   } = useScene();
+  const { fitToView } = useDiagramUtils();
 
   useEffect(() => {
     const isEditable = editorMode === 'EDITABLE';
@@ -89,6 +109,54 @@ export const useKeyboardShortcuts = () => {
       }
     };
 
+    const selectTool = () => {
+      uiStateActions.setMode({
+        type: 'CURSOR',
+        showCursor: true,
+        mousedownItem: null
+      });
+    };
+
+    const handTool = () => {
+      uiStateActions.setMode({ type: 'PAN', showCursor: false });
+      uiStateActions.setItemControls(null);
+    };
+
+    const addItemTool = () => {
+      uiStateActions.setItemControls({ type: 'ADD_ITEM' });
+      uiStateActions.setMode({
+        type: 'PLACE_ICON',
+        showCursor: true,
+        id: null
+      });
+    };
+
+    const rectangleTool = () => {
+      uiStateActions.setMode({
+        type: 'RECTANGLE.DRAW',
+        showCursor: true,
+        id: null
+      });
+    };
+
+    const connectorTool = () => {
+      uiStateActions.setMode({ type: 'CONNECTOR', id: null, showCursor: true });
+    };
+
+    const textTool = () => {
+      const textBoxId = generateId();
+      createTextBox({
+        ...TEXTBOX_DEFAULTS,
+        id: textBoxId,
+        tile: mousePosition
+      });
+      uiStateActions.setMode({
+        type: 'TEXTBOX',
+        showCursor: false,
+        id: textBoxId
+      });
+    };
+
     const onKeyDown = (e: KeyboardEvent) => {
       // Don't steal keys from text inputs or contenteditable surfaces
       // (Quill descriptions, MUI TextFields, etc).
@@ -104,12 +172,42 @@ export const useKeyboardShortcuts = () => {
         return;
       }
 
+      const hasModifier = e.ctrlKey || e.metaKey;
+
+      // === Zoom + fit-to-view (work in EDITABLE and EXPLORABLE_READONLY) ===
+      // The zoom keys mirror what every canvas editor uses; we only
+      // wire the bare-key form so the browser keeps its native
+      // Ctrl+= / Ctrl+- (page zoom).
+      if (!hasModifier) {
+        if (e.key === '+' || e.key === '=') {
+          uiStateActions.incrementZoom();
+          e.preventDefault();
+          return;
+        }
+        if (e.key === '-' || e.key === '_') {
+          uiStateActions.decrementZoom();
+          e.preventDefault();
+          return;
+        }
+        if (e.key === '0' || e.key === '1') {
+          uiStateActions.setZoom(1);
+          e.preventDefault();
+          return;
+        }
+        if (e.key === 'f' || e.key === 'F') {
+          fitToView();
+          e.preventDefault();
+          return;
+        }
+      }
+
       // Remaining shortcuts only fire in editable mode.
       if (!isEditable) return;
 
       const selected =
         itemControls && itemControls.type !== 'ADD_ITEM' ? itemControls : null;
 
+      // === Selection-dependent shortcuts ===
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (!selected) return;
         deleteSelected(selected);
@@ -146,6 +244,55 @@ export const useKeyboardShortcuts = () => {
         }
         nudgeSelected(dx, dy, selected);
         e.preventDefault();
+        return;
+      }
+
+      // === Duplicate (Ctrl/Cmd+D) ===
+      // Ctrl+D in browsers opens the bookmark dialog — preventDefault
+      // is essential. Skips connectors (matches the existing
+      // duplicateItem semantics; see useScene.ts:280).
+      if (hasModifier && (e.key === 'd' || e.key === 'D')) {
+        if (selected) {
+          duplicateItem(selected);
+          e.preventDefault();
+        }
+        return;
+      }
+
+      // === Tool switches (bare letter, no modifier) ===
+      // V or S → Select. Anything held with Ctrl/Cmd is left for the
+      // browser / other handlers (e.g. Ctrl+S = browser save, not
+      // ours to steal; Ctrl+V = future paste).
+      if (hasModifier) return;
+
+      if (e.key === 'v' || e.key === 'V' || e.key === 's' || e.key === 'S') {
+        selectTool();
+        e.preventDefault();
+        return;
+      }
+      if (e.key === 'h' || e.key === 'H') {
+        handTool();
+        e.preventDefault();
+        return;
+      }
+      if (e.key === 'a' || e.key === 'A') {
+        addItemTool();
+        e.preventDefault();
+        return;
+      }
+      if (e.key === 'r' || e.key === 'R') {
+        rectangleTool();
+        e.preventDefault();
+        return;
+      }
+      if (e.key === 'c' || e.key === 'C') {
+        connectorTool();
+        e.preventDefault();
+        return;
+      }
+      if (e.key === 't' || e.key === 'T') {
+        textTool();
+        e.preventDefault();
       }
     };
 
@@ -164,6 +311,10 @@ export const useKeyboardShortcuts = () => {
     updateViewItem,
     updateTextBox,
     updateRectangle,
+    duplicateItem,
+    createTextBox,
+    fitToView,
+    mousePosition,
     currentView
   ]);
 };

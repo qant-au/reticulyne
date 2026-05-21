@@ -148,7 +148,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
         {showToolButtons && (
           <>
             <IconButton
-              name="Select"
+              name="Select (V)"
               Icon={<NearMeIcon />}
               onClick={() => {
                 uiStateActions.setMode({
@@ -160,7 +160,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'CURSOR' || mode.type === 'DRAG_ITEMS'}
             />
             <IconButton
-              name="Pan"
+              name="Pan (H)"
               Icon={<PanToolIcon />}
               onClick={() => {
                 uiStateActions.setMode({
@@ -172,7 +172,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'PAN'}
             />
             <IconButton
-              name="Add item"
+              name="Add item (A)"
               Icon={<AddIcon />}
               onClick={() => {
                 uiStateActions.setItemControls({
@@ -187,7 +187,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'PLACE_ICON'}
             />
             <IconButton
-              name="Rectangle"
+              name="Rectangle (R)"
               Icon={<CropSquareIcon />}
               onClick={() => {
                 uiStateActions.setMode({
@@ -199,7 +199,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'RECTANGLE.DRAW'}
             />
             <IconButton
-              name="Connector"
+              name="Connector (C)"
               Icon={<ConnectorIcon />}
               onClick={() => {
                 uiStateActions.setMode({
@@ -211,7 +211,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'CONNECTOR'}
             />
             <IconButton
-              name="Text"
+              name="Text (T)"
               Icon={<TitleIcon />}
               onClick={createTextBoxProxy}
               isActive={mode.type === 'TEXTBOX'}

@@ -39,7 +39,8 @@ const App = ({
   showTitleBar,
   iconCollections,
   onSave,
-  nodeIndicatorComponent
+  nodeIndicatorComponent,
+  children
 }: IsoflowProps) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -145,6 +146,7 @@ const App = ({
       >
         <Renderer {...renderer} />
         <UiOverlay />
+        {children}
       </Box>
     </>
   );

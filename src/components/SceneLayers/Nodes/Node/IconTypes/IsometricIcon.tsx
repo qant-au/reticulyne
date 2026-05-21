@@ -29,6 +29,15 @@ export const IsometricIcon = ({ url, onImageLoaded }: Props) => {
       sx={{
         position: 'absolute',
         width: PROJECTED_TILE_SIZE.width * 0.8,
+        // Override any host-side CSS reset that sets
+        // `img { max-width: 100%; height: auto }` (Tailwind preflight,
+        // some global normalize sheets). The icon's wrapping Boxes
+        // in Node.tsx are absolutely positioned with no intrinsic
+        // size, so `max-width: 100%` clamps to 0 and the icon
+        // collapses invisibly even though the SVG has decoded fine.
+        maxWidth: 'none',
+        maxHeight: 'none',
+        height: 'auto',
         top: -size.height,
         left: -size.width / 2,
         pointerEvents: 'none'

@@ -31,7 +31,7 @@ export const NonIsometricIcon = ({ icon }: Props) => {
             width: PROJECTED_TILE_SIZE.width * 0.7,
             maxWidth: 'none',
             maxHeight: 'none',
-            height: 'auto',
+            height: 'auto'
           }}
         />
       </Box>

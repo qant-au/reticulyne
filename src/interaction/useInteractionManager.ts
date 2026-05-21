@@ -13,6 +13,7 @@ import { Connector } from './modes/Connector';
 import { Pan } from './modes/Pan';
 import { PlaceIcon } from './modes/PlaceIcon';
 import { TextBox } from './modes/TextBox';
+import { interpretWheelEvent } from './wheelInput';
 
 const modes: { [k in string]: ModeActions } = {
   CURSOR: Cursor,
@@ -153,51 +154,37 @@ export const useInteractionManager = () => {
       });
     };
 
-    // Wheel/trackpad zoom: accumulate fractional steps so a single
-    // trackpad swipe (many small deltaY events at deltaMode=0) maps to
-    // one or two zoom steps instead of clamping straight to min/max,
-    // while a discrete mouse wheel click (deltaMode=1 line, one event)
-    // still produces exactly one step.
-    //
-    //   deltaMode=0 (pixel, trackpad / Magic Mouse): one step per
-    //     ~PIXELS_PER_STEP of accumulated deltaY.
-    //   deltaMode=1 (line, discrete wheel): one step per ~LINES_PER_STEP.
-    //   deltaMode=2 (page, rare): one step per page.
-    const PIXELS_PER_STEP = 100;
-    const LINES_PER_STEP = 1;
-    const PAGES_PER_STEP = 1;
+    // Wheel/trackpad routing (FEA5-01):
+    //   - Ctrl+wheel or Cmd+wheel → zoom (browsers also synthesise
+    //     ctrlKey for trackpad pinch, so pinch keeps working).
+    //   - Plain wheel → pan (deltaY = vertical, deltaX = horizontal
+    //     for Magic Mouse / trackpad).
+    // Step interpretation and deltaMode normalisation live in
+    // `interpretWheelEvent`; this closure just dispatches the result
+    // and threads the zoomBuffer (so a single trackpad swipe maps to
+    // a handful of steps instead of clamping to MIN/MAX_ZOOM).
     let zoomBuffer = 0;
 
     const onScroll = (e: WheelEvent) => {
       // Prevent the host page from scrolling while the user is
-      // zooming the diagram. The standalone editor hides this with a
-      // page-level `overflow: 'hidden'`, but embedders that mount
-      // <Isoflow> inside a scrollable parent would see the parent
-      // scroll on every wheel tick — see BUG5-09. Requires
+      // zooming or panning the diagram. The standalone editor hides
+      // this with a page-level `overflow: 'hidden'`, but embedders
+      // that mount <Isoflow> inside a scrollable parent would see the
+      // parent scroll on every wheel tick — see BUG5-09. Requires
       // `passive: false` on addEventListener (set below).
       e.preventDefault();
 
-      let stepDelta: number;
-      switch (e.deltaMode) {
-        case 1:
-          stepDelta = e.deltaY / LINES_PER_STEP;
-          break;
-        case 2:
-          stepDelta = e.deltaY / PAGES_PER_STEP;
-          break;
-        case 0:
-        default:
-          stepDelta = e.deltaY / PIXELS_PER_STEP;
-          break;
-      }
-      zoomBuffer += stepDelta;
-      while (zoomBuffer >= 1) {
-        uiState.actions.decrementZoom();
-        zoomBuffer -= 1;
-      }
-      while (zoomBuffer <= -1) {
-        uiState.actions.incrementZoom();
-        zoomBuffer += 1;
+      const action = interpretWheelEvent(e, zoomBuffer);
+      if (action.kind === 'zoom') {
+        zoomBuffer = action.nextZoomBuffer;
+        for (let i = 0; i < action.steps; i += 1) {
+          uiState.actions.incrementZoom();
+        }
+        for (let i = 0; i < -action.steps; i += 1) {
+          uiState.actions.decrementZoom();
+        }
+      } else {
+        uiState.actions.panScroll({ x: action.panDx, y: action.panDy });
       }
     };
 

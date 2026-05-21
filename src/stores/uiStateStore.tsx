@@ -79,6 +79,21 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         setScroll: ({ position, offset }) => {
           set({ scroll: { position, offset: offset ?? get().scroll.offset } });
         },
+        // Wheel/trackpad pan path (FEA5-01). Reads the current scroll
+        // via get() so the wheel handler (whose closure may be stale)
+        // can apply a relative delta without race-condition risk.
+        panScroll: (delta) => {
+          const { scroll } = get();
+          set({
+            scroll: {
+              position: {
+                x: scroll.position.x + delta.x,
+                y: scroll.position.y + delta.y
+              },
+              offset: scroll.offset
+            }
+          });
+        },
         setItemControls: (itemControls) => {
           set({ itemControls });
         },

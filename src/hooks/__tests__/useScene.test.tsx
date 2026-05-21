@@ -6,6 +6,7 @@ import { render, cleanup, act } from '@testing-library/react';
 import { ModelProvider, useModelStore } from 'src/stores/modelStore';
 import { SceneProvider } from 'src/stores/sceneStore';
 import { UiStateProvider } from 'src/stores/uiStateStore';
+import { HistoryProvider } from 'src/stores/historyStore';
 import { useScene } from '../useScene';
 import { useInitialDataManager } from '../useInitialDataManager';
 import { model as fixtureModel } from 'src/fixtures/model';
@@ -101,7 +102,9 @@ const Harness = ({
     <ModelProvider>
       <SceneProvider>
         <UiStateProvider>
-          <Loader initialData={initialData} onCapture={onCapture} />
+          <HistoryProvider>
+            <Loader initialData={initialData} onCapture={onCapture} />
+          </HistoryProvider>
         </UiStateProvider>
       </SceneProvider>
     </ModelProvider>
@@ -544,6 +547,106 @@ describe('useScene', () => {
       });
 
       expect(slot.current.scene.connectors).toHaveLength(before);
+    });
+  });
+
+  describe('undo / redo (FEA5-03)', () => {
+    // The history store debounces commits by 250ms. Use fake timers
+    // so the tests can flush the debounce deterministically.
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('undo restores the model after a deleteViewItem', () => {
+      const slot = setup();
+      const initialIds = slot.current.scene.items.map((i) => {
+        return i.id;
+      });
+      const targetId = initialIds[0];
+
+      act(() => {
+        slot.current.scene.deleteViewItem(targetId);
+      });
+      // After the mutation, the item is gone but the debounce hasn't
+      // flushed yet — undo() flushes pending and pops.
+      expect(
+        slot.current.scene.items.map((i) => {
+          return i.id;
+        })
+      ).not.toContain(targetId);
+
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect(
+        slot.current.scene.items.map((i) => {
+          return i.id;
+        })
+      ).toContain(targetId);
+    });
+
+    test('redo reverses an undo', () => {
+      const slot = setup();
+      const initialIds = slot.current.scene.items.map((i) => {
+        return i.id;
+      });
+      const targetId = initialIds[0];
+
+      act(() => {
+        slot.current.scene.deleteViewItem(targetId);
+      });
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect(
+        slot.current.scene.items.map((i) => {
+          return i.id;
+        })
+      ).toContain(targetId);
+
+      act(() => {
+        slot.current.scene.redo();
+      });
+      expect(
+        slot.current.scene.items.map((i) => {
+          return i.id;
+        })
+      ).not.toContain(targetId);
+    });
+
+    test('a burst of mutations within the debounce collapses to one undo step', () => {
+      const slot = setup();
+      const initialCount = slot.current.scene.items.length;
+      const ids = slot.current.scene.items.map((i) => {
+        return i.id;
+      });
+
+      // Delete two items in quick succession (within the debounce
+      // window). The history store should only record ONE prior
+      // state — the pre-burst snapshot.
+      act(() => {
+        slot.current.scene.deleteViewItem(ids[0]);
+        slot.current.scene.deleteViewItem(ids[1]);
+      });
+      expect(slot.current.scene.items).toHaveLength(initialCount - 2);
+
+      // One undo should restore both items.
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect(slot.current.scene.items).toHaveLength(initialCount);
+    });
+
+    test('undo on empty history is a no-op (does not throw)', () => {
+      const slot = setup();
+      const initialCount = slot.current.scene.items.length;
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect(slot.current.scene.items).toHaveLength(initialCount);
     });
   });
 });

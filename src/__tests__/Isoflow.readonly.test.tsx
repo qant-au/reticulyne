@@ -8,6 +8,7 @@ import { theme } from 'src/styles/theme';
 import { ModelProvider } from 'src/stores/modelStore';
 import { SceneProvider } from 'src/stores/sceneStore';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
+import { HistoryProvider } from 'src/stores/historyStore';
 import { useIsoflow } from '../Isoflow';
 
 afterEach(() => {
@@ -54,7 +55,9 @@ const Harness = ({
       <ModelProvider>
         <SceneProvider>
           <UiStateProvider>
-            <HookProbe mode={mode} onReady={onReady} />
+            <HistoryProvider>
+              <HookProbe mode={mode} onReady={onReady} />
+            </HistoryProvider>
           </UiStateProvider>
         </SceneProvider>
       </ModelProvider>

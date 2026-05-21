@@ -5,6 +5,7 @@ import { render, cleanup, act } from '@testing-library/react';
 import { ModelProvider, useModelStore } from 'src/stores/modelStore';
 import { SceneProvider } from 'src/stores/sceneStore';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
+import { HistoryProvider } from 'src/stores/historyStore';
 import { useInitialDataManager } from '../useInitialDataManager';
 import { INITIAL_DATA } from 'src/config';
 import { model as fixtureModel } from 'src/fixtures/model';
@@ -75,11 +76,13 @@ const Harness = ({
     <ModelProvider>
       <SceneProvider>
         <UiStateProvider>
-          <HookProbe
-            onCapture={onCapture}
-            onValidationError={onValidationError}
-            iconCollections={iconCollections}
-          />
+          <HistoryProvider>
+            <HookProbe
+              onCapture={onCapture}
+              onValidationError={onValidationError}
+              iconCollections={iconCollections}
+            />
+          </HistoryProvider>
         </UiStateProvider>
       </SceneProvider>
     </ModelProvider>

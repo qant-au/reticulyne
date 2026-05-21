@@ -11,6 +11,7 @@ import {
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import { useSceneStore } from 'src/stores/sceneStore';
+import { useHistoryStore } from 'src/stores/historyStore';
 import * as reducers from 'src/stores/reducers';
 import type { State } from 'src/stores/reducers/types';
 import { generateId, getItemByIdOrThrow } from 'src/utils';
@@ -87,13 +88,61 @@ export const useScene = () => {
     };
   }, [model.actions, scene.actions]);
 
+  const historyStore = useHistoryStore((state) => {
+    return state;
+  });
+
+  // setState is the single chokepoint for every model mutation, so
+  // this is where FEA5-03 records the prior state into the undo
+  // stack. While undo/redo are restoring a saved snapshot, the
+  // history store flips `isApplying` so this guard skips the
+  // record — otherwise undo would push the state we're trying to
+  // undo BACK onto the past stack.
   const setState = useCallback(
     (newState: State) => {
+      if (!historyStore.isApplying) {
+        historyStore.actions.recordPriorState({
+          model: model.actions.get(),
+          scene: scene.actions.get()
+        });
+      }
       model.actions.set(newState.model);
       scene.actions.set(newState.scene);
     },
-    [model.actions, scene.actions]
+    [model.actions, scene.actions, historyStore.isApplying, historyStore.actions]
   );
+
+  const undo = useCallback(() => {
+    const current: State = {
+      model: model.actions.get(),
+      scene: scene.actions.get()
+    };
+    const priorState = historyStore.actions.undo(current);
+    if (priorState === null) return;
+    historyStore.actions.setIsApplying(true);
+    try {
+      model.actions.set(priorState.model);
+      scene.actions.set(priorState.scene);
+    } finally {
+      historyStore.actions.setIsApplying(false);
+    }
+  }, [model.actions, scene.actions, historyStore.actions]);
+
+  const redo = useCallback(() => {
+    const current: State = {
+      model: model.actions.get(),
+      scene: scene.actions.get()
+    };
+    const nextState = historyStore.actions.redo(current);
+    if (nextState === null) return;
+    historyStore.actions.setIsApplying(true);
+    try {
+      model.actions.set(nextState.model);
+      scene.actions.set(nextState.scene);
+    } finally {
+      historyStore.actions.setIsApplying(false);
+    }
+  }, [model.actions, scene.actions, historyStore.actions]);
 
   const createModelItem = useCallback(
     (newModelItem: ModelItem) => {
@@ -390,6 +439,8 @@ export const useScene = () => {
     updateRectangle,
     deleteRectangle,
     changeLayerOrder,
-    duplicateItem
+    duplicateItem,
+    undo,
+    redo
   };
 };

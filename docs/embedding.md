@@ -89,6 +89,23 @@ The renderer uses a `ResizeObserver` on its DOM root, so it responds to layout c
 
 The data-layer guard is enforced inside `useIsoflow` — calling `useIsoflow().Model.set(...)` or `useIsoflow().loadModel(...)` from outside `EDITABLE` mode is a silent no-op (with a dev-mode `console.warn`). Read access via `getModel()` is always allowed.
 
+## Wheel / trackpad input
+
+Mouse-wheel and trackpad input map onto canvas operations the same way modern editors (Figma, Miro, Excalidraw) do:
+
+| Input | Action |
+|---|---|
+| Plain wheel / two-finger trackpad scroll (vertical) | Pan vertically |
+| Plain wheel / trackpad horizontal scroll, Magic Mouse left-right swipe (`deltaX`) | Pan horizontally |
+| **Ctrl** + wheel | Zoom in / out |
+| **Cmd** + wheel (macOS) | Zoom in / out |
+| Trackpad pinch | Zoom in / out (browsers synthesise `ctrlKey` for pinch, so it follows the same path) |
+| Click-and-drag with the **Hand / Pan tool** in the toolbar | Pan via drag (unchanged from earlier releases) |
+
+The host page never sees these wheel events bubble — the renderer's wheel listener calls `preventDefault()` on both branches, so embedders that mount `<Isoflow>` inside a scrollable parent stay pinned (BUG5-09 guarantee).
+
+> **Behaviour change in v4.2.0**: Earlier releases zoomed on plain wheel and required the Hand tool to pan. From v4.2.0 onwards the modifier convention above is the default. The Hand tool still works for click-and-drag panning, so muscle-memory users keep their workflow.
+
 ## Controlling UI visibility
 
 All visibility controls are **opt-in restrictions** — omitting a prop always produces the full default behaviour. You only pass a prop when you want to narrow or override it.

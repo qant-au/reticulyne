@@ -169,6 +169,7 @@ export interface UiStateActions {
   setDialog: (dialog: keyof typeof DialogTypeEnum | null) => void;
   setZoom: (zoom: number) => void;
   setScroll: (scroll: Scroll) => void;
+  panScroll: (delta: Coords) => void;
   setItemControls: (itemControls: ItemControls | null) => void;
   setContextMenu: (contextMenu: ContextMenu | null) => void;
   setMouse: (mouse: Mouse) => void;

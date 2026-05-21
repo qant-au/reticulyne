@@ -52,6 +52,8 @@ export const useKeyboardShortcuts = () => {
     updateRectangle,
     duplicateItem,
     createTextBox,
+    copySelection,
+    paste,
     undo,
     redo,
     currentView
@@ -281,6 +283,28 @@ export const useKeyboardShortcuts = () => {
         return;
       }
 
+      // === Copy / paste (Ctrl/Cmd+C / Ctrl/Cmd+V) (FEA5-04) ===
+      // Copy silently no-ops if nothing is selected; paste no-ops if
+      // the clipboard is empty. preventDefault is essential — the
+      // browser's native Ctrl+C would otherwise copy the surrounding
+      // page text into the OS clipboard, which is not what the user
+      // wants while editing the canvas.
+      if (hasModifier && (e.key === 'c' || e.key === 'C')) {
+        if (selected) {
+          copySelection(selected);
+          e.preventDefault();
+        }
+        return;
+      }
+      if (hasModifier && (e.key === 'v' || e.key === 'V')) {
+        const pasted = paste();
+        if (pasted) {
+          uiStateActions.setItemControls(pasted);
+          e.preventDefault();
+        }
+        return;
+      }
+
       // === Tool switches (bare letter, no modifier) ===
       // V or S → Select. Anything held with Ctrl/Cmd is left for the
       // browser / other handlers (e.g. Ctrl+S = browser save, not
@@ -335,6 +359,8 @@ export const useKeyboardShortcuts = () => {
     updateRectangle,
     duplicateItem,
     createTextBox,
+    copySelection,
+    paste,
     undo,
     redo,
     fitToView,

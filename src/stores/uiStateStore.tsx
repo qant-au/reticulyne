@@ -23,6 +23,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       dialog: null,
       rendererEl: null,
       contextMenu: null,
+      clipboard: null,
       mouse: {
         position: { screen: CoordsUtils.zero(), tile: CoordsUtils.zero() },
         mousedown: null,
@@ -82,6 +83,13 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         // Wheel/trackpad pan path (FEA5-01). Reads the current scroll
         // via get() so the wheel handler (whose closure may be stale)
         // can apply a relative delta without race-condition risk.
+        // FEA5-04: clipboard slice. Lives in uiState (not model)
+        // because the clipboard is host-session state — copied
+        // selections survive across model loads / undo / redo but
+        // not across page refreshes, and they're never persisted.
+        setClipboard: (entry) => {
+          set({ clipboard: entry });
+        },
         panScroll: (delta) => {
           const { scroll } = get();
           set({

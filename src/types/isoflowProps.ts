@@ -95,4 +95,17 @@ export interface IsoflowProps {
    * positioned 20px to the right of the icon).
    */
   nodeIndicatorComponent?: NodeIndicatorComponent;
+  /**
+   * Optional children rendered inside the Isoflow provider tree.
+   * The intended use is a "driver" component that calls
+   * `useIsoflow()` to drive the editor from outside — pulse
+   * connectors on a timer, update colours from a poller, etc.
+   * `useIsoflow` requires being a descendant of `<Isoflow>` to
+   * see the contextual stores; this prop is the supported way to
+   * plant such a descendant.
+   *
+   * Driver components typically return `null`. Anything visible
+   * rendered here will appear inside the editor frame.
+   */
+  children?: ReactNode;
 }

@@ -3,11 +3,13 @@ import { Box, Select, MenuItem, useTheme } from '@mui/material';
 import { BasicEditor } from './BasicEditor/BasicEditor';
 import { DebugTools } from './DebugTools/DebugTools';
 import { ReadonlyMode } from './ReadonlyMode/ReadonlyMode';
+import { LiveDashboard } from './LiveDashboard/LiveDashboard';
 
 const examples = [
   { name: 'Basic editor', component: BasicEditor },
   { name: 'Debug tools', component: DebugTools },
-  { name: 'Read-only mode', component: ReadonlyMode }
+  { name: 'Read-only mode', component: ReadonlyMode },
+  { name: 'Live dashboard', component: LiveDashboard }
 ];
 
 export const Examples = () => {

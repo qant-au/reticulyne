@@ -131,6 +131,19 @@ export const LayerOrderingActionOptions = {
 
 export type LayerOrderingAction = keyof typeof LayerOrderingActionOptions;
 
+// FEA5-04: clipboard contents. Snapshots the data needed to paste a
+// copy of the original later; connectors are deliberately excluded
+// for the same anchor-semantics reason that useScene.duplicateItem
+// skips them (see useScene.ts:328).
+export type ClipboardEntry =
+  | {
+      kind: 'ITEM';
+      modelItem: import('./model').ModelItem;
+      viewItem: import('./model').ViewItem;
+    }
+  | { kind: 'TEXTBOX'; textBox: import('./model').TextBox }
+  | { kind: 'RECTANGLE'; rectangle: import('./model').Rectangle };
+
 export interface UiState {
   view: string;
   mainMenuOptions: MainMenuOptions;
@@ -147,6 +160,7 @@ export interface UiState {
   rendererEl: HTMLDivElement | null;
   enableDebugTools: boolean;
   showTitleBar: boolean | undefined;
+  clipboard: ClipboardEntry | null;
   // Host-supplied save callback (FEA5-03). The MainMenu's
   // 'ACTION.SAVE' entry renders only when this is defined, and the
   // click handler hands the current model snapshot back to the host
@@ -170,6 +184,7 @@ export interface UiStateActions {
   setZoom: (zoom: number) => void;
   setScroll: (scroll: Scroll) => void;
   panScroll: (delta: Coords) => void;
+  setClipboard: (entry: ClipboardEntry | null) => void;
   setItemControls: (itemControls: ItemControls | null) => void;
   setContextMenu: (contextMenu: ContextMenu | null) => void;
   setMouse: (mouse: Mouse) => void;

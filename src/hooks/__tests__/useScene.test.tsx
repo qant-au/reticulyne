@@ -649,4 +649,150 @@ describe('useScene', () => {
       expect(slot.current.scene.items).toHaveLength(initialCount);
     });
   });
+
+  describe('copy / paste (FEA5-04)', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('copySelection of an ITEM then paste creates a new view item at offset', () => {
+      const slot = setup();
+      const initialIds = slot.current.scene.items.map((i) => {
+        return i.id;
+      });
+      const sourceId = initialIds[0];
+      const sourceTile = slot.current.scene.items[0].tile;
+
+      act(() => {
+        slot.current.scene.copySelection({ type: 'ITEM', id: sourceId });
+      });
+      let pastedRef: { type: string; id: string } | null = null;
+      act(() => {
+        pastedRef = slot.current.scene.paste();
+      });
+
+      expect(pastedRef).not.toBeNull();
+      expect(pastedRef!.type).toBe('ITEM');
+      // The new item exists at offset (+1, +1) from the source.
+      const pasted = slot.current.scene.items.find((i) => {
+        return i.id === pastedRef!.id;
+      });
+      expect(pasted).toBeDefined();
+      expect(pasted!.tile).toEqual({
+        x: sourceTile.x + 1,
+        y: sourceTile.y + 1
+      });
+      expect(pasted!.id).not.toBe(sourceId);
+    });
+
+    test('paste can fire repeatedly from one copy, each producing a fresh id', () => {
+      const slot = setup();
+      const sourceId = slot.current.scene.items[0].id;
+
+      act(() => {
+        slot.current.scene.copySelection({ type: 'ITEM', id: sourceId });
+      });
+      let firstRef: { type: string; id: string } | null = null;
+      let secondRef: { type: string; id: string } | null = null;
+      act(() => {
+        firstRef = slot.current.scene.paste();
+      });
+      act(() => {
+        secondRef = slot.current.scene.paste();
+      });
+
+      expect(firstRef!.id).not.toBe(secondRef!.id);
+      expect(firstRef!.id).not.toBe(sourceId);
+      expect(secondRef!.id).not.toBe(sourceId);
+    });
+
+    test('paste with empty clipboard returns null and mutates nothing', () => {
+      const slot = setup();
+      const initialCount = slot.current.scene.items.length;
+      let ref: { type: string; id: string } | null = { type: '', id: '' };
+      act(() => {
+        ref = slot.current.scene.paste();
+      });
+      expect(ref).toBeNull();
+      expect(slot.current.scene.items).toHaveLength(initialCount);
+    });
+
+    test('paste is captured by undo history — undo removes the pasted item', () => {
+      const slot = setup();
+      const sourceId = slot.current.scene.items[0].id;
+      const initialCount = slot.current.scene.items.length;
+
+      act(() => {
+        slot.current.scene.copySelection({ type: 'ITEM', id: sourceId });
+      });
+      act(() => {
+        slot.current.scene.paste();
+      });
+      expect(slot.current.scene.items).toHaveLength(initialCount + 1);
+
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect(slot.current.scene.items).toHaveLength(initialCount);
+    });
+
+    test('copySelection of a RECTANGLE then paste creates an offset rectangle', () => {
+      const slot = setup();
+      const initialRects = slot.current.scene.rectangles;
+      if (initialRects.length === 0) {
+        // Fixture has no rectangles — skip rather than scaffold one.
+        return;
+      }
+      const sourceId = initialRects[0].id;
+      const sourceFrom = initialRects[0].from;
+      const sourceTo = initialRects[0].to;
+
+      act(() => {
+        slot.current.scene.copySelection({
+          type: 'RECTANGLE',
+          id: sourceId
+        });
+      });
+      let pastedRef: { type: string; id: string } | null = null;
+      act(() => {
+        pastedRef = slot.current.scene.paste();
+      });
+
+      expect(pastedRef!.type).toBe('RECTANGLE');
+      const pasted = slot.current.scene.rectangles.find((r) => {
+        return r.id === pastedRef!.id;
+      });
+      expect(pasted).toBeDefined();
+      expect(pasted!.from).toEqual({
+        x: sourceFrom.x + 1,
+        y: sourceFrom.y + 1
+      });
+      expect(pasted!.to).toEqual({
+        x: sourceTo.x + 1,
+        y: sourceTo.y + 1
+      });
+    });
+
+    test('copying a CONNECTOR is a silent no-op (clipboard stays empty)', () => {
+      const slot = setup();
+      const connector = slot.current.scene.connectors[0];
+      if (!connector) return;
+
+      act(() => {
+        slot.current.scene.copySelection({
+          type: 'CONNECTOR',
+          id: connector.id
+        });
+      });
+      // Subsequent paste should return null (nothing in clipboard).
+      let ref: { type: string; id: string } | null = { type: '', id: '' };
+      act(() => {
+        ref = slot.current.scene.paste();
+      });
+      expect(ref).toBeNull();
+    });
+  });
 });

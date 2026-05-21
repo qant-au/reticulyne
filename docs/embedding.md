@@ -59,6 +59,9 @@ All props are optional. The component renders a fully-functional editor with sen
 | `onError` | `(error: Error, info: ErrorInfo) => void` | `undefined` | Invoked by the internal `ErrorBoundary` when a render error escapes. Pipe to your telemetry. |
 | `errorFallback` | `ReactNode` | default fallback box | Override the "Editor failed to load" fallback rendered on `ErrorBoundary` catch. |
 | `onValidationError` | `(issues: ZodIssue[]) => void` | `undefined` | Invoked when `initialData` (or a `useIsoflow().loadModel(...)` payload) fails schema validation. Receives the array of Zod issues. When omitted, the failure is logged to `console.error` instead. Earlier versions popped a `window.alert`; that has been replaced by this contract. Callback identity does **not** need to be memoised. |
+| `enableAnimation` | `boolean` | `false` | Opt-in for the connector animation feature (FEA5-06). When `true`, a connector whose `animated` schema field is `true` renders its glyph travelling along the line on a continuous loop, and the **Animate** toggle appears in the ConnectorControls panel. When `false`, the toggle is hidden and `animated: true` connectors render statically — so a saved-with-animation diagram looks identical to a pre-FEA5-06 deployment until the host opts in. |
+| `nodeIndicatorComponent` | `(args: { item: ModelItem, view: ViewItem }) => ReactNode` | `undefined` | Per-node decorator (FEA5-07). Rendered inside every Node, positioned at the node's tile and receiving its `ModelItem` + `ViewItem`. Use it to overlay live indicators — status pips, gauges, badges, mini-charts — driven by host state that isn't part of the model. See [Live dashboards](#live-dashboards). |
+| `children` | `ReactNode` | `undefined` | Optional children rendered inside the Isoflow provider tree. Intended use is a "driver" child component that calls [`useIsoflow()`](#imperative-api-useisoflow) to drive the editor from outside — pulse connectors on a timer, update colours from a poller, etc. Driver components typically return `null`. |
 
 ### Container sizing
 
@@ -293,6 +296,9 @@ Callable from any component rendered **inside** `<Isoflow>`. Returns:
 | `setZoom(z)` | `(z: number) => void` | Set absolute zoom. |
 | `incrementZoom()` / `decrementZoom()` | `() => void` | Step zoom by `ZOOM_INCREMENT` (0.2). |
 | `rendererEl` | `HTMLDivElement \| null` | The renderer's outer DOM node — useful for export-to-image or programmatic focus. |
+| `Connector.get(id)` | `(id: string) => Connector \| undefined` | Returns the connector (defaults merged) for the given id, or `undefined` if no view contains it. |
+| `Connector.update(id, patch)` | `(id, patch) => void` | Mutate `color` / `width` / `style` / `direction` / `glyph` / `animated` from the host. **Bypasses the undo stack** so a live-data poller doesn't fill Ctrl+Z. Gated on `editorMode !== 'NON_INTERACTIVE'` — warns and no-ops otherwise. |
+| `Connector.pulse(id, opts?)` | `(id, { durationMs?, glyph? }?) => void` | Fire a one-shot signal pulse — the chosen glyph travels the connector once over `durationMs` (default 1500). Runtime-only: writes to the scene-store overlay, never persisted to the model, never recorded in history. Each call supersedes any pulse already in-flight on that connector. |
 | `Model` *(escape hatch)* | `{ get, set }` | Raw zustand actions. `set` is gated by editorMode. Prefer the named methods above. |
 | `uiState` *(escape hatch)* | `UiStateActions` | Full UI store action bag. Prefer the named methods above. |
 
@@ -330,6 +336,108 @@ function RemoteLoader({ diagramId }: { diagramId: string }) {
   return null;
 }
 ```
+
+## Live dashboards
+
+Three pieces of surface area combine to turn the editor into a host-driven dashboard:
+
+- **`enableAnimation`** (boolean prop) flips the connector animation feature on. When omitted, every dashboard primitive below is a silent no-op — your existing embed renders unchanged.
+- **`nodeIndicatorComponent`** decorates every node with host-supplied React (gauges, pips, badges).
+- **`useIsoflow().Connector`** lets host code mutate connector visuals and fire signal pulses from outside the editor tree. Because the hook needs to be a descendant of `<Isoflow>` to see the contextual stores, pass a "driver" child component via the `children` prop.
+
+Worked example — a simulated three-tier system whose API and database states wobble on a timer:
+
+```tsx
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Isoflow, { useIsoflow } from '@qant-au/isoflow';
+
+type Status = 'up' | 'degraded' | 'down';
+const STATUS_COLOR: Record<Status, string> = {
+  up: '#1f9d55',
+  degraded: '#f59e0b',
+  down: '#dc2626'
+};
+
+// Driver child rendered inside <Isoflow>. Reads host state via
+// props, calls useIsoflow().Connector imperatively on each tick.
+function DashboardDriver({ statuses, onTick }: { statuses: Record<string, Status>; onTick: () => void }) {
+  const { Connector } = useIsoflow();
+  useEffect(() => {
+    const id = window.setInterval(onTick, 1500);
+    return () => window.clearInterval(id);
+  }, [onTick]);
+  useEffect(() => {
+    Connector.pulse('conn-web-api', { durationMs: 1200 });
+    if (statuses.db !== 'down') {
+      Connector.pulse('conn-api-db', { durationMs: 1200 });
+    }
+    Connector.update('conn-api-db', {
+      color: statuses.db === 'down' ? 'color-red' : 'color-green'
+    });
+  }, [Connector, statuses]);
+  return null;
+}
+
+export function LiveDashboard() {
+  const [statuses, setStatuses] = useState<Record<string, Status>>({
+    web: 'up', api: 'up', db: 'up'
+  });
+  const advance = useCallback(() => {
+    // ...scripted state machine; see src/examples/LiveDashboard/...
+    setStatuses(/* next */);
+  }, []);
+  // Rebuild the indicator function whenever statuses change so the
+  // captured closure stays current.
+  const nodeIndicatorComponent = useMemo(() => {
+    return ({ item }) => (
+      <div style={{
+        position: 'absolute',
+        right: -28,
+        top: -68,
+        width: 16,
+        height: 16,
+        borderRadius: '50%',
+        background: STATUS_COLOR[statuses[item.id]],
+        border: '2px solid white'
+      }} />
+    );
+  }, [statuses]);
+
+  return (
+    <Isoflow
+      initialData={dashboardData}
+      enableAnimation
+      editorMode="EXPLORABLE_READONLY"
+      nodeIndicatorComponent={nodeIndicatorComponent}
+    >
+      <DashboardDriver statuses={statuses} onTick={advance} />
+    </Isoflow>
+  );
+}
+```
+
+A complete runnable version lives at [`src/examples/LiveDashboard/LiveDashboard.tsx`](../src/examples/LiveDashboard/LiveDashboard.tsx) and ships as the "Live dashboard" entry in the examples picker at <http://localhost:2223/>.
+
+### When to use which primitive
+
+| You want… | Use… |
+|---|---|
+| A status badge / gauge rendered next to a node | `nodeIndicatorComponent` |
+| A connector that always pulses to show it's "live" | `connector.animated: true` in the model |
+| To fire one-shot signal pulses per event (request, payment, etc.) | `useIsoflow().Connector.pulse(id, …)` |
+| To recolour a connector based on health / status | `useIsoflow().Connector.update(id, { color })` |
+| To swap the arrowhead for `$` / parcel / lightning / etc. | `connector.glyph: 'dollar' \| 'square' \| 'bolt' \| …` |
+
+### What gets persisted vs what's runtime
+
+| State | Persisted in the model? | Survives undo? |
+|---|---|---|
+| `connector.glyph`, `connector.animated`, `connector.color` (set via UI dropdown) | Yes (schema fields) | Yes (editor changes are undoable) |
+| `useIsoflow().Connector.update(...)` writes | Yes (model) | **No** — host-driven updates bypass the undo stack |
+| `useIsoflow().Connector.pulse(...)` | **No** — scene-store overlay only | N/A — never touches the model |
+| `nodeIndicatorComponent` output | **No** — host renders into a slot on each render | N/A — host state |
+
+The "host updates bypass undo" rule is deliberate: a poller calling `Connector.update` once a second would otherwise saturate the 100-deep undo ring and make Ctrl+Z useless for the editor user.
 
 ## Peer dependencies
 

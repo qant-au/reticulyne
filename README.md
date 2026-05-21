@@ -46,6 +46,7 @@ Reference material lives under [`docs/`](docs/README.md):
 - **Extensible icon system** — Bring your own collections via the `ProcessedCollection` interface; see [docs/isopacks.md](docs/isopacks.md) for the contract. The standalone Docker container ships with the AWS, Azure, GCP, Kubernetes, and Isoflow icon collections pre-loaded.
 - **Editor modes** — Editable, explorable-readonly, and non-interactive modes for embedding in viewers, dashboards, or full editors.
 - **Export options** — Export diagrams as JSON, PNG, or PDF from the main menu. PDF generation is client-side via jsPDF (no network call).
+- **Live dashboards** *(opt-in via `enableAnimation`)* — Animate connectors, fire signal pulses (`useIsoflow().Connector.pulse`) and decorate nodes with host-supplied gauges (`nodeIndicatorComponent`) to drive the diagram from a poller / websocket. See [Live dashboards in the embedding docs](docs/embedding.md#live-dashboards) and the runnable [`LiveDashboard` example](src/examples/LiveDashboard/LiveDashboard.tsx).
 
 ## Requirements
 

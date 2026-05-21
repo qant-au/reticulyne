@@ -51,6 +51,10 @@ export const connectorSchema = z
     style: z.enum(connectorStyleOptions).optional(),
     direction: z.enum(connectorDirectionOptions).optional(),
     glyph: z.enum(connectorGlyphOptions).optional(),
+    // FEA5-06: persistent per-connector animation flag. The runtime
+    // is also gated by IsoflowProps.enableAnimation; setting this to
+    // true on a host that hasn't opted in is a no-op visually.
+    animated: z.boolean().optional(),
     anchors: z.array(anchorSchema).max(SCHEMA_LIMITS.ANCHORS)
   })
   .strict();

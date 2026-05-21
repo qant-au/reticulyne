@@ -10,7 +10,9 @@ import {
   Select,
   MenuItem,
   TextField,
-  Typography
+  Typography,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import { GLYPHS } from 'src/components/SceneLayers/Connectors/glyphs';
 
@@ -59,6 +61,9 @@ interface Props {
 export const ConnectorControls = ({ id }: Props) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
+  });
+  const enableAnimation = useUiStateStore((state) => {
+    return state.enableAnimation;
   });
   const connector = useConnector(id);
   const { updateConnector, deleteConnector } = useScene();
@@ -164,6 +169,23 @@ export const ConnectorControls = ({ id }: Props) => {
           </Select>
         </Box>
       </Box>
+      {enableAnimation && (
+        <Box sx={{ pt: 2, px: 3 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={Boolean(connector.animated)}
+                onChange={(e) => {
+                  updateConnector(connector.id, {
+                    animated: e.target.checked
+                  });
+                }}
+              />
+            }
+            label="Animate"
+          />
+        </Box>
+      )}
       <Section>
         <Box>
           <DeleteButton

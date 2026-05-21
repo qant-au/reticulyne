@@ -78,3 +78,79 @@ describe('FEA5-05 glyph registry', () => {
     expect(container.querySelector('polygon')).not.toBeNull();
   });
 });
+
+describe('FEA5-06 glyph motion', () => {
+  test('omitting the motion prop renders a static glyph (no animateMotion)', () => {
+    const { container } = renderInSvg(
+      <GlyphRenderer glyph="dollar" rotation={0} />
+    );
+    expect(container.querySelector('animateMotion')).toBeNull();
+  });
+
+  test('motion prop emits <animateMotion> with the path mpath href', () => {
+    const { container } = renderInSvg(
+      <GlyphRenderer
+        glyph="dollar"
+        rotation={0}
+        motion={{ pathHref: '#some-path-id', durSeconds: 2 }}
+      />
+    );
+    const motion = container.querySelector('animateMotion');
+    expect(motion).not.toBeNull();
+    expect(motion?.getAttribute('dur')).toBe('2s');
+    expect(motion?.getAttribute('repeatCount')).toBe('indefinite');
+    expect(motion?.querySelector('mpath')?.getAttribute('href')).toBe(
+      '#some-path-id'
+    );
+  });
+
+  test('rotateWithLine glyphs get rotate="auto", others get rotate="0"', () => {
+    // triangle: rotateWithLine = true
+    const { container: tri } = renderInSvg(
+      <GlyphRenderer
+        glyph="triangle"
+        rotation={0}
+        motion={{ pathHref: '#p', durSeconds: 2 }}
+      />
+    );
+    expect(tri.querySelector('animateMotion')?.getAttribute('rotate')).toBe(
+      'auto'
+    );
+
+    // dollar: rotateWithLine = false
+    const { container: dol } = renderInSvg(
+      <GlyphRenderer
+        glyph="dollar"
+        rotation={0}
+        motion={{ pathHref: '#p', durSeconds: 2 }}
+      />
+    );
+    expect(dol.querySelector('animateMotion')?.getAttribute('rotate')).toBe(
+      '0'
+    );
+  });
+
+  test('reverse flag swaps keyPoints so the glyph travels end-to-start', () => {
+    const { container: fwd } = renderInSvg(
+      <GlyphRenderer
+        glyph="triangle"
+        rotation={0}
+        motion={{ pathHref: '#p', durSeconds: 2 }}
+      />
+    );
+    expect(fwd.querySelector('animateMotion')?.getAttribute('keyPoints')).toBe(
+      '0;1'
+    );
+
+    const { container: rev } = renderInSvg(
+      <GlyphRenderer
+        glyph="triangle"
+        rotation={0}
+        motion={{ pathHref: '#p', durSeconds: 2, reverse: true }}
+      />
+    );
+    expect(rev.querySelector('animateMotion')?.getAttribute('keyPoints')).toBe(
+      '1;0'
+    );
+  });
+});

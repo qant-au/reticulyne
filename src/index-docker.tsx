@@ -42,6 +42,13 @@ const initialData = e2eConfig?.initialData ?? {
 const editorMode = e2eConfig?.editorMode;
 const scrollParent = e2eConfig?.scrollParent ?? false;
 
+// FEA5-06: optional opt-in for the connector animation feature, kept
+// off by default so a production docker deployment matches the
+// pre-FEA5-06 behaviour. Pass `?animate=1` on the URL to flip the
+// toggle on for manual review without rebuilding the image.
+const enableAnimation =
+  new URLSearchParams(window.location.search).get('animate') === '1';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -59,13 +66,21 @@ const Shell = scrollParent ? (
   >
     <Box sx={{ width: '100vw', height: '200vh' }}>
       <Box sx={{ width: '100vw', height: '100vh' }}>
-        <Isoflow initialData={initialData} editorMode={editorMode} />
+        <Isoflow
+          initialData={initialData}
+          editorMode={editorMode}
+          enableAnimation={enableAnimation}
+        />
       </Box>
     </Box>
   </Box>
 ) : (
   <Box sx={{ width: '100vw', height: '100vh' }}>
-    <Isoflow initialData={initialData} editorMode={editorMode} />
+    <Isoflow
+      initialData={initialData}
+      editorMode={editorMode}
+      enableAnimation={enableAnimation}
+    />
   </Box>
 );
 

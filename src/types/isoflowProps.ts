@@ -66,4 +66,14 @@ export interface IsoflowProps {
    * stores it in the UI-state store and reads it at click time.
    */
   onSave?: (model: Model) => void;
+  /**
+   * Opt-in flag for the connector animation feature (FEA5-06).
+   * When `true`, connectors with `animated: true` render a moving
+   * glyph along their path, and the "Animate" toggle appears in
+   * the ConnectorControls panel. When `false` (default), the
+   * animation never plays even if a connector's `animated` field
+   * is set, and the toggle is hidden — so existing diagrams shipped
+   * with `animated: true` look exactly like they did before opt-in.
+   */
+  enableAnimation?: boolean;
 }

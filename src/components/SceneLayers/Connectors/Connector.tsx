@@ -12,7 +12,13 @@ import { useIsoProjection } from 'src/hooks/useIsoProjection';
 import { useConnector } from 'src/hooks/useConnector';
 import { useScene } from 'src/hooks/useScene';
 import { useColor } from 'src/hooks/useColor';
+import { useUiStateStore } from 'src/stores/uiStateStore';
 import { GlyphRenderer } from './glyphs';
+
+// FEA5-06: fixed end-to-end animation duration for the looping
+// moving glyph. Per-connector tuning (e.g. `speedMs` on the schema)
+// can come later; a single global timing keeps Stage 2 minimal.
+const ANIMATION_DURATION_SECONDS = 2;
 
 interface Props {
   connector: ReturnType<typeof useScene>['connectors'][0];
@@ -24,9 +30,20 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
   const color = useColor(_connector.color);
   const { currentView } = useScene();
   const connector = useConnector(_connector.id);
+  const enableAnimation = useUiStateStore((state) => {
+    return state.enableAnimation;
+  });
   const { css, pxSize } = useIsoProjection({
     ...connector.path.rectangle
   });
+
+  // Stable SVG fragment-id for <animateMotion><mpath href> to point
+  // at the polyline below. Encoded so embedders' arbitrary id
+  // strings (URIs, slashes, etc.) can't break the selector.
+  const pathElementId = useMemo(() => {
+    return `connector-path-${encodeURIComponent(connector.id)}`;
+  }, [connector.id]);
+  const isLooping = enableAnimation && connector.animated;
 
   const drawOffset = useMemo(() => {
     return {
@@ -107,6 +124,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
           fill="none"
         />
         <polyline
+          id={pathElementId}
           points={pathString}
           stroke={getColorVariant(color.value, 'dark', { grade: 1 })}
           strokeWidth={connectorWidthPx}
@@ -149,6 +167,21 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
             </g>
           );
         })}
+
+        {isLooping && (
+          <GlyphRenderer
+            glyph={connector.glyph}
+            rotation={0}
+            fill="black"
+            stroke={theme.palette.common.white}
+            strokeWidth={4}
+            motion={{
+              pathHref: `#${pathElementId}`,
+              durSeconds: ANIMATION_DURATION_SECONDS,
+              reverse: connector.direction === 'END_TO_START'
+            }}
+          />
+        )}
       </Svg>
     </Box>
   );

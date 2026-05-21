@@ -268,12 +268,28 @@ export const GLYPHS: Record<ConnectorGlyph, GlyphEntry> = {
   star: { Component: Star, rotateWithLine: false, label: 'Star' }
 };
 
+interface GlyphMotion {
+  // SVG fragment-id reference (e.g. `#connector-path-abc`) of the
+  // path the glyph should travel along.
+  pathHref: string;
+  durSeconds: number;
+  // When true, travel end-to-start instead of start-to-end.
+  reverse?: boolean;
+}
+
 interface GlyphRendererProps {
   glyph?: ConnectorGlyph;
   rotation: number;
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
+  // FEA5-06: when set, the glyph rides along the referenced SVG
+  // path on a continuous loop instead of rendering statically. The
+  // `rotateWithLine` flag from the registry is mapped to the
+  // <animateMotion rotate="auto"> attribute so arrowhead-like
+  // glyphs face the direction of travel and text-like glyphs stay
+  // upright.
+  motion?: GlyphMotion;
 }
 
 export const GlyphRenderer = ({
@@ -281,14 +297,33 @@ export const GlyphRenderer = ({
   rotation,
   fill = 'black',
   stroke = 'white',
-  strokeWidth = 4
+  strokeWidth = 4,
+  motion
 }: GlyphRendererProps) => {
   const entry = GLYPHS[glyph] ?? GLYPHS.triangle;
   const { Component, rotateWithLine } = entry;
-  const transform = rotateWithLine ? `rotate(${rotation})` : undefined;
-  return (
-    <g transform={transform}>
-      <Component fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
-    </g>
+  const glyphEl = (
+    <Component fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
   );
+
+  if (motion) {
+    return (
+      <g>
+        {glyphEl}
+        <animateMotion
+          dur={`${motion.durSeconds}s`}
+          repeatCount="indefinite"
+          keyPoints={motion.reverse ? '1;0' : '0;1'}
+          keyTimes="0;1"
+          calcMode="linear"
+          rotate={rotateWithLine ? 'auto' : '0'}
+        >
+          <mpath href={motion.pathHref} />
+        </animateMotion>
+      </g>
+    );
+  }
+
+  const transform = rotateWithLine ? `rotate(${rotation})` : undefined;
+  return <g transform={transform}>{glyphEl}</g>;
 };

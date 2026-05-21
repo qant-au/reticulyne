@@ -25,7 +25,7 @@ export const ZoomControls = () => {
       <UiElement>
         <Stack direction="row">
           <IconButton
-            name="Zoom out"
+            name="Zoom out (-)"
             Icon={<ZoomOutIcon />}
             onClick={uiStateStoreActions.decrementZoom}
             disabled={zoom >= MAX_ZOOM}
@@ -50,7 +50,7 @@ export const ZoomControls = () => {
           </Box>
           <Divider orientation="vertical" flexItem />
           <IconButton
-            name="Zoom in"
+            name="Zoom in (+)"
             Icon={<ZoomInIcon />}
             onClick={uiStateStoreActions.incrementZoom}
             disabled={zoom <= MIN_ZOOM}
@@ -59,7 +59,7 @@ export const ZoomControls = () => {
       </UiElement>
       <UiElement>
         <IconButton
-          name="Fit to screen"
+          name="Fit to screen (F)"
           Icon={<FitToScreenIcon />}
           onClick={fitToView}
         />

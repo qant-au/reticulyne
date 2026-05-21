@@ -44,14 +44,25 @@ const App = ({
 
   const { load, iconCollectionsKey } = initialDataManager;
 
+  // Memoise the merged `{ ...INITIAL_DATA, ...initialData }` so its
+  // reference is stable whenever the consumer's `initialData` ref is
+  // stable. Previously this merge happened inline inside the effect
+  // body, producing a fresh object on every effect run and defeating the
+  // reference-equality dedupe guard inside `useInitialDataManager.load`
+  // — every consumer re-render would re-seed the entire model store and
+  // wipe any unsaved items the user had just placed.
+  const mergedInitialData = useMemo(() => {
+    return { ...INITIAL_DATA, ...initialData };
+  }, [initialData]);
+
   useEffect(() => {
-    load({ ...INITIAL_DATA, ...initialData });
+    load(mergedInitialData);
     // `iconCollectionsKey` is included so a runtime change to the
     // `iconCollections` prop retriggers the load pipeline and the
     // filter actually re-applies. Without it, the dedupe guard inside
     // useInitialDataManager short-circuits on the same `initialData`
     // reference (BUG5-06).
-  }, [initialData, load, iconCollectionsKey]);
+  }, [mergedInitialData, load, iconCollectionsKey]);
 
   useEffect(() => {
     uiStateActions.setEditorMode(editorMode);

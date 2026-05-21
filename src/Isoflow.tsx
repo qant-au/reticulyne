@@ -24,6 +24,7 @@ const App = ({
   onModelUpdated,
   onValidationError,
   enableDebugTools = false,
+  enableAnimation = false,
   editorMode = 'EDITABLE',
   renderer,
   showTitleBar,
@@ -109,6 +110,10 @@ const App = ({
   useEffect(() => {
     uiStateActions.setEnableDebugTools(enableDebugTools);
   }, [enableDebugTools, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setEnableAnimation(enableAnimation);
+  }, [enableAnimation, uiStateActions]);
 
   if (!initialDataManager.isReady) return null;
 

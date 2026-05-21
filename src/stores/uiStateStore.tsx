@@ -31,6 +31,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       },
       itemControls: null,
       enableDebugTools: false,
+      enableAnimation: false,
       showTitleBar: undefined,
       onSave: undefined,
       actions: {
@@ -113,6 +114,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setEnableDebugTools: (enableDebugTools) => {
           set({ enableDebugTools });
+        },
+        setEnableAnimation: (enableAnimation) => {
+          set({ enableAnimation });
         },
         setShowTitleBar: (showTitleBar) => {
           set({ showTitleBar });

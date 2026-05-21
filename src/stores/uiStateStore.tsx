@@ -34,6 +34,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       enableAnimation: false,
       showTitleBar: undefined,
       onSave: undefined,
+      nodeIndicatorComponent: undefined,
       actions: {
         setView: (view) => {
           set({ view });
@@ -123,6 +124,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setOnSave: (onSave) => {
           set({ onSave });
+        },
+        setNodeIndicatorComponent: (component) => {
+          set({ nodeIndicatorComponent: component });
         },
         setRendererEl: (el) => {
           set({ rendererEl: el });

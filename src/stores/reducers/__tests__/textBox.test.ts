@@ -21,6 +21,7 @@ describe('textBox reducers', () => {
   test('deleteTextBox removes the scene cache entry keyed by the textbox id', () => {
     const scene: Scene = {
       connectors: {},
+      connectorOverlays: {},
       textBoxes: {
         [TEXT_BOX_ID]: { size: { width: 10, height: 1 } }
       }

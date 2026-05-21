@@ -6,6 +6,7 @@ const { Provider, useStore } = createContextualStore<SceneStore>(() => {
   return createStore<SceneStore>((set, get) => {
     return {
       connectors: {},
+      connectorOverlays: {},
       textBoxes: {},
       actions: {
         get,

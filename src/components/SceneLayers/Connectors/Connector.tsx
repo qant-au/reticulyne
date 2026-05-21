@@ -13,7 +13,9 @@ import { useConnector } from 'src/hooks/useConnector';
 import { useScene } from 'src/hooks/useScene';
 import { useColor } from 'src/hooks/useColor';
 import { useUiStateStore } from 'src/stores/uiStateStore';
+import { useSceneStore } from 'src/stores/sceneStore';
 import { GlyphRenderer } from './glyphs';
+import type { ConnectorGlyph } from 'src/types';
 
 // FEA5-06: fixed end-to-end animation duration for the looping
 // moving glyph. Per-connector tuning (e.g. `speedMs` on the schema)
@@ -32,6 +34,12 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
   const connector = useConnector(_connector.id);
   const enableAnimation = useUiStateStore((state) => {
     return state.enableAnimation;
+  });
+  // FEA5-07: runtime pulse overlay. Driven by useIsoflow().Connector
+  // .pulse from outside the component tree; this store subscription
+  // re-renders when a pulse starts or expires.
+  const pulseOverlay = useSceneStore((state) => {
+    return state.connectorOverlays[connector.id];
   });
   const { css, pxSize } = useIsoProjection({
     ...connector.path.rectangle
@@ -179,6 +187,29 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
               pathHref: `#${pathElementId}`,
               durSeconds: ANIMATION_DURATION_SECONDS,
               reverse: connector.direction === 'END_TO_START'
+            }}
+          />
+        )}
+
+        {pulseOverlay?.pulseExpiresAt !== undefined && (
+          <GlyphRenderer
+            // Re-key on pulseExpiresAt so a fresh pulse triggered
+            // mid-flight cleanly restarts the animation rather than
+            // letting the in-flight <animateMotion> linger and the
+            // glyph teleport.
+            key={pulseOverlay.pulseExpiresAt}
+            glyph={
+              (pulseOverlay.pulseGlyph as ConnectorGlyph) ?? connector.glyph
+            }
+            rotation={0}
+            fill="black"
+            stroke={theme.palette.common.white}
+            strokeWidth={4}
+            motion={{
+              pathHref: `#${pathElementId}`,
+              durSeconds: (pulseOverlay.pulseDurationMs ?? 1500) / 1000,
+              reverse: connector.direction === 'END_TO_START',
+              repeatCount: 1
             }}
           />
         )}

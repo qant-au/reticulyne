@@ -106,6 +106,57 @@ The host page never sees these wheel events bubble — the renderer's wheel list
 
 > **Behaviour change in v4.2.0**: Earlier releases zoomed on plain wheel and required the Hand tool to pan. From v4.2.0 onwards the modifier convention above is the default. The Hand tool still works for click-and-drag panning, so muscle-memory users keep their workflow.
 
+## Keyboard shortcuts
+
+The editor wires the conventions used by Figma, Miro, Excalidraw and tldraw. All shortcuts are window-level and are suppressed while focus is on a text input / textarea / contenteditable surface (e.g. an item-description editor), so they never collide with the host's own typing.
+
+**Tools — `EDITABLE` mode only.** Bare letter, no modifier.
+
+| Key | Tool |
+|---|---|
+| `V` or `S` | Select |
+| `H` | Hand / Pan |
+| `A` | Add item |
+| `R` | Rectangle |
+| `C` | Connector |
+| `T` | Text (creates a textbox at the current mouse tile) |
+
+**Zoom and viewport — `EDITABLE` + `EXPLORABLE_READONLY`.**
+
+| Key | Action |
+|---|---|
+| `+` / `=` | Zoom in |
+| `-` / `_` | Zoom out |
+| `0` or `1` | Reset zoom to 100% |
+| `F` | Fit to screen |
+
+**Selection-dependent — `EDITABLE` mode only.** Requires an item to be selected.
+
+| Key | Action |
+|---|---|
+| `Esc` | Deselect (works in any editor mode) |
+| `Delete` / `Backspace` | Delete the selected item |
+| `↑` `↓` `←` `→` | Nudge by one tile (+`Shift` for 5 tiles) |
+| `Ctrl/Cmd + D` | Duplicate the selected item (skips connectors) |
+| `Ctrl/Cmd + C` | Copy the selected item to the editor's clipboard |
+| `Ctrl/Cmd + V` | Paste with a one-tile offset (works repeatedly) |
+
+**Undo / redo — `EDITABLE` mode only.**
+
+| Key | Action |
+|---|---|
+| `Ctrl/Cmd + Z` | Undo |
+| `Ctrl + Y` | Redo (Windows) |
+| `Ctrl/Cmd + Shift + Z` | Redo (Mac convention) |
+
+Undo/redo covers all document mutations (items, view items, connectors, rectangles, textboxes) — rapid bursts within ~250ms collapse into a single history step, so dragging an item counts as one undo. Depth cap is 100 entries.
+
+**Notes for embedders:**
+
+- The clipboard lives in editor session state — copied selections survive across model loads, undo/redo, and view changes, but **not** across page refreshes. There is no integration with the OS clipboard.
+- Connectors are not copyable/duplicatable. Their anchors reference other items by id; the right "what does paste mean for a connector whose anchored items aren't in the target context?" semantics is not locked in. PRs welcome.
+- All shortcuts respect `editorMode` — `EXPLORABLE_READONLY` only gets zoom + fit-to-view + Escape; `NON_INTERACTIVE` gets none.
+
 ## Controlling UI visibility
 
 All visibility controls are **opt-in restrictions** — omitting a prop always produces the full default behaviour. You only pass a prop when you want to narrow or override it.

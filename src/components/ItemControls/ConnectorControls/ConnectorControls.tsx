@@ -1,7 +1,8 @@
 import {
   Connector,
   connectorStyleOptions,
-  connectorDirectionOptions
+  connectorDirectionOptions,
+  connectorGlyphOptions
 } from 'src/types';
 import {
   Box,
@@ -11,6 +12,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import { GLYPHS } from 'src/components/SceneLayers/Connectors/glyphs';
 
 // User-facing labels for the connector-direction dropdown (FEA4-02).
 const directionLabels: Record<
@@ -22,6 +24,16 @@ const directionLabels: Record<
   BOTH: 'Both ends',
   NONE: 'No arrow'
 };
+
+// User-facing labels for the connector-glyph dropdown (FEA5-05).
+// Pulled from the GLYPHS registry so the label list stays in lockstep
+// with the glyph set without a second maintenance burden.
+const glyphLabels: Record<(typeof connectorGlyphOptions)[number], string> =
+  Object.fromEntries(
+    connectorGlyphOptions.map((slug) => {
+      return [slug, GLYPHS[slug].label];
+    })
+  ) as Record<(typeof connectorGlyphOptions)[number], string>;
 
 // Inline label that matches the existing <Section title="..."> visual
 // language (small uppercase, secondary text colour). Used in the
@@ -124,6 +136,28 @@ export const ConnectorControls = ({ id }: Props) => {
               return (
                 <MenuItem key={direction} value={direction}>
                   {directionLabels[direction]}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="body2" sx={inlineSectionLabel}>
+            Type
+          </Typography>
+          <Select
+            fullWidth
+            value={connector.glyph}
+            onChange={(e) => {
+              updateConnector(connector.id, {
+                glyph: e.target.value as Connector['glyph']
+              });
+            }}
+          >
+            {connectorGlyphOptions.map((slug) => {
+              return (
+                <MenuItem key={slug} value={slug}>
+                  {glyphLabels[slug]}
                 </MenuItem>
               );
             })}

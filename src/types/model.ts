@@ -14,11 +14,16 @@ import {
   textBoxSchema,
   rectangleSchema,
   connectorStyleOptions,
-  connectorDirectionOptions
+  connectorDirectionOptions,
+  connectorGlyphOptions
 } from 'src/schemas';
 import { StoreApi } from 'zustand';
 
-export { connectorStyleOptions, connectorDirectionOptions } from 'src/schemas';
+export {
+  connectorStyleOptions,
+  connectorDirectionOptions,
+  connectorGlyphOptions
+} from 'src/schemas';
 export type Model = z.infer<typeof modelSchema>;
 export type ModelItems = z.infer<typeof modelItemsSchema>;
 export type Icon = z.infer<typeof iconSchema>;
@@ -38,6 +43,7 @@ export type ViewItem = z.infer<typeof viewItemSchema>;
 // small follow-up tracked in TODO.md.
 export type ConnectorStyle = keyof typeof connectorStyleOptions;
 export type ConnectorDirection = (typeof connectorDirectionOptions)[number];
+export type ConnectorGlyph = (typeof connectorGlyphOptions)[number];
 export type ConnectorAnchor = z.infer<typeof anchorSchema>;
 export type Connector = z.infer<typeof connectorSchema>;
 export type TextBox = z.infer<typeof textBoxSchema>;

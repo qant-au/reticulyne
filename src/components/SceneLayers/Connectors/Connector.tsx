@@ -12,6 +12,7 @@ import { useIsoProjection } from 'src/hooks/useIsoProjection';
 import { useConnector } from 'src/hooks/useConnector';
 import { useScene } from 'src/hooks/useScene';
 import { useColor } from 'src/hooks/useColor';
+import { GlyphRenderer } from './glyphs';
 
 interface Props {
   connector: ReturnType<typeof useScene>['connectors'][0];
@@ -138,14 +139,13 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
         {directionIcons.map((icon, i) => {
           return (
             <g key={i} transform={`translate(${icon.x}, ${icon.y})`}>
-              <g transform={`rotate(${icon.rotation})`}>
-                <polygon
-                  fill="black"
-                  stroke={theme.palette.common.white}
-                  strokeWidth={4}
-                  points="17.58,17.01 0,-17.01 -17.58,17.01"
-                />
-              </g>
+              <GlyphRenderer
+                glyph={connector.glyph}
+                rotation={icon.rotation}
+                fill="black"
+                stroke={theme.palette.common.white}
+                strokeWidth={4}
+              />
             </g>
           );
         })}

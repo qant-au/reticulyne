@@ -7,6 +7,7 @@ import type { InitialData, IsoflowProps, Model, ModelStore } from 'src/types';
 import { setWindowCursor, modelFromModelStore } from 'src/utils';
 import { useModelStore, ModelProvider } from 'src/stores/modelStore';
 import { SceneProvider } from 'src/stores/sceneStore';
+import { HistoryProvider } from 'src/stores/historyStore';
 import { GlobalStyles } from 'src/styles/GlobalStyles';
 import { Renderer } from 'src/components/Renderer/Renderer';
 import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
@@ -138,7 +139,9 @@ export const Isoflow = (props: IsoflowProps) => {
         <ModelProvider>
           <SceneProvider>
             <UiStateProvider>
-              <App {...appProps} />
+              <HistoryProvider>
+                <App {...appProps} />
+              </HistoryProvider>
             </UiStateProvider>
           </SceneProvider>
         </ModelProvider>

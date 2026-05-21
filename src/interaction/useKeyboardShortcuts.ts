@@ -52,6 +52,8 @@ export const useKeyboardShortcuts = () => {
     updateRectangle,
     duplicateItem,
     createTextBox,
+    undo,
+    redo,
     currentView
   } = useScene();
   const { fitToView } = useDiagramUtils();
@@ -204,6 +206,26 @@ export const useKeyboardShortcuts = () => {
       // Remaining shortcuts only fire in editable mode.
       if (!isEditable) return;
 
+      // === Undo / redo (FEA5-03) ===
+      // Standard cross-platform conventions:
+      //   Ctrl/Cmd+Z         → undo
+      //   Ctrl/Cmd+Shift+Z   → redo (Mac convention)
+      //   Ctrl+Y             → redo (Windows convention)
+      if (hasModifier && (e.key === 'z' || e.key === 'Z')) {
+        if (e.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+        e.preventDefault();
+        return;
+      }
+      if (e.ctrlKey && (e.key === 'y' || e.key === 'Y')) {
+        redo();
+        e.preventDefault();
+        return;
+      }
+
       const selected =
         itemControls && itemControls.type !== 'ADD_ITEM' ? itemControls : null;
 
@@ -313,6 +335,8 @@ export const useKeyboardShortcuts = () => {
     updateRectangle,
     duplicateItem,
     createTextBox,
+    undo,
+    redo,
     fitToView,
     mousePosition,
     currentView

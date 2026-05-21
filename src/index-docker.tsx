@@ -29,6 +29,14 @@ declare global {
        * the e2e suite.
        */
       scrollParent?: boolean;
+      /**
+       * Flip the FEA5-06 connector animation feature on for the
+       * e2e fixture. Equivalent to the `?animate=1` URL flag but
+       * doesn't require the spec to manipulate query strings —
+       * useful when a single test wants to load a custom fixture
+       * AND opt into animation in one shot.
+       */
+      enableAnimation?: boolean;
     };
   }
 }
@@ -45,8 +53,10 @@ const scrollParent = e2eConfig?.scrollParent ?? false;
 // FEA5-06: optional opt-in for the connector animation feature, kept
 // off by default so a production docker deployment matches the
 // pre-FEA5-06 behaviour. Pass `?animate=1` on the URL to flip the
-// toggle on for manual review without rebuilding the image.
+// toggle on for manual review without rebuilding the image, or set
+// `__ISOFLOW_E2E__.enableAnimation` from a Playwright spec.
 const enableAnimation =
+  e2eConfig?.enableAnimation ??
   new URLSearchParams(window.location.search).get('animate') === '1';
 
 const root = ReactDOM.createRoot(

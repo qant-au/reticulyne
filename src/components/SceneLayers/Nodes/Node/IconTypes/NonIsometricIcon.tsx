@@ -23,7 +23,16 @@ export const NonIsometricIcon = ({ icon }: Props) => {
           component="img"
           src={icon.url}
           alt={`icon-${icon.id}`}
-          sx={{ width: PROJECTED_TILE_SIZE.width * 0.7 }}
+          // maxWidth/maxHeight/height overrides are defensive against
+          // host-side CSS resets (e.g. Tailwind preflight) that clamp
+          // images to their containing block — see the matching
+          // comment in IsometricIcon.tsx for the failure mode.
+          sx={{
+            width: PROJECTED_TILE_SIZE.width * 0.7,
+            maxWidth: 'none',
+            maxHeight: 'none',
+            height: 'auto',
+          }}
         />
       </Box>
     </Box>

@@ -10,6 +10,24 @@ export const connectorDirectionOptions = [
   'NONE'
 ] as const;
 
+// FEA5-05: per-connector glyph picker. The slug at the head of the
+// list is the default rendered when a connector omits `glyph`, which
+// keeps every existing diagram visually identical post-upgrade.
+export const connectorGlyphOptions = [
+  'triangle',
+  'chevron',
+  'double-chevron',
+  'circle-solid',
+  'circle-outline',
+  'diamond',
+  'square',
+  'dollar',
+  'bolt',
+  'envelope',
+  'person',
+  'star'
+] as const;
+
 export const anchorSchema = z
   .object({
     id,
@@ -32,6 +50,7 @@ export const connectorSchema = z
     width: z.number().optional(),
     style: z.enum(connectorStyleOptions).optional(),
     direction: z.enum(connectorDirectionOptions).optional(),
+    glyph: z.enum(connectorGlyphOptions).optional(),
     anchors: z.array(anchorSchema).max(SCHEMA_LIMITS.ANCHORS)
   })
   .strict();

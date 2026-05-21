@@ -1,18 +1,22 @@
-// The four corner-positioned overlay controls — item-inspector
-// (left-edge below MainMenu), tool menu (top-right), zoom controls
-// (bottom-left), and main menu (top-left). Each is gated by the
+// The three corner-positioned overlay controls — item-inspector
+// (left-edge below MainMenu), zoom controls (bottom-left), and the
+// combined main/tool menu (top-left). Each is gated by the
 // availableTools array derived from the current editorMode, and by
 // the existence of an active itemControls reference for the
 // item-inspector slot.
 //
-// Pulled out of UiOverlay.tsx under QUA4-10 so the four absolute-
+// Pulled out of UiOverlay.tsx under QUA4-10 so the absolute-
 // positioned blocks stop drowning out the top-level overlay shape.
+// QUA4-11 merged the standalone top-right ToolMenu into MainMenu so
+// both halves render as one horizontal cluster at top-left — single
+// source of truth for "what can the user click in the chrome",
+// aligns with the host app's left-aligned chrome conventions.
+//
 // Pure presentation: every slot reads from props.
 
 import { Box } from '@mui/material';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { ItemControlsManager } from 'src/components/ItemControls/ItemControlsManager';
-import { ToolMenu } from 'src/components/ToolMenu/ToolMenu';
 import { MainMenu } from 'src/components/MainMenu/MainMenu';
 import { ZoomControls } from 'src/components/ZoomControls/ZoomControls';
 import type { ToolName } from 'src/utils';
@@ -39,6 +43,15 @@ export const ToolbarSlots = ({
   rendererSize,
   itemControls
 }: Props) => {
+  // The combined toolbar renders when EITHER half is active — i.e.
+  // the host wants the hamburger (MAIN_MENU) and/or the tool buttons
+  // (TOOL_MENU). MainMenu internally falls back to null when both
+  // are off, but we still gate the wrapping Box so positioning math
+  // stays predictable.
+  const showHamburger = availableTools.includes('MAIN_MENU');
+  const showToolButtons = availableTools.includes('TOOL_MENU');
+  const showCombinedToolbar = showHamburger || showToolButtons;
+
   return (
     <>
       {availableTools.includes('ITEM_CONTROLS') && itemControls && (
@@ -61,21 +74,6 @@ export const ToolbarSlots = ({
         </UiElement>
       )}
 
-      {availableTools.includes('TOOL_MENU') && (
-        <Box
-          sx={{
-            position: 'absolute',
-            transform: 'translateX(-100%)'
-          }}
-          style={{
-            left: rendererSize.width - appPadding.x,
-            top: appPadding.y
-          }}
-        >
-          <ToolMenu />
-        </Box>
-      )}
-
       {availableTools.includes('ZOOM_CONTROLS') && (
         <Box
           sx={{
@@ -91,7 +89,7 @@ export const ToolbarSlots = ({
         </Box>
       )}
 
-      {availableTools.includes('MAIN_MENU') && (
+      {showCombinedToolbar && (
         <Box
           sx={{
             position: 'absolute'
@@ -101,7 +99,7 @@ export const ToolbarSlots = ({
             left: appPadding.x
           }}
         >
-          <MainMenu />
+          <MainMenu showToolButtons={showToolButtons} />
         </Box>
       )}
     </>

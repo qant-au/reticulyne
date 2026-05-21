@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, act } from '@testing-library/react';
 import Isoflow from '../Isoflow';
+import type { InitialData, Model } from 'src/types';
 
 // jsdom does not implement ResizeObserver or matchMedia; the renderer
 // touches both. Provide minimal shims so the component can mount.
@@ -105,6 +106,76 @@ describe('resilience to sparse model input (BUG5-04)', () => {
     );
     expect(onError).not.toHaveBeenCalled();
     expect(container.firstChild).not.toBeNull();
+  });
+});
+
+describe('initialData reference stability (BUG5-11)', () => {
+  // Regression: the load-effect inside App spread
+  // `{ ...INITIAL_DATA, ...initialData }` inline on every effect run,
+  // producing a fresh object reference and silently defeating the
+  // reference-equality dedupe in useInitialDataManager.load. Any host
+  // that re-rendered Isoflow (e.g. because it bridges onModelUpdated
+  // into React state to track a `dirty` flag) re-seeded the entire
+  // model store on every parent render, wiping unsaved items.
+  //
+  // The fix memoises the merge so the merged ref is stable while the
+  // consumer's `initialData` ref is stable, restoring the dedupe.
+  test('parent re-render with same initialData ref does not re-seed the model', () => {
+    const onModelUpdated = jest.fn();
+
+    // Stable reference, intentionally with views: [] so the load
+    // pipeline takes the auto-create-view branch (generateId()). If the
+    // model is re-seeded between renders, a fresh view id would emerge
+    // on the second pass.
+    const initialData: InitialData = {
+      version: '',
+      title: 'StableRef',
+      icons: [],
+      colors: [{ id: 'c1', value: '#fff' }],
+      items: [],
+      views: []
+    };
+
+    const { rerender } = render(
+      <Isoflow
+        initialData={initialData}
+        onModelUpdated={onModelUpdated}
+      />
+    );
+
+    // After initial seed the callback has fired at least once and the
+    // model has a synthesised view.
+    expect(onModelUpdated).toHaveBeenCalled();
+    const initialModel = onModelUpdated.mock.calls.at(-1)?.[0] as Model;
+    expect(initialModel.views).toHaveLength(1);
+    const firstViewId = initialModel.views[0].id;
+
+    const callsBeforeRerender = onModelUpdated.mock.calls.length;
+
+    // Force a parent re-render with the SAME initialData reference but
+    // a different unrelated prop. With the bug, this triggers a fresh
+    // `{ ...INITIAL_DATA, ...initialData }` inside the load-effect,
+    // load() is not deduped, model is re-seeded, the auto-create-view
+    // branch runs again with a fresh generateId(), and onModelUpdated
+    // fires again with a different view id.
+    act(() => {
+      rerender(
+        <Isoflow
+          initialData={initialData}
+          onModelUpdated={onModelUpdated}
+          width={640}
+        />
+      );
+    });
+
+    // No extra model-update calls because load() short-circuited at
+    // the dedupe guard.
+    expect(onModelUpdated.mock.calls.length).toBe(callsBeforeRerender);
+
+    // And if the callback did fire again for some other reason, the
+    // view id must be the original one (model wasn't re-seeded).
+    const lastModel = onModelUpdated.mock.calls.at(-1)?.[0] as Model;
+    expect(lastModel.views[0].id).toBe(firstViewId);
   });
 });
 

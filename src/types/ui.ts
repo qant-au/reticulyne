@@ -1,5 +1,6 @@
 import { Coords, EditorModeEnum, MainMenuOptions } from './common';
 import { Icon, Model } from './model';
+import type { NodeIndicatorComponent } from './isoflowProps';
 import { ItemReference } from './scene';
 
 interface AddItemControls {
@@ -169,6 +170,10 @@ export interface UiState {
   // state so the MainMenu (a child of the App) can read it through
   // the existing zustand subscription path.
   onSave: ((model: Model) => void) | undefined;
+  // Host-supplied per-node decorator (FEA5-07). When defined, the
+  // Node renderer reads it through the uiState store and renders it
+  // inside every Node.
+  nodeIndicatorComponent: NodeIndicatorComponent | undefined;
 }
 
 export interface UiStateActions {
@@ -194,6 +199,9 @@ export interface UiStateActions {
   setEnableAnimation: (enabled: boolean) => void;
   setShowTitleBar: (show: boolean | undefined) => void;
   setOnSave: (onSave: ((model: Model) => void) | undefined) => void;
+  setNodeIndicatorComponent: (
+    component: NodeIndicatorComponent | undefined
+  ) => void;
 }
 
 export type UiStateStore = UiState & {

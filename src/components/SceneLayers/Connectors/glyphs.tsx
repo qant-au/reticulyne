@@ -275,6 +275,10 @@ interface GlyphMotion {
   durSeconds: number;
   // When true, travel end-to-start instead of start-to-end.
   reverse?: boolean;
+  // Number of times the animation loops. Defaults to 'indefinite'
+  // for FEA5-06's persistent loop; FEA5-07's one-shot pulse passes
+  // 1 so the glyph travels the line exactly once.
+  repeatCount?: 'indefinite' | number;
 }
 
 interface GlyphRendererProps {
@@ -312,7 +316,7 @@ export const GlyphRenderer = ({
         {glyphEl}
         <animateMotion
           dur={`${motion.durSeconds}s`}
-          repeatCount="indefinite"
+          repeatCount={motion.repeatCount ?? 'indefinite'}
           keyPoints={motion.reverse ? '1;0' : '0;1'}
           keyTimes="0;1"
           calcMode="linear"

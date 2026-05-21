@@ -1,8 +1,13 @@
 import type { ErrorInfo, ReactNode } from 'react';
 import type { ZodIssue } from 'zod';
 import type { EditorModeEnum, MainMenuOptions } from './common';
-import type { Model } from './model';
+import type { Model, ModelItem, ViewItem } from './model';
 import type { RendererProps } from './rendererProps';
+
+export type NodeIndicatorComponent = (props: {
+  item: ModelItem;
+  view: ViewItem;
+}) => ReactNode;
 
 export type InitialData = Model & {
   fitToView?: boolean;
@@ -76,4 +81,18 @@ export interface IsoflowProps {
    * with `animated: true` look exactly like they did before opt-in.
    */
   enableAnimation?: boolean;
+  /**
+   * Optional per-node decorator. When supplied, the editor renders
+   * this component inside every Node, positioned at the node's tile
+   * and receiving the node's `ModelItem` + `ViewItem`. Use it to
+   * overlay live indicators — status pips, gauges, badges,
+   * mini-charts — driven by host state that isn't part of the
+   * model (FEA5-07).
+   *
+   * The component renders inside an absolutely-positioned Box that
+   * already follows the node's tile coordinates; return absolutely-
+   * positioned content if you want to offset it (e.g. a gauge
+   * positioned 20px to the right of the icon).
+   */
+  nodeIndicatorComponent?: NodeIndicatorComponent;
 }

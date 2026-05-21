@@ -3,10 +3,19 @@ import { useShallow } from 'zustand/shallow';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { theme } from 'src/styles/theme';
-import type { InitialData, IsoflowProps, Model, ModelStore } from 'src/types';
+import type {
+  Connector as ConnectorType,
+  InitialData,
+  IsoflowProps,
+  Model,
+  ModelStore
+} from 'src/types';
 import { setWindowCursor, modelFromModelStore } from 'src/utils';
 import { useModelStore, ModelProvider } from 'src/stores/modelStore';
-import { SceneProvider } from 'src/stores/sceneStore';
+import { SceneProvider, useSceneStore } from 'src/stores/sceneStore';
+import { useHistoryStore } from 'src/stores/historyStore';
+import * as reducers from 'src/stores/reducers';
+import { CONNECTOR_DEFAULTS } from 'src/config';
 import { HistoryProvider } from 'src/stores/historyStore';
 import { GlobalStyles } from 'src/styles/GlobalStyles';
 import { Renderer } from 'src/components/Renderer/Renderer';
@@ -29,7 +38,8 @@ const App = ({
   renderer,
   showTitleBar,
   iconCollections,
-  onSave
+  onSave,
+  nodeIndicatorComponent
 }: IsoflowProps) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -114,6 +124,10 @@ const App = ({
   useEffect(() => {
     uiStateActions.setEnableAnimation(enableAnimation);
   }, [enableAnimation, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setNodeIndicatorComponent(nodeIndicatorComponent);
+  }, [nodeIndicatorComponent, uiStateActions]);
 
   if (!initialDataManager.isReady) return null;
 
@@ -231,6 +245,112 @@ const useIsoflow = () => {
   const incrementZoom = uiStateActions.incrementZoom;
   const decrementZoom = uiStateActions.decrementZoom;
 
+  // FEA5-07: imperative Connector namespace — gives a live-data host
+  // (poller, websocket, simulation) direct control over connector
+  // visuals without re-seeding the model or re-rendering the editor
+  // tree. `get` returns the merged connector. `update` is the
+  // editor-bypass write path: it bypasses the history stack so a
+  // live driver doesn't pollute Ctrl+Z. `pulse` writes to the
+  // runtime sceneStore overlay and never touches the model.
+  //
+  // Implementation note: this reads from the lower-level stores
+  // (model/scene/ui/history) at call time rather than going
+  // through `useScene()`. `useScene()` calls
+  // `getItemByIdOrThrow(views, currentViewId)` synchronously, which
+  // throws when a host calls useIsoflow before a view is loaded.
+  // Going through `.actions.get()` means the lookup only runs at
+  // mutation time — and at that point the host is responsible for
+  // ensuring the view exists.
+  const sceneStoreActions = useSceneStore((state) => {
+    return state.actions;
+  });
+  const currentViewId = useUiStateStore((state) => {
+    return state.view;
+  });
+  const historyActions = useHistoryStore((state) => {
+    return state.actions;
+  });
+  const Connector = useMemo(() => {
+    type Patch = Partial<
+      Pick<
+        ConnectorType,
+        'color' | 'width' | 'style' | 'direction' | 'glyph' | 'animated'
+      >
+    >;
+
+    const get = (id: string): ConnectorType | undefined => {
+      const model = ModelActions.get();
+      for (const view of model.views) {
+        const found = view.connectors?.find((c) => {
+          return c.id === id;
+        });
+        if (found) {
+          return { ...CONNECTOR_DEFAULTS, ...found };
+        }
+      }
+      return undefined;
+    };
+
+    const update = (id: string, patch: Patch) => {
+      if (editorModeRef.current === 'NON_INTERACTIVE') {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `[isoflow] Refusing Connector.update in editorMode="${editorModeRef.current}".`
+          );
+        }
+        return;
+      }
+      const state = {
+        model: ModelActions.get(),
+        scene: sceneStoreActions.get()
+      };
+      const newState = reducers.view({
+        action: 'UPDATE_CONNECTOR',
+        payload: { id, ...patch },
+        ctx: { viewId: currentViewId, state }
+      });
+      // Bypass undo/redo recording — host-driven imperative writes
+      // shouldn't fill the Ctrl+Z stack with live-data churn.
+      historyActions.setIsApplying(true);
+      try {
+        ModelActions.set(newState.model);
+        sceneStoreActions.set(newState.scene);
+      } finally {
+        historyActions.setIsApplying(false);
+      }
+    };
+
+    const pulse = (
+      id: string,
+      opts?: { durationMs?: number; glyph?: ConnectorType['glyph'] }
+    ) => {
+      const durationMs = opts?.durationMs ?? 1500;
+      const expiresAt = Date.now() + durationMs;
+      const current = sceneStoreActions.get();
+      sceneStoreActions.set({
+        connectorOverlays: {
+          ...current.connectorOverlays,
+          [id]: {
+            pulseExpiresAt: expiresAt,
+            pulseDurationMs: durationMs,
+            pulseGlyph: opts?.glyph
+          }
+        }
+      });
+      setTimeout(() => {
+        const next = sceneStoreActions.get();
+        const overlay = next.connectorOverlays[id];
+        if (overlay?.pulseExpiresAt === expiresAt) {
+          const rest = { ...next.connectorOverlays };
+          delete rest[id];
+          sceneStoreActions.set({ connectorOverlays: rest });
+        }
+      }, durationMs);
+    };
+
+    return { get, update, pulse };
+  }, [ModelActions, sceneStoreActions, historyActions, currentViewId]);
+
   return {
     // Documented imperative API.
     getModel,
@@ -240,6 +360,7 @@ const useIsoflow = () => {
     incrementZoom,
     decrementZoom,
     rendererEl,
+    Connector,
     // Escape hatches. Prefer the documented methods above.
     Model,
     uiState: uiStateActions

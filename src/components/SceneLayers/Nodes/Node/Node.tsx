@@ -9,6 +9,7 @@ import { getTilePosition } from 'src/utils';
 import { useIcon } from 'src/hooks/useIcon';
 import { ViewItem } from 'src/types';
 import { useModelItem } from 'src/hooks/useModelItem';
+import { useUiStateStore } from 'src/stores/uiStateStore';
 import { ExpandableLabel } from 'src/components/Label/ExpandableLabel';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditor';
 
@@ -20,6 +21,9 @@ interface Props {
 export const Node = ({ node, order }: Props) => {
   const modelItem = useModelItem(node.id);
   const { iconComponent } = useIcon(modelItem.icon);
+  const NodeIndicator = useUiStateStore((state) => {
+    return state.nodeIndicatorComponent;
+  });
 
   const position = useMemo(() => {
     return getTilePosition({
@@ -88,6 +92,11 @@ export const Node = ({ node, order }: Props) => {
             }}
           >
             {iconComponent}
+          </Box>
+        )}
+        {NodeIndicator && (
+          <Box data-testid="node-indicator-slot" sx={{ position: 'absolute' }}>
+            {NodeIndicator({ item: modelItem, view: node })}
           </Box>
         )}
       </Box>

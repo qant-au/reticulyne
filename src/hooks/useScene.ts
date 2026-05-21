@@ -222,15 +222,35 @@ export const useScene = () => {
   );
 
   const updateConnector = useCallback(
-    (id: string, updates: Partial<Connector>) => {
+    (
+      id: string,
+      updates: Partial<Connector>,
+      opts?: { recordHistory?: boolean }
+    ) => {
       const newState = reducers.view({
         action: 'UPDATE_CONNECTOR',
         payload: { id, ...updates },
         ctx: { viewId: currentViewId, state: getState() }
       });
+      // FEA5-07: host-driven imperative updates (Connector.update via
+      // useIsoflow) pass recordHistory: false so a live-data poller
+      // hitting this 5x/second doesn't fill the undo stack. Editor
+      // UI changes leave the flag unset and remain undoable. Reuses
+      // the same isApplying flag the undo/redo path uses (see
+      // setState above) so the recordPriorState guard short-circuits.
+      const skipHistory = opts?.recordHistory === false;
+      if (skipHistory) {
+        historyStore.actions.setIsApplying(true);
+        try {
+          setState(newState);
+        } finally {
+          historyStore.actions.setIsApplying(false);
+        }
+        return;
+      }
       setState(newState);
     },
-    [getState, setState, currentViewId]
+    [getState, setState, currentViewId, historyStore.actions]
   );
 
   const deleteConnector = useCallback(
@@ -243,6 +263,44 @@ export const useScene = () => {
       setState(newState);
     },
     [getState, setState, currentViewId]
+  );
+
+  // FEA5-07: write a transient pulse marker into the per-connector
+  // scene overlay. Runtime-only — never persisted, never recorded
+  // into the undo stack (writes go through scene.actions.set
+  // directly, bypassing the model-mutation `setState` chokepoint
+  // that wires through historyStore). Auto-clears via setTimeout
+  // so a poller calling this repeatedly always re-triggers cleanly.
+  const pulseConnector = useCallback(
+    (id: string, opts?: { durationMs?: number; glyph?: string }) => {
+      const durationMs = opts?.durationMs ?? 1500;
+      const expiresAt = Date.now() + durationMs;
+      const current = scene.actions.get();
+      scene.actions.set({
+        connectorOverlays: {
+          ...current.connectorOverlays,
+          [id]: {
+            pulseExpiresAt: expiresAt,
+            pulseDurationMs: durationMs,
+            pulseGlyph: opts?.glyph
+          }
+        }
+      });
+      setTimeout(() => {
+        const next = scene.actions.get();
+        const overlay = next.connectorOverlays[id];
+        // Only clear if THIS pulse is the one still active — a fresh
+        // pulse triggered before this timeout fires updates
+        // pulseExpiresAt to a later value and should not be cleared
+        // by an older timeout.
+        if (overlay?.pulseExpiresAt === expiresAt) {
+          const rest = { ...next.connectorOverlays };
+          delete rest[id];
+          scene.actions.set({ connectorOverlays: rest });
+        }
+      }, durationMs);
+    },
+    [scene.actions]
   );
 
   const createTextBox = useCallback(
@@ -566,6 +624,7 @@ export const useScene = () => {
     createConnector,
     updateConnector,
     deleteConnector,
+    pulseConnector,
     createTextBox,
     updateTextBox,
     deleteTextBox,

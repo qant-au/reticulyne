@@ -113,6 +113,7 @@ export const INITIAL_UI_STATE = {
 };
 export const INITIAL_SCENE_STATE = {
   connectors: {},
+  connectorOverlays: {},
   textBoxes: {}
 };
 // Default-on menu items. LINK.GITHUB is included because the package.json

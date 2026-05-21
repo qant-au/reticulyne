@@ -137,10 +137,7 @@ describe('initialData reference stability (BUG5-11)', () => {
     };
 
     const { rerender } = render(
-      <Isoflow
-        initialData={initialData}
-        onModelUpdated={onModelUpdated}
-      />
+      <Isoflow initialData={initialData} onModelUpdated={onModelUpdated} />
     );
 
     // After initial seed the callback has fired at least once and the

@@ -9,28 +9,16 @@
 // `PF.Grid(...)` blows up before the hook under test can do anything
 // observable.
 //
-// Real Isoflow only uses pathfinding to compute connector tile-paths
-// (`findPath` in `src/utils/pathfinder.ts`, called by
-// `getConnectorPath` during `syncConnector` / `syncScene`). Test code
-// doesn't care about the exact path; it just needs the call to return
-// an array so the downstream `[...acc, ...path]` spread succeeds.
-//
-// This mock returns an empty path, which is enough to keep the
-// reducer chain alive in tests that hydrate a model containing
-// connectors. The `default` property mirrors the import shape the
-// transpiled CJS expects.
-const PF = {
-  Grid: function Grid() {},
-  AStarFinder: function AStarFinder() {
-    return {
-      findPath: () => {
-        return [];
-      }
-    };
-  },
-  Heuristic: { manhattan: 'manhattan' },
-  DiagonalMovement: { Always: 'always' }
-};
+// FEA7-02: obstacle-aware connector auto-routing made path contents
+// load-bearing for tests, so this mock now delegates straight through
+// to the real library (with a `default` property attached so the
+// transpiled CJS import shape still works). Existing tests that only
+// needed `findPath` to return *something* still pass; new tests can
+// rely on real A* behaviour including `setWalkableAt`.
+const path = require('path');
+const realPF = require(
+  path.join(__dirname, '..', '..', '..', 'node_modules', 'pathfinding')
+);
 
-module.exports = PF;
-module.exports.default = PF;
+module.exports = realPF;
+module.exports.default = realPF;

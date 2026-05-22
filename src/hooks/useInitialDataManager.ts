@@ -39,6 +39,14 @@ export const useInitialDataManager = ({
 }: UseInitialDataManagerOptions = {}) => {
   const [isReady, setIsReady] = useState(false);
   const prevInitialData = useRef<InitialData | undefined>(undefined);
+  // BUG5-12: stash the view id that needs fit-to-view when `load` runs
+  // before the Renderer has mounted (App returns null until isReady, but
+  // isReady is set inside load — so on the very first load the renderer
+  // element is always null and getBoundingClientRect() returns 0/0,
+  // collapsing zoom to 0 and producing NaN SVG geometry). When rendererEl
+  // appears, the effect below picks up the pending id and applies the fit
+  // with a real viewport size.
+  const pendingFitToViewIdRef = useRef<string | null>(null);
   const model = useModelStore((state) => {
     return state;
   });
@@ -149,17 +157,29 @@ export const useInitialDataManager = ({
       if (initialData.fitToView) {
         const rendererSize = rendererEl?.getBoundingClientRect();
 
-        const { zoom, scroll } = getFitToViewParams(view.value, {
-          width: rendererSize?.width ?? 0,
-          height: rendererSize?.height ?? 0
-        });
+        if (
+          !rendererSize ||
+          rendererSize.width === 0 ||
+          rendererSize.height === 0
+        ) {
+          // Renderer not mounted/measured yet — stash the target view
+          // and let the rendererEl-watching effect apply the fit once
+          // the canvas has real dimensions.
+          pendingFitToViewIdRef.current = view.value.id;
+        } else {
+          const { zoom, scroll } = getFitToViewParams(view.value, {
+            width: rendererSize.width,
+            height: rendererSize.height
+          });
 
-        uiStateActions.setScroll({
-          position: scroll,
-          offset: CoordsUtils.zero()
-        });
+          uiStateActions.setScroll({
+            position: scroll,
+            offset: CoordsUtils.zero()
+          });
 
-        uiStateActions.setZoom(zoom);
+          uiStateActions.setZoom(zoom);
+          pendingFitToViewIdRef.current = null;
+        }
       }
 
       const categoriesState: IconCollectionState[] = categoriseIcons(
@@ -177,6 +197,53 @@ export const useInitialDataManager = ({
     },
     [changeView, model.actions, rendererEl, uiStateActions]
   );
+
+  // BUG5-12: apply a deferred fit-to-view as soon as the Renderer
+  // mounts. The first `load()` typically runs before the Renderer is in
+  // the DOM (App returns null until isReady, and isReady is set inside
+  // load), so the rendererEl-based fit inside load() couldn't measure a
+  // viewport. We stash the target view id there and pick it up here.
+  useEffect(() => {
+    if (!rendererEl || !pendingFitToViewIdRef.current) return;
+
+    const apply = () => {
+      const targetId = pendingFitToViewIdRef.current;
+      if (!targetId) return true;
+      const rect = rendererEl.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return false;
+      const currentModel = model.actions.get();
+      const view = currentModel.views.find((v) => {
+        return v.id === targetId;
+      });
+      if (!view) {
+        pendingFitToViewIdRef.current = null;
+        return true;
+      }
+      const { zoom, scroll } = getFitToViewParams(view, {
+        width: rect.width,
+        height: rect.height
+      });
+      uiStateActions.setScroll({
+        position: scroll,
+        offset: CoordsUtils.zero()
+      });
+      uiStateActions.setZoom(zoom);
+      pendingFitToViewIdRef.current = null;
+      return true;
+    };
+
+    if (apply()) return;
+    // Renderer is in the DOM but layout hasn't settled — try again on
+    // the next frame. This covers StrictMode mount/remount and the
+    // first paint pipeline where getBoundingClientRect briefly reports
+    // 0x0.
+    const raf = requestAnimationFrame(() => {
+      apply();
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+    };
+  }, [rendererEl, model.actions, uiStateActions]);
 
   const clear = useCallback(() => {
     load({ ...INITIAL_DATA, icons: model.icons, colors: model.colors });

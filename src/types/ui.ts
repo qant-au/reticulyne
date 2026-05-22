@@ -1,6 +1,9 @@
 import { Coords, EditorModeEnum, MainMenuOptions } from './common';
 import { Icon, Model } from './model';
-import type { NodeIndicatorComponent } from './isoflowProps';
+import type {
+  ConnectorIndicatorComponent,
+  NodeIndicatorComponent
+} from './isoflowProps';
 import { ItemReference } from './scene';
 
 interface AddItemControls {
@@ -174,6 +177,9 @@ export interface UiState {
   // Node renderer reads it through the uiState store and renders it
   // inside every Node.
   nodeIndicatorComponent: NodeIndicatorComponent | undefined;
+  // FEA7-03: host-supplied per-connector decorator. Rendered at each
+  // connector's midpoint via the ConnectorIndicators scene layer.
+  connectorIndicatorComponent: ConnectorIndicatorComponent | undefined;
 }
 
 export interface UiStateActions {
@@ -201,6 +207,9 @@ export interface UiStateActions {
   setOnSave: (onSave: ((model: Model) => void) | undefined) => void;
   setNodeIndicatorComponent: (
     component: NodeIndicatorComponent | undefined
+  ) => void;
+  setConnectorIndicatorComponent: (
+    component: ConnectorIndicatorComponent | undefined
   ) => void;
 }
 

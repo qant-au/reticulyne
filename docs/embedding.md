@@ -61,6 +61,7 @@ All props are optional. The component renders a fully-functional editor with sen
 | `onValidationError` | `(issues: ZodIssue[]) => void` | `undefined` | Invoked when `initialData` (or a `useIsoflow().loadModel(...)` payload) fails schema validation. Receives the array of Zod issues. When omitted, the failure is logged to `console.error` instead. Earlier versions popped a `window.alert`; that has been replaced by this contract. Callback identity does **not** need to be memoised. |
 | `enableAnimation` | `boolean` | `false` | Opt-in for the connector animation feature (FEA5-06). When `true`, a connector whose `animated` schema field is `true` renders its glyph travelling along the line on a continuous loop, and the **Animate** toggle appears in the ConnectorControls panel. When `false`, the toggle is hidden and `animated: true` connectors render statically — so a saved-with-animation diagram looks identical to a pre-FEA5-06 deployment until the host opts in. |
 | `nodeIndicatorComponent` | `(args: { item: ModelItem, view: ViewItem }) => ReactNode` | `undefined` | Per-node decorator (FEA5-07). Rendered inside every Node, positioned at the node's tile and receiving its `ModelItem` + `ViewItem`. Use it to overlay live indicators — status pips, gauges, badges, mini-charts — driven by host state that isn't part of the model. See [Live dashboards](#live-dashboards). |
+| `connectorIndicatorComponent` | `(args: { connector: Connector, view: View }) => ReactNode` | `undefined` | Per-connector decorator (FEA7-03). Rendered at every connector's midpoint as an absolutely-positioned overlay, receiving the connector's schema-level model and the parent `View`. Mirrors `nodeIndicatorComponent` for link-level telemetry — throughput, latency, error-rate, link-down — driven by host state that isn't part of the model. |
 | `children` | `ReactNode` | `undefined` | Optional children rendered inside the Isoflow provider tree. Intended use is a "driver" child component that calls [`useIsoflow()`](#imperative-api-useisoflow) to drive the editor from outside — pulse connectors on a timer, update colours from a poller, etc. Driver components typically return `null`. |
 
 ### Container sizing
@@ -339,10 +340,11 @@ function RemoteLoader({ diagramId }: { diagramId: string }) {
 
 ## Live dashboards
 
-Three pieces of surface area combine to turn the editor into a host-driven dashboard:
+Four pieces of surface area combine to turn the editor into a host-driven dashboard:
 
 - **`enableAnimation`** (boolean prop) flips the connector animation feature on. When omitted, every dashboard primitive below is a silent no-op — your existing embed renders unchanged.
 - **`nodeIndicatorComponent`** decorates every node with host-supplied React (gauges, pips, badges).
+- **`connectorIndicatorComponent`** mirrors it for connectors (FEA7-03) — pass a component to overlay link-level telemetry at each connector's midpoint (throughput, latency, error-rate, link-down).
 - **`useIsoflow().Connector`** lets host code mutate connector visuals and fire signal pulses from outside the editor tree. Because the hook needs to be a descendant of `<Isoflow>` to see the contextual stores, pass a "driver" child component via the `children` prop.
 
 Worked example — a simulated three-tier system whose API and database states wobble on a timer:
@@ -423,6 +425,7 @@ A complete runnable version lives at [`src/examples/LiveDashboard/LiveDashboard.
 | You want… | Use… |
 |---|---|
 | A status badge / gauge rendered next to a node | `nodeIndicatorComponent` |
+| A throughput / latency / link-down badge on a connector | `connectorIndicatorComponent` |
 | A connector that always pulses to show it's "live" | `connector.animated: true` in the model |
 | To fire one-shot signal pulses per event (request, payment, etc.) | `useIsoflow().Connector.pulse(id, …)` |
 | To recolour a connector based on health / status | `useIsoflow().Connector.update(id, { color })` |
@@ -436,6 +439,7 @@ A complete runnable version lives at [`src/examples/LiveDashboard/LiveDashboard.
 | `useIsoflow().Connector.update(...)` writes | Yes (model) | **No** — host-driven updates bypass the undo stack |
 | `useIsoflow().Connector.pulse(...)` | **No** — scene-store overlay only | N/A — never touches the model |
 | `nodeIndicatorComponent` output | **No** — host renders into a slot on each render | N/A — host state |
+| `connectorIndicatorComponent` output | **No** — host renders into a midpoint slot on each render | N/A — host state |
 
 The "host updates bypass undo" rule is deliberate: a poller calling `Connector.update` once a second would otherwise saturate the 100-deep undo ring and make Ctrl+Z useless for the editor user.
 

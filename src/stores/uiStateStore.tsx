@@ -35,6 +35,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       showTitleBar: undefined,
       onSave: undefined,
       nodeIndicatorComponent: undefined,
+      connectorIndicatorComponent: undefined,
       actions: {
         setView: (view) => {
           set({ view });
@@ -127,6 +128,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setNodeIndicatorComponent: (component) => {
           set({ nodeIndicatorComponent: component });
+        },
+        setConnectorIndicatorComponent: (component) => {
+          set({ connectorIndicatorComponent: component });
         },
         setRendererEl: (el) => {
           set({ rendererEl: el });

@@ -57,6 +57,10 @@ The CSP above is only applied by the standalone Docker image. A consumer embeddi
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (v4.0.0):
+Current counts (v4.5.0):
 - `npm audit --omit=dev`: 2 low — both in the `quill` chain documented above.
 - `npm audit` (including dev): 2 low — same two entries; no dev-only advisories remain. The CI pipeline gates on `npm audit --omit=dev --audit-level=moderate`; the two low-severity entries above are below the threshold by design.
+
+### `SEC6-01` — overrode transitive `uuid` to clear `GHSA-w5hq-g745-h8pq`
+
+`webpack-dev-server@5.2.4 → sockjs@0.3.24` pinned `uuid@8.3.2`, which is in the vulnerable range (`< 11.1.1`) of `GHSA-w5hq-g745-h8pq` / `CVE-2026-41907` (silent partial buffer writes in `v3()/v5()/v6()` when caller-supplied `buf` is undersized or `offset` overflows). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`) and sockjs only ever calls `v4()` (`node_modules/sockjs/lib/transport.js:9`), so the vulnerable code path isn't even exercised in practice — but Dependabot kept the alert open. Added a top-level `"overrides": { "uuid": "^11.1.1" }` block in `package.json` so the transitive copy dedupes onto our already-patched direct dependency. `npm ls uuid` now returns a single `uuid@11.1.1` entry and the Dependabot alert auto-closes once the lockfile lands on `main`.

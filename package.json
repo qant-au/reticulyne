@@ -122,6 +122,9 @@
     "react-dom": ">=18",
     "zustand": "^5.0.13"
   },
+  "overrides": {
+    "uuid": "^11.1.1"
+  },
   "browserslist": {
     "production": [
       ">0.2%",

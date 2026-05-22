@@ -118,6 +118,7 @@ describe('Connector mode', () => {
     Connector.mouseup?.(state);
 
     expect(state.scene.deleteConnector).toHaveBeenCalledWith('conn-1');
+    expect(state.uiState.actions.setItemControls).not.toHaveBeenCalled();
     expect(state.uiState.actions.setMode).toHaveBeenCalledWith({
       type: 'CURSOR',
       showCursor: true,
@@ -152,6 +153,10 @@ describe('Connector mode', () => {
     Connector.mouseup?.(state);
 
     expect(state.scene.deleteConnector).not.toHaveBeenCalled();
+    expect(state.uiState.actions.setItemControls).toHaveBeenCalledWith({
+      type: 'CONNECTOR',
+      id: 'conn-1'
+    });
     expect(state.uiState.actions.setMode).toHaveBeenCalledWith({
       type: 'CURSOR',
       showCursor: true,

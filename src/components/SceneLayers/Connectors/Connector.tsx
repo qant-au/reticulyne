@@ -4,7 +4,9 @@ import { UNPROJECTED_TILE_SIZE } from 'src/config';
 import {
   getAnchorTile,
   getColorVariant,
-  getConnectorDirectionIcon
+  getConnectorDirectionIcon,
+  flipConnectorTileY,
+  anchorWorldYToRenderY
 } from 'src/utils';
 import { Circle } from 'src/components/Circle/Circle';
 import { Svg } from 'src/components/Svg/Svg';
@@ -41,7 +43,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
   const pulseOverlay = useSceneStore((state) => {
     return state.connectorOverlays[connector.id];
   });
-  const { css, pxSize } = useIsoProjection({
+  const { css, pxSize, gridSize } = useIsoProjection({
     ...connector.path.rectangle
   });
 
@@ -60,13 +62,23 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
     };
   }, []);
 
+  // Translate path tiles from the logical "world delta from
+  // rectangle.from" coordinate space into the renderer's SVG-local
+  // space. See flipConnectorTileY for the why — BUG4-01 fixed the
+  // X mirror; this is the Y companion.
+  const renderTiles = useMemo(() => {
+    return connector.path.tiles.map((tile) => {
+      return { x: tile.x, y: flipConnectorTileY(tile.y, gridSize.height) };
+    });
+  }, [connector.path.tiles, gridSize.height]);
+
   const pathString = useMemo(() => {
-    return connector.path.tiles.reduce((acc, tile) => {
+    return renderTiles.reduce((acc, tile) => {
       return `${acc} ${tile.x * UNPROJECTED_TILE_SIZE + drawOffset.x},${
         tile.y * UNPROJECTED_TILE_SIZE + drawOffset.y
       }`;
     }, '');
-  }, [connector.path.tiles, drawOffset]);
+  }, [renderTiles, drawOffset]);
 
   const anchorPositions = useMemo(() => {
     if (!isSelected) return [];
@@ -74,10 +86,10 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
     return connector.anchors.map((anchor) => {
       const position = getAnchorTile(anchor, currentView);
 
-      // Anchor position in SVG-local coords = world-anchor minus the
-      // rectangle's bottom-left corner (the search-area origin). The
-      // operand order matches the new low-to-high rectangle
-      // convention; see BUG4-01 / normalisePositionFromOrigin.
+      // Anchor handle in SVG-local coords. X matches the path
+      // normalisation (BUG4-01); Y is flipped through the bounding
+      // box (see anchorWorldYToRenderY) so it lands on top of the
+      // Y-flipped path tile rather than its world-Y mirror.
       return {
         id: anchor.id,
         x:
@@ -85,7 +97,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
             UNPROJECTED_TILE_SIZE +
           drawOffset.x,
         y:
-          (position.y - connector.path.rectangle.from.y) *
+          anchorWorldYToRenderY(position.y, connector.path.rectangle.to.y) *
             UNPROJECTED_TILE_SIZE +
           drawOffset.y
       };
@@ -99,8 +111,12 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
   ]);
 
   const directionIcons = useMemo(() => {
-    return getConnectorDirectionIcon(connector.path.tiles, connector.direction);
-  }, [connector.path.tiles, connector.direction]);
+    // Feed the Y-flipped tiles so the arrow's pixel position AND its
+    // rotation (computed in computeArrowFromTwoTiles using the SVG-
+    // local-tile convention where +Y = south on screen) both match the
+    // rendered polyline.
+    return getConnectorDirectionIcon(renderTiles, connector.direction);
+  }, [renderTiles, connector.direction]);
 
   const connectorWidthPx = useMemo(() => {
     return (UNPROJECTED_TILE_SIZE / 100) * connector.width;

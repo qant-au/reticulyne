@@ -1,6 +1,13 @@
 import Isoflow from 'src/Isoflow';
 import { initialData } from '../initialData';
+import { useExamplesThemeMode } from '../themeModeContext';
 
 export const BasicEditor = () => {
-  return <Isoflow initialData={{ ...initialData, fitToView: true }} />;
+  const { themeMode } = useExamplesThemeMode();
+  return (
+    <Isoflow
+      initialData={{ ...initialData, fitToView: true }}
+      themeMode={themeMode}
+    />
+  );
 };

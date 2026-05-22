@@ -8,10 +8,13 @@ import {
   IconButton,
   Typography,
   Button,
-  Divider
+  Divider,
+  ToggleButton,
+  ToggleButtonGroup
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { useExamplesThemeMode } from './themeModeContext';
 
 const SIDEBAR_WIDTH = 260;
 
@@ -31,6 +34,7 @@ export const ExamplesSidebar = ({
   onSelect
 }: Props) => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const { themeMode, setThemeMode } = useExamplesThemeMode();
 
   return (
     <>
@@ -111,6 +115,58 @@ export const ExamplesSidebar = ({
           })}
         </Stack>
         <Divider />
+        {/* FEA7-04 demo: drives every example's Isoflow themeMode prop
+            via the examples-themed context so the picker can showcase
+            light / auto / dark side by side. */}
+        <Box
+          sx={{
+            px: 2,
+            py: 1.5,
+            minWidth: SIDEBAR_WIDTH,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1
+          }}
+        >
+          <Typography
+            variant="caption"
+            sx={{ color: 'text.secondary', textTransform: 'uppercase' }}
+          >
+            Theme
+          </Typography>
+          <ToggleButtonGroup
+            size="small"
+            value={themeMode}
+            exclusive
+            onChange={(_, next) => {
+              if (next) setThemeMode(next);
+            }}
+            data-testid="theme-mode-toggle"
+            sx={{ width: '100%' }}
+          >
+            <ToggleButton
+              value="light"
+              sx={{ flex: 1, textTransform: 'none' }}
+              data-testid="theme-mode-light"
+            >
+              Light
+            </ToggleButton>
+            <ToggleButton
+              value="auto"
+              sx={{ flex: 1, textTransform: 'none' }}
+              data-testid="theme-mode-auto"
+            >
+              Auto
+            </ToggleButton>
+            <ToggleButton
+              value="dark"
+              sx={{ flex: 1, textTransform: 'none' }}
+              data-testid="theme-mode-dark"
+            >
+              Dark
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
       </Box>
       {!isExpanded && (
         <IconButton

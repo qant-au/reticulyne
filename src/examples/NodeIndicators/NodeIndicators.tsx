@@ -6,6 +6,7 @@ import { Box, Typography } from '@mui/material';
 import Isoflow from 'src/Isoflow';
 import { icons, colors } from '../initialData';
 import type { InitialData, ModelItem } from 'src/types';
+import { useExamplesThemeMode } from '../themeModeContext';
 
 type Status = 'up' | 'degraded' | 'down';
 
@@ -67,12 +68,14 @@ const StatusPip = ({ item }: { item: ModelItem }) => {
 };
 
 export const NodeIndicators = () => {
+  const { themeMode } = useExamplesThemeMode();
   return (
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
       <Isoflow
         initialData={indicatorsInitialData}
         editorMode="EXPLORABLE_READONLY"
         nodeIndicatorComponent={StatusPip}
+        themeMode={themeMode}
       />
       <Box
         sx={{

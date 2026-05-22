@@ -165,11 +165,49 @@ export const createIsoflowTheme = (mode: PaletteMode) => {
 // light-mode theme exactly as before.
 export const theme = createIsoflowTheme('light');
 
-// Surfaced for any external consumer that wants the raw config
-// without re-running createTheme. Mirrors the pre-FEA7 export.
-export const themeConfig = {
+// Pre-FEA7-04 `themeConfig` export — the full ThemeOptions used to
+// build the light-mode theme. Retained as a top-level export because
+// the picker entry (`src/index.tsx`) spreads it into `createTheme`
+// to derive its own outer theme. Mode-aware consumers should call
+// `createIsoflowTheme(mode)` instead.
+export const themeConfig: ThemeOptions = {
   customVars,
-  // The factory builds everything else; this re-export is for
-  // ergonomic parity with the older API.
-  mode: 'light' as PaletteMode
+  shadows: createShadows('light'),
+  typography: {
+    h2: { fontSize: '4em', fontStyle: 'bold', lineHeight: 1.2 },
+    h5: { fontSize: '1.3em', lineHeight: 1.2 },
+    body1: { fontSize: '0.85em', lineHeight: 1.2 },
+    body2: { fontSize: '0.75em', lineHeight: 1.2 }
+  },
+  palette: {
+    secondary: { main: '#df004c' }
+  },
+  components: {
+    MuiCard: {
+      defaultProps: { elevation: 0, variant: 'outlined' }
+    },
+    MuiToolbar: {
+      styleOverrides: { root: { backgroundColor: 'white' } }
+    },
+    MuiButtonBase: {
+      defaultProps: { disableRipple: true, disableTouchRipple: true }
+    },
+    MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+        variant: 'contained',
+        disableRipple: true,
+        disableTouchRipple: true
+      },
+      styleOverrides: { root: { textTransform: 'none' } }
+    },
+    MuiSvgIcon: {
+      defaultProps: { color: 'action' },
+      styleOverrides: { root: { width: 17, height: 17 } }
+    },
+    MuiTextField: {
+      defaultProps: { variant: 'outlined' },
+      styleOverrides: { root: { '.MuiInputBase-input': {} } }
+    }
+  }
 };

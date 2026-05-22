@@ -8,6 +8,7 @@ import { ConnectorAnimations } from './ConnectorAnimations/ConnectorAnimations';
 import { ConnectorPulse } from './ConnectorPulse/ConnectorPulse';
 import { NodeIndicators } from './NodeIndicators/NodeIndicators';
 import { ExamplesSidebar } from './ExamplesSidebar';
+import { ExamplesThemeModeProvider } from './themeModeContext';
 
 const examples = [
   { name: 'Basic editor', component: BasicEditor },
@@ -27,13 +28,17 @@ export const Examples = () => {
   }, [currentExample]);
 
   return (
-    <Box sx={{ width: '100vw', height: '100vh' }}>
-      <Box sx={{ width: '100%', height: '100%' }}>{Example && <Example />}</Box>
-      <ExamplesSidebar
-        examples={examples}
-        currentIndex={currentExample}
-        onSelect={setCurrentExample}
-      />
-    </Box>
+    <ExamplesThemeModeProvider>
+      <Box sx={{ width: '100vw', height: '100vh' }}>
+        <Box sx={{ width: '100%', height: '100%' }}>
+          {Example && <Example />}
+        </Box>
+        <ExamplesSidebar
+          examples={examples}
+          currentIndex={currentExample}
+          onSelect={setCurrentExample}
+        />
+      </Box>
+    </ExamplesThemeModeProvider>
   );
 };

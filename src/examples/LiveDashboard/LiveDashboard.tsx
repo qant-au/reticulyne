@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import Isoflow, { useIsoflow } from 'src/Isoflow';
 import { icons, colors } from '../initialData';
+import { useExamplesThemeMode } from '../themeModeContext';
 import type { InitialData, ModelItem } from 'src/types';
 
 type Status = 'up' | 'degraded' | 'down';
@@ -163,6 +164,7 @@ const DashboardDriver = ({ state, onTick }: DriverProps) => {
 };
 
 export const LiveDashboard = () => {
+  const { themeMode } = useExamplesThemeMode();
   const [state, setState] = useState<DashboardState>(initialDashboardState);
 
   // Scripted state machine: cycles through up → degraded → down →
@@ -205,6 +207,7 @@ export const LiveDashboard = () => {
         enableAnimation
         editorMode="EXPLORABLE_READONLY"
         nodeIndicatorComponent={nodeIndicatorComponent}
+        themeMode={themeMode}
       >
         <DashboardDriver state={state} onTick={advanceTick} />
       </Isoflow>

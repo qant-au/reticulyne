@@ -92,6 +92,18 @@ export interface IsoflowProps {
    */
   enableAnimation?: boolean;
   /**
+   * Colour palette for the editor (FEA7-04). Default `'light'`
+   * preserves the pre-FEA7-04 look. `'dark'` switches the canvas,
+   * toolbar, inspector, and rich-text editor to a dark palette.
+   * `'auto'` follows the user-agent's `prefers-color-scheme`
+   * media query and updates live as it changes.
+   *
+   * The mode is baked into Isoflow's internal MUI `<ThemeProvider>`
+   * (not inherited from any outer host theme) so embedders can mix
+   * a dark Isoflow inside an otherwise-light app and vice versa.
+   */
+  themeMode?: 'light' | 'dark' | 'auto';
+  /**
    * Optional per-node decorator. When supplied, the editor renders
    * this component inside every Node, positioned at the node's tile
    * and receiving the node's `ModelItem` + `ViewItem`. Use it to

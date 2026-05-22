@@ -1,7 +1,6 @@
 // Examples-picker left rail. Replaces the corner <Select> with a
 // collapsible sidebar listing every demo. Owned by the dev/demo bundle
 // (port 2223) — not part of the published library.
-import { useState } from 'react';
 import {
   Box,
   Stack,
@@ -16,7 +15,10 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useExamplesThemeMode } from './themeModeContext';
 
-const SIDEBAR_WIDTH = 260;
+// Exported so the picker's Examples wrapper can reserve the same
+// horizontal slice for the diagram container — without this, the
+// diagram renders 100vw underneath the fixed-position sidebar.
+export const SIDEBAR_WIDTH = 260;
 
 interface ExampleEntry {
   name: string;
@@ -26,14 +28,17 @@ interface Props {
   examples: ExampleEntry[];
   currentIndex: number;
   onSelect: (index: number) => void;
+  isExpanded: boolean;
+  onExpandedChange: (next: boolean) => void;
 }
 
 export const ExamplesSidebar = ({
   examples,
   currentIndex,
-  onSelect
+  onSelect,
+  isExpanded,
+  onExpandedChange
 }: Props) => {
-  const [isExpanded, setIsExpanded] = useState(true);
   const { themeMode, setThemeMode } = useExamplesThemeMode();
 
   return (
@@ -77,7 +82,7 @@ export const ExamplesSidebar = ({
             aria-label="Collapse sidebar"
             size="small"
             onClick={() => {
-              setIsExpanded(false);
+              onExpandedChange(false);
             }}
           >
             <ChevronLeftIcon fontSize="small" />
@@ -174,7 +179,7 @@ export const ExamplesSidebar = ({
           aria-label="Expand sidebar"
           size="small"
           onClick={() => {
-            setIsExpanded(true);
+            onExpandedChange(true);
           }}
           sx={{
             position: 'fixed',

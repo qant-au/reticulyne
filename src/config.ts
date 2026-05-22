@@ -63,7 +63,13 @@ export const VIEW_ITEM_DEFAULTS: Required<Omit<ViewItem, 'id' | 'tile'>> = {
   labelHeight: 80
 };
 
-export const CONNECTOR_DEFAULTS: Required<Omit<Connector, 'id' | 'color'>> = {
+// `animationRate` and `animationFlow` (FEA7-01) deliberately omitted
+// from the defaults — leaving them undefined makes the renderer fall
+// back to pre-FEA7 behaviour (full-speed loop, direction-derived flow)
+// so older diagrams are byte-identical to today.
+export const CONNECTOR_DEFAULTS: Required<
+  Omit<Connector, 'id' | 'color' | 'animationRate' | 'animationFlow'>
+> = {
   width: 10,
   description: '',
   anchors: [],

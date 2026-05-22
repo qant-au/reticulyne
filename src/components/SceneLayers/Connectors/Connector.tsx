@@ -20,9 +20,14 @@ import { GlyphRenderer } from './glyphs';
 import type { ConnectorGlyph } from 'src/types';
 
 // FEA5-06: fixed end-to-end animation duration for the looping
-// moving glyph. Per-connector tuning (e.g. `speedMs` on the schema)
-// can come later; a single global timing keeps Stage 2 minimal.
+// moving glyph. FEA7-01: per-connector `animationRate` scales this
+// inversely (rate 1 = full speed, rate 0.5 = half speed, rate 0
+// stops the animation entirely).
 const ANIMATION_DURATION_SECONDS = 2;
+// Smallest non-zero rate the renderer will accept before treating
+// the animation as "stopped". Prevents division by ~0 turning into
+// implausibly long durations that browsers may special-case.
+const MIN_ANIMATION_RATE = 0.01;
 
 interface Props {
   connector: ReturnType<typeof useScene>['connectors'][0];
@@ -53,7 +58,20 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
   const pathElementId = useMemo(() => {
     return `connector-path-${encodeURIComponent(connector.id)}`;
   }, [connector.id]);
-  const isLooping = enableAnimation && connector.animated;
+  // FEA7-01: animationRate is opt-in. Undefined preserves the legacy
+  // full-speed loop; a defined value scales the animation duration
+  // and 0 halts it without removing the connector's `animated` flag.
+  const animationRate = connector.animationRate ?? 1;
+  const isLooping =
+    enableAnimation && Boolean(connector.animated) && animationRate > 0;
+  const animationDurationSeconds =
+    ANIMATION_DURATION_SECONDS / Math.max(animationRate, MIN_ANIMATION_RATE);
+  // FEA7-01: explicit flow overrides the direction-derived reverse.
+  // The fallback reproduces the pre-FEA7 rule exactly so diagrams
+  // without `animationFlow` set render byte-identical.
+  const fallbackReverse = connector.direction === 'END_TO_START';
+  const animationFlow =
+    connector.animationFlow ?? (fallbackReverse ? 'reverse' : 'forward');
 
   const drawOffset = useMemo(() => {
     return {
@@ -192,7 +210,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
           );
         })}
 
-        {isLooping && (
+        {isLooping && animationFlow !== 'reverse' && (
           <GlyphRenderer
             glyph={connector.glyph}
             rotation={0}
@@ -201,8 +219,27 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
             strokeWidth={4}
             motion={{
               pathHref: `#${pathElementId}`,
-              durSeconds: ANIMATION_DURATION_SECONDS,
-              reverse: connector.direction === 'END_TO_START'
+              durSeconds: animationDurationSeconds,
+              reverse: false
+            }}
+          />
+        )}
+        {isLooping && animationFlow !== 'forward' && (
+          <GlyphRenderer
+            // FEA7-01: when flow is 'both', this second glyph travels
+            // in the opposite direction so the connector carries two
+            // moving glyphs simultaneously. When flow is 'reverse',
+            // this is the sole glyph (matches the legacy single-glyph
+            // behaviour but explicitly reversed).
+            glyph={connector.glyph}
+            rotation={0}
+            fill="black"
+            stroke={theme.palette.common.white}
+            strokeWidth={4}
+            motion={{
+              pathHref: `#${pathElementId}`,
+              durSeconds: animationDurationSeconds,
+              reverse: true
             }}
           />
         )}

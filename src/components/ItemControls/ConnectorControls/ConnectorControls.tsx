@@ -2,7 +2,8 @@ import {
   Connector,
   connectorStyleOptions,
   connectorDirectionOptions,
-  connectorGlyphOptions
+  connectorGlyphOptions,
+  connectorAnimationFlowOptions
 } from 'src/types';
 import {
   Box,
@@ -11,7 +12,8 @@ import {
   TextField,
   Typography,
   FormControlLabel,
-  Switch
+  Switch,
+  Slider
 } from '@mui/material';
 import { GLYPHS } from 'src/components/SceneLayers/Connectors/glyphs';
 import { useConnector } from 'src/hooks/useConnector';
@@ -33,6 +35,20 @@ const directionLabels: Record<
   END_TO_START: 'END TO START',
   BOTH: 'BOTH ENDS',
   NONE: 'NO ARROW'
+};
+
+// User-facing labels for the animation-flow dropdown (FEA7-01).
+// Forward = travel start→end, reverse = end→start, both = two glyphs
+// going opposite ways. When undefined, the renderer derives flow from
+// the arrow `direction` for back-compat — surfaced here as a fourth
+// "(from direction)" affordance.
+const animationFlowLabels: Record<
+  (typeof connectorAnimationFlowOptions)[number],
+  string
+> = {
+  forward: 'FORWARD',
+  reverse: 'REVERSE',
+  both: 'BOTH WAYS'
 };
 
 // User-facing labels for the connector-glyph dropdown (FEA5-05).
@@ -228,7 +244,15 @@ export const ConnectorControls = ({ id }: Props) => {
         </Box>
       </Box>
       {enableAnimation && (
-        <Box sx={{ pt: 2, px: 3 }}>
+        <Box
+          sx={{
+            pt: 2,
+            px: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
+          }}
+        >
           <FormControlLabel
             control={
               <Switch
@@ -242,6 +266,63 @@ export const ConnectorControls = ({ id }: Props) => {
             }
             label="Animate"
           />
+          {/* FEA7-01: rate + flow controls. Disabled (not hidden) when
+              Animate is off so they don't shift around as users toggle
+              the master switch — clearer affordance that they belong
+              to the animation block. */}
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="body2" sx={inlineSectionLabel}>
+                Rate
+              </Typography>
+              <Slider
+                disabled={!connector.animated}
+                min={0}
+                max={1}
+                step={0.05}
+                value={connector.animationRate ?? 1}
+                valueLabelDisplay="auto"
+                onChange={(_, value) => {
+                  updateConnector(connector.id, {
+                    animationRate: value as number
+                  });
+                }}
+              />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="body2" sx={inlineSectionLabel}>
+                Flow
+              </Typography>
+              <Select
+                fullWidth
+                disabled={!connector.animated}
+                // Surface the fallback (direction-derived) as a
+                // distinct value rather than hiding it — embedders
+                // and users alike benefit from seeing that "undefined
+                // == derive from direction" is the current state.
+                value={connector.animationFlow ?? ''}
+                displayEmpty
+                onChange={(e) => {
+                  const next = e.target.value as string;
+                  updateConnector(connector.id, {
+                    animationFlow:
+                      next === ''
+                        ? undefined
+                        : (next as Connector['animationFlow'])
+                  });
+                }}
+              >
+                <MenuItem value="">FROM DIRECTION</MenuItem>
+                {connectorAnimationFlowOptions.map((flow) => {
+                  return (
+                    <MenuItem key={flow} value={flow}>
+                      {animationFlowLabels[flow]}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </Box>
+          </Box>
         </Box>
       )}
       <Section>

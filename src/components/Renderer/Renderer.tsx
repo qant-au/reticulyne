@@ -9,6 +9,7 @@ import { Nodes } from 'src/components/SceneLayers/Nodes/Nodes';
 import { Rectangles } from 'src/components/SceneLayers/Rectangles/Rectangles';
 import { Connectors } from 'src/components/SceneLayers/Connectors/Connectors';
 import { ConnectorLabels } from 'src/components/SceneLayers/ConnectorLabels/ConnectorLabels';
+import { ConnectorIndicators } from 'src/components/SceneLayers/ConnectorIndicators/ConnectorIndicators';
 import { TextBoxes } from 'src/components/SceneLayers/TextBoxes/TextBoxes';
 import { SizeIndicator } from 'src/components/DebugUtils/SizeIndicator';
 import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
@@ -85,6 +86,9 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
       </SceneLayer>
       <SceneLayer>
         <ConnectorLabels connectors={connectors} />
+      </SceneLayer>
+      <SceneLayer>
+        <ConnectorIndicators connectors={connectors} />
       </SceneLayer>
       {enableDebugTools && (
         <SceneLayer>

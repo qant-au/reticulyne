@@ -40,6 +40,7 @@ const App = ({
   iconCollections,
   onSave,
   nodeIndicatorComponent,
+  connectorIndicatorComponent,
   children
 }: IsoflowProps) => {
   const uiStateActions = useUiStateStore((state) => {
@@ -129,6 +130,10 @@ const App = ({
   useEffect(() => {
     uiStateActions.setNodeIndicatorComponent(nodeIndicatorComponent);
   }, [nodeIndicatorComponent, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setConnectorIndicatorComponent(connectorIndicatorComponent);
+  }, [connectorIndicatorComponent, uiStateActions]);
 
   if (!initialDataManager.isReady) return null;
 

@@ -1,12 +1,22 @@
 import type { ErrorInfo, ReactNode } from 'react';
 import type { ZodIssue } from 'zod';
 import type { EditorModeEnum, MainMenuOptions } from './common';
-import type { Model, ModelItem, ViewItem } from './model';
+import type { Connector, Model, ModelItem, View, ViewItem } from './model';
 import type { RendererProps } from './rendererProps';
 
 export type NodeIndicatorComponent = (props: {
   item: ModelItem;
   view: ViewItem;
+}) => ReactNode;
+
+// FEA7-03: mirror of NodeIndicatorComponent for connectors. Renders
+// at the connector's midpoint as an absolutely-positioned overlay
+// inside the SceneLayers stack. Use it to surface link-level
+// telemetry — throughput, latency, error rate, link-down status —
+// driven by host state that isn't part of the model.
+export type ConnectorIndicatorComponent = (props: {
+  connector: Connector;
+  view: View;
 }) => ReactNode;
 
 export type InitialData = Model & {
@@ -95,6 +105,18 @@ export interface IsoflowProps {
    * positioned 20px to the right of the icon).
    */
   nodeIndicatorComponent?: NodeIndicatorComponent;
+  /**
+   * Optional per-connector decorator. When supplied, the editor
+   * renders this component at every connector's midpoint, receiving
+   * the connector's model shape and the parent View. Mirror of
+   * `nodeIndicatorComponent` for link-level telemetry overlays
+   * (FEA7-03).
+   *
+   * The component renders inside an absolutely-positioned Box that
+   * already follows the connector's midpoint; return absolutely-
+   * positioned content if you want to offset it further.
+   */
+  connectorIndicatorComponent?: ConnectorIndicatorComponent;
   /**
    * Optional children rendered inside the Isoflow provider tree.
    * The intended use is a "driver" component that calls

@@ -19,7 +19,12 @@ import { CONNECTOR_SEARCH_OFFSET, UNPROJECTED_TILE_SIZE } from 'src/config';
 import { CoordsUtils } from './CoordsUtils';
 import { findPath } from './pathfinder';
 import { getItemByIdOrThrow } from './common';
-import { getBoundingBox, getBoundingBoxSize, sortByPosition } from './geometry';
+import {
+  getBoundingBox,
+  getBoundingBoxSize,
+  isWithinBounds,
+  sortByPosition
+} from './geometry';
 
 export const getAllAnchors = (connectors: Connector[]) => {
   return connectors.reduce((acc, connector) => {
@@ -68,6 +73,57 @@ interface GetConnectorPath {
   view: View;
 }
 
+// FEA7-02: collect all tile coords inside `searchRect` (search-area-
+// local coords, low-to-high rectangle) that are occupied by view
+// items, rectangles, or text boxes. Items referenced by any of
+// `anchorItemIds` are skipped so a connector terminating ON a node
+// can enter/exit it. Other connectors are not treated as obstacles
+// — diagram tools typically allow connectors to cross.
+const collectObstacleTiles = (
+  view: View,
+  rectangleFrom: Coords,
+  searchAreaSize: { width: number; height: number },
+  anchorItemIds: Set<string>
+): Coords[] => {
+  const obstacles: Coords[] = [];
+  const localMaxX = searchAreaSize.width - 1;
+  const localMaxY = searchAreaSize.height - 1;
+
+  const pushIfInside = (worldTile: Coords) => {
+    const local = CoordsUtils.subtract(worldTile, rectangleFrom);
+    if (local.x < 0 || local.y < 0) return;
+    if (local.x > localMaxX || local.y > localMaxY) return;
+    obstacles.push(local);
+  };
+
+  for (const item of view.items ?? []) {
+    if (anchorItemIds.has(item.id)) continue;
+    pushIfInside(item.tile);
+  }
+
+  for (const rect of view.rectangles ?? []) {
+    const bounds = [rect.from, rect.to];
+    const sorted = sortByPosition(bounds);
+    for (let x = sorted.lowX; x <= sorted.highX; x += 1) {
+      for (let y = sorted.lowY; y <= sorted.highY; y += 1) {
+        if (!isWithinBounds({ x, y }, bounds)) continue;
+        pushIfInside({ x, y });
+      }
+    }
+  }
+
+  for (const textBox of view.textBoxes ?? []) {
+    // Text boxes only persist their anchor tile in the schema; the
+    // rendered width comes from the content at runtime. Treating the
+    // anchor tile alone as occupied is approximate but matches the
+    // schema's view of the world and is enough to stop trivial
+    // collisions in tests.
+    pushIfInside(textBox.tile);
+  }
+
+  return obstacles;
+};
+
 export const getConnectorPath = ({
   anchors,
   view
@@ -109,6 +165,21 @@ export const getConnectorPath = ({
     });
   });
 
+  // FEA7-02: items that this connector's anchors reference are
+  // intentionally NOT treated as obstacles — they're the endpoints
+  // the connector is meant to dock onto. Anchors of other kinds
+  // (tile-bound, anchor-to-anchor) contribute nothing to skip.
+  const anchorItemIds = new Set<string>();
+  for (const anchor of anchors) {
+    if (anchor.ref.item) anchorItemIds.add(anchor.ref.item);
+  }
+  const obstacles = collectObstacleTiles(
+    view,
+    rectangle.from,
+    searchAreaSize,
+    anchorItemIds
+  );
+
   const tiles = positionsNormalisedFromSearchArea.reduce<Coords[]>(
     (acc, position, i) => {
       if (i === 0) return acc;
@@ -117,7 +188,8 @@ export const getConnectorPath = ({
       const path = findPath({
         from: prev,
         to: position,
-        gridSize: searchAreaSize
+        gridSize: searchAreaSize,
+        obstacles
       });
 
       return [...acc, ...path];

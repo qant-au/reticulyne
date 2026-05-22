@@ -139,6 +139,39 @@ export const connectorPathTileToGlobal = (
   return CoordsUtils.add(origin, tile);
 };
 
+// Y-flip helpers (BUG6-01). `getConnectorPath` returns path tiles
+// normalised as world-deltas from rectangle.from (+Y = world-up), but
+// the SVG container that renders them has the iso projection matrix
+// applied — and under that matrix SVG-local +Y maps to screen-down-
+// right, i.e. world-DOWN. So the path's Y direction is the OPPOSITE
+// of SVG-local Y. Without flipping, a connector between two anchors
+// that differ in both X and Y is rendered along the wrong diagonal of
+// its bounding box (source ends up at (sourceX, destY); dest at
+// (destX, sourceY)). BUG4-01 fixed the equivalent X mirror; this is
+// the Y companion.
+//
+// These helpers convert from the path's logical coordinate system to
+// the renderer's SVG-local coordinate system. Use them in the
+// connector renderer; do NOT use them outside the SVG container —
+// hitTest.ts, Cursor.ts, ConnectorLabel.tsx all compose with
+// connectorPathTileToGlobal() to recover real world coords and must
+// stay in the logical (un-flipped) space.
+
+// Render-side Y for a connector PATH tile. `gridHeight` is the
+// inclusive tile span of the connector's bounding box rectangle
+// (rectangle.to.y - rectangle.from.y + 1).
+export const flipConnectorTileY = (pathTileY: number, gridHeight: number) => {
+  return gridHeight - 1 - pathTileY;
+};
+
+// Render-side Y for a connector ANCHOR positioned at world coord
+// `worldY` inside a connector whose path rectangle spans from
+// `rectangle.from.y` to `rectangle.to.y`. Algebraically equivalent
+// to flipConnectorTileY(worldY - rectangle.from.y, gridHeight).
+export const anchorWorldYToRenderY = (worldY: number, rectangleToY: number) => {
+  return rectangleToY - worldY;
+};
+
 export const getAnchorAtTile = (tile: Coords, anchors: ConnectorAnchor[]) => {
   return anchors.find((anchor) => {
     return Boolean(

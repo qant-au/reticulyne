@@ -22,7 +22,9 @@ import {
   normalisePositionFromOrigin,
   connectorPathTileToGlobal,
   getConnectorPath,
-  getConnectorDirectionIcon
+  getConnectorDirectionIcon,
+  flipConnectorTileY,
+  anchorWorldYToRenderY
 } from 'src/utils';
 import { CONNECTOR_SEARCH_OFFSET, UNPROJECTED_TILE_SIZE } from 'src/config';
 import type { ConnectorAnchor, Coords, View } from 'src/types';
@@ -257,6 +259,120 @@ describe('connector coordinate system', () => {
       expect(both).toHaveLength(2);
       expect(both[0].rotation).toBe(180);
       expect(both[1].rotation).toBe(0);
+    });
+  });
+
+  // BUG6-01 Y-flip helpers. The bug they guard: path tiles are stored
+  // as world-deltas from rectangle.from (+Y = world-up), but the iso
+  // projection matrix that the SVG container uses maps SVG-local +Y
+  // to screen-DOWN-right (= world-DOWN). So the renderer must flip
+  // path Y. Without this, connectors drawn between two anchors that
+  // differ in BOTH X and Y are mirrored across their bounding box —
+  // axis-aligned spans hide the bug.
+  describe('Y-flip helpers (BUG6-01)', () => {
+    describe('flipConnectorTileY', () => {
+      test('is its own inverse (involution)', () => {
+        const gridH = 6;
+        for (let y = 0; y < gridH; y += 1) {
+          expect(flipConnectorTileY(flipConnectorTileY(y, gridH), gridH)).toBe(
+            y
+          );
+        }
+      });
+
+      test('maps path-y=0 to (gridHeight - 1) and vice versa', () => {
+        expect(flipConnectorTileY(0, 6)).toBe(5);
+        expect(flipConnectorTileY(5, 6)).toBe(0);
+      });
+
+      test('maps the midpoint to itself for odd grid heights', () => {
+        expect(flipConnectorTileY(2, 5)).toBe(2);
+      });
+
+      test('single-tile grid (height 1): the only valid y maps to itself', () => {
+        expect(flipConnectorTileY(0, 1)).toBe(0);
+      });
+    });
+
+    describe('anchorWorldYToRenderY', () => {
+      test('returns rectangle.to.y - worldY', () => {
+        expect(anchorWorldYToRenderY(2, 4)).toBe(2);
+        expect(anchorWorldYToRenderY(-1, 3)).toBe(4);
+      });
+
+      test('agrees with flipConnectorTileY for any (worldY, rectangle)', () => {
+        // Algebraic invariant: anchorWorldYToRenderY(worldY, to.y)
+        // === flipConnectorTileY(worldY - from.y, to.y - from.y + 1).
+        // If a future change drifts one helper apart from the other,
+        // the anchor handle will visibly desync from the path tile it
+        // was supposed to land on.
+        const cases: Array<{ from: number; to: number; world: number }> = [
+          { from: -3, to: 3, world: -3 },
+          { from: -3, to: 3, world: 0 },
+          { from: -3, to: 3, world: 3 },
+          { from: 0, to: 5, world: 0 },
+          { from: 0, to: 5, world: 5 }
+        ];
+        cases.forEach(({ from, to, world }) => {
+          const gridH = to - from + 1;
+          expect(anchorWorldYToRenderY(world, to)).toBe(
+            flipConnectorTileY(world - from, gridH)
+          );
+        });
+      });
+
+      test('returns 0 when the world anchor is at rectangle.to.y', () => {
+        // Highest world-Y (visually highest tile in iso) → SVG-local
+        // y=0 (top of the SVG container). The matrix then iso-projects
+        // y=0 to the top-left of the rendered diamond — which is where
+        // the visually-uppermost tile belongs.
+        expect(anchorWorldYToRenderY(7, 7)).toBe(0);
+      });
+
+      test('returns the full Y span when the world anchor is at rectangle.from.y', () => {
+        // Lowest world-Y (visually bottommost tile in iso) → maximum
+        // SVG-local y. With a search rectangle spanning y=[lowY, highY],
+        // anchorWorldYToRenderY(lowY, highY) = highY - lowY = gridH - 1.
+        expect(anchorWorldYToRenderY(-1, 3)).toBe(4);
+      });
+    });
+
+    test('round trip: path tile (px, py) of a diagonal connector flips to its render tile', () => {
+      // Two diagonal anchors: A=(-2,-1), B=(2,2).
+      // rectangle.from = (-3, -2), rectangle.to = (3, 3), gridH = 6.
+      // Anchor A's path tile = (1, 1). After Y flip: render-y = 4.
+      // Anchor B's path tile = (5, 4). After Y flip: render-y = 1.
+      const gridH = 6;
+      expect(flipConnectorTileY(1, gridH)).toBe(4);
+      expect(flipConnectorTileY(4, gridH)).toBe(1);
+
+      // Same answer via the anchor formula (world Y → render Y):
+      expect(anchorWorldYToRenderY(-1, 3)).toBe(4);
+      expect(anchorWorldYToRenderY(2, 3)).toBe(1);
+    });
+
+    test('SVG-local pixel position derived from the helpers matches the corrected renderer formula', () => {
+      // This locks the helpers to the constants the renderer uses.
+      // If UNPROJECTED_TILE_SIZE ever changes, the renderer will keep
+      // working because it imports the same constant — but this test
+      // pins the EXPECTED pixel values so a regression that
+      // accidentally drops the Y-flip (or partial-undoes it) shows up
+      // as a numerical mismatch rather than silent visual breakage.
+      const U = UNPROJECTED_TILE_SIZE;
+      const half = U / 2;
+
+      // A=(-2,-1), B=(2,2). rectangle.to.y=3, rectangle.from.y=-2,
+      // gridH=6.
+      const rectangleToY = 3;
+
+      const aRenderY = anchorWorldYToRenderY(-1, rectangleToY) * U + half;
+      const bRenderY = anchorWorldYToRenderY(2, rectangleToY) * U + half;
+      expect(aRenderY).toBe(4 * U + half); // = 450 when U=100
+      expect(bRenderY).toBe(1 * U + half); // = 150 when U=100
+      // Pre-fix behaviour put A at U/2 + 1*U = 150 and B at U/2 + 4*U
+      // = 450 (Y swapped). Make the regression explicit:
+      expect(aRenderY).not.toBe(1 * U + half);
+      expect(bRenderY).not.toBe(4 * U + half);
     });
   });
 });

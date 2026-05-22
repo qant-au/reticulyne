@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
-import { theme } from 'src/styles/theme';
+import { createIsoflowTheme } from 'src/styles/theme';
+import { useResolvedThemeMode } from 'src/hooks/useResolvedThemeMode';
 import type {
   Connector as ConnectorType,
   InitialData,
@@ -158,7 +159,14 @@ const App = ({
 };
 
 export const Isoflow = (props: IsoflowProps) => {
-  const { onError, errorFallback, ...appProps } = props;
+  const { onError, errorFallback, themeMode = 'light', ...appProps } = props;
+  // FEA7-04: resolve 'auto' against prefers-color-scheme, then
+  // memoise the createTheme() result so MUI's deep-merge runs once
+  // per mode change instead of every parent render.
+  const resolvedMode = useResolvedThemeMode(themeMode);
+  const theme = useMemo(() => {
+    return createIsoflowTheme(resolvedMode);
+  }, [resolvedMode]);
   return (
     <IsoflowErrorBoundary onError={onError} fallback={errorFallback}>
       <ThemeProvider theme={theme}>

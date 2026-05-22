@@ -209,14 +209,23 @@ export const LiveDashboard = () => {
         <DashboardDriver state={state} onTick={advanceTick} />
       </Isoflow>
       <Box
-        sx={{
-          position: 'absolute',
-          top: 16,
-          left: 16,
-          p: 1.5,
-          bgcolor: 'rgba(255,255,255,0.9)',
-          borderRadius: 1,
-          pointerEvents: 'none'
+        sx={(t) => {
+          // FEA7-04: pull the overlay's tinted-paper bg from the
+          // active theme so the panel reads above both light and
+          // dark canvases. The 0.9 alpha tint is preserved.
+          return {
+            position: 'absolute',
+            top: 16,
+            left: 16,
+            p: 1.5,
+            bgcolor:
+              t.palette.mode === 'dark'
+                ? 'rgba(30,33,40,0.9)'
+                : 'rgba(255,255,255,0.9)',
+            color: 'text.primary',
+            borderRadius: 1,
+            pointerEvents: 'none'
+          };
         }}
       >
         <Typography variant="body2" sx={{ fontWeight: 600 }}>

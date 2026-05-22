@@ -97,6 +97,11 @@ export const Connector: ModeActions = {
       !(firstAnchor.ref.item && lastAnchor.ref.item)
     ) {
       scene.deleteConnector(uiState.mode.id);
+    } else {
+      uiState.actions.setItemControls({
+        type: 'CONNECTOR',
+        id: uiState.mode.id
+      });
     }
 
     uiState.actions.setMode({

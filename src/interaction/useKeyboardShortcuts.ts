@@ -39,6 +39,9 @@ export const useKeyboardShortcuts = () => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
+  const dialog = useUiStateStore((state) => {
+    return state.dialog;
+  });
   const mousePosition = useUiStateStore((state) => {
     return state.mouse.position.tile;
   });
@@ -205,6 +208,17 @@ export const useKeyboardShortcuts = () => {
         }
       }
 
+      // ? → toggle keyboard shortcuts dialog (works in all modes)
+      if (!hasModifier && e.key === '?') {
+        if (dialog === 'KEYBOARD_SHORTCUTS') {
+          uiStateActions.setDialog(null);
+        } else {
+          uiStateActions.setDialog('KEYBOARD_SHORTCUTS');
+        }
+        e.preventDefault();
+        return;
+      }
+
       // Remaining shortcuts only fire in editable mode.
       if (!isEditable) return;
 
@@ -349,6 +363,7 @@ export const useKeyboardShortcuts = () => {
   }, [
     editorMode,
     itemControls,
+    dialog,
     uiStateActions,
     deleteViewItem,
     deleteTextBox,

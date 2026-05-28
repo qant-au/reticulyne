@@ -19,6 +19,7 @@ import { UiElement } from 'src/components/UiElement/UiElement';
 import { ItemControlsManager } from 'src/components/ItemControls/ItemControlsManager';
 import { MainMenu } from 'src/components/MainMenu/MainMenu';
 import { ZoomControls } from 'src/components/ZoomControls/ZoomControls';
+import { HelpButton } from 'src/components/HelpButton/HelpButton';
 import type { ToolName } from 'src/utils';
 import type { ItemControls } from 'src/types';
 import type { Size } from 'src/types/common';
@@ -102,6 +103,16 @@ export const ToolbarSlots = ({
           <MainMenu showToolButtons={showToolButtons} />
         </Box>
       )}
+
+      <Box
+        sx={{ position: 'absolute', transformOrigin: 'bottom right' }}
+        style={{
+          top: rendererSize.height - appPadding.y * 2,
+          right: appPadding.x
+        }}
+      >
+        <HelpButton />
+      </Box>
     </>
   );
 };

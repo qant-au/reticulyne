@@ -13,6 +13,7 @@ import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { DragAndDrop } from 'src/components/DragAndDrop/DragAndDrop';
 import { ContextMenuManager } from 'src/components/ContextMenu/ContextMenuManager';
 import { ExportImageDialog } from 'src/components/ExportImageDialog/ExportImageDialog';
+import { KeyboardShortcutsDialog } from 'src/components/KeyboardShortcutsDialog/KeyboardShortcutsDialog';
 import type { DialogTypeEnum, Mode, Coords } from 'src/types';
 
 interface Props {
@@ -43,6 +44,9 @@ export const DialogLayer = ({
       )}
       {dialog === 'EXPORT_IMAGE' && (
         <ExportImageDialog onClose={onCloseDialog} />
+      )}
+      {dialog === 'KEYBOARD_SHORTCUTS' && (
+        <KeyboardShortcutsDialog onClose={onCloseDialog} />
       )}
       <SceneLayer>
         <Box ref={setContextMenuAnchor} />

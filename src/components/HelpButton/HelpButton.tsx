@@ -7,6 +7,9 @@ export const HelpButton = () => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
+  const dialog = useUiStateStore((state) => {
+    return state.dialog;
+  });
 
   return (
     <UiElement>
@@ -14,7 +17,11 @@ export const HelpButton = () => {
         name="Keyboard shortcuts (?)"
         Icon={<HelpOutlineIcon />}
         onClick={() => {
-          uiStateActions.setDialog('KEYBOARD_SHORTCUTS');
+          if (dialog === 'KEYBOARD_SHORTCUTS') {
+            uiStateActions.setDialog(null);
+          } else {
+            uiStateActions.setDialog('KEYBOARD_SHORTCUTS');
+          }
         }}
       />
     </UiElement>

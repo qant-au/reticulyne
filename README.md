@@ -50,22 +50,31 @@ Reference material lives under [`docs/`](docs/README.md):
 
 ## Planned features
 
-The items below are prioritised candidates for the next active development phase, synthesised from fork analysis and community contributions. Dependencies are noted where one feature unlocks another.
+The items below are ordered by two rules applied in combination: **dependencies first** (an item that unblocks or is required by another item precedes it, even when its own user-visible benefit is modest), and **schema / API changes that are cheapest to do early come before features that would require the same migration later**. Items that deliver immediate UX value without blocking anything else are slotted in their natural place within those constraints.
 
 ---
 
-### Multi-floor management *(new)*
+### `enableGlobalDragHandlers` — embedding isolation fix
 
-Extends the diagram model along the z-axis, allowing a single canvas to represent a multi-storey building, a multi-tier network stack, or any environment where vertical layering has semantic meaning (Floor 1 / Floor 2 / Roof Plant; L2 / L3 / application tier; web / app / database).
+Adds an `enableGlobalDragHandlers: boolean` prop (default `true` for back-compat). When `false`, pointer listeners attach to the renderer element rather than `window`, preventing drag events from leaking into host-page sibling widgets. Also migrates all mouse events to the Pointer Events API (`pointerdown` / `pointermove` / `pointerup`) for unified mouse/touch/stylus handling. Directly applicable to the confirmed embedding use case (Isoflow inside a larger host product). From `mmastrac/isoflow`.
 
-- **Floors are independent canvases.** Each floor edits and navigates exactly as the current canvas does — a floor is not a filtered view, it is a full peer diagram.
-- **Cross-floor connectors.** Links between items on different floors are fully supported. Each cross-floor connection renders as a stub on each floor, terminating at a floor-transition marker (keeping the isometric projection unambiguous). The stub clearly labels the remote floor and remote endpoint.
-- **Active / inactive dimming.** The active floor renders at full opacity. All other floors are rendered at reduced opacity — enough to read the topology, not enough to compete with the active plane. This is the same dimming mechanism as selection dimming (below), applied at floor scope rather than item scope.
-- **Tab-strip navigation.** Floors are user-named and reordered; a tab strip (or keyboard Alt+Up/Down) switches the active floor.
+*Prioritised first because:* the event-attachment model is a behavioural contract. Once embedders rely on current (leaky) `window`-level handlers, changing the default becomes a breaking change. The Pointer Events migration also unblocks future multi-touch and stylus work. Cheapest to do before the public API is locked.
 
-The concept synthesises two independent community contributions: `bgrewell/isoflow`'s vertical z-offset stacking of node groups gives the depth model; `nuno-andre/isoflow`'s selection dimming gives the visual vocabulary. Together they compose into a navigation paradigm where depth is physically meaningful rather than purely organisational.
+---
 
-*Depends on: selection dimming (below), per-rectangle transparency / z-index (below).*
+### Per-rectangle custom fill, outline, and transparency
+
+Extends the rectangle schema with four optional fields: `colorValue` (direct hex fill, bypassing the palette reference system), `outlineColor` (independent border stroke), `transparency` (fill alpha 0–1), and `zIndex` (per-item z-order override). All fields are optional with explicit fallbacks, so migration risk is minimal. Lets embedders push arbitrary status colours from an external source without pre-registering palette entries — natural fit for alerting-region overlays or VPC boundary styling in live dashboards. From `bgrewell/isoflow`.
+
+*Prioritised second because:* this is a schema extension to the rectangle type — the sooner optional fields land, the sooner embedders can rely on them without a migration. Also a hard dependency of multi-floor management (below), where `transparency` and `zIndex` control how inactive floors are rendered.
+
+---
+
+### 8-directional connector routing
+
+Enables diagonal routing (N/S/E/W + four 45° diagonals) in addition to the current 4-directional grid. The `pathfinding` library already bundled supports `DiagonalMovement` — the change is a config flag in `src/utils/pathfinder.ts` plus segment-rendering updates in `src/utils/connector.ts`. Dramatically reduces path length and visual clutter in densely connected diagrams; particularly noticeable in live dashboards where the current 4-direction constraint forces long L-shaped detours between nodes that are not axis-aligned. Inspired by `kingt0t/isoflow`'s hexagonal tile experiment (which achieves the same practical benefit from a different angle).
+
+*Prioritised third because:* highest bang-for-buck on the list — a one-line config change in the pathfinder with no schema impact. Landing it early means all subsequent connector work (auto-routing improvements, WebGL renderer) inherits 8-directional paths from the start rather than being retrofitted later.
 
 ---
 
@@ -75,7 +84,7 @@ When exactly one item is selected, all other items fade to reduced opacity with 
 
 Connects to the existing `nodeIndicatorComponent` pattern — "host drives visual state" — applied to selection context.
 
-*Also a dependency for: multi-floor management.*
+*Prioritised fourth because:* the `highlightedItemId` prop is a new public API surface that should be locked down before stabilisation. Also a hard dependency of multi-floor management (below), where the same dimming mechanism is applied at floor scope.
 
 ---
 
@@ -85,25 +94,22 @@ Items are assigned to named layers (e.g. "Topology", "Detail", "Annotations"). E
 
 Distinct from multi-view (separate complete canvases) and from grouping (spatial organisation). Layers cut across both.
 
----
-
-### 8-directional connector routing
-
-Enables diagonal routing (N/S/E/W + four 45° diagonals) in addition to the current 4-directional grid. The `pathfinding` library already bundled supports `DiagonalMovement` — the change is a config flag in `src/utils/pathfinder.ts` plus segment-rendering updates in `src/utils/connector.ts`. Dramatically reduces path length and visual clutter in densely connected diagrams; particularly noticeable in live dashboards where the current 4-direction constraint forces long L-shaped detours between nodes that are not axis-aligned. Inspired by `kingt0t/isoflow`'s hexagonal tile experiment (which achieves the same practical benefit from a different angle).
+*Prioritised fifth because:* layers add a metadata field to the item schema. Landing this before multi-floor management avoids touching item metadata twice — if floors land first, layers would need to be retrofitted alongside an already complex floor model.
 
 ---
 
-### `enableGlobalDragHandlers` — embedding isolation fix
+### Multi-floor management *(new)*
 
-Adds an `enableGlobalDragHandlers: boolean` prop (default `true` for back-compat). When `false`, pointer listeners attach to the renderer element rather than `window`, preventing drag events from leaking into host-page sibling widgets. Also migrates all mouse events to the Pointer Events API (`pointerdown` / `pointermove` / `pointerup`) for unified mouse/touch/stylus handling. Directly applicable to the confirmed embedding use case (Isoflow inside a larger host product). From `mmastrac/isoflow`.
+Extends the diagram model along the z-axis, allowing a single canvas to represent a multi-storey building, a multi-tier network stack, or any environment where vertical layering has semantic meaning (Floor 1 / Floor 2 / Roof Plant; L2 / L3 / application tier; web / app / database).
 
----
+- **Floors are independent canvases.** Each floor edits and navigates exactly as the current canvas does — a floor is not a filtered view, it is a full peer diagram.
+- **Cross-floor connectors.** Links between items on different floors are fully supported. Each cross-floor connection renders as a stub on each floor, terminating at a floor-transition marker (keeping the isometric projection unambiguous). The stub clearly labels the remote floor and remote endpoint.
+- **Active / inactive dimming.** The active floor renders at full opacity. All other floors are rendered at reduced opacity — enough to read the topology, not enough to compete with the active plane. This is the dimming mechanism from selection dimming (above), applied at floor scope rather than item scope.
+- **Tab-strip navigation.** Floors are user-named and reordered; a tab strip (or keyboard Alt+Up/Down) switches the active floor.
 
-### Per-rectangle custom fill, outline, and transparency
+The concept synthesises two independent community contributions: `bgrewell/isoflow`'s vertical z-offset stacking of node groups gives the depth model; `nuno-andre/isoflow`'s selection dimming gives the visual vocabulary. Together they compose into a navigation paradigm where depth is physically meaningful rather than purely organisational.
 
-Extends the rectangle schema with four optional fields: `colorValue` (direct hex fill, bypassing the palette reference system), `outlineColor` (independent border stroke), `transparency` (fill alpha 0–1), and `zIndex` (per-item z-order override). All fields are optional with explicit fallbacks, so migration risk is minimal. Lets embedders push arbitrary status colours from an external source without pre-registering palette entries — natural fit for alerting-region overlays or VPC boundary styling in live dashboards. From `bgrewell/isoflow`.
-
-*Also contributes to: multi-floor management (transparency and z-index control how background floors are rendered).*
+*Depends on: selection dimming and per-rectangle transparency / z-index (both above). Benefits from diagram layers (above) being settled first so item metadata is not migrated twice.*
 
 ---
 

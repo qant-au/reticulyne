@@ -530,6 +530,92 @@ brand-agnostic; let embedders override the list via a prop.
 
 **Effort.** Small. ~1 day plus design time.
 
+### 2.8 Replace Quill rich-text editor (DEP-04 follow-up)
+
+**What it does.** Swaps `react-quill-new` → `quill@2.0.3` (the node-description
+rich-text editor at `src/components/MarkdownEditor/`) for an actively
+maintained alternative — TipTap (ProseMirror-backed) or Lexical (Meta's
+post-Draft.js editor). The schema-visible field (`description: string`) and
+the public allowlist of formats (`bold`, `italic`, `underline`, `strike`,
+`link`) stay the same; only the editor implementation and the in-source XSS
+mitigations change.
+
+**Why Tier 2.** This is the only outstanding accepted residual advisory in
+`SECURITY.md` (`GHSA-v3m3-f69x-jf25`, low-severity, dev-only audit gate
+already silent at moderate). The in-source `Link.sanitize` override plus the
+narrow `formats` allowlist contain the risk today, and `script-src 'self'`
+in the standalone Docker image's CSP contains the residual blast radius — so
+the swap is not a stabilisation blocker. But it locks consumer expectations
+the longer it sits: every embedder using `description` strings becomes a
+breakage risk when the editor changes. Better to land it in v1 than after
+embedders have shipped against the Quill behaviour.
+
+**Where in code.**
+- `src/components/MarkdownEditor/MarkdownEditor.tsx` — the editor component
+  and its `formats` allowlist (load-bearing for the mitigation).
+- `src/components/MarkdownEditor/sanitizeLinkUrl.ts` — module-load override
+  of Quill's `Link.sanitize`. Equivalent must exist in the replacement,
+  rejecting `javascript:` / `data:` / `vbscript:` / `file:` / `blob:`
+  (including percent-encoded variants) on every `<a href>`.
+- `SECURITY.md` (entry `GHSA-v3m3-f69x-jf25`), `README.md` § *Security*, and
+  `docs/embedding.md` § *Security model* — all three describe the consumer
+  contract for HTML stored in `description`. The new editor must preserve
+  that contract or the docs must be updated in lockstep.
+- `package.json` — `react-quill-new` dependency drops; new editor's package
+  added. CSS imports for the editor change too.
+- The DOMPurify embedder-side recommendation (in `docs/embedding.md`) stays
+  regardless — the new editor is a defence in depth, not a replacement for
+  consumer-side sanitisation of `initialData`.
+
+**Approach sketch.**
+
+- Pick the replacement. **Lean: TipTap** — extension-based, smaller core,
+  well-suited to a narrow allowlist; `StarterKit` ships with exactly the
+  marks we need and is easy to subset further. Lexical is the other credible
+  option but its tooling surface is larger than we need.
+- Build the new component behind a flag (or in a sibling directory) so the
+  old Quill component stays runnable side-by-side during the swap.
+- Re-implement the link-protocol sanitisation in TipTap's link extension
+  (`Link.configure({ protocols: ['http', 'https', 'mailto'], … })` is
+  closer to the right shape — but verify it actually rejects rather than
+  silently allows other protocols, and add an `addAttributes()` override if
+  not).
+- Lock the format set: `Bold`, `Italic`, `Underline`, `Strike`, `Link`. No
+  `Image`, no `History`-clipboard, no raw-HTML paste handler that bypasses
+  the allowlist. The clipboard pipeline is where most security regressions
+  hide — write a test that pastes `<iframe>`, `<svg onload>`, `<style>`, and
+  a `data:` link and asserts they're stripped.
+- Migration: existing `description` strings are Quill HTML output. TipTap
+  reads HTML on init; verify that bold/italic/underline/strike/link
+  round-trip cleanly. If TipTap rewrites the output shape (e.g. `<b>` vs
+  `<strong>`), decide whether to normalise on load or leave the drift —
+  there's no schema migration unless we want one.
+- Dark mode: TipTap doesn't ship its own theme, so Tier 2.5's dark-mode
+  audit becomes simpler (just the wrapper, not a separate Quill stylesheet).
+  Coordinate with whoever picks up 2.5.
+- Update `SECURITY.md` to close `GHSA-v3m3-f69x-jf25` (move from "Known
+  accepted residual advisories" to a historical entry once the npm audit
+  is clean), update `README.md` and `docs/embedding.md` security sections,
+  and bump the version per `CLAUDE.md`'s release process.
+
+**Reviewer's notes.** The mitigation in source today is two layers: link-
+protocol sanitisation **and** a narrow `formats` allowlist. The second layer
+is what catches `<iframe>` / `<svg>` / `<style>` on paste. The replacement
+must preserve **both** layers; getting only one is a regression that won't
+be obvious in `npm audit`. Treat the format-allowlist test (paste hostile
+HTML, assert it's stripped) as the merge gate, not a follow-up. Note also
+that the consumer-app embedder (`qantcore/app`, Blueprint feature) currently
+keeps an explanatory comment about the Quill CVE in its shell file
+(`_BlueprintShell.tsx`); when this swap lands, ping that consumer so the
+comment can be retired.
+
+**Collab-ready.** The `description` field continues to be a plain string
+keyed by item id — no CRDT-relevant shape change.
+
+**Effort.** Medium. ~2–3 days including the swap, the security-test gate,
+the docs lockstep, and a Docker-image smoke pass to confirm CSP behaviour
+is unchanged.
+
 ---
 
 ## Tier 3 — Nice-to-have

@@ -123,7 +123,8 @@
     "zustand": "^5.0.13"
   },
   "overrides": {
-    "uuid": "^11.1.1"
+    "uuid": "^11.1.1",
+    "qs": "^6.15.2"
   },
   "browserslist": {
     "production": [

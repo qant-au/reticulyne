@@ -1,12 +1,15 @@
 import { useMemo } from 'react';
-import { getItemByIdOrThrow } from 'src/utils';
+import { getItemById } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
 
 export const useConnector = (id: string) => {
   const { connectors } = useScene();
 
   const connector = useMemo(() => {
-    return getItemByIdOrThrow(connectors, id).value;
+    // A deleted connector's component goes through one final render cycle
+    // before unmounting. Return null rather than throwing so the component
+    // can bail out cleanly instead of hitting IsoflowErrorBoundary.
+    return getItemById(connectors, id);
   }, [connectors, id]);
 
   return connector;

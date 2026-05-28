@@ -31,11 +31,13 @@ export const NodeControls = ({ id }: Props) => {
   const viewItem = useViewItem(id);
   const modelItem = useModelItem(id);
   const { iconCategories } = useIconCategories();
-  const { icon } = useIcon(modelItem.icon);
+  const { icon } = useIcon(modelItem?.icon);
 
   const onSwitchMode = useCallback((newMode: Mode) => {
     setMode(newMode);
   }, []);
+
+  if (!viewItem || !modelItem) return null;
 
   return (
     <ControlsContainer header={<Header title="Edit object" />}>

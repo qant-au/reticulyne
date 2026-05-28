@@ -20,7 +20,7 @@ interface Props {
 
 export const Node = ({ node, order }: Props) => {
   const modelItem = useModelItem(node.id);
-  const { iconComponent } = useIcon(modelItem.icon);
+  const { iconComponent } = useIcon(modelItem?.icon);
   const NodeIndicator = useUiStateStore((state) => {
     return state.nodeIndicatorComponent;
   });
@@ -34,13 +34,16 @@ export const Node = ({ node, order }: Props) => {
 
   const description = useMemo(() => {
     if (
+      !modelItem ||
       modelItem.description === undefined ||
       modelItem.description === MARKDOWN_EMPTY_VALUE
     )
       return null;
 
     return modelItem.description;
-  }, [modelItem.description]);
+  }, [modelItem]);
+
+  if (!modelItem) return null;
 
   return (
     <Box

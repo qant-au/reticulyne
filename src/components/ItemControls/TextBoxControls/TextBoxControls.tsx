@@ -26,6 +26,7 @@ export const TextBoxControls = ({ id }: Props) => {
   });
   const textBox = useTextBox(id);
   const { updateTextBox, deleteTextBox } = useScene();
+  if (!textBox) return null;
 
   return (
     <ControlsContainer header={<Header title="Edit text" />}>

@@ -18,6 +18,7 @@ export const RectangleControls = ({ id }: Props) => {
   });
   const rectangle = useRectangle(id);
   const { updateRectangle, deleteRectangle } = useScene();
+  if (!rectangle) return null;
 
   return (
     <ControlsContainer header={<Header title="Edit rectangle" />}>

@@ -94,7 +94,17 @@ Items are assigned to named layers (e.g. "Topology", "Detail", "Annotations"). E
 
 Distinct from multi-view (separate complete canvases) and from grouping (spatial organisation). Layers cut across both.
 
-*Prioritised fifth because:* layers add a metadata field to the item schema. Landing this before multi-floor management avoids touching item metadata twice — if floors land first, layers would need to be retrofitted alongside an already complex floor model.
+#### Redacted layer — export-time suppression
+
+A reserved built-in layer named **Redacted** serves a specific purpose beyond visibility: items on it are visible in the editor (so the diagram remains complete and navigable) but are **excluded from all exports** (PNG, PDF, SVG) unless the export dialog's **"Include redacted content"** checkbox is explicitly checked.
+
+The intended use is annotation-based. IP addresses, service identifiers, internal port numbers, and similar sensitive text live in TextBox items (or connector description labels) placed on the Redacted layer. When the diagram is shared externally those annotations are silently omitted — the structural topology (nodes, connectors, rectangles) is always preserved. Removing structural objects is the job of the ordinary visibility toggle; redaction is purely an export gate.
+
+If a diagram has no items on the Redacted layer, export behaviour is identical to today — the "Include redacted content" checkbox does not appear and nothing changes for the user.
+
+**Why this pairs naturally with layers.** The export pipeline (PNG, PDF, and SVG once that lands) already needs to be updated to respect layer visibility when rendering. Adding a redaction predicate in the same pass — skip any item whose layer is Redacted unless the export option opts in — is marginal incremental work. Building both together avoids a second pass through the export components later.
+
+*Prioritised fifth because:* layers add a `layerId` metadata field to the item schema. Landing this before multi-floor management avoids touching item metadata twice — if floors land first, layers would need to be retrofitted alongside an already complex floor model. The Redacted sub-feature is included here rather than as a separate item because its implementation cost is marginal once the export pipeline is already being made layer-aware.
 
 ---
 

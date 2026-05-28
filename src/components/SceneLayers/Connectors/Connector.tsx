@@ -38,40 +38,44 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
   const theme = useTheme();
   const color = useColor(_connector.color);
   const { currentView } = useScene();
+  // useConnector may return null during the final render cycle after the
+  // connector is deleted but before this component unmounts. All hook
+  // calls below use _connector (the always-valid prop) so they are
+  // unconditional. The guard before the return keeps deleted connectors
+  // out of the DOM without hitting IsoflowErrorBoundary.
   const connector = useConnector(_connector.id);
   const enableAnimation = useUiStateStore((state) => {
     return state.enableAnimation;
   });
-  // FEA5-07: runtime pulse overlay. Driven by useIsoflow().Connector
-  // .pulse from outside the component tree; this store subscription
-  // re-renders when a pulse starts or expires.
+  // FEA5-07: runtime pulse overlay. _connector.id used (not connector.id)
+  // so this subscription is unconditional when connector is null.
   const pulseOverlay = useSceneStore((state) => {
-    return state.connectorOverlays[connector.id];
+    return state.connectorOverlays[_connector.id];
   });
   const { css, pxSize, gridSize } = useIsoProjection({
-    ...connector.path.rectangle
+    ..._connector.path.rectangle
   });
 
   // Stable SVG fragment-id for <animateMotion><mpath href> to point
   // at the polyline below. Encoded so embedders' arbitrary id
   // strings (URIs, slashes, etc.) can't break the selector.
   const pathElementId = useMemo(() => {
-    return `connector-path-${encodeURIComponent(connector.id)}`;
-  }, [connector.id]);
+    return `connector-path-${encodeURIComponent(_connector.id)}`;
+  }, [_connector.id]);
   // FEA7-01: animationRate is opt-in. Undefined preserves the legacy
   // full-speed loop; a defined value scales the animation duration
   // and 0 halts it without removing the connector's `animated` flag.
-  const animationRate = connector.animationRate ?? 1;
+  const animationRate = _connector.animationRate ?? 1;
   const isLooping =
-    enableAnimation && Boolean(connector.animated) && animationRate > 0;
+    enableAnimation && Boolean(_connector.animated) && animationRate > 0;
   const animationDurationSeconds =
     ANIMATION_DURATION_SECONDS / Math.max(animationRate, MIN_ANIMATION_RATE);
   // FEA7-01: explicit flow overrides the direction-derived reverse.
   // The fallback reproduces the pre-FEA7 rule exactly so diagrams
   // without `animationFlow` set render byte-identical.
-  const fallbackReverse = connector.direction === 'END_TO_START';
+  const fallbackReverse = _connector.direction === 'END_TO_START';
   const animationFlow =
-    connector.animationFlow ?? (fallbackReverse ? 'reverse' : 'forward');
+    _connector.animationFlow ?? (fallbackReverse ? 'reverse' : 'forward');
 
   const drawOffset = useMemo(() => {
     return {
@@ -85,10 +89,10 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
   // space. See flipConnectorTileY for the why — BUG4-01 fixed the
   // X mirror; this is the Y companion.
   const renderTiles = useMemo(() => {
-    return connector.path.tiles.map((tile) => {
+    return _connector.path.tiles.map((tile) => {
       return { x: tile.x, y: flipConnectorTileY(tile.y, gridSize.height) };
     });
-  }, [connector.path.tiles, gridSize.height]);
+  }, [_connector.path.tiles, gridSize.height]);
 
   const pathString = useMemo(() => {
     return renderTiles.reduce((acc, tile) => {
@@ -101,7 +105,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
   const anchorPositions = useMemo(() => {
     if (!isSelected) return [];
 
-    return connector.anchors.map((anchor) => {
+    return _connector.anchors.map((anchor) => {
       const position = getAnchorTile(anchor, currentView);
 
       // Anchor handle in SVG-local coords. X matches the path
@@ -111,19 +115,19 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
       return {
         id: anchor.id,
         x:
-          (position.x - connector.path.rectangle.from.x) *
+          (position.x - _connector.path.rectangle.from.x) *
             UNPROJECTED_TILE_SIZE +
           drawOffset.x,
         y:
-          anchorWorldYToRenderY(position.y, connector.path.rectangle.to.y) *
+          anchorWorldYToRenderY(position.y, _connector.path.rectangle.to.y) *
             UNPROJECTED_TILE_SIZE +
           drawOffset.y
       };
     });
   }, [
     currentView,
-    connector.path.rectangle,
-    connector.anchors,
+    _connector.path.rectangle,
+    _connector.anchors,
     drawOffset,
     isSelected
   ]);
@@ -133,15 +137,15 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
     // rotation (computed in computeArrowFromTwoTiles using the SVG-
     // local-tile convention where +Y = south on screen) both match the
     // rendered polyline.
-    return getConnectorDirectionIcon(renderTiles, connector.direction);
-  }, [renderTiles, connector.direction]);
+    return getConnectorDirectionIcon(renderTiles, _connector.direction);
+  }, [renderTiles, _connector.direction]);
 
   const connectorWidthPx = useMemo(() => {
-    return (UNPROJECTED_TILE_SIZE / 100) * connector.width;
-  }, [connector.width]);
+    return (UNPROJECTED_TILE_SIZE / 100) * _connector.width;
+  }, [_connector.width]);
 
   const strokeDashArray = useMemo(() => {
-    switch (connector.style) {
+    switch (_connector.style) {
       case 'DASHED':
         return `${connectorWidthPx * 2}, ${connectorWidthPx * 2}`;
       case 'DOTTED':
@@ -150,7 +154,9 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
       default:
         return 'none';
     }
-  }, [connector.style, connectorWidthPx]);
+  }, [_connector.style, connectorWidthPx]);
+
+  if (!connector) return null;
 
   return (
     <Box style={css}>

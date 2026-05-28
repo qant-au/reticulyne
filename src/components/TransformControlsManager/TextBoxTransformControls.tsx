@@ -11,8 +11,11 @@ export const TextBoxTransformControls = ({ id }: Props) => {
   const textBox = useTextBox(id);
 
   const to = useMemo(() => {
+    if (!textBox) return null;
     return getTextBoxEndTile(textBox, textBox.size);
   }, [textBox]);
+
+  if (!textBox || !to) return null;
 
   return <TransformControls from={textBox.tile} to={to} />;
 };

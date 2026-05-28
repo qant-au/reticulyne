@@ -106,6 +106,7 @@ export const ConnectorControls = ({ id }: Props) => {
   });
   const connector = useConnector(id);
   const { updateConnector, deleteConnector } = useScene();
+  if (!connector) return null;
 
   const isArrowDisabled = connector.direction === 'NONE';
 

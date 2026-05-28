@@ -7,6 +7,7 @@ interface Props {
 
 export const NodeTransformControls = ({ id }: Props) => {
   const node = useViewItem(id);
+  if (!node) return null;
 
   return <TransformControls from={node.tile} to={node.tile} />;
 };

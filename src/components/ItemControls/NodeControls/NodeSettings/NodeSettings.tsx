@@ -24,6 +24,7 @@ export const NodeSettings = ({
   onDeleted
 }: Props) => {
   const modelItem = useModelItem(node.id);
+  if (!modelItem) return null;
 
   return (
     <>

@@ -732,6 +732,31 @@ agnostic; let embedders override via prop.
 
 ---
 
+### 2.15 Diagram layers with Redacted export layer **[NEW]**
+
+**What it does.** Items are assigned to named layers (e.g. "Topology", "Detail", "Annotations"). Each layer has a toolbar visibility toggle; `iso.setLayerVisible(id, bool)` exposes the same control to the imperative API. One diagram serves multiple audiences.
+
+A reserved built-in layer named **Redacted** serves an additional purpose. Items on it remain visible in the editor but are excluded from all exports (PNG, PDF, SVG) unless the export dialog's "Include redacted content" checkbox is explicitly checked. The intended pattern is annotation-based — IP addresses, service identifiers, internal port numbers, and similar sensitive text live in TextBox items on this layer; the structural topology (nodes, connectors, rectangles) is always preserved in exports. If no items are on the Redacted layer, export behaviour is unchanged.
+
+**Why here, after 2.4 SVG export.** The export pipeline already needs to be updated to respect layer visibility when rendering PNG, PDF, and the new SVG. Redaction is a single additional predicate in that same pass: `if item.layerId === 'redacted' && !opts.includeRedacted, skip`. Scheduling layers immediately after SVG export means the export components are touched once, not twice.
+
+**Where in code.**
+- `src/schemas/model.ts` — add `layers?: Layer[]` to the model schema (`{ id, name, visible, isBuiltIn? }`); add optional `layerId?: string` to every item type.
+- `src/stores/modelStore.tsx` — layer CRUD; seed new diagrams with built-in layers `Default`, `Annotations`, `Redacted` (`isBuiltIn: true` prevents rename or delete on the Redacted layer).
+- `src/components/` — toolbar layer panel with per-layer visibility toggles and drag-to-reorder.
+- `src/utils/exportAsImage.ts`, `src/utils/exportAsSVG.ts`, `src/utils/exportAsPdf.ts` — add `includeRedacted: boolean` option (default `false`); filter item list through a single predicate before rendering.
+- `src/components/ExportImageDialog/` — "Include redacted content" checkbox, rendered only when the diagram contains at least one item on the Redacted layer.
+
+**Approach sketch.**
+- Existing diagrams with no `layerId` fields load cleanly — items default to `'default'` layer via a fallback in `refineModel()`. Zero migration cost.
+- Layers have draw order (bottom-to-top) with drag-to-reorder in the panel. Item z-order within a layer is the existing bring-to-front concern (1.3); layer order is a separate, coarser concept.
+- Export dialog: check `model.layers` for Redacted layer + scene items with `layerId === 'redacted'` before showing the checkbox. Checking it passes `includeRedacted: true` to the export function as an ephemeral option; it does not persist to the model.
+- `iso.setLayerVisible(id, bool)` and `iso.getLayers(): Layer[]` added to `useIsoflow()`.
+
+**Effort.** Medium. ~2 days: schema + store (~0.5 d), toolbar layer panel (~0.5 d), export pipeline + dialog (~0.5 d), tests (~0.5 d).
+
+---
+
 ## Tier 3 — Nice-to-have
 
 ### 3.1 Hover highlight + tooltip
@@ -884,16 +909,17 @@ front-loads the highest-return items:
    contract.
 6. **2.5 left-click drag to connect** — 1.5 days; depends on 2.1 being done.
 7. **2.4 SVG export** — 1 day; independent, no risk.
-8. **1.4 multi-select** — 2–3 days; unlocks 3.2 and bulk operations.
-9. **1.5 + 1.6 diff updates + stable API** — 2–3 days; document once.
-10. **2.7 + 2.8 search + mini-map** — 2 days combined.
-11. **2.9 snap-to-grid** — 1 day (snap only; guides are follow-on).
-12. **2.10 replace Quill** — 2–3 days; security milestone.
-13. **2.11 + 2.12 D&D palette + touch pinch** — 3 days combined.
-14. **2.13 + 2.14 custom icons + templates** — 2 days combined.
-15. **1.7 grouping** — 3–5 days; save for last in Tier 1 (largest schema
+8. **2.15 diagram layers + Redacted export layer** — 2 days; export pipeline becomes layer-aware here; Redacted is marginal cost alongside; schema lands before grouping (1.7) to avoid double-migration.
+9. **1.4 multi-select** — 2–3 days; unlocks 3.2 and bulk operations.
+10. **1.5 + 1.6 diff updates + stable API** — 2–3 days; document once.
+11. **2.7 + 2.8 search + mini-map** — 2 days combined.
+12. **2.9 snap-to-grid** — 1 day (snap only; guides are follow-on).
+13. **2.10 replace Quill** — 2–3 days; security milestone.
+14. **2.11 + 2.12 D&D palette + touch pinch** — 3 days combined.
+15. **2.13 + 2.14 custom icons + templates** — 2 days combined.
+16. **1.7 grouping** — 3–5 days; save for last in Tier 1 (largest schema
     change).
-16. **APP-01 + APP-02 Docker shell** — 2.5 days; after library API is stable.
+17. **APP-01 + APP-02 Docker shell** — 2.5 days; after library API is stable.
 
 Stop after Tier 2 and stabilise. Tier 3 becomes a "next minor release" backlog.
 

@@ -40,5 +40,8 @@ yarn-error.log*
 /phase-*.md
 /*backup
 
+# Local-only planning / research notes — not committed
+/ROADMAP-TODO.md
+
 # IDE state — local-only, not shared via git
 /.idea

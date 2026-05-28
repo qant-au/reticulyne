@@ -48,6 +48,71 @@ Reference material lives under [`docs/`](docs/README.md):
 - **Export options** — Export diagrams as JSON, PNG, or PDF from the main menu. PDF generation is client-side via jsPDF (no network call).
 - **Live dashboards** *(opt-in via `enableAnimation`)* — Animate connectors, fire signal pulses (`useIsoflow().Connector.pulse`) and decorate nodes with host-supplied gauges (`nodeIndicatorComponent`) to drive the diagram from a poller / websocket. See [Live dashboards in the embedding docs](docs/embedding.md#live-dashboards) and the runnable [`LiveDashboard` example](src/examples/LiveDashboard/LiveDashboard.tsx).
 
+## Planned features
+
+The items below are prioritised candidates for the next active development phase, synthesised from fork analysis and community contributions. Dependencies are noted where one feature unlocks another.
+
+---
+
+### Multi-floor management *(new)*
+
+Extends the diagram model along the z-axis, allowing a single canvas to represent a multi-storey building, a multi-tier network stack, or any environment where vertical layering has semantic meaning (Floor 1 / Floor 2 / Roof Plant; L2 / L3 / application tier; web / app / database).
+
+- **Floors are independent canvases.** Each floor edits and navigates exactly as the current canvas does — a floor is not a filtered view, it is a full peer diagram.
+- **Cross-floor connectors.** Links between items on different floors are fully supported. Each cross-floor connection renders as a stub on each floor, terminating at a floor-transition marker (keeping the isometric projection unambiguous). The stub clearly labels the remote floor and remote endpoint.
+- **Active / inactive dimming.** The active floor renders at full opacity. All other floors are rendered at reduced opacity — enough to read the topology, not enough to compete with the active plane. This is the same dimming mechanism as selection dimming (below), applied at floor scope rather than item scope.
+- **Tab-strip navigation.** Floors are user-named and reordered; a tab strip (or keyboard Alt+Up/Down) switches the active floor.
+
+The concept synthesises two independent community contributions: `bgrewell/isoflow`'s vertical z-offset stacking of node groups gives the depth model; `nuno-andre/isoflow`'s selection dimming gives the visual vocabulary. Together they compose into a navigation paradigm where depth is physically meaningful rather than purely organisational.
+
+*Depends on: selection dimming (below), per-rectangle transparency / z-index (below).*
+
+---
+
+### Selection dimming *(item highlighting)*
+
+When exactly one item is selected, all other items fade to reduced opacity with a CSS transition (`opacity: 0.2`, `transition: opacity 0.3s`). Ports `nuno-andre/isoflow`'s implementation, extended to all item types (nodes, connectors, rectangles — the upstream only dims nodes) and exposed as a `highlightedItemId` prop so a host can drive focus externally without touching interaction state.
+
+Connects to the existing `nodeIndicatorComponent` pattern — "host drives visual state" — applied to selection context.
+
+*Also a dependency for: multi-floor management.*
+
+---
+
+### Diagram layers with per-layer visibility toggle
+
+Items are assigned to named layers (e.g. "Topology", "Detail", "Annotations"). Each layer has a visibility toggle. Turning off "Detail" hides IP addresses, connection labels, and port numbers while leaving the base topology intact; turning off "Annotations" hides text boxes and status indicators without removing nodes or connectors. One diagram serves multiple audiences with a single toggle in the toolbar or via `iso.setLayerVisible('detail', false)` in the imperative API.
+
+Distinct from multi-view (separate complete canvases) and from grouping (spatial organisation). Layers cut across both.
+
+---
+
+### 8-directional connector routing
+
+Enables diagonal routing (N/S/E/W + four 45° diagonals) in addition to the current 4-directional grid. The `pathfinding` library already bundled supports `DiagonalMovement` — the change is a config flag in `src/utils/pathfinder.ts` plus segment-rendering updates in `src/utils/connector.ts`. Dramatically reduces path length and visual clutter in densely connected diagrams; particularly noticeable in live dashboards where the current 4-direction constraint forces long L-shaped detours between nodes that are not axis-aligned. Inspired by `kingt0t/isoflow`'s hexagonal tile experiment (which achieves the same practical benefit from a different angle).
+
+---
+
+### `enableGlobalDragHandlers` — embedding isolation fix
+
+Adds an `enableGlobalDragHandlers: boolean` prop (default `true` for back-compat). When `false`, pointer listeners attach to the renderer element rather than `window`, preventing drag events from leaking into host-page sibling widgets. Also migrates all mouse events to the Pointer Events API (`pointerdown` / `pointermove` / `pointerup`) for unified mouse/touch/stylus handling. Directly applicable to the confirmed embedding use case (Isoflow inside a larger host product). From `mmastrac/isoflow`.
+
+---
+
+### Per-rectangle custom fill, outline, and transparency
+
+Extends the rectangle schema with four optional fields: `colorValue` (direct hex fill, bypassing the palette reference system), `outlineColor` (independent border stroke), `transparency` (fill alpha 0–1), and `zIndex` (per-item z-order override). All fields are optional with explicit fallbacks, so migration risk is minimal. Lets embedders push arbitrary status colours from an external source without pre-registering palette entries — natural fit for alerting-region overlays or VPC boundary styling in live dashboards. From `bgrewell/isoflow`.
+
+*Also contributes to: multi-floor management (transparency and z-index control how background floors are rendered).*
+
+---
+
+### WebGL connector renderer *(future architectural direction)*
+
+An optional Three.js layer for connector rendering, complementing the existing SVG layer. The SVG layer is efficient up to ~50 animated connectors; beyond that, `strokeDashoffset` animation triggers per-frame style recalculation across many SVG nodes. A WebGL overlay decouples animation frame rate from the DOM layout pipeline entirely. Architectural signal from `a876691666/Visoflow` (a Vue 3 reimplementation — not directly portable, but the direction is clear). Noted as the path to take when connector animation becomes a measured performance bottleneck at scale, not a near-term pick-up.
+
+---
+
 ## Requirements
 
 - **React** 18 or 19 (peer dependency) and a matching `react-dom`.

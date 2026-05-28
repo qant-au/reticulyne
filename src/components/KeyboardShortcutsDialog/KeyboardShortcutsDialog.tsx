@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -112,8 +111,8 @@ const ShortcutRow = ({ keys, description }: Shortcut) => {
         {description}
       </Typography>
       <Stack direction="row" spacing={0.5} sx={{ flexShrink: 0 }}>
-        {keys.map((key) => {
-          return <KbdChip key={key} label={key} />;
+        {keys.map((key, i) => {
+          return <KbdChip key={`${key}-${i}`} label={key} />;
         })}
       </Stack>
     </Stack>
@@ -128,35 +127,33 @@ export const KeyboardShortcutsDialog = ({ onClose }: Props) => {
         <Stack spacing={2}>
           {SHORTCUT_SECTIONS.map((section, sectionIndex) => {
             return (
-              <React.Fragment key={section.title}>
-                {sectionIndex > 0 && <Divider />}
-                <Box>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: 'text.disabled',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                      fontWeight: 700,
-                      display: 'block',
-                      mb: 0.5
-                    }}
-                  >
-                    {section.title}
-                  </Typography>
-                  <Stack>
-                    {section.shortcuts.map((shortcut) => {
-                      return (
-                        <ShortcutRow
-                          key={shortcut.description}
-                          keys={shortcut.keys}
-                          description={shortcut.description}
-                        />
-                      );
-                    })}
-                  </Stack>
-                </Box>
-              </React.Fragment>
+              <Box key={section.title}>
+                {sectionIndex > 0 && <Divider sx={{ mb: 2 }} />}
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'text.disabled',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    fontWeight: 700,
+                    display: 'block',
+                    mb: 0.5
+                  }}
+                >
+                  {section.title}
+                </Typography>
+                <Stack>
+                  {section.shortcuts.map((shortcut) => {
+                    return (
+                      <ShortcutRow
+                        key={shortcut.description}
+                        keys={shortcut.keys}
+                        description={shortcut.description}
+                      />
+                    );
+                  })}
+                </Stack>
+              </Box>
             );
           })}
         </Stack>

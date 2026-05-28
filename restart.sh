@@ -11,15 +11,28 @@
 # Usage:
 #   bash restart.sh                       # rebuild & restart both, wait
 #                                         # for HTTP 200, run + watch
-#                                         # Graphify in background
+#                                         # Graphify in background, then
+#                                         # tail the container logs until
+#                                         # the user presses 'D'
 #   PORT=3000 bash restart.sh             # override editor port (default 2222)
 #   EXAMPLES_PORT=4000 bash restart.sh    # override examples port (default 2223)
 #   TAG=isoflow:dev bash restart.sh
 #   NO_EXAMPLES=1 bash restart.sh         # skip the examples container entirely
 #   NO_GRAPHIFY=1 bash restart.sh         # skip Graphify steps entirely
+#   NO_WATCH=1 bash restart.sh            # exit immediately after the
+#                                         # containers are healthy instead
+#                                         # of tailing their logs — for CI
+#                                         # and other non-interactive callers
+#
+# After both containers are healthy the script stays attached and follows
+# their logs (prefixed with the container name) until you press the 'D'
+# key — at which point it detaches and exits 0 but leaves the containers
+# running. Ctrl+C while watching has the same effect. Set NO_WATCH=1 to
+# skip the watch entirely.
 #
 # Exits 0 once both containers respond, or non-zero on build/start/poll
-# failure. The Graphify watcher continues running in the background.
+# failure. The Graphify watcher continues running in the background
+# regardless of whether the log watch is active.
 
 set -euo pipefail
 
@@ -32,6 +45,7 @@ EXAMPLES_NAME="${EXAMPLES_NAME:-isoflow-examples}"
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-30}"
 NO_EXAMPLES="${NO_EXAMPLES:-0}"
 NO_GRAPHIFY="${NO_GRAPHIFY:-0}"
+NO_WATCH="${NO_WATCH:-0}"
 GRAPHIFY_LOG="${GRAPHIFY_LOG:-graphify-out/watch.log}"
 GRAPHIFY_PIDFILE="${GRAPHIFY_PIDFILE:-graphify-out/watch.pid}"
 
@@ -161,3 +175,97 @@ echo "    Editor:           http://localhost:${PORT}/"
 if [[ "$NO_EXAMPLES" != "1" ]]; then
   echo "    Examples picker:  http://localhost:${EXAMPLES_PORT}/"
 fi
+
+# ---- Watch loop: follow container logs until the user hits 'D' ----
+# Default behaviour after a successful restart is to stay attached and
+# tail the live logs of every container we started. The destructive
+# INT/TERM trap from earlier is now stale — the containers are
+# healthy, so Ctrl+C should mean "stop watching" rather than "tear
+# them down". We swap the trap before entering the loop, run a raw-
+# mode keypress read on /dev/tty, and restore the tty + reap the
+# background `docker logs` followers via the EXIT trap on the way out.
+#
+# The watch is only safe when stdin is an actual tty — there is no
+# way to receive a 'D' otherwise. CI / piped / nohup callers should
+# pass NO_WATCH=1 (or just rely on the auto-skip below).
+if [[ "$NO_WATCH" == "1" ]] || [[ ! -t 0 ]]; then
+  if [[ "$NO_WATCH" != "1" ]]; then
+    echo
+    echo "==> stdin is not a tty; skipping the log watch."
+    echo "    Follow logs with: docker logs -f $NAME"
+    if [[ "$NO_EXAMPLES" != "1" ]]; then
+      echo "                  or: docker logs -f $EXAMPLES_NAME"
+    fi
+  fi
+  exit 0
+fi
+
+WATCH_NAMES=("$NAME")
+if [[ "$NO_EXAMPLES" != "1" ]]; then
+  WATCH_NAMES+=("$EXAMPLES_NAME")
+fi
+
+WATCH_PIDS=()
+WATCH_STTY=""
+
+detach_from_watch() {
+  if [[ -n "$WATCH_STTY" ]]; then
+    stty "$WATCH_STTY" </dev/tty 2>/dev/null || true
+    WATCH_STTY=""
+  fi
+  if (( ${#WATCH_PIDS[@]} > 0 )); then
+    kill "${WATCH_PIDS[@]}" 2>/dev/null || true
+    wait "${WATCH_PIDS[@]}" 2>/dev/null || true
+    WATCH_PIDS=()
+  fi
+}
+
+on_watch_signal() {
+  detach_from_watch
+  echo
+  echo "==> Detached. Containers still running:"
+  for name in "${WATCH_NAMES[@]}"; do
+    echo "    docker logs -f $name"
+  done
+  exit 0
+}
+
+# Replace the startup cleanup trap (which would tear the containers
+# down) with the graceful detach trap. EXIT covers the normal-exit
+# path (press 'D' → break out of the loop → fall off the script);
+# INT/TERM cover Ctrl+C and kill respectively, both of which now
+# detach gracefully instead of stopping the containers.
+trap detach_from_watch EXIT
+trap on_watch_signal INT TERM
+
+echo
+echo "==> Watching containers — press 'D' to detach (containers keep running)."
+
+# Background log followers. --tail seeds recent context; -f tails new
+# lines. sed -u prefixes each line with the container name so output
+# is unambiguous when both containers are talking (sed -u keeps the
+# pipe line-buffered so prefixes appear immediately rather than after
+# a 4KB flush). docker logs writes container stderr to its own
+# stderr, so we merge both streams into stdout before the prefix.
+for watch_name in "${WATCH_NAMES[@]}"; do
+  docker logs -f --tail 20 "$watch_name" 2>&1 \
+    | sed -u "s|^|[$watch_name] |" &
+  WATCH_PIDS+=("$!")
+done
+
+# Single-keypress read on /dev/tty: raw mode disables canonical input
+# (no Enter required) and disables echo (so 'D' doesn't print over
+# the streaming log lines).
+WATCH_STTY=$(stty -g </dev/tty 2>/dev/null || true)
+stty -icanon -echo </dev/tty 2>/dev/null || true
+
+while IFS= read -r -n 1 watch_char </dev/tty; do
+  case "$watch_char" in
+    d|D) break ;;
+  esac
+done
+
+# Normal-exit detach path: call the signal handler explicitly so the
+# "Detached" message and the docker-logs hint print whether the user
+# pressed 'D' or hit Ctrl+C.
+on_watch_signal

@@ -343,6 +343,63 @@ function RemoteLoader({ diagramId }: { diagramId: string }) {
 }
 ```
 
+## Rectangle custom styling
+
+The `Rectangle` schema accepts four optional styling overrides in addition to the existing `color` palette reference (FEA11-01):
+
+| Field | Type | Description |
+|---|---|---|
+| `colorValue` | `string` — 6-digit hex (e.g. `#ff6600`) | Direct fill colour. Overrides the `color` palette reference. Falls back to the palette colour when absent. |
+| `outlineColor` | `string` — 6-digit hex | Border stroke colour. Overrides the auto-derived dark variant of the fill. Falls back to the derived colour when absent. |
+| `transparency` | `number` (0–1) | Fill alpha, where `0` = fully opaque and `1` = fully transparent. Applied on top of `colorValue` or the palette colour. Omit or set to `0` for a solid fill. |
+| `zIndex` | `integer` | Per-rectangle z-order override. Higher values render in front of lower values. Rectangles with the same `zIndex` (or no `zIndex`) keep their relative order from the layer controls (Bring to Front etc.). |
+
+These fields are designed for embedders that push status colours from external systems (e.g. monitoring dashboards, compliance tools) without needing to pre-register palette entries. The editor inspector panel exposes **Fill colour**, **Border colour**, and **Transparency** controls when a rectangle is selected. `zIndex` is an API-only field — interactive layer ordering continues to work via the existing Bring to Front / Send to Back context-menu actions.
+
+Example using `Model.set` (the escape-hatch raw accessor on `useIsoflow()`):
+
+```typescript
+import Isoflow, { useIsoflow } from '@qant-au/isoflow';
+
+function StatusOverlay() {
+  const { Model, getModel } = useIsoflow();
+
+  function paintAlert(rectangleId: string) {
+    const current = getModel();
+    Model.set({
+      ...current,
+      views: current.views.map((view) => ({
+        ...view,
+        rectangles: (view.rectangles ?? []).map((r) =>
+          r.id === rectangleId
+            ? { ...r, colorValue: '#d32f2f', transparency: 0.3 }
+            : r
+        )
+      }))
+    });
+  }
+
+  function clearAlert(rectangleId: string) {
+    const current = getModel();
+    Model.set({
+      ...current,
+      views: current.views.map((view) => ({
+        ...view,
+        rectangles: (view.rectangles ?? []).map((r) =>
+          r.id === rectangleId
+            ? { ...r, colorValue: undefined, transparency: undefined }
+            : r
+        )
+      }))
+    });
+  }
+
+  return null;
+}
+```
+
+Alternatively, supply `colorValue` / `outlineColor` / `transparency` / `zIndex` directly in `initialData` when mounting the component — all fields are optional and round-trip through `onModelUpdated` unchanged.
+
 ## Live dashboards
 
 Four pieces of surface area combine to turn the editor into a host-driven dashboard:

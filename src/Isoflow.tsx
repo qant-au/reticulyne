@@ -43,6 +43,7 @@ const App = ({
   onSave,
   nodeIndicatorComponent,
   connectorIndicatorComponent,
+  highlightedItemId,
   exportTheme = 'light',
   children
 }: IsoflowProps) => {
@@ -137,6 +138,10 @@ const App = ({
   useEffect(() => {
     uiStateActions.setConnectorIndicatorComponent(connectorIndicatorComponent);
   }, [connectorIndicatorComponent, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setHighlightedItemId(highlightedItemId);
+  }, [highlightedItemId, uiStateActions]);
 
   useEffect(() => {
     uiStateActions.setExportTheme(exportTheme);

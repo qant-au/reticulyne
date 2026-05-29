@@ -152,6 +152,15 @@ export interface IsoflowProps {
    */
   connectorIndicatorComponent?: ConnectorIndicatorComponent;
   /**
+   * When set, the editor highlights the item with this ID and dims all
+   * other items to `opacity: 0.2` with a CSS transition. Drives focus
+   * from host-side navigation without touching interaction state (FEA12-01).
+   *
+   * When omitted, the `I` keyboard shortcut controls dimming based on
+   * the current interactive selection instead.
+   */
+  highlightedItemId?: string;
+  /**
    * Optional children rendered inside the Isoflow provider tree.
    * The intended use is a "driver" component that calls
    * `useIsoflow()` to drive the editor from outside — pulse

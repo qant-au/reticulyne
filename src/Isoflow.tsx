@@ -22,7 +22,7 @@ import { GlobalStyles } from 'src/styles/GlobalStyles';
 import { Renderer } from 'src/components/Renderer/Renderer';
 import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
-import { INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
+import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { IsoflowErrorBoundary } from 'src/components/IsoflowErrorBoundary/IsoflowErrorBoundary';
 
@@ -42,6 +42,7 @@ const App = ({
   onSave,
   nodeIndicatorComponent,
   connectorIndicatorComponent,
+  exportTheme = 'light',
   children
 }: IsoflowProps) => {
   const uiStateActions = useUiStateStore((state) => {
@@ -136,6 +137,10 @@ const App = ({
     uiStateActions.setConnectorIndicatorComponent(connectorIndicatorComponent);
   }, [connectorIndicatorComponent, uiStateActions]);
 
+  useEffect(() => {
+    uiStateActions.setExportTheme(exportTheme);
+  }, [exportTheme, uiStateActions]);
+
   if (!initialDataManager.isReady) return null;
 
   return (
@@ -159,7 +164,7 @@ const App = ({
 };
 
 export const Isoflow = (props: IsoflowProps) => {
-  const { onError, errorFallback, themeMode = 'light', ...appProps } = props;
+  const { onError, errorFallback, themeMode = 'auto', exportTheme = 'light', ...appProps } = props;
   // FEA7-04: resolve 'auto' against prefers-color-scheme, then
   // memoise the createTheme() result so MUI's deep-merge runs once
   // per mode change instead of every parent render.
@@ -167,6 +172,13 @@ export const Isoflow = (props: IsoflowProps) => {
   const theme = useMemo(() => {
     return createIsoflowTheme(resolvedMode);
   }, [resolvedMode]);
+  const modeAwareInitialData = useMemo(() => {
+    if (appProps.initialData) return appProps.initialData;
+    return {
+      ...INITIAL_DATA,
+      colors: [{ ...DEFAULT_COLOR, value: theme.customVars.customPalette.defaultColor }]
+    };
+  }, [appProps.initialData, theme]);
   return (
     <IsoflowErrorBoundary onError={onError} fallback={errorFallback}>
       <ThemeProvider theme={theme}>
@@ -174,7 +186,7 @@ export const Isoflow = (props: IsoflowProps) => {
           <SceneProvider>
             <UiStateProvider>
               <HistoryProvider>
-                <App {...appProps} />
+                <App {...appProps} initialData={modeAwareInitialData} exportTheme={exportTheme} />
               </HistoryProvider>
             </UiStateProvider>
           </SceneProvider>

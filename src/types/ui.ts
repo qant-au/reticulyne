@@ -165,6 +165,7 @@ export interface UiState {
   rendererEl: HTMLDivElement | null;
   enableDebugTools: boolean;
   enableAnimation: boolean;
+  exportTheme: 'light' | 'dark';
   showTitleBar: boolean | undefined;
   clipboard: ClipboardEntry | null;
   // Host-supplied save callback (FEA5-03). The MainMenu's
@@ -204,6 +205,7 @@ export interface UiStateActions {
   setRendererEl: (el: HTMLDivElement) => void;
   setEnableDebugTools: (enabled: boolean) => void;
   setEnableAnimation: (enabled: boolean) => void;
+  setExportTheme: (mode: 'light' | 'dark') => void;
   setShowTitleBar: (show: boolean | undefined) => void;
   setOnSave: (onSave: ((model: Model) => void) | undefined) => void;
   setNodeIndicatorComponent: (

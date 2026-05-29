@@ -1,10 +1,12 @@
 import chroma from 'chroma-js';
+import { Box } from '@mui/material';
 import { useScene } from 'src/hooks/useScene';
 import { IsoTileArea } from 'src/components/IsoTileArea/IsoTileArea';
 import { getColorVariant } from 'src/utils';
 import { useColor } from 'src/hooks/useColor';
 
-type Props = ReturnType<typeof useScene>['rectangles'][0];
+type SceneRectangle = ReturnType<typeof useScene>['rectangles'][0];
+type Props = SceneRectangle & { isDimmed?: boolean };
 
 export const Rectangle = ({
   from,
@@ -12,7 +14,8 @@ export const Rectangle = ({
   color: colorId,
   colorValue,
   outlineColor,
-  transparency
+  transparency,
+  isDimmed
 }: Props) => {
   const paletteColor = useColor(colorId);
 
@@ -33,15 +36,17 @@ export const Rectangle = ({
     outlineColor ?? getColorVariant(resolvedHex, 'dark', { grade: 2 });
 
   return (
-    <IsoTileArea
-      from={from}
-      to={to}
-      fill={fill}
-      cornerRadius={22}
-      stroke={{
-        color: strokeColor,
-        width: 1
-      }}
-    />
+    <Box style={{ opacity: isDimmed ? 0.2 : 1, transition: 'opacity 0.3s' }}>
+      <IsoTileArea
+        from={from}
+        to={to}
+        fill={fill}
+        cornerRadius={22}
+        stroke={{
+          color: strokeColor,
+          width: 1
+        }}
+      />
+    </Box>
   );
 };

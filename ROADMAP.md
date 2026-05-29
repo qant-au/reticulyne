@@ -379,8 +379,7 @@ Collapse/expand is a follow-up.
 
 ## Tier 2 — Ship for v1
 
-High-value features ordered by bang-for-buck (cheapest wins first, larger-effort
-items last). Items marked **[NEW]** were not in the previous catalogue.
+Ordered by the same criteria as the README-tracked feature set: dependencies first, then schema / API changes cheapest to do early, then bang-for-buck as tiebreaker. The quick wins (2.1–2.3) lead; Replace Quill (2.10) is promoted ahead of the interaction features to clear the Quill API surface before it accretes further. Items marked **[NEW]** were not in the previous catalogue.
 
 ### 2.1 Anchor hotspot visualisation **[NEW]**
 
@@ -460,34 +459,48 @@ Document the debounce in `docs/embedding.md`.
 
 ---
 
-### 2.4 SVG export **[NEW]**
+### 2.10 Replace Quill rich-text editor (DEP-04 follow-up)
 
-**What it does.** A new "Export as SVG" option alongside the existing PNG and
-PDF entries. The output is a vector SVG that opens in Illustrator, Figma, or
-slides at any resolution.
+*(Was item 2.8. Promoted to position 4 in Tier 2.)*
 
-**Why Tier 2.** The canvas is already SVG-DOM — this is the natural highest-
-quality export with no additional dependency.
+**What it does.** Swaps `react-quill-new` → an actively maintained alternative
+(TipTap recommended) for the node-description rich-text editor at
+`src/components/MarkdownEditor/`.
 
-**Where in code.** `src/components/ExportImageDialog/` — add SVG tab/option;
-new `src/utils/exportAsSVG.ts` (mirrors `exportAsImage.ts` shape but targets
-`XMLSerializer`).
+**Why sorted here (before 2.5).** The only outstanding accepted residual
+advisory (`GHSA-v3m3-f69x-jf25`, low-severity) — contained today by the
+`Link.sanitize` override and narrow `formats` allowlist. Promoted ahead of the
+interaction features because the longer Quill stays, the more code accumulates
+around its API: the dark-mode CSS override (1.1) must be migrated here, and
+every subsequent feature that exercises description editing (2.5 connector UX,
+2.7 search, 2.11 D&D) builds on the right substrate from the start. Replacing
+it immediately after the quick wins means no Quill-specific surface accretes
+past this point.
+
+**Where in code.** `src/components/MarkdownEditor/MarkdownEditor.tsx`;
+`src/components/MarkdownEditor/sanitizeLinkUrl.ts`; `SECURITY.md`,
+`README.md`, `docs/embedding.md`.
 
 **Approach sketch.**
-- Clone the renderer's root `<svg>` DOM node. Walk the clone to inline `style`
-  attributes, replace `class` references with explicit properties, strip React
-  data attributes.
-- Add correct `xmlns`, `viewBox`, and `width`/`height`.
-- `XMLSerializer.serializeToString()` → Blob → `saveAs()` via existing
-  `file-saver` dep.
-- Icon images: inline as `data:` URIs so the SVG is portable. Test with AWS
-  and GCP icon packs (largest isopack icons are ~32 KB; base64 inflation ~33%).
-- Export policy: always use light theme (same as PNG/PDF). Add `exportTheme`
-  prop override for embedders who need dark exports.
-- Known caveat to document: GSAP animations don't transfer; animated connectors
-  export as static.
+- TipTap with `StarterKit` subsetted to `Bold`, `Italic`, `Underline`,
+  `Strike`, `Link` only.
+- Re-implement link-protocol sanitisation in TipTap's link extension; verify
+  it rejects `javascript:`, `data:`, `vbscript:`, `file:`, `blob:` including
+  percent-encoded variants.
+- Build behind a sibling directory so Quill stays runnable during the swap.
+- Clipboard security test: paste `<iframe>`, `<svg onload>`, `<style>`,
+  `data:` link; assert all stripped. This is the merge gate.
+- Existing `description` strings are Quill HTML; TipTap reads HTML on init.
+  Verify bold/italic/underline/strike/link round-trip cleanly.
+- TipTap has no built-in theme — the dark-mode CSS override added in 1.1
+  migrates to TipTap theming in this step; no separate dark-mode pass needed
+  later.
+- Update `SECURITY.md` to close `GHSA-v3m3-f69x-jf25` once npm audit is clean.
+  Ping the consumer (`qantcore/app`, `_BlueprintShell.tsx`) to retire their
+  explanatory Quill CVE comment.
 
-**Effort.** Small. ~1 day.
+**Effort.** Medium. ~2–3 days including swap, security-test gate, docs
+lockstep, and Docker smoke pass.
 
 ---
 
@@ -600,44 +613,6 @@ first; guides are follow-on polish.
 
 ---
 
-### 2.10 Replace Quill rich-text editor (DEP-04 follow-up)
-
-*(Was item 2.8.)*
-
-**What it does.** Swaps `react-quill-new` → an actively maintained alternative
-(TipTap recommended) for the node-description rich-text editor at
-`src/components/MarkdownEditor/`.
-
-**Why Tier 2.** The only outstanding accepted residual advisory in `SECURITY.md`
-(`GHSA-v3m3-f69x-jf25`, low-severity). The in-source `Link.sanitize` override
-plus the narrow `formats` allowlist contain the risk today. Better to land the
-swap in v1.
-
-**Where in code.** `src/components/MarkdownEditor/MarkdownEditor.tsx`;
-`src/components/MarkdownEditor/sanitizeLinkUrl.ts`; `SECURITY.md`,
-`README.md`, `docs/embedding.md`.
-
-**Approach sketch.**
-- TipTap with `StarterKit` subsetted to `Bold`, `Italic`, `Underline`,
-  `Strike`, `Link` only.
-- Re-implement link-protocol sanitisation in TipTap's link extension; verify
-  it rejects `javascript:`, `data:`, `vbscript:`, `file:`, `blob:` including
-  percent-encoded variants.
-- Build behind a sibling directory so Quill stays runnable during the swap.
-- Clipboard security test: paste `<iframe>`, `<svg onload>`, `<style>`,
-  `data:` link; assert all stripped. This is the merge gate.
-- Existing `description` strings are Quill HTML; TipTap reads HTML on init.
-  Verify bold/italic/underline/strike/link round-trip cleanly.
-- TipTap has no built-in theme, simplifying the dark-mode (1.1) audit.
-- Update `SECURITY.md` to close `GHSA-v3m3-f69x-jf25` once npm audit is clean.
-  Ping the consumer (`qantcore/app`, `_BlueprintShell.tsx`) to retire their
-  explanatory Quill CVE comment.
-
-**Effort.** Medium. ~2–3 days including swap, security-test gate, docs
-lockstep, and Docker smoke pass.
-
----
-
 ### 2.11 Drag-and-drop from icon palette **[NEW]**
 
 **What it does.** A persistent (or toggled) icon sidebar from which icons can
@@ -729,31 +704,6 @@ loads every template through `validateModel()` on every PR. Keep names brand-
 agnostic; let embedders override via prop.
 
 **Effort.** Small. ~1 day plus design time.
-
----
-
-### 2.15 Diagram layers with Redacted export layer **[NEW]**
-
-**What it does.** Items are assigned to named layers (e.g. "Topology", "Detail", "Annotations"). Each layer has a toolbar visibility toggle; `iso.setLayerVisible(id, bool)` exposes the same control to the imperative API. One diagram serves multiple audiences.
-
-A reserved built-in layer named **Redacted** serves an additional purpose. Items on it remain visible in the editor but are excluded from all exports (PNG, PDF, SVG) unless the export dialog's "Include redacted content" checkbox is explicitly checked. The intended pattern is annotation-based — IP addresses, service identifiers, internal port numbers, and similar sensitive text live in TextBox items on this layer; the structural topology (nodes, connectors, rectangles) is always preserved in exports. If no items are on the Redacted layer, export behaviour is unchanged.
-
-**Why here, after 2.4 SVG export.** The export pipeline already needs to be updated to respect layer visibility when rendering PNG, PDF, and the new SVG. Redaction is a single additional predicate in that same pass: `if item.layerId === 'redacted' && !opts.includeRedacted, skip`. Scheduling layers immediately after SVG export means the export components are touched once, not twice.
-
-**Where in code.**
-- `src/schemas/model.ts` — add `layers?: Layer[]` to the model schema (`{ id, name, visible, isBuiltIn? }`); add optional `layerId?: string` to every item type.
-- `src/stores/modelStore.tsx` — layer CRUD; seed new diagrams with built-in layers `Default`, `Annotations`, `Redacted` (`isBuiltIn: true` prevents rename or delete on the Redacted layer).
-- `src/components/` — toolbar layer panel with per-layer visibility toggles and drag-to-reorder.
-- `src/utils/exportAsImage.ts`, `src/utils/exportAsSVG.ts`, `src/utils/exportAsPdf.ts` — add `includeRedacted: boolean` option (default `false`); filter item list through a single predicate before rendering.
-- `src/components/ExportImageDialog/` — "Include redacted content" checkbox, rendered only when the diagram contains at least one item on the Redacted layer.
-
-**Approach sketch.**
-- Existing diagrams with no `layerId` fields load cleanly — items default to `'default'` layer via a fallback in `refineModel()`. Zero migration cost.
-- Layers have draw order (bottom-to-top) with drag-to-reorder in the panel. Item z-order within a layer is the existing bring-to-front concern (1.3); layer order is a separate, coarser concept.
-- Export dialog: check `model.layers` for Redacted layer + scene items with `layerId === 'redacted'` before showing the checkbox. Checking it passes `includeRedacted: true` to the export function as an ephemeral option; it does not persist to the model.
-- `iso.setLayerVisible(id, bool)` and `iso.getLayers(): Layer[]` added to `useIsoflow()`.
-
-**Effort.** Medium. ~2 days: schema + store (~0.5 d), toolbar layer panel (~0.5 d), export pipeline + dialog (~0.5 d), tests (~0.5 d).
 
 ---
 
@@ -898,28 +848,32 @@ Five design moves that matter most for the embedded-live-dashboard use case:
 ## Suggested order of attack
 
 If a sequence is wanted rather than a menu, this order minimises re-work and
-front-loads the highest-return items:
+front-loads the highest-return items. **Assumption:** the README-tracked feature
+set (enableGlobalDragHandlers, per-rectangle fill, 8-directional routing, SVG
+export, selection dimming, diagram layers + Redacted, multi-floor management)
+lands before item 1 below begins; dark mode (1.1) is the current active item
+and is treated as the starting point.
 
-1. **1.1 dark mode** — 1 day; P1 integration requirement; no dependencies.
+1. **1.1 dark mode** — 1 day; P1 integration requirement; currently in progress.
 2. **1.2 diagram title UI** — 0.5 days; tiny schema fix + API method.
 3. **1.3 layer ordering UI** — 1 day; reducer already half-wired.
 4. **2.1 + 2.2 anchor hotspots + double-click to add** — 1 day combined;
-   pure UX wins.
+   pure UX wins; 2.1 is a dependency for 2.5.
 5. **2.3 auto-save indicator** — 0.5 days; completes the embedder trust
    contract.
-6. **2.5 left-click drag to connect** — 1.5 days; depends on 2.1 being done.
-7. **2.4 SVG export** — 1 day; independent, no risk.
-8. **2.15 diagram layers + Redacted export layer** — 2 days; export pipeline becomes layer-aware here; Redacted is marginal cost alongside; schema lands before grouping (1.7) to avoid double-migration.
-9. **1.4 multi-select** — 2–3 days; unlocks 3.2 and bulk operations.
-10. **1.5 + 1.6 diff updates + stable API** — 2–3 days; document once.
-11. **2.7 + 2.8 search + mini-map** — 2 days combined.
-12. **2.9 snap-to-grid** — 1 day (snap only; guides are follow-on).
-13. **2.10 replace Quill** — 2–3 days; security milestone.
-14. **2.11 + 2.12 D&D palette + touch pinch** — 3 days combined.
-15. **2.13 + 2.14 custom icons + templates** — 2 days combined.
-16. **1.7 grouping** — 3–5 days; save for last in Tier 1 (largest schema
+6. **2.10 replace Quill** — 2–3 days; promoted early to clear the Quill API
+   surface before interaction features accrete around it; security milestone;
+   dark-mode CSS override migrates to TipTap in this step.
+7. **2.5 left-click drag to connect** — 1.5 days; depends on 2.1 (step 4).
+8. **1.4 multi-select** — 2–3 days; unlocks 3.2 and bulk operations.
+9. **1.5 + 1.6 diff updates + stable API** — 2–3 days; document once.
+10. **2.7 + 2.8 search + mini-map** — 2 days combined.
+11. **2.9 snap-to-grid** — 1 day (snap only; guides are follow-on).
+12. **2.11 + 2.12 D&D palette + touch pinch** — 3 days combined.
+13. **2.13 + 2.14 custom icons + templates** — 2 days combined.
+14. **1.7 grouping** — 3–5 days; save for last in Tier 1 (largest schema
     change).
-17. **APP-01 + APP-02 Docker shell** — 2.5 days; after library API is stable.
+15. **APP-01 + APP-02 Docker shell** — 2.5 days; after library API is stable.
 
 Stop after Tier 2 and stabilise. Tier 3 becomes a "next minor release" backlog.
 

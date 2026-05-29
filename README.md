@@ -88,6 +88,14 @@ Connects to the existing `nodeIndicatorComponent` pattern — "host drives visua
 
 ---
 
+### SVG export
+
+A new "Export as SVG" option alongside the existing PNG and PDF entries in the main menu. The output is a resolution-independent vector file that opens in Illustrator, Figma, Inkscape, or any presentation tool at any scale — the natural highest-quality export format since the canvas is already SVG-DOM. Icons inline as `data:` URIs for portability; animated connectors export as static (documented caveat). Export policy: light theme by default; `exportTheme` prop override for embedders who need dark exports.
+
+*Prioritised fifth because:* no schema change and no dependency on items above. SVG export is placed before Diagram layers because the render pass it introduces — which must respect layer visibility to produce correct output — establishes the layer-filtering predicate that the Diagram layers / Redacted feature relies on. The export components are touched once here rather than separately for SVG and again for layer-awareness.
+
+---
+
 ### Diagram layers with per-layer visibility toggle
 
 Items are assigned to named layers (e.g. "Topology", "Detail", "Annotations"). Each layer has a visibility toggle. Turning off "Detail" hides IP addresses, connection labels, and port numbers while leaving the base topology intact; turning off "Annotations" hides text boxes and status indicators without removing nodes or connectors. One diagram serves multiple audiences with a single toggle in the toolbar or via `iso.setLayerVisible('detail', false)` in the imperative API.
@@ -104,7 +112,7 @@ If a diagram has no items on the Redacted layer, export behaviour is identical t
 
 **Why this pairs naturally with layers.** The export pipeline (PNG, PDF, and SVG once that lands) already needs to be updated to respect layer visibility when rendering. Adding a redaction predicate in the same pass — skip any item whose layer is Redacted unless the export option opts in — is marginal incremental work. Building both together avoids a second pass through the export components later.
 
-*Prioritised fifth because:* layers add a `layerId` metadata field to the item schema. Landing this before multi-floor management avoids touching item metadata twice — if floors land first, layers would need to be retrofitted alongside an already complex floor model. The Redacted sub-feature is included here rather than as a separate item because its implementation cost is marginal once the export pipeline is already being made layer-aware.
+*Prioritised sixth because:* layers add a `layerId` metadata field to the item schema. Landing this before multi-floor management avoids touching item metadata twice — if floors land first, layers would need to be retrofitted alongside an already complex floor model. The Redacted sub-feature is included here rather than as a separate item because the export pipeline is already layer-aware from SVG export (above).
 
 ---
 
@@ -119,7 +127,7 @@ Extends the diagram model along the z-axis, allowing a single canvas to represen
 
 The concept synthesises two independent community contributions: `bgrewell/isoflow`'s vertical z-offset stacking of node groups gives the depth model; `nuno-andre/isoflow`'s selection dimming gives the visual vocabulary. Together they compose into a navigation paradigm where depth is physically meaningful rather than purely organisational.
 
-*Depends on: selection dimming and per-rectangle transparency / z-index (both above). Benefits from diagram layers (above) being settled first so item metadata is not migrated twice.*
+*Depends on: selection dimming and per-rectangle transparency / z-index (both above). Benefits from diagram layers (above) being settled first so item metadata is not migrated twice, and from SVG export (above) having already established the layer-aware export pipeline.*
 
 ---
 

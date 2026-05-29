@@ -27,7 +27,13 @@ export const TextBox = ({ textBox, isDimmed }: Props) => {
   });
 
   return (
-    <Box style={{ ...css, opacity: isDimmed ? 0.2 : 1, transition: 'opacity 0.3s' }}>
+    <Box
+      style={{
+        ...css,
+        opacity: isDimmed ? 0.2 : 1,
+        transition: 'opacity 0.3s'
+      }}
+    >
       <Box
         sx={{
           position: 'absolute',

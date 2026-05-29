@@ -17,7 +17,9 @@ export const Nodes = ({ nodes }: Props) => {
             key={node.id}
             order={-node.tile.x - node.tile.y}
             node={node}
-            isDimmed={activeHighlightId !== null && activeHighlightId !== node.id}
+            isDimmed={
+              activeHighlightId !== null && activeHighlightId !== node.id
+            }
           />
         );
       })}

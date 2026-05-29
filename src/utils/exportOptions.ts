@@ -144,7 +144,9 @@ const fetchAsDataUri = async (src: string): Promise<string> => {
   const fetchedBlob = await res.blob();
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
     reader.onerror = reject;
     reader.readAsDataURL(fetchedBlob);
   });
@@ -207,7 +209,9 @@ export const exportAsVectorSvg = async (
     const y = parseFloat(svgEl.style.top) || 0;
     const cssTransform = svgEl.style.transform || '';
     const clone = svgEl.cloneNode(true) as SVGSVGElement;
-    clone.querySelectorAll('animateMotion').forEach((a) => a.remove());
+    clone.querySelectorAll('animateMotion').forEach((a) => {
+      a.remove();
+    });
     clone.style.position = '';
     clone.style.left = '';
     clone.style.top = '';
@@ -233,7 +237,9 @@ export const exportAsVectorSvg = async (
     const y = parseFloat(divEl.style.top) || 0;
     const cssTransform = divEl.style.transform || '';
     const clone = svgChild.cloneNode(true) as SVGSVGElement;
-    clone.querySelectorAll('animateMotion').forEach((a) => a.remove());
+    clone.querySelectorAll('animateMotion').forEach((a) => {
+      a.remove();
+    });
     const g = document.createElementNS(ns, 'g');
     g.setAttribute(
       'transform',
@@ -285,14 +291,15 @@ export const exportAsUniversalSvg = async (
   el: HTMLElement,
   bgColor: string
 ): Promise<void> => {
-  const prevBg = el.style.background;
-  el.style.background = bgColor;
+  const { style } = el;
+  const prevBg = style.background;
+  style.background = bgColor;
   try {
     const dataUrl = await toSvg(el, { cacheBust: true });
     const res = await fetch(dataUrl);
     const blob = await res.blob();
     downloadFile(blob, generateGenericFilename('universal.svg'));
   } finally {
-    el.style.background = prevBg;
+    style.background = prevBg;
   }
 };

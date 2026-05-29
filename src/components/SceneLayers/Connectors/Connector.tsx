@@ -35,7 +35,11 @@ interface Props {
   isDimmed?: boolean;
 }
 
-export const Connector = ({ connector: _connector, isSelected, isDimmed }: Props) => {
+export const Connector = ({
+  connector: _connector,
+  isSelected,
+  isDimmed
+}: Props) => {
   const theme = useTheme();
   const color = useColor(_connector.color);
   const { currentView } = useScene();
@@ -160,7 +164,13 @@ export const Connector = ({ connector: _connector, isSelected, isDimmed }: Props
   if (!connector) return null;
 
   return (
-    <Box style={{ ...css, opacity: isDimmed ? 0.2 : 1, transition: 'opacity 0.3s' }}>
+    <Box
+      style={{
+        ...css,
+        opacity: isDimmed ? 0.2 : 1,
+        transition: 'opacity 0.3s'
+      }}
+    >
       <Svg viewboxSize={pxSize}>
         <polyline
           points={pathString}

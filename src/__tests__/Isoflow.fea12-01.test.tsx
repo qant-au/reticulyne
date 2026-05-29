@@ -88,12 +88,7 @@ describe('FEA12-01 highlightedItemId', () => {
 
   test('renders without error when highlightedItemId is undefined', () => {
     const onError = jest.fn();
-    render(
-      <Isoflow
-        onError={onError}
-        initialData={initialData}
-      />
-    );
+    render(<Isoflow onError={onError} initialData={initialData} />);
     expect(onError).not.toHaveBeenCalled();
   });
 

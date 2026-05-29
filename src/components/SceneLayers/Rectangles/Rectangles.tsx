@@ -21,7 +21,9 @@ export const Rectangles = ({ rectangles }: Props) => {
             <Rectangle
               key={rectangle.id}
               {...rectangle}
-              isDimmed={activeHighlightId !== null && activeHighlightId !== rectangle.id}
+              isDimmed={
+                activeHighlightId !== null && activeHighlightId !== rectangle.id
+              }
             />
           );
         })}

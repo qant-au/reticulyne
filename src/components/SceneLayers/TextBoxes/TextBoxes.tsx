@@ -16,7 +16,9 @@ export const TextBoxes = ({ textBoxes }: Props) => {
           <TextBox
             key={textBox.id}
             textBox={textBox}
-            isDimmed={activeHighlightId !== null && activeHighlightId !== textBox.id}
+            isDimmed={
+              activeHighlightId !== null && activeHighlightId !== textBox.id
+            }
           />
         );
       })}

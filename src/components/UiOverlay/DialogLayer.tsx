@@ -46,9 +46,7 @@ export const DialogLayer = ({
       {dialog === 'EXPORT_IMAGE' && (
         <ExportImageDialog onClose={onCloseDialog} />
       )}
-      {dialog === 'EXPORT_SVG' && (
-        <ExportSvgDialog onClose={onCloseDialog} />
-      )}
+      {dialog === 'EXPORT_SVG' && <ExportSvgDialog onClose={onCloseDialog} />}
       {dialog === 'KEYBOARD_SHORTCUTS' && (
         <KeyboardShortcutsDialog onClose={onCloseDialog} />
       )}

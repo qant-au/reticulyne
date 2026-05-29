@@ -31,13 +31,19 @@ interface Props {
 
 export const ExportSvgDialog = ({ onClose }: Props) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const currentView = useUiStateStore((state) => state.view);
+  const currentView = useUiStateStore((state) => {
+    return state.view;
+  });
   const [isReady, setIsReady] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const { getUnprojectedBounds } = useDiagramUtils();
-  const uiStateActions = useUiStateStore((state) => state.actions);
-  const exportTheme = useUiStateStore((state) => state.exportTheme);
+  const uiStateActions = useUiStateStore((state) => {
+    return state.actions;
+  });
+  const exportTheme = useUiStateStore((state) => {
+    return state.exportTheme;
+  });
   const model = useModelStore(
     useShallow((state): Omit<ModelStore, 'actions'> => {
       return modelFromModelStore(state);
@@ -158,7 +164,9 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
                       <input
                         type="checkbox"
                         checked={transparent}
-                        onChange={(e) => setTransparent(e.target.checked)}
+                        onChange={(e) => {
+                          return setTransparent(e.target.checked);
+                        }}
                         style={{ marginRight: 8 }}
                       />
                     }
@@ -202,9 +210,7 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
             </>
           )}
 
-          {exportError && (
-            <Alert severity="error">{exportError}</Alert>
-          )}
+          {exportError && <Alert severity="error">{exportError}</Alert>}
         </Stack>
       </DialogContent>
     </Dialog>

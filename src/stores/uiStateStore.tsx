@@ -37,6 +37,8 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       onSave: undefined,
       nodeIndicatorComponent: undefined,
       connectorIndicatorComponent: undefined,
+      selectionDimEnabled: false,
+      highlightedItemId: undefined,
       actions: {
         setView: (view) => {
           set({ view });
@@ -135,6 +137,15 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setConnectorIndicatorComponent: (component) => {
           set({ connectorIndicatorComponent: component });
+        },
+        setSelectionDimEnabled: (selectionDimEnabled) => {
+          set({ selectionDimEnabled });
+        },
+        toggleSelectionDimEnabled: () => {
+          set({ selectionDimEnabled: !get().selectionDimEnabled });
+        },
+        setHighlightedItemId: (highlightedItemId) => {
+          set({ highlightedItemId });
         },
         setRendererEl: (el) => {
           set({ rendererEl: el });

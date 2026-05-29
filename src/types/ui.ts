@@ -182,6 +182,12 @@ export interface UiState {
   // FEA7-03: host-supplied per-connector decorator. Rendered at each
   // connector's midpoint via the ConnectorIndicators scene layer.
   connectorIndicatorComponent: ConnectorIndicatorComponent | undefined;
+  // FEA12-01: selection dimming. When selectionDimEnabled is true
+  // and exactly one item is selected, all other items render at
+  // reduced opacity. highlightedItemId lets the host drive the same
+  // visual from outside without touching interaction state.
+  selectionDimEnabled: boolean;
+  highlightedItemId: string | undefined;
 }
 
 export interface UiStateActions {
@@ -214,6 +220,9 @@ export interface UiStateActions {
   setConnectorIndicatorComponent: (
     component: ConnectorIndicatorComponent | undefined
   ) => void;
+  setSelectionDimEnabled: (enabled: boolean) => void;
+  toggleSelectionDimEnabled: () => void;
+  setHighlightedItemId: (id: string | undefined) => void;
 }
 
 export type UiStateStore = UiState & {

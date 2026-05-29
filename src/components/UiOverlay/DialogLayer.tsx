@@ -13,6 +13,7 @@ import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { DragAndDrop } from 'src/components/DragAndDrop/DragAndDrop';
 import { ContextMenuManager } from 'src/components/ContextMenu/ContextMenuManager';
 import { ExportImageDialog } from 'src/components/ExportImageDialog/ExportImageDialog';
+import { ExportSvgDialog } from 'src/components/ExportSvgDialog/ExportSvgDialog';
 import { KeyboardShortcutsDialog } from 'src/components/KeyboardShortcutsDialog/KeyboardShortcutsDialog';
 import type { DialogTypeEnum, Mode, Coords } from 'src/types';
 
@@ -44,6 +45,9 @@ export const DialogLayer = ({
       )}
       {dialog === 'EXPORT_IMAGE' && (
         <ExportImageDialog onClose={onCloseDialog} />
+      )}
+      {dialog === 'EXPORT_SVG' && (
+        <ExportSvgDialog onClose={onCloseDialog} />
       )}
       {dialog === 'KEYBOARD_SHORTCUTS' && (
         <KeyboardShortcutsDialog onClose={onCloseDialog} />

@@ -6,6 +6,7 @@ import {
   DataObject as ExportJsonIcon,
   PhotoOutlined as ExportImageIcon,
   ArticleOutlined as ExportPdfIcon,
+  PolylineOutlined as ExportSvgIcon,
   FolderOpen as FolderOpenIcon,
   DeleteOutlined as DeleteOutlineIcon,
   SaveOutlined as SaveIcon,
@@ -103,6 +104,11 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
   const onExportAsImage = useCallback(() => {
     uiStateActions.setIsMainMenuOpen(false);
     uiStateActions.setDialog('EXPORT_IMAGE');
+  }, [uiStateActions]);
+
+  const onExportAsSvg = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    uiStateActions.setDialog('EXPORT_SVG');
   }, [uiStateActions]);
 
   const onClearCanvas = useCallback(() => {
@@ -267,6 +273,12 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
             {mainMenuOptions.includes('EXPORT.PDF') && (
               <MenuItem onClick={onExportAsPdf} Icon={<ExportPdfIcon />}>
                 Export as PDF
+              </MenuItem>
+            )}
+
+            {mainMenuOptions.includes('EXPORT.SVG') && (
+              <MenuItem onClick={onExportAsSvg} Icon={<ExportSvgIcon />}>
+                Export as SVG
               </MenuItem>
             )}
 

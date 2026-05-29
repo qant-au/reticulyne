@@ -26,6 +26,7 @@ High-level overview of what landed during the v4 modernisation work (full detail
   - `iconCollections` allow/deny filter prop for bundled icon packs — FEA5-02.
   - `onSave` callback + `'ACTION.SAVE'` main-menu entry for host-managed save — FEA5-03 (v4.1.0).
   - **Dark mode audit pass** (FEA9-01): `themeMode` default changed from `'light'` to `'auto'` (follows OS colour-scheme preference) — **breaking change**: embedders that relied on the implicit light default must now pass `themeMode="light"` explicitly. New `exportTheme` prop (`'light'` | `'dark'`, default `'light'`) controls the initial background colour in the export dialog. Fixes: connector glyph colours in dark mode, label colours on dark backgrounds, and export dialog background seeding.
+  - **Embedding isolation** *(opt-in via `enableGlobalDragHandlers={false}`)* — Pointer event listeners attach to the renderer element rather than `window` when the prop is `false`, preventing drag events from leaking into host-page sibling widgets. Simultaneously migrates from the split mouse/touch event pair to the unified Pointer Events API (`pointerdown` / `pointermove` / `pointerup`) for consistent mouse, touch, and stylus handling. Pointer capture ensures drag tracking continues even when the pointer leaves the renderer bounds mid-drag — FEA10-01.
 
 The forward-looking FEA5 roadmap has now landed in full — see the `Controlling UI visibility` and `Host-managed save` sections in [docs/embedding.md](docs/embedding.md) for the contracts.
 
@@ -52,14 +53,6 @@ Reference material lives under [`docs/`](docs/README.md):
 ## Planned features
 
 The items below are ordered by two rules applied in combination: **dependencies first** (an item that unblocks or is required by another item precedes it, even when its own user-visible benefit is modest), and **schema / API changes that are cheapest to do early come before features that would require the same migration later**. Items that deliver immediate UX value without blocking anything else are slotted in their natural place within those constraints.
-
----
-
-### `enableGlobalDragHandlers` — embedding isolation fix
-
-Adds an `enableGlobalDragHandlers: boolean` prop (default `true` for back-compat). When `false`, pointer listeners attach to the renderer element rather than `window`, preventing drag events from leaking into host-page sibling widgets. Also migrates all mouse events to the Pointer Events API (`pointerdown` / `pointermove` / `pointerup`) for unified mouse/touch/stylus handling. Directly applicable to the confirmed embedding use case (Isoflow inside a larger host product). From `mmastrac/isoflow`.
-
-*Prioritised first because:* the event-attachment model is a behavioural contract. Once embedders rely on current (leaky) `window`-level handlers, changing the default becomes a breaking change. The Pointer Events migration also unblocks future multi-touch and stylus work. Cheapest to do before the public API is locked.
 
 ---
 

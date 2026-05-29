@@ -35,6 +35,7 @@ const App = ({
   onValidationError,
   enableDebugTools = false,
   enableAnimation = false,
+  enableGlobalDragHandlers = true,
   editorMode = 'EDITABLE',
   renderer,
   showTitleBar,
@@ -155,7 +156,10 @@ const App = ({
           transform: 'translateZ(0)'
         }}
       >
-        <Renderer {...renderer} />
+        <Renderer
+          {...renderer}
+          enableGlobalDragHandlers={enableGlobalDragHandlers}
+        />
         <UiOverlay />
         {children}
       </Box>

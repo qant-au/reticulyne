@@ -128,4 +128,18 @@ describe('FEA7-04 themeMode prop', () => {
     );
     expect(onError).not.toHaveBeenCalled();
   });
+
+  test('exportTheme="dark" renders without error', () => {
+    installMatchMedia(false);
+    const onError = jest.fn();
+    render(
+      <Isoflow
+        onError={onError}
+        initialData={emptyInitialData}
+        themeMode="dark"
+        exportTheme="dark"
+      />
+    );
+    expect(onError).not.toHaveBeenCalled();
+  });
 });

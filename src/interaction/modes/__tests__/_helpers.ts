@@ -62,7 +62,15 @@ export const makeUiStateActions = () => {
     setContextMenu: jest.fn(),
     setMouse: jest.fn(),
     setRendererEl: jest.fn(),
-    setEnableDebugTools: jest.fn()
+    setEnableDebugTools: jest.fn(),
+    setEnableAnimation: jest.fn(),
+    setExportTheme: jest.fn(),
+    setClipboard: jest.fn(),
+    panScroll: jest.fn(),
+    setShowTitleBar: jest.fn(),
+    setOnSave: jest.fn(),
+    setNodeIndicatorComponent: jest.fn(),
+    setConnectorIndicatorComponent: jest.fn()
   };
 };
 

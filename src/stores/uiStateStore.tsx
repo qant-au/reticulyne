@@ -32,6 +32,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       itemControls: null,
       enableDebugTools: false,
       enableAnimation: false,
+      exportTheme: 'light' as const,
       showTitleBar: undefined,
       onSave: undefined,
       nodeIndicatorComponent: undefined,
@@ -119,6 +120,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setEnableAnimation: (enableAnimation) => {
           set({ enableAnimation });
+        },
+        setExportTheme: (mode) => {
+          set({ exportTheme: mode });
         },
         setShowTitleBar: (showTitleBar) => {
           set({ showTitleBar });

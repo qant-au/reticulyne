@@ -119,6 +119,7 @@ export type IconCollectionStateWithIcons = IconCollectionState & {
 
 export const DialogTypeEnum = {
   EXPORT_IMAGE: 'EXPORT_IMAGE',
+  EXPORT_SVG: 'EXPORT_SVG',
   KEYBOARD_SHORTCUTS: 'KEYBOARD_SHORTCUTS'
 } as const;
 

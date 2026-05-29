@@ -140,6 +140,7 @@ export const exportAsPdf = async (el: HTMLDivElement, size?: Size) => {
 const fetchAsDataUri = async (src: string): Promise<string> => {
   if (src.startsWith('data:')) return src;
   const res = await fetch(src);
+  if (!res.ok) throw new Error(`Failed to fetch icon: ${res.status}`);
   const fetchedBlob = await res.blob();
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -181,6 +182,24 @@ export const exportAsVectorSvg = async (
     root.appendChild(bg);
   }
 
+  // Locate the SceneLayer — the direct child of `el` that is the
+  // nearest positioned ancestor of the scene SVG elements.
+  // Its offsetLeft/offsetTop (which ignore CSS transform, unlike BCR)
+  // give the scene-space origin offset within the renderer container.
+  let sceneOffsetX = 0;
+  let sceneOffsetY = 0;
+  const firstSvg = el.querySelector<SVGSVGElement>('svg');
+  if (firstSvg) {
+    let cur: HTMLElement | null = firstSvg.parentElement;
+    while (cur && cur.parentElement !== el) {
+      cur = cur.parentElement as HTMLElement | null;
+    }
+    if (cur) {
+      sceneOffsetX = cur.offsetLeft;
+      sceneOffsetY = cur.offsetTop;
+    }
+  }
+
   // Pattern 1: <svg style="position:absolute; left:X; top:Y; transform:matrix(...)">
   el.querySelectorAll<SVGSVGElement>('svg').forEach((svgEl) => {
     if (svgEl.style.position !== 'absolute') return;
@@ -197,7 +216,7 @@ export const exportAsVectorSvg = async (
     const g = document.createElementNS(ns, 'g');
     g.setAttribute(
       'transform',
-      `translate(${x} ${y})${cssTransform ? ` ${cssTransform}` : ''}`
+      `translate(${x + sceneOffsetX} ${y + sceneOffsetY})${cssTransform ? ` ${cssTransform}` : ''}`
     );
     g.appendChild(clone);
     root.appendChild(g);
@@ -218,7 +237,7 @@ export const exportAsVectorSvg = async (
     const g = document.createElementNS(ns, 'g');
     g.setAttribute(
       'transform',
-      `translate(${x} ${y})${cssTransform ? ` ${cssTransform}` : ''}`
+      `translate(${x + sceneOffsetX} ${y + sceneOffsetY})${cssTransform ? ` ${cssTransform}` : ''}`
     );
     g.appendChild(clone);
     root.appendChild(g);
@@ -238,6 +257,11 @@ export const exportAsVectorSvg = async (
       imageEl.setAttribute('width', String(rect.width));
       imageEl.setAttribute('height', String(rect.height));
       imageEl.setAttribute('href', dataUri);
+      imageEl.setAttributeNS(
+        'http://www.w3.org/1999/xlink',
+        'xlink:href',
+        dataUri
+      );
       root.appendChild(imageEl);
     } catch {
       // Skip icons that cannot be fetched.
@@ -248,7 +272,7 @@ export const exportAsVectorSvg = async (
   const serializer = new XMLSerializer();
   const svgStr = serializer.serializeToString(root);
   const blob = new Blob([svgStr], { type: 'image/svg+xml' });
-  downloadFile(blob, generateGenericFilename('svg'));
+  downloadFile(blob, generateGenericFilename('vector.svg'));
 };
 
 /**
@@ -267,7 +291,7 @@ export const exportAsUniversalSvg = async (
     const dataUrl = await toSvg(el, { cacheBust: true });
     const res = await fetch(dataUrl);
     const blob = await res.blob();
-    downloadFile(blob, generateGenericFilename('svg'));
+    downloadFile(blob, generateGenericFilename('universal.svg'));
   } finally {
     el.style.background = prevBg;
   }

@@ -208,7 +208,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
               <GlyphRenderer
                 glyph={connector.glyph}
                 rotation={icon.rotation}
-                fill={theme.palette.common.white}
+                fill={theme.palette.text.primary}
                 stroke={theme.palette.common.white}
                 strokeWidth={4}
               />
@@ -220,7 +220,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
           <GlyphRenderer
             glyph={connector.glyph}
             rotation={0}
-            fill={theme.palette.common.white}
+            fill={theme.palette.text.primary}
             stroke={theme.palette.common.white}
             strokeWidth={4}
             motion={{
@@ -239,7 +239,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
             // behaviour but explicitly reversed).
             glyph={connector.glyph}
             rotation={0}
-            fill={theme.palette.common.white}
+            fill={theme.palette.text.primary}
             stroke={theme.palette.common.white}
             strokeWidth={4}
             motion={{
@@ -261,7 +261,7 @@ export const Connector = ({ connector: _connector, isSelected }: Props) => {
               (pulseOverlay.pulseGlyph as ConnectorGlyph) ?? connector.glyph
             }
             rotation={0}
-            fill={theme.palette.common.white}
+            fill={theme.palette.text.primary}
             stroke={theme.palette.common.white}
             strokeWidth={4}
             motion={{

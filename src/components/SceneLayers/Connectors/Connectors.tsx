@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
+import { useActiveHighlightId } from 'src/hooks/useActiveHighlightId';
 import { Connector } from './Connector';
 
 interface Props {
@@ -15,6 +16,8 @@ export const Connectors = ({ connectors }: Props) => {
   const mode = useUiStateStore((state) => {
     return state.mode;
   });
+
+  const activeHighlightId = useActiveHighlightId();
 
   const selectedConnectorId = useMemo(() => {
     if (mode.type === 'CONNECTOR') {
@@ -35,6 +38,7 @@ export const Connectors = ({ connectors }: Props) => {
             key={connector.id}
             connector={connector}
             isSelected={selectedConnectorId === connector.id}
+            isDimmed={activeHighlightId !== null && activeHighlightId !== connector.id}
           />
         );
       })}

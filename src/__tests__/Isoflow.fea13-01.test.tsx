@@ -20,16 +20,20 @@ beforeAll(() => {
   if (!window.matchMedia) {
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: (query: string) => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addEventListener: () => {},
-        removeEventListener: () => {},
-        addListener: () => {},
-        removeListener: () => {},
-        dispatchEvent: () => false
-      })
+      value: (query: string) => {
+        return {
+          matches: false,
+          media: query,
+          onchange: null,
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          addListener: () => {},
+          removeListener: () => {},
+          dispatchEvent: () => {
+            return false;
+          }
+        };
+      }
     });
   }
 });
@@ -84,12 +88,7 @@ describe('FEA13-01 SVG export menu option', () => {
 
   test('renders without error with full default menu', () => {
     const onError = jest.fn();
-    render(
-      <Isoflow
-        onError={onError}
-        initialData={initialData}
-      />
-    );
+    render(<Isoflow onError={onError} initialData={initialData} />);
     expect(onError).not.toHaveBeenCalled();
   });
 

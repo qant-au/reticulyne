@@ -38,7 +38,9 @@ export const Connectors = ({ connectors }: Props) => {
             key={connector.id}
             connector={connector}
             isSelected={selectedConnectorId === connector.id}
-            isDimmed={activeHighlightId !== null && activeHighlightId !== connector.id}
+            isDimmed={
+              activeHighlightId !== null && activeHighlightId !== connector.id
+            }
           />
         );
       })}

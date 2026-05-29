@@ -12,9 +12,15 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
  *   2. selectionDimEnabled toggle + current itemControls selection
  */
 export const useActiveHighlightId = (): string | null => {
-  const selectionDimEnabled = useUiStateStore((s) => s.selectionDimEnabled);
-  const highlightedItemId = useUiStateStore((s) => s.highlightedItemId);
-  const itemControls = useUiStateStore((s) => s.itemControls);
+  const selectionDimEnabled = useUiStateStore((s) => {
+    return s.selectionDimEnabled;
+  });
+  const highlightedItemId = useUiStateStore((s) => {
+    return s.highlightedItemId;
+  });
+  const itemControls = useUiStateStore((s) => {
+    return s.itemControls;
+  });
 
   return useMemo(() => {
     if (highlightedItemId !== undefined) return highlightedItemId;

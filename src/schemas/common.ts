@@ -60,3 +60,7 @@ export const constrainedStrings = {
   name: z.string().max(100),
   description: z.string().max(1000)
 };
+
+export const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, {
+  message: 'Must be a 6-digit hex colour (e.g. #ff0000)'
+});

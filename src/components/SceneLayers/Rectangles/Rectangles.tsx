@@ -8,9 +8,14 @@ interface Props {
 export const Rectangles = ({ rectangles }: Props) => {
   return (
     <>
-      {[...rectangles].reverse().map((rectangle) => {
-        return <Rectangle key={rectangle.id} {...rectangle} />;
-      })}
+      {[...rectangles]
+        .sort((a, b) => {
+          return (a.zIndex ?? 0) - (b.zIndex ?? 0);
+        })
+        .reverse()
+        .map((rectangle) => {
+          return <Rectangle key={rectangle.id} {...rectangle} />;
+        })}
     </>
   );
 };

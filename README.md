@@ -27,6 +27,7 @@ High-level overview of what landed during the v4 modernisation work (full detail
   - `onSave` callback + `'ACTION.SAVE'` main-menu entry for host-managed save — FEA5-03 (v4.1.0).
   - **Dark mode audit pass** (FEA9-01): `themeMode` default changed from `'light'` to `'auto'` (follows OS colour-scheme preference) — **breaking change**: embedders that relied on the implicit light default must now pass `themeMode="light"` explicitly. New `exportTheme` prop (`'light'` | `'dark'`, default `'light'`) controls the initial background colour in the export dialog. Fixes: connector glyph colours in dark mode, label colours on dark backgrounds, and export dialog background seeding.
   - **Embedding isolation** *(opt-in via `enableGlobalDragHandlers={false}`)* — Pointer event listeners attach to the renderer element rather than `window` when the prop is `false`, preventing drag events from leaking into host-page sibling widgets. Simultaneously migrates from the split mouse/touch event pair to the unified Pointer Events API (`pointerdown` / `pointermove` / `pointerup`) for consistent mouse, touch, and stylus handling. Pointer capture ensures drag tracking continues even when the pointer leaves the renderer bounds mid-drag — FEA10-01.
+  - **Per-rectangle custom styling** — `colorValue` (direct hex fill), `outlineColor` (border stroke), `transparency` (fill alpha 0–1), and `zIndex` (z-order override) added as optional fields to the rectangle schema. Embedders can push status colours from external sources without pre-registering palette entries — useful for alerting-region overlays and live-dashboard VPC boundaries. Editor controls added to the rectangle inspector panel — FEA11-01.
 
 The forward-looking FEA5 roadmap has now landed in full — see the `Controlling UI visibility` and `Host-managed save` sections in [docs/embedding.md](docs/embedding.md) for the contracts.
 
@@ -53,14 +54,6 @@ Reference material lives under [`docs/`](docs/README.md):
 ## Planned features
 
 The items below are ordered by two rules applied in combination: **dependencies first** (an item that unblocks or is required by another item precedes it, even when its own user-visible benefit is modest), and **schema / API changes that are cheapest to do early come before features that would require the same migration later**. Items that deliver immediate UX value without blocking anything else are slotted in their natural place within those constraints.
-
----
-
-### Per-rectangle custom fill, outline, and transparency
-
-Extends the rectangle schema with four optional fields: `colorValue` (direct hex fill, bypassing the palette reference system), `outlineColor` (independent border stroke), `transparency` (fill alpha 0–1), and `zIndex` (per-item z-order override). All fields are optional with explicit fallbacks, so migration risk is minimal. Lets embedders push arbitrary status colours from an external source without pre-registering palette entries — natural fit for alerting-region overlays or VPC boundary styling in live dashboards. From `bgrewell/isoflow`.
-
-*Prioritised second because:* this is a schema extension to the rectangle type — the sooner optional fields land, the sooner embedders can rely on them without a migration. Also a hard dependency of multi-floor management (below), where `transparency` and `zIndex` control how inactive floors are rendered.
 
 ---
 

@@ -164,7 +164,13 @@ const App = ({
 };
 
 export const Isoflow = (props: IsoflowProps) => {
-  const { onError, errorFallback, themeMode = 'auto', exportTheme = 'light', ...appProps } = props;
+  const {
+    onError,
+    errorFallback,
+    themeMode = 'auto',
+    exportTheme = 'light',
+    ...appProps
+  } = props;
   // FEA7-04: resolve 'auto' against prefers-color-scheme, then
   // memoise the createTheme() result so MUI's deep-merge runs once
   // per mode change instead of every parent render.
@@ -176,7 +182,9 @@ export const Isoflow = (props: IsoflowProps) => {
     if (appProps.initialData) return appProps.initialData;
     return {
       ...INITIAL_DATA,
-      colors: [{ ...DEFAULT_COLOR, value: theme.customVars.customPalette.defaultColor }]
+      colors: [
+        { ...DEFAULT_COLOR, value: theme.customVars.customPalette.defaultColor }
+      ]
     };
     // `theme` is intentionally omitted from deps. The default colour is a
     // one-time seed value — including `theme` re-seeds the model store on
@@ -190,7 +198,11 @@ export const Isoflow = (props: IsoflowProps) => {
           <SceneProvider>
             <UiStateProvider>
               <HistoryProvider>
-                <App {...appProps} initialData={modeAwareInitialData} exportTheme={exportTheme} />
+                <App
+                  {...appProps}
+                  initialData={modeAwareInitialData}
+                  exportTheme={exportTheme}
+                />
               </HistoryProvider>
             </UiStateProvider>
           </SceneProvider>

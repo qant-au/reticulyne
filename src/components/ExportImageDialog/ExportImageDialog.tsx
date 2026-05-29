@@ -51,7 +51,9 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const exportTheme = useUiStateStore((state) => state.exportTheme);
+  const exportTheme = useUiStateStore((state) => {
+    return state.exportTheme;
+  });
   const model = useModelStore(
     useShallow((state): Omit<ModelStore, 'actions'> => {
       return modelFromModelStore(state);
@@ -117,9 +119,9 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
     setShowGrid(checked);
   };
 
-  const [backgroundColor, setBackgroundColor] = useState<string>(
-    () => createIsoflowTheme(exportTheme).customVars.customPalette.diagramBg
-  );
+  const [backgroundColor, setBackgroundColor] = useState<string>(() => {
+    return createIsoflowTheme(exportTheme).customVars.customPalette.diagramBg;
+  });
   const handleBackgroundColorChange = (color: string) => {
     setBackgroundColor(color);
   };

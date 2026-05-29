@@ -178,7 +178,11 @@ export const Isoflow = (props: IsoflowProps) => {
       ...INITIAL_DATA,
       colors: [{ ...DEFAULT_COLOR, value: theme.customVars.customPalette.defaultColor }]
     };
-  }, [appProps.initialData, theme]);
+    // `theme` is intentionally omitted from deps. The default colour is a
+    // one-time seed value — including `theme` re-seeds the model store on
+    // every live auto mode switch, wiping user edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appProps.initialData]);
   return (
     <IsoflowErrorBoundary onError={onError} fallback={errorFallback}>
       <ThemeProvider theme={theme}>

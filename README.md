@@ -48,7 +48,7 @@ Reference material lives under [`docs/`](docs/README.md):
 - **Drag-and-drop editor** — Express your architecture with icons, regions and connectors.
 - **Extensible icon system** — Bring your own collections via the `ProcessedCollection` interface; see [docs/isopacks.md](docs/isopacks.md) for the contract. The standalone Docker container ships with the AWS, Azure, GCP, Kubernetes, and Isoflow icon collections pre-loaded.
 - **Editor modes** — Editable, explorable-readonly, and non-interactive modes for embedding in viewers, dashboards, or full editors.
-- **Export options** — Export diagrams as JSON, PNG, or PDF from the main menu. PDF generation is client-side via jsPDF (no network call).
+- **Export options** — Export diagrams as JSON, PNG, PDF, or SVG from the main menu. PDF generation is client-side via jsPDF; SVG export offers two formats: a true-flat vector SVG (Illustrator/Inkscape/Figma) and a foreignObject universal SVG (full-fidelity in browsers and Figma). All exports are client-side with no network calls.
 - **Live dashboards** *(opt-in via `enableAnimation`)* — Animate connectors, fire signal pulses (`useIsoflow().Connector.pulse`) and decorate nodes with host-supplied gauges (`nodeIndicatorComponent`) to drive the diagram from a poller / websocket. See [Live dashboards in the embedding docs](docs/embedding.md#live-dashboards) and the runnable [`LiveDashboard` example](src/examples/LiveDashboard/LiveDashboard.tsx).
 
 ## Planned features
@@ -75,7 +75,7 @@ Connects to the existing `nodeIndicatorComponent` pattern — "host drives visua
 
 ---
 
-### SVG export
+### SVG export *(shipped in FEA13-01)*
 
 A new "Export as SVG" option alongside the existing PNG and PDF entries in the main menu. The output is a resolution-independent vector file that opens in Illustrator, Figma, Inkscape, or any presentation tool at any scale — the natural highest-quality export format since the canvas is already SVG-DOM. Icons inline as `data:` URIs for portability; animated connectors export as static (documented caveat). Export policy: light theme by default; `exportTheme` prop override for embedders who need dark exports.
 

@@ -65,7 +65,10 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
   },
   {
     title: 'General',
-    shortcuts: [{ keys: ['?'], description: 'Toggle this dialog' }]
+    shortcuts: [
+      { keys: ['?'], description: 'Toggle this dialog' },
+      { keys: ['I'], description: 'Toggle item highlighting' }
+    ]
   }
 ];
 

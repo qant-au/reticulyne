@@ -208,6 +208,7 @@ Available values (`MainMenuOptionsEnum`):
 | `'EXPORT.JSON'` | Download the current model as JSON |
 | `'EXPORT.PNG'` | Export the diagram as a PNG image |
 | `'EXPORT.PDF'` | Export the diagram as a PDF |
+| `'EXPORT.SVG'` | Export the diagram as SVG. Opens a dialog with background colour picker and two download buttons: **vector SVG** (true-flat, Illustrator/Inkscape/Figma compatible — text boxes not captured) and **universal SVG** (foreignObject, full-fidelity in browsers and Figma) |
 | `'ACTION.CLEAR_CANVAS'` | Clear all items from the current view |
 | `'LINK.GITHUB'` | Link to the GitHub repository |
 | `'VERSION'` | Display the library version number |

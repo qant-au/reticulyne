@@ -17,7 +17,13 @@ import { TransformControlsManager } from 'src/components/TransformControlsManage
 import { useScene } from 'src/hooks/useScene';
 import { RendererProps } from 'src/types/rendererProps';
 
-export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
+export const Renderer = ({
+  showGrid,
+  backgroundColor,
+  enableGlobalDragHandlers = true
+}: RendererProps & {
+  enableGlobalDragHandlers?: boolean;
+}) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const interactionsRef = useRef<HTMLDivElement | null>(null);
   const enableDebugTools = useUiStateStore((state) => {
@@ -29,7 +35,9 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const { setInteractionsElement } = useInteractionManager();
+  const { setInteractionsElement } = useInteractionManager(
+    enableGlobalDragHandlers
+  );
   const { items, rectangles, connectors, textBoxes } = useScene();
   useKeyboardShortcuts();
 

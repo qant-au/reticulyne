@@ -92,6 +92,16 @@ export interface IsoflowProps {
    */
   enableAnimation?: boolean;
   /**
+   * When `false`, pointer event listeners attach to the renderer element
+   * rather than `window`, preventing drag events from leaking into host-page
+   * sibling widgets when Isoflow is embedded in a larger app. Defaults to
+   * `true` for backwards compatibility.
+   *
+   * All pointer input (mouse, touch, stylus) is handled via the Pointer
+   * Events API regardless of this setting (FEA10-01).
+   */
+  enableGlobalDragHandlers?: boolean;
+  /**
    * Colour palette for the editor (FEA7-04). Default `'auto'` follows the
    * user-agent's `prefers-color-scheme` media query and updates live as it
    * changes. Pass `'light'` or `'dark'` to pin the mode explicitly.

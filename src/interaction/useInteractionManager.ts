@@ -29,18 +29,18 @@ const modes: { [k in string]: ModeActions } = {
 
 const getModeFunction = (mode: ModeActions, e: SlimMouseEvent) => {
   switch (e.type) {
-    case 'mousemove':
+    case 'pointermove':
       return mode.mousemove;
-    case 'mousedown':
+    case 'pointerdown':
       return mode.mousedown;
-    case 'mouseup':
+    case 'pointerup':
       return mode.mouseup;
     default:
       return null;
   }
 };
 
-export const useInteractionManager = () => {
+export const useInteractionManager = (enableGlobalDragHandlers = true) => {
   const rendererRef = useRef<HTMLElement | null>(null);
   const reducerTypeRef = useRef<string | undefined>(undefined);
   const uiState = useUiStateStore((state) => {
@@ -53,7 +53,7 @@ export const useInteractionManager = () => {
   const { size: rendererSize } = useResizeObserver(uiState.rendererEl);
 
   const onMouseEvent = useCallback(
-    (e: SlimMouseEvent) => {
+    (e: MouseEvent) => {
       if (!rendererRef.current) return;
 
       const mode = modes[uiState.mode.type];
@@ -102,7 +102,7 @@ export const useInteractionManager = () => {
   );
 
   const onContextMenu = useCallback(
-    (e: SlimMouseEvent) => {
+    (e: Event) => {
       e.preventDefault();
 
       const itemAtTile = getItemAtTile({
@@ -125,33 +125,19 @@ export const useInteractionManager = () => {
   useEffect(() => {
     if (uiState.mode.type === 'INTERACTIONS_DISABLED') return;
 
-    const el = window;
+    // When enableGlobalDragHandlers is false, confine to the interactions
+    // overlay element so drag events don't leak to host-page siblings
+    // (FEA10-01). el is null until uiState.rendererEl triggers a re-run.
+    const el = enableGlobalDragHandlers ? null : rendererRef.current;
 
-    const onTouchStart = (e: TouchEvent) => {
-      onMouseEvent({
-        ...e,
-        clientX: Math.floor(e.touches[0].clientX),
-        clientY: Math.floor(e.touches[0].clientY),
-        type: 'mousedown'
-      });
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      onMouseEvent({
-        ...e,
-        clientX: Math.floor(e.touches[0].clientX),
-        clientY: Math.floor(e.touches[0].clientY),
-        type: 'mousemove'
-      });
-    };
-
-    const onTouchEnd = (e: TouchEvent) => {
-      onMouseEvent({
-        ...e,
-        clientX: 0,
-        clientY: 0,
-        type: 'mouseup'
-      });
+    // When confined to the renderer element, pointer capture ensures
+    // pointermove keeps firing even when the pointer leaves the bounds
+    // mid-drag — matching the behaviour you'd get from a window listener.
+    const onPointerDown = (e: PointerEvent) => {
+      if (el && e.currentTarget instanceof Element) {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      }
+      onMouseEvent(e);
     };
 
     // Wheel/trackpad routing (FEA5-01):
@@ -188,27 +174,36 @@ export const useInteractionManager = () => {
       }
     };
 
-    el.addEventListener('mousemove', onMouseEvent);
-    el.addEventListener('mousedown', onMouseEvent);
-    el.addEventListener('mouseup', onMouseEvent);
-    el.addEventListener('contextmenu', onContextMenu);
-    el.addEventListener('touchstart', onTouchStart);
-    el.addEventListener('touchmove', onTouchMove);
-    el.addEventListener('touchend', onTouchEnd);
     // passive: false is required for preventDefault() to take effect —
     // Chrome treats wheel listeners as passive by default and ignores
     // preventDefault on passive listeners.
     uiState.rendererEl?.addEventListener('wheel', onScroll, { passive: false });
 
+    if (enableGlobalDragHandlers) {
+      window.addEventListener('pointermove', onMouseEvent);
+      window.addEventListener('pointerdown', onPointerDown);
+      window.addEventListener('pointerup', onMouseEvent);
+      window.addEventListener('contextmenu', onContextMenu);
+    } else if (el) {
+      el.addEventListener('pointermove', onMouseEvent);
+      el.addEventListener('pointerdown', onPointerDown);
+      el.addEventListener('pointerup', onMouseEvent);
+      el.addEventListener('contextmenu', onContextMenu);
+    }
+
     return () => {
-      el.removeEventListener('mousemove', onMouseEvent);
-      el.removeEventListener('mousedown', onMouseEvent);
-      el.removeEventListener('mouseup', onMouseEvent);
-      el.removeEventListener('contextmenu', onContextMenu);
-      el.removeEventListener('touchstart', onTouchStart);
-      el.removeEventListener('touchmove', onTouchMove);
-      el.removeEventListener('touchend', onTouchEnd);
       uiState.rendererEl?.removeEventListener('wheel', onScroll);
+      if (enableGlobalDragHandlers) {
+        window.removeEventListener('pointermove', onMouseEvent);
+        window.removeEventListener('pointerdown', onPointerDown);
+        window.removeEventListener('pointerup', onMouseEvent);
+        window.removeEventListener('contextmenu', onContextMenu);
+      } else if (el) {
+        el.removeEventListener('pointermove', onMouseEvent);
+        el.removeEventListener('pointerdown', onPointerDown);
+        el.removeEventListener('pointerup', onMouseEvent);
+        el.removeEventListener('contextmenu', onContextMenu);
+      }
     };
   }, [
     uiState.editorMode,
@@ -216,7 +211,8 @@ export const useInteractionManager = () => {
     uiState.mode.type,
     onContextMenu,
     uiState.actions,
-    uiState.rendererEl
+    uiState.rendererEl,
+    enableGlobalDragHandlers
   ]);
 
   const setInteractionsElement = useCallback((element: HTMLElement) => {

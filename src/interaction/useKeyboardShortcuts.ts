@@ -219,6 +219,15 @@ export const useKeyboardShortcuts = () => {
         return;
       }
 
+      // I → toggle selection dimming (FEA12-01). Works in all modes
+      // including read-only — the toggle is always visible via the `?`
+      // dialog regardless of mode.
+      if (!hasModifier && (e.key === 'i' || e.key === 'I')) {
+        uiStateActions.toggleSelectionDimEnabled();
+        e.preventDefault();
+        return;
+      }
+
       // Remaining shortcuts only fire in editable mode.
       if (!isEditable) return;
 

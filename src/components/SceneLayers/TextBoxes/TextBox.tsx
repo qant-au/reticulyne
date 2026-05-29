@@ -7,9 +7,10 @@ import { useScene } from 'src/hooks/useScene';
 
 interface Props {
   textBox: ReturnType<typeof useScene>['textBoxes'][0];
+  isDimmed?: boolean;
 }
 
-export const TextBox = ({ textBox }: Props) => {
+export const TextBox = ({ textBox, isDimmed }: Props) => {
   const { paddingX, fontProps } = useTextBoxProps(textBox);
 
   const to = useMemo(() => {
@@ -26,7 +27,7 @@ export const TextBox = ({ textBox }: Props) => {
   });
 
   return (
-    <Box style={css}>
+    <Box style={{ ...css, opacity: isDimmed ? 0.2 : 1, transition: 'opacity 0.3s' }}>
       <Box
         sx={{
           position: 'absolute',

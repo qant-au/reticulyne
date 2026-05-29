@@ -10,7 +10,7 @@ A React component for drawing network diagrams.
 
 ## v4.x development history
 
-High-level overview of what landed during the v4 modernisation work (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, `FEA4`, `FEA5`, `BUG5`, `SEC5`, and `QUA5` task-ID prefixes):
+High-level overview of what landed during the v4 modernisation work (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, `FEA4`, `FEA5`, `BUG5`, `SEC5`, `QUA5`, and `FEA9` task-ID prefixes):
 
 - **Security & supply-chain.** Embedder-side sanitisation contract documented in full ([Security](#security) section below and [docs/embedding.md](docs/embedding.md)). CI gated on `npm audit --omit=dev --audit-level=moderate`. nginx CSP trade-offs captured in [SECURITY.md](SECURITY.md).
 - **Test surface.** Grew from 13 suites / 83 cases to **31 suites / 217 cases**. The hook layer, every interaction-mode handler, the connector coordinate system, the PDF export, and the schema bounds are now covered.
@@ -25,6 +25,7 @@ High-level overview of what landed during the v4 modernisation work (full detail
   - `showTitleBar` prop to override title-bar visibility — FEA5-01.
   - `iconCollections` allow/deny filter prop for bundled icon packs — FEA5-02.
   - `onSave` callback + `'ACTION.SAVE'` main-menu entry for host-managed save — FEA5-03 (v4.1.0).
+  - **Dark mode audit pass** (FEA9-01): `themeMode` default changed from `'light'` to `'auto'` (follows OS colour-scheme preference) — **breaking change**: embedders that relied on the implicit light default must now pass `themeMode="light"` explicitly. New `exportTheme` prop (`'light'` | `'dark'`, default `'light'`) controls the initial background colour in the export dialog. Fixes: connector glyph colours in dark mode, label colours on dark backgrounds, and export dialog background seeding.
 
 The forward-looking FEA5 roadmap has now landed in full — see the `Controlling UI visibility` and `Host-managed save` sections in [docs/embedding.md](docs/embedding.md) for the contracts.
 

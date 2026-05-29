@@ -63,11 +63,37 @@ All props are optional. The component renders a fully-functional editor with sen
 | `enableGlobalDragHandlers` | `boolean` | `true` | When `false`, pointer event listeners attach to the renderer element rather than `window`, preventing drag events from leaking into host-page sibling widgets (FEA10-01). Defaults to `true` for backwards compatibility. All pointer input (mouse, touch, stylus) is handled via the Pointer Events API regardless of this setting. |
 | `nodeIndicatorComponent` | `(args: { item: ModelItem, view: ViewItem }) => ReactNode` | `undefined` | Per-node decorator (FEA5-07). Rendered inside every Node, positioned at the node's tile and receiving its `ModelItem` + `ViewItem`. Use it to overlay live indicators — status pips, gauges, badges, mini-charts — driven by host state that isn't part of the model. See [Live dashboards](#live-dashboards). |
 | `connectorIndicatorComponent` | `(args: { connector: Connector, view: View }) => ReactNode` | `undefined` | Per-connector decorator (FEA7-03). Rendered at every connector's midpoint as an absolutely-positioned overlay, receiving the connector's schema-level model and the parent `View`. Mirrors `nodeIndicatorComponent` for link-level telemetry — throughput, latency, error-rate, link-down — driven by host state that isn't part of the model. |
+| `highlightedItemId` | `string` | `undefined` | When set, the editor highlights the item with this ID and dims all others to `opacity: 0.2` with a CSS transition (FEA12-01). Drives focus from host-side navigation without touching interaction state. When omitted, the `I` keyboard shortcut controls dimming based on the current interactive selection instead. |
 | `themeMode` | `'light'` \| `'dark'` \| `'auto'` | `'auto'` | Controls the editor colour scheme. `'light'` and `'dark'` force the respective palette. `'auto'` (the default) mirrors the OS/browser `prefers-color-scheme` setting and switches live when the user changes their system preference. |
 | `exportTheme` | `'light'` \| `'dark'` | `'light'` | Controls the initial background colour in the export dialog (PNG / PDF). `'light'` seeds the dialog with the light-mode diagram background (`#f6faff`); `'dark'` seeds it with the dark-mode background (`#1a1d24`). The user can still change the background colour inside the dialog before downloading. |
 | `children` | `ReactNode` | `undefined` | Optional children rendered inside the Isoflow provider tree. Intended use is a "driver" child component that calls [`useIsoflow()`](#imperative-api-useisoflow) to drive the editor from outside — pulse connectors on a timer, update colours from a poller, etc. Driver components typically return `null`. |
 
 > **Breaking change (FEA9-01):** Prior to this release `themeMode` defaulted to `'light'`. The default is now `'auto'`, which follows the user's OS colour-scheme preference. Embedders that relied on the implicit light theme must now pass `themeMode="light"` explicitly to preserve the previous behaviour.
+
+### Keyboard shortcuts
+
+| Key | Action |
+|-----|--------|
+| `V`, `S` | Select tool |
+| `H` | Hand (pan) tool |
+| `A` | Add item |
+| `R` | Rectangle tool |
+| `C` | Connector tool |
+| `T` | Text tool |
+| `+` / `-` | Zoom in / out |
+| `0` | Reset zoom |
+| `F` | Fit to view |
+| `⌘/Ctrl Z` | Undo |
+| `⌘/Ctrl ⇧ Z` | Redo |
+| `⌘/Ctrl C` | Copy |
+| `⌘/Ctrl V` | Paste |
+| `⌘/Ctrl D` | Duplicate |
+| `Del` / `⌫` | Delete selected |
+| `↑↓←→` | Nudge selected item |
+| `⇧ ↑↓←→` | Nudge ×5 |
+| `Esc` | Deselect |
+| `I` | Toggle item highlighting (dims all items except the selected one) |
+| `?` | Toggle keyboard shortcuts dialog |
 
 ### Container sizing
 

@@ -189,7 +189,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                   left: 0,
                   width: 500,
                   height: 300,
-                  bgcolor: 'common.white'
+                  bgcolor: 'background.paper'
                 }}
               >
                 <Loader size={2} />

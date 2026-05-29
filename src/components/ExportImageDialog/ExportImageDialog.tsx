@@ -31,7 +31,7 @@ import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { Isoflow } from 'src/Isoflow';
 import { Loader } from 'src/components/Loader/Loader';
-import { customVars } from 'src/styles/theme';
+import { createIsoflowTheme } from 'src/styles/theme';
 import { ColorPicker } from 'src/components/ColorSelector/ColorPicker';
 
 interface Props {
@@ -51,6 +51,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
+  const exportTheme = useUiStateStore((state) => state.exportTheme);
   const model = useModelStore(
     useShallow((state): Omit<ModelStore, 'actions'> => {
       return modelFromModelStore(state);
@@ -117,7 +118,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   };
 
   const [backgroundColor, setBackgroundColor] = useState<string>(
-    customVars.customPalette.diagramBg
+    () => createIsoflowTheme(exportTheme).customVars.customPalette.diagramBg
   );
   const handleBackgroundColorChange = (color: string) => {
     setBackgroundColor(color);

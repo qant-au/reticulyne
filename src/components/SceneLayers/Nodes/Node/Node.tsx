@@ -16,9 +16,10 @@ import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditor';
 interface Props {
   node: ViewItem;
   order: number;
+  isDimmed?: boolean;
 }
 
-export const Node = ({ node, order }: Props) => {
+export const Node = ({ node, order, isDimmed }: Props) => {
   const modelItem = useModelItem(node.id);
   const { iconComponent } = useIcon(modelItem?.icon);
   const NodeIndicator = useUiStateStore((state) => {
@@ -50,6 +51,10 @@ export const Node = ({ node, order }: Props) => {
       sx={{
         position: 'absolute',
         zIndex: order
+      }}
+      style={{
+        opacity: isDimmed ? 0.2 : 1,
+        transition: 'opacity 0.3s'
       }}
     >
       <Box

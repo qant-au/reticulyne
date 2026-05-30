@@ -13,7 +13,7 @@ A React component for drawing network diagrams.
 High-level overview of what landed during the v4 modernisation work (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, `FEA4`, `FEA5`, `BUG5`, `SEC5`, `QUA5`, and `FEA9` task-ID prefixes):
 
 - **Security & supply-chain.** Embedder-side sanitisation contract documented in full ([Security](#security) section below and [docs/embedding.md](docs/embedding.md)). CI gated on `npm audit --omit=dev --audit-level=moderate`. nginx CSP trade-offs captured in [SECURITY.md](SECURITY.md).
-- **Test surface.** Grew from 13 suites / 83 cases to **31 suites / 217 cases**. The hook layer, every interaction-mode handler, the connector coordinate system, the PDF export, and the schema bounds are now covered.
+- **Test surface.** Grew from 13 suites / 83 cases to **45 suites / 353 cases**. The hook layer, every interaction-mode handler, the connector coordinate system, the PDF export, and the schema bounds are now covered.
 - **Refactors.** Split the 777-line `src/utils/renderer.ts` into seven concern-focused modules; consolidated three Zustand stores behind a `createContextualStore<T>` factory; reshaped `UiOverlay` into four focused children; extracted three hooks out of `MainMenu`.
 - **Bug fixes.** Corrected the connector path coordinate system at source (removing a self-flagged `transform: scale(-1, 1)` CSS hack), fixed a `deleteModelItem` reducer that left sparse-array holes, and (5th-pass) closed scene-cache leaks in `deleteConnector` / `deleteTextBox`, a dead dedupe guard in `useInitialDataManager`, a stuck-drag after mouseup outside the renderer, render-time throws on sparse `colors` / dangling icon refs, silent JSON-import failures, an ignored runtime `iconCollections` prop change, a stray-icon-on-toolbar bug in `PlaceIcon`, a debounce-timer leak in the export-image dialog, an embedder wheel-scroll leak, and a `useResizeObserver` cleanup gap — BUG5-01..09, QUA5-01.
 - **Security hardening (5th-pass).** Bounded tile coordinates in the schema to cap the pathfinder grid (SEC5-01) and added per-array + per-string caps across every input schema as defence-in-depth against host-side DoS via crafted `initialData` (SEC5-02).
@@ -28,6 +28,7 @@ High-level overview of what landed during the v4 modernisation work (full detail
   - **Dark mode audit pass** (FEA9-01): `themeMode` default changed from `'light'` to `'auto'` (follows OS colour-scheme preference) — **breaking change**: embedders that relied on the implicit light default must now pass `themeMode="light"` explicitly. New `exportTheme` prop (`'light'` | `'dark'`, default `'light'`) controls the initial background colour in the export dialog. Fixes: connector glyph colours in dark mode, label colours on dark backgrounds, and export dialog background seeding.
   - **Embedding isolation** *(opt-in via `enableGlobalDragHandlers={false}`)* — Pointer event listeners attach to the renderer element rather than `window` when the prop is `false`, preventing drag events from leaking into host-page sibling widgets. Simultaneously migrates from the split mouse/touch event pair to the unified Pointer Events API (`pointerdown` / `pointermove` / `pointerup`) for consistent mouse, touch, and stylus handling. Pointer capture ensures drag tracking continues even when the pointer leaves the renderer bounds mid-drag — FEA10-01.
   - **Per-rectangle custom styling** — `colorValue` (direct hex fill), `outlineColor` (border stroke), `transparency` (fill alpha 0–1), and `zIndex` (z-order override) added as optional fields to the rectangle schema. Embedders can push status colours from external sources without pre-registering palette entries — useful for alerting-region overlays and live-dashboard VPC boundaries. Editor controls added to the rectangle inspector panel — FEA11-01.
+  - **8-directional connector routing** — `DiagonalMovement.Always` confirmed active from the original codebase; connectors route via N/S/E/W plus all four 45° diagonals. Dedicated test coverage added — FEA8-01 (v4.7.0).
 
 The forward-looking FEA5 roadmap has now landed in full — see the `Controlling UI visibility` and `Host-managed save` sections in [docs/embedding.md](docs/embedding.md) for the contracts.
 
@@ -49,19 +50,12 @@ Reference material lives under [`docs/`](docs/README.md):
 - **Extensible icon system** — Bring your own collections via the `ProcessedCollection` interface; see [docs/isopacks.md](docs/isopacks.md) for the contract. The standalone Docker container ships with the AWS, Azure, GCP, Kubernetes, and Isoflow icon collections pre-loaded.
 - **Editor modes** — Editable, explorable-readonly, and non-interactive modes for embedding in viewers, dashboards, or full editors.
 - **Export options** — Export diagrams as JSON, PNG, PDF, or SVG from the main menu. PDF generation is client-side via jsPDF; SVG export offers two formats: a true-flat vector SVG (Illustrator/Inkscape/Figma) and a foreignObject universal SVG (full-fidelity in browsers and Figma). All exports are client-side with no network calls.
+- **8-directional connector routing** — A* pathfinder uses diagonal movement (N/S/E/W plus all four 45° diagonals), producing shorter, less cluttered paths especially in densely connected diagrams.
 - **Live dashboards** *(opt-in via `enableAnimation`)* — Animate connectors, fire signal pulses (`useIsoflow().Connector.pulse`) and decorate nodes with host-supplied gauges (`nodeIndicatorComponent`) to drive the diagram from a poller / websocket. See [Live dashboards in the embedding docs](docs/embedding.md#live-dashboards) and the runnable [`LiveDashboard` example](src/examples/LiveDashboard/LiveDashboard.tsx).
 
 ## Planned features
 
 The items below are ordered by two rules applied in combination: **dependencies first** (an item that unblocks or is required by another item precedes it, even when its own user-visible benefit is modest), and **schema / API changes that are cheapest to do early come before features that would require the same migration later**. Items that deliver immediate UX value without blocking anything else are slotted in their natural place within those constraints.
-
----
-
-### 8-directional connector routing
-
-Enables diagonal routing (N/S/E/W + four 45° diagonals) in addition to the current 4-directional grid. The `pathfinding` library already bundled supports `DiagonalMovement` — the change is a config flag in `src/utils/pathfinder.ts` plus segment-rendering updates in `src/utils/connector.ts`. Dramatically reduces path length and visual clutter in densely connected diagrams; particularly noticeable in live dashboards where the current 4-direction constraint forces long L-shaped detours between nodes that are not axis-aligned. Inspired by `kingt0t/isoflow`'s hexagonal tile experiment (which achieves the same practical benefit from a different angle).
-
-*Prioritised third because:* highest bang-for-buck on the list — a one-line config change in the pathfinder with no schema impact. Landing it early means all subsequent connector work (auto-routing improvements, WebGL renderer) inherits 8-directional paths from the start rather than being retrofitted later.
 
 ---
 
@@ -71,7 +65,7 @@ When exactly one item is selected, all other items fade to reduced opacity with 
 
 Connects to the existing `nodeIndicatorComponent` pattern — "host drives visual state" — applied to selection context.
 
-*Prioritised fourth because:* the `highlightedItemId` prop is a new public API surface that should be locked down before stabilisation. Also a hard dependency of multi-floor management (below), where the same dimming mechanism is applied at floor scope.
+*Prioritised third because:* the `highlightedItemId` prop is a new public API surface that should be locked down before stabilisation. Also a hard dependency of multi-floor management (below), where the same dimming mechanism is applied at floor scope.
 
 ---
 
@@ -79,7 +73,7 @@ Connects to the existing `nodeIndicatorComponent` pattern — "host drives visua
 
 A new "Export as SVG" option alongside the existing PNG and PDF entries in the main menu. The output is a resolution-independent vector file that opens in Illustrator, Figma, Inkscape, or any presentation tool at any scale — the natural highest-quality export format since the canvas is already SVG-DOM. Icons inline as `data:` URIs for portability; animated connectors export as static (documented caveat). Export policy: light theme by default; `exportTheme` prop override for embedders who need dark exports.
 
-*Prioritised fifth because:* no schema change and no dependency on items above. SVG export is placed before Diagram layers because the render pass it introduces — which must respect layer visibility to produce correct output — establishes the layer-filtering predicate that the Diagram layers / Redacted feature relies on. The export components are touched once here rather than separately for SVG and again for layer-awareness.
+*Prioritised fourth because:* no schema change and no dependency on items above. SVG export is placed before Diagram layers because the render pass it introduces — which must respect layer visibility to produce correct output — establishes the layer-filtering predicate that the Diagram layers / Redacted feature relies on. The export components are touched once here rather than separately for SVG and again for layer-awareness.
 
 ---
 
@@ -99,7 +93,7 @@ If a diagram has no items on the Redacted layer, export behaviour is identical t
 
 **Why this pairs naturally with layers.** The export pipeline (PNG, PDF, and SVG once that lands) already needs to be updated to respect layer visibility when rendering. Adding a redaction predicate in the same pass — skip any item whose layer is Redacted unless the export option opts in — is marginal incremental work. Building both together avoids a second pass through the export components later.
 
-*Prioritised sixth because:* layers add a `layerId` metadata field to the item schema. Landing this before multi-floor management avoids touching item metadata twice — if floors land first, layers would need to be retrofitted alongside an already complex floor model. The Redacted sub-feature is included here rather than as a separate item because the export pipeline is already layer-aware from SVG export (above).
+*Prioritised fifth because:* layers add a `layerId` metadata field to the item schema. Landing this before multi-floor management avoids touching item metadata twice — if floors land first, layers would need to be retrofitted alongside an already complex floor model. The Redacted sub-feature is included here rather than as a separate item because the export pipeline is already layer-aware from SVG export (above).
 
 ---
 

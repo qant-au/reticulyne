@@ -85,3 +85,105 @@ describe('FEA7-02 pathfinder obstacles', () => {
     expect(path).toEqual([]);
   });
 });
+
+describe('FEA8-01 8-directional routing', () => {
+  // Each cardinal direction: 5-tile straight path on a clear 5×5 grid.
+  test('North: (2,4) → (2,0) is 5 tiles', () => {
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 2, y: 4 },
+      to: { x: 2, y: 0 }
+    });
+    expect(path.length).toBe(5);
+    expect(path[0]).toEqual({ x: 2, y: 4 });
+    expect(path[path.length - 1]).toEqual({ x: 2, y: 0 });
+  });
+
+  test('South: (2,0) → (2,4) is 5 tiles', () => {
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 2, y: 0 },
+      to: { x: 2, y: 4 }
+    });
+    expect(path.length).toBe(5);
+    expect(path[0]).toEqual({ x: 2, y: 0 });
+    expect(path[path.length - 1]).toEqual({ x: 2, y: 4 });
+  });
+
+  test('East: (0,2) → (4,2) is 5 tiles', () => {
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 0, y: 2 },
+      to: { x: 4, y: 2 }
+    });
+    expect(path.length).toBe(5);
+    expect(path[0]).toEqual({ x: 0, y: 2 });
+    expect(path[path.length - 1]).toEqual({ x: 4, y: 2 });
+  });
+
+  test('West: (4,2) → (0,2) is 5 tiles', () => {
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 4, y: 2 },
+      to: { x: 0, y: 2 }
+    });
+    expect(path.length).toBe(5);
+    expect(path[0]).toEqual({ x: 4, y: 2 });
+    expect(path[path.length - 1]).toEqual({ x: 0, y: 2 });
+  });
+
+  test('NE diagonal: (0,4) → (4,0) is 5 tiles', () => {
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 0, y: 4 },
+      to: { x: 4, y: 0 }
+    });
+    expect(path.length).toBe(5);
+    expect(path[0]).toEqual({ x: 0, y: 4 });
+    expect(path[path.length - 1]).toEqual({ x: 4, y: 0 });
+  });
+
+  test('SE diagonal: (0,0) → (4,4) is 5 tiles', () => {
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 0, y: 0 },
+      to: { x: 4, y: 4 }
+    });
+    expect(path.length).toBe(5);
+    expect(path[0]).toEqual({ x: 0, y: 0 });
+    expect(path[path.length - 1]).toEqual({ x: 4, y: 4 });
+  });
+
+  test('SW diagonal: (4,0) → (0,4) is 5 tiles', () => {
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 4, y: 0 },
+      to: { x: 0, y: 4 }
+    });
+    expect(path.length).toBe(5);
+    expect(path[0]).toEqual({ x: 4, y: 0 });
+    expect(path[path.length - 1]).toEqual({ x: 0, y: 4 });
+  });
+
+  test('NW diagonal: (4,4) → (0,0) is 5 tiles', () => {
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 4, y: 4 },
+      to: { x: 0, y: 0 }
+    });
+    expect(path.length).toBe(5);
+    expect(path[0]).toEqual({ x: 4, y: 4 });
+    expect(path[path.length - 1]).toEqual({ x: 0, y: 0 });
+  });
+
+  test('diagonal path is shorter than 4-direction would require', () => {
+    // 4-direction: (0,0)→(4,4) needs 8 steps = 9 tiles.
+    // With DiagonalMovement.Always: 4 diagonal steps = 5 tiles.
+    const path = findPath({
+      gridSize: { width: 5, height: 5 },
+      from: { x: 0, y: 0 },
+      to: { x: 4, y: 4 }
+    });
+    expect(path.length).toBeLessThan(9);
+  });
+});

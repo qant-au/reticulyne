@@ -351,6 +351,54 @@ describe('connector coordinate system', () => {
       expect(anchorWorldYToRenderY(2, 3)).toBe(1);
     });
 
+    // FEA8-01: diagonal directions. Arrow at tiles[N-2] pointing at
+    // tiles[N-1]; rotation is determined by the sign of the x/y delta.
+    describe('getConnectorDirectionIcon — diagonal directions (FEA8-01)', () => {
+      test('NE: arrow points up-right (rotation 45°)', () => {
+        const tiles = [
+          { x: 0, y: 2 },
+          { x: 1, y: 1 },
+          { x: 2, y: 0 }
+        ];
+        const icons = getConnectorDirectionIcon(tiles, 'START_TO_END');
+        expect(icons).toHaveLength(1);
+        expect(icons[0].rotation).toBe(45);
+      });
+
+      test('SE: arrow points down-right (rotation 135°)', () => {
+        const tiles = [
+          { x: 0, y: 0 },
+          { x: 1, y: 1 },
+          { x: 2, y: 2 }
+        ];
+        const icons = getConnectorDirectionIcon(tiles, 'START_TO_END');
+        expect(icons).toHaveLength(1);
+        expect(icons[0].rotation).toBe(135);
+      });
+
+      test('NW: arrow points up-left (rotation -45°)', () => {
+        const tiles = [
+          { x: 2, y: 2 },
+          { x: 1, y: 1 },
+          { x: 0, y: 0 }
+        ];
+        const icons = getConnectorDirectionIcon(tiles, 'START_TO_END');
+        expect(icons).toHaveLength(1);
+        expect(icons[0].rotation).toBe(-45);
+      });
+
+      test('SW: arrow points down-left (rotation -135°)', () => {
+        const tiles = [
+          { x: 2, y: 0 },
+          { x: 1, y: 1 },
+          { x: 0, y: 2 }
+        ];
+        const icons = getConnectorDirectionIcon(tiles, 'START_TO_END');
+        expect(icons).toHaveLength(1);
+        expect(icons[0].rotation).toBe(-135);
+      });
+    });
+
     test('SVG-local pixel position derived from the helpers matches the corrected renderer formula', () => {
       // This locks the helpers to the constants the renderer uses.
       // If UNPROJECTED_TILE_SIZE ever changes, the renderer will keep

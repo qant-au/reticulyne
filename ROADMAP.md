@@ -853,3 +853,377 @@ Stop after Tier 2 and stabilise. Tier 3 becomes a "next minor release" backlog.
   is not (IDs are append-only).
 - This file is forward-looking strategy. Anything observable today (props,
   hooks, schemas) belongs in `docs/api.md` / `docs/embedding.md`, not here.
+
+---
+
+## Excalidraw Side-by-Side
+
+`@qant-au/isoflow` is being embedded into a larger product that also embeds a
+customised Excalidraw. The two tools serve different audiences — Excalidraw for
+free-form sketching, isoflow for tile-based isometric infra diagrams — but they
+sit one tab apart in the same shell. A user who has just drawn a flowchart in
+Excalidraw and clicks across to sketch an isometric network should feel like
+they are still in the same family of tools (the way a Visio user moves between
+network-diagram, floor-plan, and flowchart templates without retraining).
+
+**This section is not a merit comparison.** It is a **UX-alignment audit**:
+where does isoflow's keyboard / mouse / toolbar / menu surface diverge from
+Excalidraw's, what should be aligned, and what divergences are domain-driven
+and worth keeping. Excalidraw's surface is treated as the fixed reference;
+isoflow moves to meet it where the action is the same.
+
+**Explicit non-goal:** this section does not propose making isoflow into a
+free-form vector editor, nor making Excalidraw isometric. The bar is "Excalidraw
+muscle memory should not be punished".
+
+### Alignment principles
+
+- **Match the shortcut when the action is the same** (`Ctrl+Z`, `?`, `V`, `R`,
+  `T`, `H` — already aligned today).
+- **Don't invent a new modifier convention when Excalidraw has one** —
+  `Alt+drag` = duplicate; `Space+drag` = pan; `Shift+click` = extend selection.
+- **Free-form-only behaviours are domain-divergent, not bugs** (eraser,
+  freehand, diamond, ellipse, line — no equivalent in a tile-based isometric
+  editor).
+- **Where isoflow has a concept Excalidraw doesn't** (isometric tiles, fixed
+  connector anchors, layered floors) — invent freely, but don't reuse a key
+  Excalidraw already owns.
+- **The Excalidraw `?` help dialog is the implicit contract.** If a shortcut
+  appears there, isoflow should either match it, deliberately leave it unbound,
+  or document the divergence in its own `?` dialog.
+
+### Side-by-side — keyboard shortcuts
+
+Status legend: **MATCH** = same key, same action (keep). **MISMATCH** = same
+key, different action (collision) or different key, same action — fix.
+**GAP** = Excalidraw has it, isoflow doesn't, would translate — add.
+**DOMAIN** = Excalidraw concept that doesn't apply here — acknowledge and
+leave.
+
+| Action | Excalidraw | isoflow today | Status | Fix tracked under |
+|---|---|---|---|---|
+| Selection tool | `1` or `V` | `V` / `S` | **MISMATCH** — `1` collides with isoflow's reset-zoom | UXA-01 |
+| Hand / pan tool | `H` | `H` | MATCH | — |
+| Rectangle tool | `R` or `2` | `R` | MISMATCH (number alias missing) | UXA-01 |
+| Text tool | `T` or `8` | `T` | MISMATCH (number alias missing) | UXA-01 |
+| Arrow / connector | `A` or `5` | `C` | **MISMATCH** — `A` collides with isoflow's Add-item | UXA-01 |
+| Add image / icon | `9` | `A` | **MISMATCH** — reuses Excalidraw's arrow key | UXA-01 |
+| Reset zoom | `Ctrl/Cmd+0` | bare `0` or `1` | **MISMATCH** — bare digits collide with Excalidraw's tool keys | UXA-01 |
+| Zoom in | `Ctrl/Cmd+=` | bare `=` | MISMATCH (modifier alias missing) | UXA-01 |
+| Zoom out | `Ctrl/Cmd+-` | bare `-` | MISMATCH (modifier alias missing) | UXA-01 |
+| Fit to view | `Shift+1` | `F` | MISMATCH (Shift+1 alias missing) | UXA-01 |
+| Fit to selection | `Shift+2` | n/a | GAP — depends on multi-select | UXA-07 (after 1.4) |
+| Space+drag pan | wired | dialog-documented, **not wired** | GAP | UXA-02 |
+| Alt+drag duplicate | wired | unbound (Alt has no isoflow bindings) | GAP | UXA-03 |
+| Shift+click extend select | wired | unbound | GAP | 1.4 |
+| Marquee drag-select | wired | unbound | GAP | 1.4 |
+| Select all | `Ctrl/Cmd+A` | unbound | GAP | UXA-07 (after 1.4) |
+| Cut | `Ctrl/Cmd+X` | unbound | GAP | UXA-04 |
+| Copy | `Ctrl/Cmd+C` | `Ctrl/Cmd+C` | MATCH | — |
+| Paste | `Ctrl/Cmd+V` | `Ctrl/Cmd+V` | MATCH | — |
+| Duplicate | `Ctrl/Cmd+D` (or `Alt+drag`) | `Ctrl/Cmd+D` | MATCH for `Ctrl/Cmd+D`; gap on `Alt+drag` | UXA-03 |
+| Delete | `Delete` / `Backspace` | `Delete` / `Backspace` | MATCH | — |
+| Undo | `Ctrl/Cmd+Z` | `Ctrl/Cmd+Z` | MATCH | — |
+| Redo | `Ctrl/Cmd+Shift+Z`; Win `Ctrl+Y` | `Ctrl/Cmd+Shift+Z`; Win `Ctrl+Y` | MATCH | — |
+| Group | `Ctrl/Cmd+G` | unbound | GAP | 1.7 |
+| Ungroup | `Ctrl/Cmd+Shift+G` | unbound | GAP | 1.7 |
+| Send backward | `Ctrl/Cmd+[` | context-menu only | GAP | 1.3 + UXA-06 |
+| Bring forward | `Ctrl/Cmd+]` | context-menu only | GAP | 1.3 + UXA-06 |
+| Send to back | `Ctrl/Cmd+Shift+[` (Win) / `Cmd+Opt+[` (Mac) | context-menu only | GAP | 1.3 + UXA-06 |
+| Bring to front | `Ctrl/Cmd+Shift+]` (Win) / `Cmd+Opt+]` (Mac) | context-menu only | GAP | 1.3 + UXA-06 |
+| Nudge | arrow keys (`Shift` = ×N) | arrow keys (`Shift` = ×5) | MATCH | — |
+| Help dialog | `?` | `?` | MATCH | — |
+| Toggle theme (light↔dark) | `Alt+Shift+D` | n/a (prop-only) | GAP | UXA-08 |
+| Toggle selection dimming | n/a | `I` | DOMAIN — isoflow-only feature | — |
+| Lock element | `Ctrl/Cmd+Shift+L` | n/a | GAP — isoflow has no lock concept | left open |
+| Eraser | `E` or `0` | n/a | DOMAIN | — |
+| Diamond | `D` or `3` | n/a | DOMAIN | — |
+| Ellipse | `O` or `4` | n/a | DOMAIN | — |
+| Line | `L` or `6` | n/a | DOMAIN | — |
+| Freedraw | `P` or `7` | n/a | DOMAIN | — |
+| Frame / Laser / Eye-dropper | `F` / `K` / `I` | n/a | DOMAIN | — |
+| Flip horizontal / vertical | `Shift+H` / `Shift+V` | n/a | DOMAIN — isometric icons | — |
+
+### Side-by-side — gestures, toolbar, menus
+
+| Surface | Excalidraw | isoflow today | Status |
+|---|---|---|---|
+| Left-click empty | deselect | deselect | MATCH |
+| Left-click item | select | select | MATCH |
+| Double-click empty | start text | no-op | GAP (2.2) |
+| Double-click item | edit text / open inline label | no-op | GAP (2.2 will open inspector) |
+| Right-click | context menu (rich: cut/copy/paste/group/order/lock) | context menu **only on rectangles** (5 items) | MISMATCH — context menu must extend to items, connectors, textboxes |
+| Wheel (plain) | zoom | pan | MISMATCH (intentional, see note) |
+| Ctrl+wheel | zoom faster | zoom | MATCH |
+| Pinch (touch) | zoom | n/a (single-touch only) | GAP (2.12) |
+| Single-finger touch | pan | mapped to mouse events | partial MATCH |
+| Drag from library / palette | drop on canvas | n/a — Add-item mode required | GAP (2.11) |
+| Toolbar position | top-centre floating | top-left next to hamburger | Visual divergence; defer to integrating shell |
+| Library / icon palette | right-side toggleable | inline via Add-Item mode | GAP (2.11 → persistent palette) |
+| Main-menu location | hamburger top-left | hamburger top-left | MATCH |
+| Property inspector | left rail (when item selected) | right rail (when item selected) | Visual divergence; defer to integrating shell |
+| Zoom controls | bottom-left | right rail | Visual divergence; defer to integrating shell |
+| Dark-theme toggle (in-app) | `Alt+Shift+D` and main menu | prop-only (no in-app control) | GAP (UXA-08) |
+
+**Note on wheel direction.** Plain-wheel = pan is an isoflow design choice
+(FEA5-01) because the isometric canvas is conceptually a 2D map where panning
+is the primary navigation gesture. Changing this would be a deeper UX shift
+than alignment work justifies — flag for product-level discussion if the
+embedding host wants parity. `Ctrl+wheel` zoom already matches Excalidraw.
+
+**Note on toolbar / panel positions.** Three layout items above are flagged
+*Visual divergence; defer to integrating shell* rather than tracked as UXA
+tasks. Moving the toolbar from top-left to top-centre, or flipping the
+inspector to the left rail, is a visual-design decision the host shell can
+re-skin without rewriting isoflow internals (the components are MUI-themed and
+positionable). It is out of scope for the keyboard / interaction alignment
+this section drives.
+
+### New `UXA-NN` tasks
+
+Ordered by bang-for-buck. Total estimated effort ≈ 3 days across the family;
+none requires a schema change. All items are scoped to `EDITABLE` mode unless
+noted.
+
+#### UXA-01 Tool hotkey realignment (full parity)
+
+**What it does.** Rebinds tool hotkeys so an Excalidraw user's muscle memory
+carries over directly. New bindings:
+
+- `1` → Select (alias of `V` / `S`) — was reset-zoom.
+- `2` → Rectangle (alias of `R`).
+- `5` → Connector (alias of `C`).
+- `A` → Connector (second alias — Excalidraw uses `A` for arrow).
+- `8` → Text (alias of `T`).
+- `9` → Add-item (alias of `I`).
+- `I` → Add-item (replaces current bare `A`). `I` doubles as Excalidraw's
+  eye-dropper, but isoflow has no eye-dropper, so reuse is safe and "I = Icon"
+  is mnemonic.
+- `Ctrl/Cmd+0` → Reset zoom (Excalidraw match). Bare `0` / `1` no longer
+  bound to reset zoom — they belong to Excalidraw's tool layer.
+- `Ctrl/Cmd+=` / `Ctrl/Cmd+-` → zoom in / out aliases alongside existing bare
+  `=` / `-`.
+- `Shift+1` → Fit-to-view alias of `F` (Excalidraw match).
+
+**Why.** This is the single largest piece of muscle-memory friction between
+the two tools. Pressing `1` in isoflow currently resets zoom; an Excalidraw
+user expects it to be Select. Pressing `A` currently opens the icon picker; an
+Excalidraw user expects an arrow / connector. Without this rebind every other
+alignment piece is undermined by a daily collision.
+
+**Where in code.** `src/interaction/useKeyboardShortcuts.ts` (binding table);
+`src/components/KeyboardShortcutsDialog/KeyboardShortcutsDialog.tsx` (rows
+updated to list new bindings, including the deprecation note for bare `0` /
+`1`); `docs/api.md` if any keybinding is publicly documented.
+
+**Approach sketch.**
+- Extend the binding table to accept multiple keys per action.
+- Where a binding is changing semantics (bare `0`, bare `1`, bare `A`), this
+  is a breaking change for existing isoflow users — call it out in the
+  release-notes paragraph that ships with the commit.
+- Keep all existing letter aliases (`V`, `S`, `H`, `R`, `T`, `C`, `F`) intact.
+  This is additive for everything except the three bare keys whose meaning
+  flips.
+
+**Reviewer's notes.** Test that `1` in an input field (e.g. typing into a
+node label) still types "1" — the existing input-focus guard in
+`useKeyboardShortcuts.ts` already covers this; just verify the new bindings
+inherit the same guard.
+
+**Effort.** Small. ~1 day including dialog updates and tests.
+
+---
+
+#### UXA-02 Wire Space+drag to pan
+
+**What it does.** Holding Space turns any current mode into a transient pan
+mode. Release Space to return to the prior mode. Matches Excalidraw exactly.
+
+**Why.** The shortcuts dialog already advertises it
+(`KeyboardShortcutsDialog.tsx:44`), but no handler is wired. This is the
+single most common "I tried to pan and got a wrong gesture" complaint in any
+tool that lacks it.
+
+**Where in code.** `src/interaction/useKeyboardShortcuts.ts` (key-up / key-down
+on Space); `src/interaction/modes/Pan.ts` (already exists); the mode-stack
+plumbing in `src/stores/uiStateStore.tsx` (transient overlay vs replace).
+
+**Approach sketch.**
+- On Space key-down (outside input fields): if current mode is not already
+  `PAN`, push `PAN` as a transient overlay and remember the previous mode.
+- On Space key-up: pop back to the remembered previous mode.
+- Cursor changes to `grab` on Space-down, `grabbing` during drag — reuse the
+  existing `Pan` mode's cursor logic.
+- Guard: ignore Space if the focus target is an input / contenteditable
+  (existing guard).
+
+**Effort.** Small. ~0.5 days.
+
+---
+
+#### UXA-03 Alt+drag to duplicate
+
+**What it does.** In Cursor mode, holding Alt while dragging a selected item
+starts a drag that places a duplicate at release, leaving the original in
+place. Matches Excalidraw.
+
+**Why.** Alt-drag is the universal "copy this somewhere else" gesture in
+diagram tools. isoflow has no Alt bindings at all today, so this is a pure
+addition.
+
+**Where in code.** `src/interaction/modes/Cursor.ts` (detect Alt on
+`pointerdown`); `src/interaction/modes/DragItems.ts` (branch on a new
+`duplicateOnRelease: boolean` flag); reuse the existing `duplicateItem()`
+reducer already wired into the context menu
+(`src/components/ContextMenu/ContextMenuManager.tsx`).
+
+**Approach sketch.**
+- On `pointerdown` over a selected item with `event.altKey`, enter
+  `DRAG_ITEMS` mode with the duplicate flag set.
+- During drag the original stays put; render a ghost at the drag position.
+- On `pointerup`, call `duplicateItem()` with the drag delta as the placement
+  offset, then return to Cursor mode with the duplicate selected.
+- Cancel on `Esc`: discard the ghost, leave original untouched.
+
+**Effort.** Small. ~0.5 days.
+
+---
+
+#### UXA-04 Cut (`Ctrl/Cmd+X`)
+
+**What it does.** Copy + delete in one shot. Same key as Excalidraw.
+
+**Where in code.** `src/interaction/useKeyboardShortcuts.ts` — add binding
+that calls the existing copy reducer then the existing delete reducer.
+
+**Effort.** Tiny. ~0.25 days.
+
+---
+
+#### UXA-05 Help-dialog audit and divergence note
+
+**What it does.** Update the keyboard-shortcuts dialog to (a) reflect all
+UXA-01 to UXA-04 bindings, and (b) add a "Differences from Excalidraw" footer
+listing the intentional `DOMAIN` divergences (no diamond, ellipse, line,
+freedraw, eraser, frame, laser, eye-dropper — because isoflow's atomic unit is
+an icon-on-a-tile, not a free-form vector primitive). Users learn what to
+expect rather than hunting for shortcuts that don't exist.
+
+**Where in code.**
+`src/components/KeyboardShortcutsDialog/KeyboardShortcutsDialog.tsx`.
+
+**Effort.** Tiny. ~0.25 days.
+
+---
+
+#### UXA-06 Bring/send-order hotkeys (depends on 1.3)
+
+**What it does.** Once 1.3 (layer ordering UI) lands, add keyboard bindings
+matching Excalidraw exactly: `Ctrl/Cmd+]` / `Ctrl/Cmd+[` for forward /
+backward; `Ctrl/Cmd+Shift+]` / `Ctrl/Cmd+Shift+[` for to-front / to-back on
+Windows, plus the Mac variants `Cmd+Opt+]` / `Cmd+Opt+[` that Excalidraw
+also accepts.
+
+**Where in code.** `src/interaction/useKeyboardShortcuts.ts` (after 1.3 wires
+the reducer to non-rectangle item types).
+
+**Effort.** Rolled into 1.3.
+
+---
+
+#### UXA-07 `Ctrl+A` select-all + `Shift+2` fit-to-selection (depends on 1.4)
+
+**What it does.** Once multi-select is wired (1.4): bind `Ctrl/Cmd+A` to
+select every item in the current diagram / floor, and `Shift+2` to fit the
+viewport to the current selection (Excalidraw's "zoom to selection"). Both
+become no-ops with a single item or no selection.
+
+**Where in code.** `src/interaction/useKeyboardShortcuts.ts` (after 1.4);
+`src/utils/fitToView.ts` (extend to accept a selection-set bounding box
+rather than the full-diagram bounds).
+
+**Effort.** Tiny. ~0.25 days post-1.4.
+
+---
+
+#### UXA-08 `Alt+Shift+D` in-app theme toggle
+
+**What it does.** Dark mode itself shipped in FEA7-04 / FEA9-01 — `themeMode`
+is a prop today, host-driven, default `'auto'`. Excalidraw exposes an in-app
+keyboard toggle (`Alt+Shift+D`) that flips light ↔ dark regardless of the OS
+preference. To match, add a stateful in-app override layer.
+
+**Why.** Without this binding an Excalidraw user pressing `Alt+Shift+D` in
+isoflow gets nothing, even though the underlying theme machinery is there.
+The cost of fixing it is small enough that "we have dark mode but not its
+toggle" is not a defensible state.
+
+**Where in code.** `src/stores/uiStateStore.tsx` (new
+`themeOverride: 'light' | 'dark' | null` field plus action);
+`src/hooks/useResolvedThemeMode.ts` (resolution priority becomes:
+`themeOverride` if set, else the `themeMode` prop, else system preference);
+`src/interaction/useKeyboardShortcuts.ts` (new binding cycles the override);
+`src/components/KeyboardShortcutsDialog/KeyboardShortcutsDialog.tsx` (dialog
+row).
+
+**Approach sketch.**
+- Match Excalidraw exactly: `Alt+Shift+D` is a binary light ↔ dark toggle,
+  not a tri-state cycle. Users who want to return to `auto` either refresh
+  the page or use a host-provided UI control. Adding a third "back to auto"
+  position diverges from Excalidraw and would be an Excalidraw-user surprise.
+- First press: set `themeOverride` to the opposite of whatever
+  `useResolvedThemeMode` is currently returning. Subsequent presses flip.
+- The host's `themeMode` prop still wins on mount (no UI override yet
+  exists). After the first key press, the override wins.
+- No persistence across page loads in v1 — the override is per-session.
+  Persistence belongs to the host shell, not the library.
+
+**Reviewer's notes.** Ensure the override does not fire while focus is in a
+node label or rich-text editor (existing input-focus guard). Add a smoke test
+that mirrors `src/__tests__/Isoflow.fea7-04.test.tsx` for the override path.
+
+**Effort.** Small. ~0.5 days.
+
+### Cross-references to existing roadmap items
+
+Per the cross-reference-only treatment of overlap, the following items already
+sit in the roadmap tiers and happen to be alignment moves. They are not
+duplicated as UXA tasks — they are noted here so the alignment story reads
+end-to-end:
+
+- **Dark mode (shipped — FEA7-04 / FEA9-01).** See README v4.x history. The
+  remaining alignment piece is the in-app `Alt+Shift+D` toggle, tracked as
+  UXA-08 above.
+- **1.3 Layer ordering UI.** The reducer already half-wired; UXA-06 above
+  covers the Excalidraw-exact key bindings that ship with it.
+- **1.4 Real multi-select.** Covers `Shift+click`, marquee drag-select,
+  `Ctrl/Cmd+A` (via UXA-07) and `Shift+2` fit-to-selection.
+- **1.7 Grouping / nesting.** Covers `Ctrl/Cmd+G` / `Ctrl/Cmd+Shift+G`.
+- **2.11 Drag-and-drop from icon palette.** Lands the persistent right-side
+  icon library that aligns with Excalidraw's library panel paradigm.
+- **2.12 Multi-touch pinch-to-zoom.** Touch-tablet parity.
+
+### Items intentionally left divergent
+
+These Excalidraw concepts will **not** be added to isoflow. Acknowledging them
+explicitly here means the user-facing help dialog (per UXA-05) can list them
+as "intentionally absent" rather than leaving users to discover the gap.
+
+- **Eraser / Frame / Laser / Eye-dropper / Diamond / Ellipse / Line /
+  Freedraw.** Free-form vector primitives. isoflow's atomic unit is an
+  iconified tile plus a typed connector, a rectangle region, or a text box.
+  Adding these primitives would dilute the tool's purpose and create
+  ambiguity about which tool a user should reach for in which app.
+- **Element lock (`Ctrl/Cmd+Shift+L`).** isoflow has no per-item lock concept
+  today; read-only behaviour is handled at the embedder level via
+  `editorMode`. Worth revisiting *if* embedders ask for per-item lock; not
+  worth speculative work.
+- **Flip horizontal / vertical (`Shift+H` / `Shift+V`).** Isometric icons are
+  not symmetric in either axis; flipping is rarely meaningful and the rare
+  cases (e.g. mirror-image rack layout) are better served by alternate icon
+  variants in the icon pack.
+- **Wheel-zoom default direction.** Plain wheel pans (FEA5-01) because the
+  isometric canvas is conceptually a 2D map. `Ctrl/Cmd+wheel` zoom matches
+  Excalidraw. Flipping the default to wheel-zoom would be a deeper UX shift
+  than alignment work justifies — out of scope for UXA, can be raised as a
+  separate product-level discussion.

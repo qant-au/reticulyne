@@ -6,10 +6,11 @@
 > (embedded live dashboards; consumer-built diagrams) tell us what really
 > matters.
 
-Last completed review/fix round was **FEA8** (keyboard shortcuts dialog and
-help button). The next round of feature work will land under **`FEA9-NN`**,
+Last completed feature round was **FEA13** (Export as SVG). The next round of
+feature work will land under **`FEA14-NN`** (or `UXA-NN` for the
+Excalidraw-alignment workstream described in `Excalidraw Side-by-Side` below),
 with each `NN` allocated at pick-up time. Bugs / docs / security work that
-falls out of these features carries the matching prefix (`BUG9-NN`, …).
+falls out of these features carries the matching prefix (`BUG14-NN`, …).
 
 Companion documents:
 
@@ -101,46 +102,6 @@ post-v1 desirability.
 
 These items change the state model or the public API. Adding them later means
 either a breaking change for embedders or running a parallel system alongside.
-Dark mode leads this tier as the P1 integration requirement.
-
-### 1.1 Dark mode ⭐ P1 integration requirement
-
-**What it does.** Canvas, toolbar, and inspector all support a dark theme;
-embedder controls via `themeMode: 'light' | 'dark' | 'auto'`.
-
-**Why Tier 1.** P1 integration requirement for the host application. Also,
-locking the theming surface in early means the SVG export (2.4), mini-map
-(2.8), and future connectorIndicator renders all inherit the correct token
-palette without needing separate dark-mode passes. The earlier this lands, the
-less rework downstream colour-sensitive features accumulate.
-
-**Where in code.** `src/styles/theme.ts:52-136` is fully MUI-token driven today
-with only ~2 hard-coded hex values in `customVars`. Adding a `palette.mode ===
-'dark'` branch is the bulk of the work; an audit pass covers the rest.
-
-**Approach sketch.**
-- Add a dark variant to the MUI theme. Top-level prop `themeMode: 'light' |
-  'dark' | 'auto'`; default to `'auto'` (respects `prefers-color-scheme`).
-- Replace the two `customVars` hex colours with mode-aware tokens.
-- Grid lines, default node fills, and connector strokes all need dark
-  equivalents — pick fresh colours, don't just invert.
-- The Quill rich-text editor has its own stylesheet; needs a separate dark-mode
-  CSS override (or coordinate with 2.10 if Quill is being replaced first).
-- PNG / PDF / SVG exports: default to light always so documents stay readable.
-  Add a separate `exportTheme` prop for embedders who need dark exports.
-- Add `'dark'` / `'light'` demo toggle to the examples picker
-  (`src/index.tsx`) so QA can flip modes without changing code.
-
-**Reviewer's notes.** Icon packs (AWS/Azure/GCP/K8s) are coloured SVGs that
-read fine on dark backgrounds. Only black/white icons need a backing chip. The
-correction in the prior analysis cuts the effort estimate from "~2 days mostly
-auditing colours" to "~1 day mostly picking dark palette". Coordinate with 2.10
-(Replace Quill) — TipTap has no bundled theme, which simplifies the dark-mode
-audit once Quill is gone.
-
-**Effort.** Small-medium. ~1 day.
-
----
 
 ### 1.2 Diagram title UI and API exposure **[NEW]**
 
@@ -835,8 +796,9 @@ Five design moves that matter most for the embedded-live-dashboard use case:
    `animationFlow` avoids colliding with the existing `direction` field
    governing arrow rendering.
 4. **Status indicators belong on connectors too.** `nodeIndicatorComponent`
-   and `connectorIndicatorComponent` (FEA7-03) are both live. SVG export (2.4)
-   and mini-map (2.8) must handle these render slots gracefully.
+   and `connectorIndicatorComponent` (FEA7-03) are both live. SVG export
+   (shipped FEA13-01) and mini-map (2.8) must handle these render slots
+   gracefully.
 5. **Read-only mode should look read-only.** `EXPLORABLE_READONLY` exists but
    cursor and hover affordances may still suggest interactivity. A once-over
    pass — default cursor, no hover-edit highlights, no "click to edit"
@@ -850,30 +812,28 @@ Five design moves that matter most for the embedded-live-dashboard use case:
 If a sequence is wanted rather than a menu, this order minimises re-work and
 front-loads the highest-return items. **Assumption:** the README-tracked feature
 set (enableGlobalDragHandlers, per-rectangle fill, 8-directional routing, SVG
-export, selection dimming, diagram layers + Redacted, multi-floor management)
-lands before item 1 below begins; dark mode (1.1) is the current active item
-and is treated as the starting point.
+export, selection dimming, dark mode, diagram layers + Redacted, multi-floor
+management) lands before item 1 below begins.
 
-1. **1.1 dark mode** — 1 day; P1 integration requirement; currently in progress.
-2. **1.2 diagram title UI** — 0.5 days; tiny schema fix + API method.
-3. **1.3 layer ordering UI** — 1 day; reducer already half-wired.
-4. **2.1 + 2.2 anchor hotspots + double-click to add** — 1 day combined;
+1. **1.2 diagram title UI** — 0.5 days; tiny schema fix + API method.
+2. **1.3 layer ordering UI** — 1 day; reducer already half-wired.
+3. **2.1 + 2.2 anchor hotspots + double-click to add** — 1 day combined;
    pure UX wins; 2.1 is a dependency for 2.5.
-5. **2.3 auto-save indicator** — 0.5 days; completes the embedder trust
+4. **2.3 auto-save indicator** — 0.5 days; completes the embedder trust
    contract.
-6. **2.10 replace Quill** — 2–3 days; promoted early to clear the Quill API
+5. **2.10 replace Quill** — 2–3 days; promoted early to clear the Quill API
    surface before interaction features accrete around it; security milestone;
    dark-mode CSS override migrates to TipTap in this step.
-7. **2.5 left-click drag to connect** — 1.5 days; depends on 2.1 (step 4).
-8. **1.4 multi-select** — 2–3 days; unlocks 3.2 and bulk operations.
-9. **1.5 + 1.6 diff updates + stable API** — 2–3 days; document once.
-10. **2.7 + 2.8 search + mini-map** — 2 days combined.
-11. **2.9 snap-to-grid** — 1 day (snap only; guides are follow-on).
-12. **2.11 + 2.12 D&D palette + touch pinch** — 3 days combined.
-13. **2.13 + 2.14 custom icons + templates** — 2 days combined.
-14. **1.7 grouping** — 3–5 days; save for last in Tier 1 (largest schema
+6. **2.5 left-click drag to connect** — 1.5 days; depends on 2.1 (step 3).
+7. **1.4 multi-select** — 2–3 days; unlocks 3.2 and bulk operations.
+8. **1.5 + 1.6 diff updates + stable API** — 2–3 days; document once.
+9. **2.7 + 2.8 search + mini-map** — 2 days combined.
+10. **2.9 snap-to-grid** — 1 day (snap only; guides are follow-on).
+11. **2.11 + 2.12 D&D palette + touch pinch** — 3 days combined.
+12. **2.13 + 2.14 custom icons + templates** — 2 days combined.
+13. **1.7 grouping** — 3–5 days; save for last in Tier 1 (largest schema
     change).
-15. **APP-01 + APP-02 Docker shell** — 2.5 days; after library API is stable.
+14. **APP-01 + APP-02 Docker shell** — 2.5 days; after library API is stable.
 
 Stop after Tier 2 and stabilise. Tier 3 becomes a "next minor release" backlog.
 
@@ -881,8 +841,9 @@ Stop after Tier 2 and stabilise. Tier 3 becomes a "next minor release" backlog.
 
 ## Maintenance
 
-- When a Tier 1/2/3 item is picked up, allocate the next free `FEA9-NN` (or
-  `BUG9-NN` etc.) at the start of the branch. Application-layer items use
+- When a Tier 1/2/3 item is picked up, allocate the next free `FEA14-NN` (or
+  `BUG14-NN` etc.) at the start of the branch. Excalidraw-alignment items use
+  `UXA-NN` (see `Excalidraw Side-by-Side` below). Application-layer items use
   `APP-NN`. Use the ID in every commit subject per `CLAUDE.md`.
 - On merge, move the item from this file into `README.md`'s historical section
   under the appropriate round heading, keyed by ID. Don't keep the description

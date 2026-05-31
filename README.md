@@ -1,5 +1,7 @@
 # Isoflow
 
+> Part of [Projects](../README.md)
+
 A React component for drawing network diagrams.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

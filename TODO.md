@@ -1,8 +1,8 @@
 ---
-project: isoflow
-display_name: Isoflow
+project: isometrica
+display_name: Isometrica
 type: other
 prefix: iso
 ---
 
-# Isoflow TODO
+# Isometrica TODO

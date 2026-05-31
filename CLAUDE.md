@@ -1,5 +1,7 @@
 # Claude Code instructions for `@qant-au/isoflow`
 
+> Part of [Projects](../README.md)
+
 These are project-wide instructions read automatically by Claude Code at the start of any session in this repository.
 
 ## Always start with Graphify

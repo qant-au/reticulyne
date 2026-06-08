@@ -1,8 +1,8 @@
 ---
-project: isometrica
-display_name: Isometrica
+project: reticulyne
+display_name: Reticulyne
 type: other
 prefix: iso
 ---
 
-# Isometrica TODO
+# Reticulyne TODO

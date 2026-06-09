@@ -55,6 +55,9 @@ export const Renderer = ({
   return (
     <Box
       ref={containerRef}
+      role="application"
+      aria-label="Diagram canvas"
+      aria-roledescription="isometric diagram editor"
       sx={{
         position: 'absolute',
         top: 0,

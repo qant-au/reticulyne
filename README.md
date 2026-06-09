@@ -1,4 +1,4 @@
-# Isoflow
+# Reticulyne
 
 > Part of [Projects](../README.md)
 
@@ -6,11 +6,21 @@ A React component for drawing network diagrams.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **Fork note:** This is a maintained community fork of [isoflow](https://github.com/markmanx/isoflow) by Mark Mankarious, which is no longer actively maintained. Maintained by QANT Pty Ltd under the same MIT license.
+## About Reticulyne
+
+Reticulyne is an embeddable, isometric network-diagram editor for React. The project home is **[reticulyne.com](https://reticulyne.com)**; source lives at **[github.com/qant-au/reticulyne](https://github.com/qant-au/reticulyne)**. The library ships as a React component for embedding inside other applications, and as a standalone Docker image for self-hosted editor deployments.
+
+The name *Reticulyne* derives from *reticulum* — the Latin word for a network of fibres — with a designed `-lyne` orthography that names the product's job: networks, drawn.
+
+### Succession from Isoflow
+
+Reticulyne is the modern successor to [isoflow](https://github.com/markmanx/isoflow) by Mark Mankarious. The project began life as `@qant-au/isoflow`, a maintained community fork of the original after upstream maintenance lapsed. Over the v1.x–v4.x line the codebase diverged substantially from upstream — every feature shipping today was built here rather than ported from upstream — and the fork framing had stopped describing the actual relationship. The rename acknowledges that. Mark's original MIT-licensed work remains attributed in [`LICENSE`](./LICENSE); Reticulyne continues under the same MIT license.
+
+Reticulyne v0.1.0 marks the renamed identity. It is a *naming* reset, not a *content* reset — the technical lineage summarised below is unbroken.
 
 > **Development status:** This project is currently under active development. We are working through a period of significant modernisation — upgrading dependencies, improving build tooling, hardening security, and expanding the feature set. Things may change rapidly between releases during this phase. We intend to stabilise the codebase and open the project up to normal community contribution once that foundational work is complete.
 
-## v4.x development history
+## Pre-rename development history (as `@qant-au/isoflow` v1.x → v4.7.0)
 
 High-level overview of what landed during the v4 modernisation work (full detail in `git log` under the `SEC4`, `QUA4`, `BLD4`, `BUG4`, `DOC4`, `FEA4`, `FEA5`, `BUG5`, `SEC5`, `QUA5`, and `FEA9` task-ID prefixes):
 
@@ -130,6 +140,8 @@ An optional Three.js layer for connector rendering, complementing the existing S
 
 ## Installation
 
+> The package is currently still published as `@qant-au/isoflow`. The rename to `@reticulyne/core` lands with Reticulyne v0.1.0 (Stage 2 of the rename work). Install instructions below reflect the currently published package name.
+
 This package is published to GitHub Packages, not the public npm registry. Full setup (including `.npmrc` and token configuration) is in [docs/installation.md](docs/installation.md). The quick version:
 
 ```bash
@@ -146,7 +158,7 @@ npm install \
 
 **Read this if you ever pass user-influenced data into `initialData`.**
 
-Isoflow renders node and connector `description` fields as HTML through a Quill-based rich-text editor. The library ships with an in-source mitigation for the `quill@2.0.3` XSS advisory ([`GHSA-v3m3-f69x-jf25`](https://github.com/advisories/GHSA-v3m3-f69x-jf25)) — but it is **narrow** and consumer responsibility starts where it ends:
+Reticulyne renders node and connector `description` fields as HTML through a Quill-based rich-text editor. The library ships with an in-source mitigation for the `quill@2.0.3` XSS advisory ([`GHSA-v3m3-f69x-jf25`](https://github.com/advisories/GHSA-v3m3-f69x-jf25)) — but it is **narrow** and consumer responsibility starts where it ends:
 
 - ✅ **What the library does for you.** A module-load override of Quill's `Link` blot rejects `javascript:`, `data:`, `vbscript:`, `file:`, and `blob:` URL protocols (including percent-encoded variants) on every `<a href>` Quill touches. This covers both user-typed links and `value`-prop HTML re-parsed through Quill's clipboard converter. The editor is also locked to a small `formats` allowlist (`bold`, `italic`, `underline`, `strike`, `link`) — Quill drops unknown tags it sees during paste.
 - ❌ **What the library does NOT do for you.** It does not strip arbitrary HTML elements from the `description` string before that string ever reaches Quill. If your application hydrates `initialData` from an untrusted source (consumer-uploaded JSON, third-party API, a database row originally populated by an end user), constructs like `<iframe srcdoc="...">`, `<svg onload="...">`, `<img src=x onerror="...">`, or `<style>` injections can land in the DOM.
@@ -173,7 +185,7 @@ The full embed-side contract — including read/write asymmetry and the `onModel
 
 ## Project maintainer
 
-Contact information to follow.
+Reticulyne is maintained by **Adam Burgess** ([adamburgess.me](https://adamburgess.me)) under QANT Pty Ltd. The project home is [reticulyne.com](https://reticulyne.com); source lives at [github.com/qant-au/reticulyne](https://github.com/qant-au/reticulyne).
 
 ## Contributing and support
 

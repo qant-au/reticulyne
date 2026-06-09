@@ -1,16 +1,16 @@
 # syntax=docker/dockerfile:1.7
 #
-# Standalone Isoflow nginx image. Two variants share this single
+# Standalone Reticulyne nginx image. Two variants share this single
 # Dockerfile, parameterised via two build args:
 #
-#   # Main editor (single <Isoflow> SPA, src/index-docker.tsx entry):
-#   docker build -t isoflow .
+#   # Main editor (single <Reticulyne> SPA, src/index-docker.tsx entry):
+#   docker build -t reticulyne .
 #
 #   # Examples picker (BasicEditor / DebugTools / ReadonlyMode, src/index.tsx):
 #   docker build \
 #     --build-arg WEBPACK_SCRIPT=docker:examples:build \
 #     --build-arg DIST_DIR=dist-docker-examples \
-#     -t isoflow-examples .
+#     -t reticulyne-examples .
 #
 # Defaults match the main editor variant. `restart.sh` is the
 # canonical caller for both variants.

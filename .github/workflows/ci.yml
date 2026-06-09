@@ -68,7 +68,7 @@ jobs:
   # (pull_request) contains the literal string `[run e2e]`. The intent
   # is opt-in: most PRs don't touch the editor's interactive surface,
   # so paying ~3 minutes per run is reserved for the changes that do.
-  # The job builds the isoflow Docker image, starts it on the runner,
+  # The job builds the reticulyne Docker image, starts it on the runner,
   # and points Playwright at it.
   e2e:
     runs-on: ubuntu-latest
@@ -99,21 +99,21 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Build isoflow Docker image
-        run: docker build -t isoflow .
+      - name: Build reticulyne Docker image
+        run: docker build -t reticulyne .
 
-      - name: Start isoflow container
+      - name: Start reticulyne container
         run: |
-          docker run -d --rm --name isoflow -p 2222:8080 isoflow
+          docker run -d --rm --name reticulyne -p 2222:8080 reticulyne
           for i in $(seq 1 30); do
             if curl -sf http://localhost:2222/ > /dev/null; then
-              echo "isoflow container responding on :2222"
+              echo "reticulyne container responding on :2222"
               exit 0
             fi
             sleep 1
           done
-          echo "isoflow container did not respond within 30s" >&2
-          docker logs isoflow >&2 || true
+          echo "reticulyne container did not respond within 30s" >&2
+          docker logs reticulyne >&2 || true
           exit 1
 
       - name: Run Playwright tests
@@ -121,9 +121,9 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:2222
 
-      - name: Stop isoflow container
+      - name: Stop reticulyne container
         if: always()
-        run: docker rm -f isoflow || true
+        run: docker rm -f reticulyne || true
 
       - name: Upload Playwright report on failure
         if: failure()

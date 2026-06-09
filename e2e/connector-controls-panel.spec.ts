@@ -17,7 +17,7 @@ test('Edit line panel meets the new requirements', async ({ page }) => {
   });
 
   await page.addInitScript((iconSvg) => {
-    window.__ISOFLOW_E2E__ = {
+    window.__RETICULYNE_E2E__ = {
       initialData: {
         title: 'panel smoke',
         items: [

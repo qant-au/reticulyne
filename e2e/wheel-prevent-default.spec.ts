@@ -20,7 +20,7 @@ import { expect, test } from '@playwright/test';
 test.describe('BUG5-09 — wheel events do not scroll an embedding parent', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
-      window.__ISOFLOW_E2E__ = {
+      window.__RETICULYNE_E2E__ = {
         scrollParent: true
       };
     });

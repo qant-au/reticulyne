@@ -1,6 +1,6 @@
 // Standalone Docker SPA — examples-picker variant. Built by
 // `npm run docker:examples:build`; used by docker/Dockerfile to
-// produce the `isoflow-examples` nginx image (port 2223 on the host
+// produce the `reticulyne-examples` nginx image (port 2223 on the host
 // via restart.sh).
 //
 // Entry point is src/index.tsx, the full editor UI with the

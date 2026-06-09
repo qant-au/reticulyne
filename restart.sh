@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# restart.sh — rebuild both standalone Isoflow Docker images, serve them
+# restart.sh — rebuild both standalone Reticulyne Docker images, serve them
 # side-by-side, and (re-)sync the Graphify knowledge graph.
 #
-#   http://localhost:2222   isoflow            (single full-screen editor —
-#                                               just the Isoflow component)
-#   http://localhost:2223   isoflow-examples   (examples picker UI with the
-#                                               BasicEditor / DebugTools /
-#                                               ReadonlyMode menu)
+#   http://localhost:2222   reticulyne            (single full-screen editor —
+#                                                 just the Reticulyne component)
+#   http://localhost:2223   reticulyne-examples   (examples picker UI with the
+#                                                 BasicEditor / DebugTools /
+#                                                 ReadonlyMode menu)
 #
 # Usage:
 #   bash restart.sh                       # rebuild & restart both, wait
@@ -16,7 +16,7 @@
 #                                         # the user presses 'D'
 #   PORT=3000 bash restart.sh             # override editor port (default 2222)
 #   EXAMPLES_PORT=4000 bash restart.sh    # override examples port (default 2223)
-#   TAG=isoflow:dev bash restart.sh
+#   TAG=reticulyne:dev bash restart.sh
 #   NO_EXAMPLES=1 bash restart.sh         # skip the examples container entirely
 #   NO_GRAPHIFY=1 bash restart.sh         # skip Graphify steps entirely
 #   NO_WATCH=1 bash restart.sh            # exit immediately after the
@@ -38,10 +38,10 @@ set -euo pipefail
 
 PORT="${PORT:-2222}"
 EXAMPLES_PORT="${EXAMPLES_PORT:-2223}"
-TAG="${TAG:-isoflow}"
-EXAMPLES_TAG="${EXAMPLES_TAG:-isoflow-examples}"
-NAME="${NAME:-isoflow}"
-EXAMPLES_NAME="${EXAMPLES_NAME:-isoflow-examples}"
+TAG="${TAG:-reticulyne}"
+EXAMPLES_TAG="${EXAMPLES_TAG:-reticulyne-examples}"
+NAME="${NAME:-reticulyne}"
+EXAMPLES_NAME="${EXAMPLES_NAME:-reticulyne-examples}"
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-30}"
 NO_EXAMPLES="${NO_EXAMPLES:-0}"
 NO_GRAPHIFY="${NO_GRAPHIFY:-0}"
@@ -88,7 +88,7 @@ wait_for_http() {
   done
 }
 
-# ---- Container 1: isoflow (single-editor SPA, port 2222) ----
+# ---- Container 1: reticulyne (single-editor SPA, port 2222) ----
 echo "==> Stopping any prior \"$NAME\" container"
 docker rm -f "$NAME" >/dev/null 2>&1 || true
 
@@ -104,7 +104,7 @@ if ! wait_for_http "http://localhost:${PORT}/" "Editor"; then
   exit 1
 fi
 
-# ---- Container 2: isoflow-examples (examples picker UI, port 2223) ----
+# ---- Container 2: reticulyne-examples (examples picker UI, port 2223) ----
 if [[ "$NO_EXAMPLES" == "1" ]]; then
   echo "==> Skipping examples container (NO_EXAMPLES=1)"
 else

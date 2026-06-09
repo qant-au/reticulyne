@@ -59,7 +59,7 @@ test('non-axis-aligned connector renders along the correct diagonal', async ({
   });
 
   await page.addInitScript((iconSvg) => {
-    window.__ISOFLOW_E2E__ = {
+    window.__RETICULYNE_E2E__ = {
       initialData: {
         title: 'e2e diagonal connector fixture',
         items: [

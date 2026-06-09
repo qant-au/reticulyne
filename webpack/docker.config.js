@@ -1,9 +1,9 @@
 // Standalone Docker SPA — main editor variant. Built by
 // `npm run docker:build`; used by docker/Dockerfile to produce the
-// `isoflow` nginx image (port 2222 on the host via restart.sh).
+// `reticulyne` nginx image (port 2222 on the host via restart.sh).
 //
 // Entry point is src/index-docker.tsx, which mounts a full-screen
-// <Isoflow> with no examples picker. No source maps — see the
+// <Reticulyne> with no examples picker. No source maps — see the
 // rationale in prod.config.js.
 
 const path = require('path');

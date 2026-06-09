@@ -112,7 +112,7 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
     // misconfiguration without breaking the UI.
     expect(warnSpy).toHaveBeenCalled();
     const matched = warnSpy.mock.calls.find((call) => {
-      return /\[isoflow\].*ACTION\.SAVE.*onSave/i.test(String(call[0]));
+      return /\[reticulyne\].*ACTION\.SAVE.*onSave/i.test(String(call[0]));
     });
     expect(matched).toBeDefined();
   });

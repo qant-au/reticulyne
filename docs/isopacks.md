@@ -1,6 +1,6 @@
 # Isopacks
 
-An **isopack** is a collection of icons (and related assets) that Isoflow can render. The
+An **isopack** is a collection of icons (and related assets) that Reticulyne can render. The
 editor doesn't ship any default icons — you supply collections at mount time via the
 `initialData.icons` prop.
 
@@ -41,10 +41,10 @@ const icons = collections.flatMap((c) =>
 ## Loading icons
 
 ```tsx
-import Isoflow from '@qant-au/isoflow';
+import Reticulyne from '@qant-au/isoflow';
 import myIcons from './my-icons.json'; // [{ id, name, url, ... }]
 
-<Isoflow initialData={{
+<Reticulyne initialData={{
   title: 'Example scene',
   icons: myIcons,
   colors: [],
@@ -59,7 +59,7 @@ The icons appear in the icon panel and can be dragged onto the canvas.
 
 The repository ships five icon collections embedded under `src/vendor/isopacks/`:
 
-- **isoflow** — general infrastructure icons (server, storage, switch, etc.)
+- **reticulyne** — general infrastructure icons (server, storage, switch, etc.)
 - **aws** — Amazon Web Services
 - **azure** — Microsoft Azure
 - **gcp** — Google Cloud Platform
@@ -93,7 +93,7 @@ const icons = customCollection.icons.map((icon) => ({
   collection: customCollection.id,
 }));
 
-<Isoflow initialData={{ title: 'Example', icons, colors: [], items: [], views: [] }} />;
+<Reticulyne initialData={{ title: 'Example', icons, colors: [], items: [], views: [] }} />;
 ```
 
 The plugin interface is intentionally minimal — any data that satisfies `ProcessedCollection`

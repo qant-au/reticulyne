@@ -4,7 +4,7 @@ import { jsPDF } from 'jspdf';
 import { Model, Size } from '../types';
 
 export const generateGenericFilename = (extension: string) => {
-  return `isoflow-export-${new Date().toISOString()}.${extension}`;
+  return `reticulyne-export-${new Date().toISOString()}.${extension}`;
 };
 
 export const base64ToBlob = (

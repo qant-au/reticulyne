@@ -5,12 +5,12 @@ A minimal example. Assumes you've completed [installation](installation.md).
 ## Minimal render
 
 ```tsx
-import Isoflow from '@qant-au/isoflow';
+import Reticulyne from '@qant-au/isoflow';
 
 export function App() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Isoflow />
+      <Reticulyne />
     </div>
   );
 }
@@ -21,12 +21,12 @@ particularly useful — see [isopacks.md](isopacks.md) for how to load icon coll
 
 ## Container sizing
 
-`<Isoflow>` fills 100% of its containing block. Make sure the container has non-zero
+`<Reticulyne>` fills 100% of its containing block. Make sure the container has non-zero
 dimensions, or pass `width` / `height` props directly:
 
 ```tsx
-<Isoflow width={640} height={480} />
-<Isoflow width="50vw" height="80vh" />
+<Reticulyne width={640} height={480} />
+<Reticulyne width="50vw" height="80vh" />
 ```
 
 The renderer attaches a `ResizeObserver` to its root, so layout changes are picked up
@@ -37,7 +37,7 @@ without a remount.
 `initialData` accepts a complete model:
 
 ```tsx
-<Isoflow
+<Reticulyne
   initialData={{
     title: 'My diagram',
     version: '',
@@ -55,7 +55,7 @@ Invalid data triggers an alert at mount and the editor renders empty. See
 ## Capturing edits
 
 ```tsx
-<Isoflow
+<Reticulyne
   initialData={diagram}
   onModelUpdated={(model) => {
     persistToBackend(model);
@@ -70,7 +70,7 @@ closure on every render is fine.
 ## Read-only
 
 ```tsx
-<Isoflow editorMode="EXPLORABLE_READONLY" initialData={diagram} />
+<Reticulyne editorMode="EXPLORABLE_READONLY" initialData={diagram} />
 ```
 
 `EXPLORABLE_READONLY` keeps pan, zoom, and selection but hides edit controls and blocks
@@ -79,20 +79,20 @@ See [embedding.md](embedding.md#editor-modes) for the full mode matrix.
 
 ## Next.js
 
-`<Isoflow>` accesses `window` at module load and cannot be server-side rendered. Wrap it in
+`<Reticulyne>` accesses `window` at module load and cannot be server-side rendered. Wrap it in
 a dynamic import with SSR disabled:
 
 ```tsx
-// IsoflowDynamic.tsx
+// ReticulyneDynamic.tsx
 import dynamic from 'next/dynamic';
 
-export const IsoflowDynamic = dynamic(
+export const ReticulyneDynamic = dynamic(
   () => import('@qant-au/isoflow').then((m) => m.default),
   { ssr: false }
 );
 ```
 
-Then use `<IsoflowDynamic />` from your pages or components.
+Then use `<ReticulyneDynamic />` from your pages or components.
 
 ## Next steps
 

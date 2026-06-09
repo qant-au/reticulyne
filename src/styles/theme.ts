@@ -26,7 +26,7 @@ declare module '@mui/material/styles' {
 // Build the customVars block for a given palette mode. Diagram bg
 // and the new-node default colour both vary; the structural numbers
 // (paddings, toolbar height) are mode-agnostic.
-const createIsoflowVars = (mode: PaletteMode): CustomThemeVars => {
+const createReticulyneVars = (mode: PaletteMode): CustomThemeVars => {
   const isDark = mode === 'dark';
   return {
     appPadding: { x: 40, y: 40 },
@@ -40,8 +40,8 @@ const createIsoflowVars = (mode: PaletteMode): CustomThemeVars => {
 
 // FEA7-04: legacy `customVars` export — kept as the light-mode value
 // for back-compat with any external import. Mode-specific vars now
-// live behind `createIsoflowVars(mode)`.
-export const customVars: CustomThemeVars = createIsoflowVars('light');
+// live behind `createReticulyneVars(mode)`.
+export const customVars: CustomThemeVars = createReticulyneVars('light');
 
 const createShadows = (mode: PaletteMode) => {
   // Dark mode wants deeper, more saturated drop shadows so popovers
@@ -63,9 +63,9 @@ const createShadows = (mode: PaletteMode) => {
 // FEA7-04: theme factory. Embedders pass `themeMode` on <Reticulyne>;
 // the resolved mode ('light' | 'dark' — 'auto' is resolved at the
 // React layer via prefers-color-scheme) drives palette + customVars.
-export const createIsoflowTheme = (mode: PaletteMode) => {
+export const createReticulyneTheme = (mode: PaletteMode) => {
   const isDark = mode === 'dark';
-  const vars = createIsoflowVars(mode);
+  const vars = createReticulyneVars(mode);
 
   return createTheme({
     customVars: vars,
@@ -163,13 +163,13 @@ export const createIsoflowTheme = (mode: PaletteMode) => {
 // Back-compat named export. Pre-FEA7 consumers may import `theme`
 // directly; that import-shape continues to resolve to the
 // light-mode theme exactly as before.
-export const theme = createIsoflowTheme('light');
+export const theme = createReticulyneTheme('light');
 
 // Pre-FEA7-04 `themeConfig` export — the full ThemeOptions used to
 // build the light-mode theme. Retained as a top-level export because
 // the picker entry (`src/index.tsx`) spreads it into `createTheme`
 // to derive its own outer theme. Mode-aware consumers should call
-// `createIsoflowTheme(mode)` instead.
+// `createReticulyneTheme(mode)` instead.
 export const themeConfig: ThemeOptions = {
   customVars,
   shadows: createShadows('light'),

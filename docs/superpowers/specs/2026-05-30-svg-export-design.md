@@ -14,13 +14,13 @@ Add "Export as SVG" to the main menu, producing two formats from a single dialog
 
 ## Background
 
-The existing export surface offers PNG (`exportAsImage`) and PDF (`exportAsPdf`). Both use an off-screen `<Isoflow>` instance to render at the correct export theme before capturing. SVG export follows the same pattern but splits into two output formats because no single SVG encoding satisfies both "editable in vector tools" and "portable across browsers."
+The existing export surface offers PNG (`exportAsImage`) and PDF (`exportAsPdf`). Both use an off-screen `<Reticulyne>` instance to render at the correct export theme before capturing. SVG export follows the same pattern but splits into two output formats because no single SVG encoding satisfies both "editable in vector tools" and "portable across browsers."
 
 ---
 
 ## Architecture
 
-A new `ExportSvgDialog` mounts an off-screen `<Isoflow exportTheme="light" editorMode="NON_INTERACTIVE">` instance (identical to `ExportImageDialog`). Once the instance signals ready, the user can choose a background colour and click either of two download buttons. Each button calls a dedicated export utility in `src/utils/exportOptions.ts`.
+A new `ExportSvgDialog` mounts an off-screen `<Reticulyne exportTheme="light" editorMode="NON_INTERACTIVE">` instance (identical to `ExportImageDialog`). Once the instance signals ready, the user can choose a background colour and click either of two download buttons. Each button calls a dedicated export utility in `src/utils/exportOptions.ts`.
 
 The dialog is triggered from the main menu via a new `EXPORT.SVG` menu option and a new `EXPORT_SVG` dialog type. No changes to the store shape, prop API, or render pipeline are required beyond the additions described below.
 
@@ -118,4 +118,4 @@ Both export functions are `async` and wrapped in `try/catch`. On failure, a MUI 
 - Export preview
 - Filename customisation (uses `generateGenericFilename` like PNG/PDF)
 - Dark-theme SVG export (always `exportTheme`-seeded, not live theme)
-- Programmatic SVG export via `useIsoflow()` (can be added in a follow-up)
+- Programmatic SVG export via `useReticulyne()` (can be added in a follow-up)

@@ -26,7 +26,10 @@ export class ReticulyneErrorBoundary extends Component<Props, State> {
       this.props.onError(error, info);
     }
     if (process.env.NODE_ENV !== 'production') {
-      console.error('[isoflow] Render error caught by ErrorBoundary:', error);
+      console.error(
+        '[reticulyne] Render error caught by ErrorBoundary:',
+        error
+      );
     }
   }
 

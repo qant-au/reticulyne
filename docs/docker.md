@@ -19,8 +19,8 @@ The repo ships **two** standalone image variants, both built from a single `Dock
 
 | Container | Tag | Webpack entry | Host port (default) | What it serves |
 |---|---|---|---|---|
-| `isoflow` | `isoflow` | `src/index-docker.tsx` | `2222` | Single full-screen `<Isoflow>` component. Intended for production-shaped deployments where the editor IS the page. |
-| `isoflow-examples` | `isoflow-examples` | `src/index.tsx` | `2223` | Examples-picker UI with the BasicEditor / DebugTools / ReadonlyMode menu. Useful for showcasing the embedding modes and for hand-testing in a browser. |
+| `reticulyne` | `reticulyne` | `src/index-docker.tsx` | `2222` | Single full-screen `<Reticulyne>` component. Intended for production-shaped deployments where the editor IS the page. |
+| `reticulyne-examples` | `reticulyne-examples` | `src/index.tsx` | `2223` | Examples-picker UI with the BasicEditor / DebugTools / ReadonlyMode menu. Useful for showcasing the embedding modes and for hand-testing in a browser. |
 
 The Dockerfile defaults match the main editor variant. The examples variant is selected at build time via `--build-arg WEBPACK_SCRIPT=docker:examples:build --build-arg DIST_DIR=dist-docker-examples` (which `restart.sh` does automatically). Both variants use the same `docker/nginx.conf` and the same `nginxinc/nginx-unprivileged:1.30-alpine` runtime base, so security headers, CSP, gzip, and cache discipline apply identically.
 
@@ -35,7 +35,7 @@ bash restart.sh
 ```
 
 That script:
-1. Stops and removes any prior `isoflow` / `isoflow-examples` containers.
+1. Stops and removes any prior `reticulyne` / `reticulyne-examples` containers.
 2. Rebuilds both images from the single `Dockerfile` — defaults give the main editor; the examples variant is built with `--build-arg WEBPACK_SCRIPT=docker:examples:build --build-arg DIST_DIR=dist-docker-examples`.
 3. Starts both containers detached on host ports `2222` and `2223`, mapping each to the container's `8080`.
 4. Polls each URL until 200 OK (timeout 30s).
@@ -46,8 +46,8 @@ Environment overrides for non-default workflows:
 ```bash
 PORT=3000 bash restart.sh                      # override main editor host port
 EXAMPLES_PORT=4000 bash restart.sh             # override examples picker host port
-TAG=isoflow:dev bash restart.sh
-NAME=isoflow-staging bash restart.sh
+TAG=reticulyne:dev bash restart.sh
+NAME=reticulyne-staging bash restart.sh
 NO_EXAMPLES=1 bash restart.sh                  # skip the examples container
 NO_GRAPHIFY=1 bash restart.sh                  # skip the Graphify update + watch
 TIMEOUT_SECONDS=60 bash restart.sh
@@ -57,15 +57,15 @@ Or run the docker commands by hand:
 
 ```bash
 # Main editor:
-docker build -t isoflow .
-docker run -d --rm --name isoflow -p 2222:8080 isoflow
+docker build -t reticulyne .
+docker run -d --rm --name reticulyne -p 2222:8080 reticulyne
 
 # Examples picker:
 docker build \
   --build-arg WEBPACK_SCRIPT=docker:examples:build \
   --build-arg DIST_DIR=dist-docker-examples \
-  -t isoflow-examples .
-docker run -d --rm --name isoflow-examples -p 2223:8080 isoflow-examples
+  -t reticulyne-examples .
+docker run -d --rm --name reticulyne-examples -p 2223:8080 reticulyne-examples
 ```
 
 (Note the internal port `8080`, not `80` — see "What's in the image" above.)
@@ -82,11 +82,11 @@ The custom nginx config (`docker/nginx.conf`) ships:
   - `Referrer-Policy: no-referrer-when-downgrade`
   - `X-Frame-Options: SAMEORIGIN` (legacy fallback — modern browsers honour the CSP `frame-ancestors` directive below)
   - `Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()`
-  - `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://isoflow.io https://static.isoflow.io; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'`
+  - `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://reticulyne.io https://static.reticulyne.io; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'`
 - **`server_tokens off`** so the nginx version isn't disclosed.
 - **`autoindex off`** so directory contents aren't listed.
 
-The CSP allows the Google Fonts CDN (used by the bundled standalone `index.html` for Noto Sans) and `isoflow.io` (vendored icon-pack image hosts). If you fork the image and replace the font or icon sources, update the CSP accordingly.
+The CSP allows the Google Fonts CDN (used by the bundled standalone `index.html` for Noto Sans) and `reticulyne.io` (vendored icon-pack image hosts). If you fork the image and replace the font or icon sources, update the CSP accordingly.
 
 ## Healthcheck
 
@@ -124,7 +124,7 @@ If you front the container with a reverse proxy (Caddy / Traefik / nginx ingress
 The Dockerfile raises `npm config set fetch-timeout 600000` and `fetch-retries 5` before the install. On a sufficiently slow network you can raise those values further by editing the Dockerfile; if they're still timing out, your build is reaching the public npm registry from inside docker without network reachability — check Docker's DNS configuration or use a registry mirror.
 
 **`restart.sh` times out polling `http://localhost:2222/`.**
-The script dumps `docker logs isoflow` on timeout. Most common cause: an nginx config syntax error introduced by editing `docker/nginx.conf`. Run `docker run --rm -it isoflow nginx -t` to validate the config without serving.
+The script dumps `docker logs reticulyne` on timeout. Most common cause: an nginx config syntax error introduced by editing `docker/nginx.conf`. Run `docker run --rm -it reticulyne nginx -t` to validate the config without serving.
 
 **Port `2222` already in use.**
 Override with `PORT=3000 bash restart.sh`, or stop the conflicting process: `lsof -i :2222`.

@@ -22,7 +22,7 @@ import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { Reticulyne } from 'src/Reticulyne';
 import { Loader } from 'src/components/Loader/Loader';
-import { createIsoflowTheme } from 'src/styles/theme';
+import { createReticulyneTheme } from 'src/styles/theme';
 import { ColorPicker } from 'src/components/ColorSelector/ColorPicker';
 
 interface Props {
@@ -69,7 +69,8 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
   }, []);
 
   const [backgroundColor, setBackgroundColor] = useState<string>(() => {
-    return createIsoflowTheme(exportTheme).customVars.customPalette.diagramBg;
+    return createReticulyneTheme(exportTheme).customVars.customPalette
+      .diagramBg;
   });
   const [transparent, setTransparent] = useState(false);
 

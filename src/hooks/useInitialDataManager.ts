@@ -111,7 +111,7 @@ export const useInitialDataManager = ({
           // <Reticulyne onValidationError={...} /> prop) to route this
           // into their own error-reporting pipeline.
           console.error(
-            '[isoflow] initialData failed schema validation:',
+            '[reticulyne] initialData failed schema validation:',
             validationResult.error.issues
           );
         }

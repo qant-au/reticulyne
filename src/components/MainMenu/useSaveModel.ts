@@ -34,7 +34,7 @@ export const useSaveModel = () => {
       // undefined, so this branch shouldn't fire from a user click.
       // Kept as a guard in case a future menu change races the prop.
       console.warn(
-        '[isoflow] "Save" menu entry clicked without an onSave callback wired. ' +
+        '[reticulyne] "Save" menu entry clicked without an onSave callback wired. ' +
           'Pass <Reticulyne onSave={...} /> alongside listing "ACTION.SAVE" in mainMenuOptions.'
       );
       return;

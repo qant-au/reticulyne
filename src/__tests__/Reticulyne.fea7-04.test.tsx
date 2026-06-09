@@ -3,7 +3,7 @@
  */
 import { render, cleanup } from '@testing-library/react';
 import Reticulyne from '../Reticulyne';
-import { createIsoflowTheme } from 'src/styles/theme';
+import { createReticulyneTheme } from 'src/styles/theme';
 import type { InitialData } from 'src/types';
 
 beforeAll(() => {
@@ -58,14 +58,14 @@ const emptyInitialData: InitialData = {
 };
 
 describe('FEA7-04 theme factory', () => {
-  test('createIsoflowTheme(light) yields palette.mode = "light"', () => {
-    const theme = createIsoflowTheme('light');
+  test('createReticulyneTheme(light) yields palette.mode = "light"', () => {
+    const theme = createReticulyneTheme('light');
     expect(theme.palette.mode).toBe('light');
     expect(theme.customVars.customPalette.diagramBg).toBe('#f6faff');
   });
 
-  test('createIsoflowTheme(dark) yields palette.mode = "dark" with dark customVars', () => {
-    const theme = createIsoflowTheme('dark');
+  test('createReticulyneTheme(dark) yields palette.mode = "dark" with dark customVars', () => {
+    const theme = createReticulyneTheme('dark');
     expect(theme.palette.mode).toBe('dark');
     expect(theme.customVars.customPalette.diagramBg).toBe('#1a1d24');
     // The default node colour shifts to a darker blue so dark-mode
@@ -74,8 +74,8 @@ describe('FEA7-04 theme factory', () => {
   });
 
   test('factory returns a stable shape across modes (typography, components)', () => {
-    const light = createIsoflowTheme('light');
-    const dark = createIsoflowTheme('dark');
+    const light = createReticulyneTheme('light');
+    const dark = createReticulyneTheme('dark');
     // The fields that should be mode-invariant
     expect(light.customVars.appPadding).toEqual(dark.customVars.appPadding);
     expect(light.customVars.toolMenu).toEqual(dark.customVars.toolMenu);

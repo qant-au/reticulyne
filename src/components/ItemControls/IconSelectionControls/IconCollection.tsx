@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Divider, Stack, Typography, Button } from '@mui/material';
-import {
-  ExpandMore as ChevronDownIcon,
-  ExpandLess as ChevronUpIcon
-} from '@mui/icons-material';
+import ChevronDownIcon from '@mui/icons-material/ExpandMore';
+import ChevronUpIcon from '@mui/icons-material/ExpandLess';
 import { Icon as IconI } from 'src/types';
 import { Section } from 'src/components/ItemControls/components/Section';
 import { IconGrid } from './IconGrid';

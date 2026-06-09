@@ -1,22 +1,20 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Menu, Typography, Divider, Card, Stack } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  GitHub as GitHubIcon,
-  DataObject as ExportJsonIcon,
-  PhotoOutlined as ExportImageIcon,
-  ArticleOutlined as ExportPdfIcon,
-  PolylineOutlined as ExportSvgIcon,
-  FolderOpen as FolderOpenIcon,
-  DeleteOutlined as DeleteOutlineIcon,
-  SaveOutlined as SaveIcon,
-  PanToolOutlined as PanToolIcon,
-  NearMeOutlined as NearMeIcon,
-  AddOutlined as AddIcon,
-  EastOutlined as ConnectorIcon,
-  CropSquareOutlined as CropSquareIcon,
-  Title as TitleIcon
-} from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import ExportJsonIcon from '@mui/icons-material/DataObject';
+import ExportImageIcon from '@mui/icons-material/PhotoOutlined';
+import ExportPdfIcon from '@mui/icons-material/ArticleOutlined';
+import ExportSvgIcon from '@mui/icons-material/PolylineOutlined';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
+import SaveIcon from '@mui/icons-material/SaveOutlined';
+import PanToolIcon from '@mui/icons-material/PanToolOutlined';
+import NearMeIcon from '@mui/icons-material/NearMeOutlined';
+import AddIcon from '@mui/icons-material/AddOutlined';
+import ConnectorIcon from '@mui/icons-material/EastOutlined';
+import CropSquareIcon from '@mui/icons-material/CropSquareOutlined';
+import TitleIcon from '@mui/icons-material/Title';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
 import { useUiStateStore } from 'src/stores/uiStateStore';

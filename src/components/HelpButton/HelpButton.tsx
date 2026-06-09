@@ -1,4 +1,4 @@
-import { HelpOutlined as HelpOutlineIcon } from '@mui/icons-material';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutlined';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
 import { useUiStateStore } from 'src/stores/uiStateStore';

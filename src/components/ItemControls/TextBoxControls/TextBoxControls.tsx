@@ -6,7 +6,7 @@ import {
   ToggleButtonGroup,
   Slider
 } from '@mui/material';
-import { TextRotationNone as TextRotationNoneIcon } from '@mui/icons-material';
+import TextRotationNoneIcon from '@mui/icons-material/TextRotationNone';
 import { useTextBox } from 'src/hooks/useTextBox';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { getIsoProjectionCss } from 'src/utils';

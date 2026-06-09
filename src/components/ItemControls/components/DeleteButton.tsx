@@ -1,4 +1,4 @@
-import { DeleteOutlined as DeleteIcon } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { Button } from '@mui/material';
 
 interface Props {

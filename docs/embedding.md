@@ -1,6 +1,6 @@
-# Embedding `@reticulyne/core`
+# Embedding `@qant-au/reticulyne`
 
-This document describes the contract a consumer of `@reticulyne/core` can rely on: every prop, every callback, the imperative API exposed by the `useReticulyne` hook, the container-sizing rules, and the security model.
+This document describes the contract a consumer of `@qant-au/reticulyne` can rely on: every prop, every callback, the imperative API exposed by the `useReticulyne` hook, the container-sizing rules, and the security model.
 
 Audience: a frontend developer embedding the editor inside a larger React application.
 
@@ -9,18 +9,18 @@ Audience: a frontend developer embedding the editor inside a larger React applic
 ## Importing
 
 ```tsx
-import Reticulyne, { useReticulyne } from '@reticulyne/core';
+import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
 ```
 
 The default export is the `Reticulyne` React component. The named export `useReticulyne` is the imperative hook (only callable inside `<Reticulyne>`'s subtree). Standalone exports (schemas, reducers, types) are also re-exported from the default entrypoint.
 
 ## Required peer dependencies (v2 onwards)
 
-`@reticulyne/core@2+` externalises its UI / state / theming stack. Install these alongside the library:
+`@qant-au/reticulyne@2+` externalises its UI / state / theming stack. Install these alongside the library:
 
 ```bash
 npm install \
-  @reticulyne/core \
+  @qant-au/reticulyne \
   react react-dom \
   @mui/material @mui/icons-material \
   @emotion/react @emotion/styled \
@@ -36,9 +36,9 @@ The package is published to GitHub Packages, not the public npm registry. Before
 //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
 ```
 
-Replace `YOUR_GITHUB_TOKEN` with a [GitHub personal access token](https://github.com/settings/tokens) that has the `read:packages` scope. The token only needs read access — it is used to pull the package, not to publish. Keep the token out of source control (add `.npmrc` to `.gitignore` if the token is embedded, or use an environment variable: `_authToken=${GITHUB_TOKEN}`). Once the `.npmrc` is in place, `npm install` resolves `@reticulyne/core` normally.
+Replace `YOUR_GITHUB_TOKEN` with a [GitHub personal access token](https://github.com/settings/tokens) that has the `read:packages` scope. The token only needs read access — it is used to pull the package, not to publish. Keep the token out of source control (add `.npmrc` to `.gitignore` if the token is embedded, or use an environment variable: `_authToken=${GITHUB_TOKEN}`). Once the `.npmrc` is in place, `npm install` resolves `@qant-au/reticulyne` normally.
 
-`@reticulyne/core@3` requires **MUI v9** (v2 required MUI v5). If your application already uses MUI v9 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and v1 → v2 → v3 migration notes.
+`@qant-au/reticulyne@3` requires **MUI v9** (v2 required MUI v5). If your application already uses MUI v9 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and v1 → v2 → v3 migration notes.
 
 ## Component props (`<Reticulyne>`)
 
@@ -338,7 +338,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 Worked example (read-only viewer + round-trip):
 
 ```tsx
-import Reticulyne, { useReticulyne } from '@reticulyne/core';
+import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
 import { useEffect, useState } from 'react';
 
 function DiagramViewer({ diagramId }: { diagramId: string }) {
@@ -386,7 +386,7 @@ These fields are designed for embedders that push status colours from external s
 Example using `Model.set` (the escape-hatch raw accessor on `useReticulyne()`):
 
 ```typescript
-import Reticulyne, { useReticulyne } from '@reticulyne/core';
+import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
 
 function StatusOverlay() {
   const { Model, getModel } = useReticulyne();
@@ -440,7 +440,7 @@ Worked example — a simulated three-tier system whose API and database states w
 
 ```tsx
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Reticulyne, { useReticulyne } from '@reticulyne/core';
+import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
 
 type Status = 'up' | 'degraded' | 'down';
 const STATUS_COLOR: Record<Status, string> = {
@@ -568,7 +568,7 @@ The mitigations above protect Quill's *input* path. They do not run on the `desc
 
 ```tsx
 import DOMPurify from 'dompurify';
-import Reticulyne from '@reticulyne/core';
+import Reticulyne from '@qant-au/reticulyne';
 
 // Match the editor's own allowlist so a round-trip through Reticulyne is lossless.
 const SANITISE_OPTIONS: DOMPurify.Config = {

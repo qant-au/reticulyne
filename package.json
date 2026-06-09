@@ -1,5 +1,5 @@
 {
-  "name": "@reticulyne/core",
+  "name": "@qant-au/reticulyne",
   "version": "0.1.0",
   "private": false,
   "description": "An open-source React component for drawing network diagrams.",

@@ -2,7 +2,7 @@
 
 The repository ships a self-contained Docker image that serves the editor as a static SPA over nginx. This is the right choice when you want a deployable instance of the editor without embedding it inside your own React application — for example, to run a private editor for a team on an internal subdomain.
 
-> If you want to **embed** the editor as a component inside an existing React app, install `@reticulyne/core` from GitHub Packages and follow [`embedding.md`](./embedding.md) instead.
+> If you want to **embed** the editor as a component inside an existing React app, install `@qant-au/reticulyne` from GitHub Packages and follow [`embedding.md`](./embedding.md) instead.
 
 ## What's in the image
 

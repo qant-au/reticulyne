@@ -1,10 +1,10 @@
-// FEA5-07: imperative `useIsoflow().Connector.pulse()` in isolation.
+// FEA5-07: imperative `useReticulyne().Connector.pulse()` in isolation.
 // Two nodes, one connector, one button. Clicking the button fires a
 // one-shot glyph travelling along the line — no auto-tick, no model
 // mutations. LiveDashboard wires this same call into a setInterval; this
 // example strips it back to the bare API.
 import { Box, Button, Typography } from '@mui/material';
-import Isoflow, { useIsoflow } from 'src/Isoflow';
+import Reticulyne, { useReticulyne } from 'src/Reticulyne';
 import { icons, colors } from '../initialData';
 import type { InitialData } from 'src/types';
 import { useExamplesThemeMode } from '../themeModeContext';
@@ -44,10 +44,10 @@ const pulseInitialData: InitialData = {
   fitToView: true
 };
 
-// Inner driver: must live inside the <Isoflow> tree so `useIsoflow()`
+// Inner driver: must live inside the <Reticulyne> tree so `useReticulyne()`
 // can resolve the surrounding context providers.
 const PulseDriver = () => {
-  const { Connector } = useIsoflow();
+  const { Connector } = useReticulyne();
   return (
     <Box
       sx={{
@@ -77,13 +77,13 @@ export const ConnectorPulse = () => {
   const { themeMode } = useExamplesThemeMode();
   return (
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-      <Isoflow
+      <Reticulyne
         initialData={pulseInitialData}
         editorMode="EXPLORABLE_READONLY"
         themeMode={themeMode}
       >
         <PulseDriver />
-      </Isoflow>
+      </Reticulyne>
       <Box
         sx={{
           position: 'absolute',
@@ -100,7 +100,7 @@ export const ConnectorPulse = () => {
           Connector pulse (FEA5-07)
         </Typography>
         <Typography variant="caption" component="div">
-          The button calls <code>useIsoflow().Connector.pulse(id)</code> — a
+          The button calls <code>useReticulyne().Connector.pulse(id)</code> — a
           one-shot glyph that travels the line, then clears itself.
         </Typography>
       </Box>

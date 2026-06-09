@@ -27,7 +27,7 @@ describe('useIcon', () => {
     // points to because the host swapped palettes through the
     // imperative Model.set API (which bypasses cross-ref validation).
     // Before BUG5-04 this threw inside useMemo on render, surfacing
-    // through IsoflowErrorBoundary for every node referencing the
+    // through ReticulyneErrorBoundary for every node referencing the
     // missing icon.
     const { result } = renderHook(
       () => {

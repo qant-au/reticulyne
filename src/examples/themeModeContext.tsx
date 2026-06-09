@@ -1,7 +1,7 @@
 // FEA7-04 demo glue: the examples picker (dev/demo bundle, port 2223)
 // drives `themeMode` from a sidebar toggle. Each example reads the
 // resolved value via `useExamplesThemeMode()` and passes it to its
-// own <Isoflow>. Lives in the examples tree so it doesn't ship with
+// own <Reticulyne>. Lives in the examples tree so it doesn't ship with
 // the library bundle.
 import { createContext, useContext, useState, ReactNode } from 'react';
 

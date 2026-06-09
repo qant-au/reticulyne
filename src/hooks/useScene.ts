@@ -233,7 +233,7 @@ export const useScene = () => {
         ctx: { viewId: currentViewId, state: getState() }
       });
       // FEA5-07: host-driven imperative updates (Connector.update via
-      // useIsoflow) pass recordHistory: false so a live-data poller
+      // useReticulyne) pass recordHistory: false so a live-data poller
       // hitting this 5x/second doesn't fill the undo stack. Editor
       // UI changes leave the flag unset and remain undoable. Reuses
       // the same isApplying flag the undo/redo path uses (see

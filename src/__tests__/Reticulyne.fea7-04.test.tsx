@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, cleanup } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import { createIsoflowTheme } from 'src/styles/theme';
 import type { InitialData } from 'src/types';
 
@@ -86,7 +86,7 @@ describe('FEA7-04 themeMode prop', () => {
   test('default (no themeMode) renders without error in light mode', () => {
     installMatchMedia(false);
     const onError = jest.fn();
-    render(<Isoflow onError={onError} initialData={emptyInitialData} />);
+    render(<Reticulyne onError={onError} initialData={emptyInitialData} />);
     expect(onError).not.toHaveBeenCalled();
   });
 
@@ -94,7 +94,7 @@ describe('FEA7-04 themeMode prop', () => {
     installMatchMedia(false);
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={emptyInitialData}
         themeMode="dark"
@@ -107,7 +107,7 @@ describe('FEA7-04 themeMode prop', () => {
     installMatchMedia(true);
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={emptyInitialData}
         themeMode="auto"
@@ -120,7 +120,7 @@ describe('FEA7-04 themeMode prop', () => {
     installMatchMedia(false);
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={emptyInitialData}
         themeMode="auto"
@@ -133,7 +133,7 @@ describe('FEA7-04 themeMode prop', () => {
     installMatchMedia(false);
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={emptyInitialData}
         themeMode="dark"

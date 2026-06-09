@@ -7,7 +7,7 @@ import { useResolvedThemeMode } from 'src/hooks/useResolvedThemeMode';
 import type {
   Connector as ConnectorType,
   InitialData,
-  IsoflowProps,
+  ReticulyneProps,
   Model,
   ModelStore
 } from 'src/types';
@@ -24,7 +24,7 @@ import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
-import { IsoflowErrorBoundary } from 'src/components/IsoflowErrorBoundary/IsoflowErrorBoundary';
+import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
 
 const App = ({
   initialData,
@@ -46,7 +46,7 @@ const App = ({
   highlightedItemId,
   exportTheme = 'light',
   children
-}: IsoflowProps) => {
+}: ReticulyneProps) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
@@ -172,7 +172,7 @@ const App = ({
   );
 };
 
-export const Isoflow = (props: IsoflowProps) => {
+export const Reticulyne = (props: ReticulyneProps) => {
   const {
     onError,
     errorFallback,
@@ -201,7 +201,7 @@ export const Isoflow = (props: IsoflowProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appProps.initialData]);
   return (
-    <IsoflowErrorBoundary onError={onError} fallback={errorFallback}>
+    <ReticulyneErrorBoundary onError={onError} fallback={errorFallback}>
       <ThemeProvider theme={theme}>
         <ModelProvider>
           <SceneProvider>
@@ -217,11 +217,11 @@ export const Isoflow = (props: IsoflowProps) => {
           </SceneProvider>
         </ModelProvider>
       </ThemeProvider>
-    </IsoflowErrorBoundary>
+    </ReticulyneErrorBoundary>
   );
 };
 
-const useIsoflow = () => {
+const useReticulyne = () => {
   const rendererEl = useUiStateStore((state) => {
     return state.rendererEl;
   });
@@ -255,7 +255,7 @@ const useIsoflow = () => {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
             `[isoflow] Refusing model mutation in editorMode="${editorModeRef.current}". ` +
-              `Set editorMode="EDITABLE" to allow mutations through useIsoflow().Model.set.`
+              `Set editorMode="EDITABLE" to allow mutations through useReticulyne().Model.set.`
           );
         }
         return;
@@ -309,7 +309,7 @@ const useIsoflow = () => {
   // (model/scene/ui/history) at call time rather than going
   // through `useScene()`. `useScene()` calls
   // `getItemByIdOrThrow(views, currentViewId)` synchronously, which
-  // throws when a host calls useIsoflow before a view is loaded.
+  // throws when a host calls useReticulyne before a view is loaded.
   // Going through `.actions.get()` means the lookup only runs at
   // mutation time — and at that point the host is responsible for
   // ensuring the view exists.
@@ -419,6 +419,6 @@ const useIsoflow = () => {
   };
 };
 
-export { useIsoflow };
+export { useReticulyne };
 export * from 'src/standaloneExports';
-export default Isoflow;
+export default Reticulyne;

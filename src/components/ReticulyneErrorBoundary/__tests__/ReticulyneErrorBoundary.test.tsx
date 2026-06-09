@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, cleanup } from '@testing-library/react';
-import { IsoflowErrorBoundary } from '../IsoflowErrorBoundary';
+import { ReticulyneErrorBoundary } from '../ReticulyneErrorBoundary';
 
 afterEach(() => {
   cleanup();
@@ -12,7 +12,7 @@ const Bomb = () => {
   throw new Error('boom');
 };
 
-describe('IsoflowErrorBoundary', () => {
+describe('ReticulyneErrorBoundary', () => {
   let errorSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -27,27 +27,27 @@ describe('IsoflowErrorBoundary', () => {
 
   test('renders children when no error', () => {
     const { getByText } = render(
-      <IsoflowErrorBoundary>
+      <ReticulyneErrorBoundary>
         <span>safe</span>
-      </IsoflowErrorBoundary>
+      </ReticulyneErrorBoundary>
     );
     expect(getByText('safe')).toBeTruthy();
   });
 
   test('renders default fallback on render error', () => {
     const { getByRole } = render(
-      <IsoflowErrorBoundary>
+      <ReticulyneErrorBoundary>
         <Bomb />
-      </IsoflowErrorBoundary>
+      </ReticulyneErrorBoundary>
     );
     expect(getByRole('alert').textContent).toContain('Editor failed to load');
   });
 
   test('renders custom fallback when provided', () => {
     const { getByText } = render(
-      <IsoflowErrorBoundary fallback={<span>custom-fallback</span>}>
+      <ReticulyneErrorBoundary fallback={<span>custom-fallback</span>}>
         <Bomb />
-      </IsoflowErrorBoundary>
+      </ReticulyneErrorBoundary>
     );
     expect(getByText('custom-fallback')).toBeTruthy();
   });
@@ -55,9 +55,9 @@ describe('IsoflowErrorBoundary', () => {
   test('invokes onError callback', () => {
     const onError = jest.fn();
     render(
-      <IsoflowErrorBoundary onError={onError}>
+      <ReticulyneErrorBoundary onError={onError}>
         <Bomb />
-      </IsoflowErrorBoundary>
+      </ReticulyneErrorBoundary>
     );
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);

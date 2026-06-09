@@ -29,7 +29,7 @@ import {
 import { ModelStore } from 'src/types';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { Isoflow } from 'src/Isoflow';
+import { Reticulyne } from 'src/Reticulyne';
 import { Loader } from 'src/components/Loader/Loader';
 import { createIsoflowTheme } from 'src/styles/theme';
 import { ColorPicker } from 'src/components/ColorSelector/ColorPicker';
@@ -169,7 +169,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                     height: unprojectedBounds.height * quality
                   }}
                 >
-                  <Isoflow
+                  <Reticulyne
                     editorMode="NON_INTERACTIVE"
                     onModelUpdated={exportImage}
                     initialData={{

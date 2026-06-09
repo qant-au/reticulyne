@@ -61,7 +61,7 @@ export const useInitialDataManager = ({
   // Stash the latest validation-error callback in a ref so `load`'s
   // useCallback identity stays stable across consumer re-renders that
   // pass a fresh inline closure each time. Same pattern as
-  // onModelUpdatedRef in Isoflow.tsx.
+  // onModelUpdatedRef in Reticulyne.tsx.
   const onValidationErrorRef = useRef(onValidationError);
   useEffect(() => {
     onValidationErrorRef.current = onValidationError;
@@ -108,7 +108,7 @@ export const useInitialDataManager = ({
           // but do not pop a window.alert — a library popping native
           // modals breaks every embedder's UX. The consumer can pass
           // an `onValidationError` callback (forwarded from the
-          // <Isoflow onValidationError={...} /> prop) to route this
+          // <Reticulyne onValidationError={...} /> prop) to route this
           // into their own error-reporting pipeline.
           console.error(
             '[isoflow] initialData failed schema validation:',

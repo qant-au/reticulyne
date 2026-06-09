@@ -5,7 +5,7 @@ export const useWindowUtils = () => {
   const { fitToView, getUnprojectedBounds } = useDiagramUtils();
 
   useEffect(() => {
-    window.Isoflow = {
+    window.Reticulyne = {
       getUnprojectedBounds,
       fitToView
     };

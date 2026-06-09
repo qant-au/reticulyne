@@ -60,7 +60,7 @@ const createShadows = (mode: PaletteMode) => {
   return shadows;
 };
 
-// FEA7-04: theme factory. Embedders pass `themeMode` on <Isoflow>;
+// FEA7-04: theme factory. Embedders pass `themeMode` on <Reticulyne>;
 // the resolved mode ('light' | 'dark' — 'auto' is resolved at the
 // React layer via prefers-color-scheme) drives palette + customVars.
 export const createIsoflowTheme = (mode: PaletteMode) => {

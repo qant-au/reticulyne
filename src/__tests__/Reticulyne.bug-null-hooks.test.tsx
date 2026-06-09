@@ -7,7 +7,7 @@
  * useTextBox, useViewItem) called getItemByIdOrThrow in their render path.
  * When an item was deleted, React child components went through one final
  * render cycle before unmounting. The throw surfaced through
- * IsoflowErrorBoundary and replaced the entire editor with "Editor failed
+ * ReticulyneErrorBoundary and replaced the entire editor with "Editor failed
  * to load." — observable via the onError prop.
  *
  * Hook-level tests cover useModelItem (which only needs ModelProvider).
@@ -18,7 +18,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { render, cleanup } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import { ModelProvider, useModelStore } from 'src/stores/modelStore';
 import { useModelItem } from 'src/hooks/useModelItem';
 import type { InitialData } from 'src/types';
@@ -27,7 +27,7 @@ const ModelWrapper = ({ children }: { children: ReactNode }) => {
   return <ModelProvider>{children}</ModelProvider>;
 };
 
-// jsdom shims required by the Isoflow renderer
+// jsdom shims required by the Reticulyne renderer
 beforeAll(() => {
   if (!('ResizeObserver' in globalThis)) {
     (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
@@ -148,7 +148,7 @@ describe('BUG-01: editor does not crash when rendering items', () => {
 
   test('mounts with nodes, connectors, and rectangles without triggering onError', () => {
     const onError = jest.fn();
-    render(<Isoflow onError={onError} initialData={initialData} />);
+    render(<Reticulyne onError={onError} initialData={initialData} />);
     expect(onError).not.toHaveBeenCalled();
   });
 
@@ -160,7 +160,7 @@ describe('BUG-01: editor does not crash when rendering items', () => {
     const onModelUpdated = jest.fn();
 
     const { unmount } = render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         onModelUpdated={onModelUpdated}
         initialData={initialData}

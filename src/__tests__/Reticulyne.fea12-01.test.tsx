@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, cleanup } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import type { InitialData } from 'src/types';
 
 beforeAll(() => {
@@ -77,7 +77,7 @@ describe('FEA12-01 highlightedItemId', () => {
   test('renders without error when highlightedItemId is supplied', () => {
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={initialData}
         highlightedItemId="node-a"
@@ -88,14 +88,14 @@ describe('FEA12-01 highlightedItemId', () => {
 
   test('renders without error when highlightedItemId is undefined', () => {
     const onError = jest.fn();
-    render(<Isoflow onError={onError} initialData={initialData} />);
+    render(<Reticulyne onError={onError} initialData={initialData} />);
     expect(onError).not.toHaveBeenCalled();
   });
 
   test('renders without error when highlightedItemId matches a connector', () => {
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={initialData}
         highlightedItemId="connector-1"
@@ -107,7 +107,7 @@ describe('FEA12-01 highlightedItemId', () => {
   test('renders without error when highlightedItemId matches no item', () => {
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={initialData}
         highlightedItemId="nonexistent-id"

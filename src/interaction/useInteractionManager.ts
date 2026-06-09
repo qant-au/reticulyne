@@ -155,7 +155,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       // Prevent the host page from scrolling while the user is
       // zooming or panning the diagram. The standalone editor hides
       // this with a page-level `overflow: 'hidden'`, but embedders
-      // that mount <Isoflow> inside a scrollable parent would see the
+      // that mount <Reticulyne> inside a scrollable parent would see the
       // parent scroll on every wheel tick — see BUG5-09. Requires
       // `passive: false` on addEventListener (set below).
       e.preventDefault();

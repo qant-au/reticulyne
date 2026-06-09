@@ -1,11 +1,11 @@
-import Isoflow from 'src/Isoflow';
+import Reticulyne from 'src/Reticulyne';
 import { initialData } from '../initialData';
 import { useExamplesThemeMode } from '../themeModeContext';
 
 export const BasicEditor = () => {
   const { themeMode } = useExamplesThemeMode();
   return (
-    <Isoflow
+    <Reticulyne
       initialData={{ ...initialData, fitToView: true }}
       themeMode={themeMode}
     />

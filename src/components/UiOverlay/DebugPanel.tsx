@@ -1,6 +1,6 @@
 // Optional bottom-left debug panel; sits above ZoomControls.
 // Visible when the consumer passes enableDebugTools=true (forwarded
-// from the <Isoflow enableDebugTools={...} /> prop and stored on the
+// from the <Reticulyne enableDebugTools={...} /> prop and stored on the
 // ui-state store).
 //
 // Extracted from UiOverlay.tsx under QUA4-10.

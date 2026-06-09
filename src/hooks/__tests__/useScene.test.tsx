@@ -68,7 +68,7 @@ const SceneProbe = ({ onCapture }: { onCapture: (s: Slot) => void }) => {
 // passes and the model store / scene store have been populated), we
 // don't render SceneProbe at all — useScene's view-id lookup would
 // otherwise throw against an empty store. This mirrors the same
-// readiness gate that the real <Isoflow> component uses around its
+// readiness gate that the real <Reticulyne> component uses around its
 // Renderer subtree.
 const Loader = ({
   initialData,

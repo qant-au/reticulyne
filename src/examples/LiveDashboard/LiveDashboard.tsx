@@ -2,16 +2,16 @@
 // added in FEA5-05/06/07:
 //   - per-connector glyph (set on the connectors below)
 //   - `enableAnimation` + `animated: true` for the persistent loop
-//   - `useIsoflow().Connector.pulse()` for one-shot signal pulses
+//   - `useReticulyne().Connector.pulse()` for one-shot signal pulses
 //   - `nodeIndicatorComponent` for live status pips next to each node
 //
 // The data layer is a tiny simulated state machine — `useState` +
 // `setInterval` driven from a child component that calls
-// `useIsoflow()`. Real hosts would swap this for a websocket
+// `useReticulyne()`. Real hosts would swap this for a websocket
 // subscription, a polling fetch, or whatever feeds them live state.
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import Isoflow, { useIsoflow } from 'src/Isoflow';
+import Reticulyne, { useReticulyne } from 'src/Reticulyne';
 import { icons, colors } from '../initialData';
 import { useExamplesThemeMode } from '../themeModeContext';
 import type { InitialData, ModelItem } from 'src/types';
@@ -121,8 +121,8 @@ const renderStatusPip = (state: DashboardState, args: { item: ModelItem }) => {
   );
 };
 
-// Driver child rendered inside Isoflow. Uses `useIsoflow()` (only
-// callable inside the Isoflow tree) to fire one-shot pulses on a
+// Driver child rendered inside Reticulyne. Uses `useReticulyne()` (only
+// callable inside the Reticulyne tree) to fire one-shot pulses on a
 // timer. Also updates connector colour in lockstep with the
 // downstream node's status so a "db down" connector turns red.
 interface DriverProps {
@@ -131,7 +131,7 @@ interface DriverProps {
 }
 
 const DashboardDriver = ({ state, onTick }: DriverProps) => {
-  const { Connector } = useIsoflow();
+  const { Connector } = useReticulyne();
 
   // One ticker shared across both connectors. The web→api request
   // fires every tick; the api→db request fires only if db is up.
@@ -192,7 +192,7 @@ export const LiveDashboard = () => {
 
   // Closure-capture `state` here so the indicator function rebuilds
   // on each LiveDashboard render (when state changes), the prop
-  // identity changes, Isoflow plumbs the new fn to the uiState store
+  // identity changes, Reticulyne plumbs the new fn to the uiState store
   // and every Node re-renders with the up-to-date status.
   const nodeIndicatorComponent = useMemo(() => {
     return (args: { item: ModelItem }) => {
@@ -202,7 +202,7 @@ export const LiveDashboard = () => {
 
   return (
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-      <Isoflow
+      <Reticulyne
         initialData={dashboardInitialData}
         enableAnimation
         editorMode="EXPLORABLE_READONLY"
@@ -210,7 +210,7 @@ export const LiveDashboard = () => {
         themeMode={themeMode}
       >
         <DashboardDriver state={state} onTick={advanceTick} />
-      </Isoflow>
+      </Reticulyne>
       <Box
         sx={(t) => {
           // FEA7-04: pull the overlay's tinted-paper bg from the

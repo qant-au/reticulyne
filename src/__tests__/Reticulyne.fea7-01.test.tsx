@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, cleanup } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import { connectorSchema } from 'src/schemas/connector';
 import type { InitialData, Connector } from 'src/types';
 
@@ -166,7 +166,7 @@ describe('FEA7-01 schema', () => {
 describe('FEA7-01 renderer', () => {
   test('animationRate=0 suppresses the looping glyph', () => {
     const { container } = render(
-      <Isoflow
+      <Reticulyne
         enableAnimation
         initialData={fixtureWithConnector({ animationRate: 0 })}
       />
@@ -179,7 +179,7 @@ describe('FEA7-01 renderer', () => {
 
   test('animationRate=0.5 doubles the per-loop duration', () => {
     const { container } = render(
-      <Isoflow
+      <Reticulyne
         enableAnimation
         initialData={fixtureWithConnector({ animationRate: 0.5 })}
       />
@@ -191,7 +191,7 @@ describe('FEA7-01 renderer', () => {
 
   test('animationRate undefined keeps the legacy 2s duration', () => {
     const { container } = render(
-      <Isoflow enableAnimation initialData={fixtureWithConnector({})} />
+      <Reticulyne enableAnimation initialData={fixtureWithConnector({})} />
     );
     const motion = container.querySelector('animateMotion');
     expect(motion?.getAttribute('dur')).toBe('2s');
@@ -199,7 +199,7 @@ describe('FEA7-01 renderer', () => {
 
   test('animationFlow "both" renders two glyphs travelling opposite ways', () => {
     const { container } = render(
-      <Isoflow
+      <Reticulyne
         enableAnimation
         initialData={fixtureWithConnector({ animationFlow: 'both' })}
       />
@@ -215,7 +215,7 @@ describe('FEA7-01 renderer', () => {
 
   test('animationFlow "reverse" overrides the direction-derived flow', () => {
     const { container } = render(
-      <Isoflow
+      <Reticulyne
         enableAnimation
         initialData={fixtureWithConnector({
           // direction defaults to START_TO_END (forward), so this
@@ -230,7 +230,7 @@ describe('FEA7-01 renderer', () => {
 
   test('animationFlow undefined falls back to direction-derived flow', () => {
     const { container } = render(
-      <Isoflow
+      <Reticulyne
         enableAnimation
         initialData={fixtureWithConnector({ direction: 'END_TO_START' })}
       />

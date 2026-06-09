@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen, cleanup, act } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import type { InitialData, Model } from 'src/types';
 
 // jsdom does not implement ResizeObserver or matchMedia; the renderer
@@ -41,24 +41,26 @@ afterEach(() => {
   cleanup();
 });
 
-describe('Isoflow smoke', () => {
+describe('Reticulyne smoke', () => {
   test('mounts with no props and produces a non-empty render', () => {
-    const { container } = render(<Isoflow />);
+    const { container } = render(<Reticulyne />);
     expect(container.firstChild).not.toBeNull();
   });
 
   test('mounts with editorMode="EXPLORABLE_READONLY"', () => {
-    const { container } = render(<Isoflow editorMode="EXPLORABLE_READONLY" />);
+    const { container } = render(
+      <Reticulyne editorMode="EXPLORABLE_READONLY" />
+    );
     expect(container.firstChild).not.toBeNull();
   });
 
   test('mounts with editorMode="NON_INTERACTIVE"', () => {
-    const { container } = render(<Isoflow editorMode="NON_INTERACTIVE" />);
+    const { container } = render(<Reticulyne editorMode="NON_INTERACTIVE" />);
     expect(container.firstChild).not.toBeNull();
   });
 
   test('mounts with custom width and height', () => {
-    const { container } = render(<Isoflow width={640} height={480} />);
+    const { container } = render(<Reticulyne width={640} height={480} />);
     expect(container.firstChild).not.toBeNull();
   });
 });
@@ -66,7 +68,7 @@ describe('Isoflow smoke', () => {
 describe('resilience to sparse model input (BUG5-04)', () => {
   // The library accepts unbounded zod input (colors has no .min() in its
   // schema). Before BUG5-04, useColor threw when the palette was empty,
-  // surfacing through IsoflowErrorBoundary and replacing the editor
+  // surfacing through ReticulyneErrorBoundary and replacing the editor
   // with the failure UI. Dangling icon refs (only reachable via the
   // imperative Model.set escape hatch which bypasses cross-ref
   // validation) had the same shape of problem in useIcon — both hooks
@@ -77,7 +79,7 @@ describe('resilience to sparse model input (BUG5-04)', () => {
   test('mounts with colors: [] without crashing the editor', () => {
     const onError = jest.fn();
     const { container } = render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={{
           version: '',
@@ -114,7 +116,7 @@ describe('initialData reference stability (BUG5-11)', () => {
   // `{ ...INITIAL_DATA, ...initialData }` inline on every effect run,
   // producing a fresh object reference and silently defeating the
   // reference-equality dedupe in useInitialDataManager.load. Any host
-  // that re-rendered Isoflow (e.g. because it bridges onModelUpdated
+  // that re-rendered Reticulyne (e.g. because it bridges onModelUpdated
   // into React state to track a `dirty` flag) re-seeded the entire
   // model store on every parent render, wiping unsaved items.
   //
@@ -137,7 +139,7 @@ describe('initialData reference stability (BUG5-11)', () => {
     };
 
     const { rerender } = render(
-      <Isoflow initialData={initialData} onModelUpdated={onModelUpdated} />
+      <Reticulyne initialData={initialData} onModelUpdated={onModelUpdated} />
     );
 
     // After initial seed the callback has fired at least once and the
@@ -157,7 +159,7 @@ describe('initialData reference stability (BUG5-11)', () => {
     // fires again with a different view id.
     act(() => {
       rerender(
-        <Isoflow
+        <Reticulyne
           initialData={initialData}
           onModelUpdated={onModelUpdated}
           width={640}
@@ -178,17 +180,17 @@ describe('initialData reference stability (BUG5-11)', () => {
 
 describe('showTitleBar prop', () => {
   test('showTitleBar=true forces title bar visible even in NON_INTERACTIVE mode', () => {
-    render(<Isoflow editorMode="NON_INTERACTIVE" showTitleBar={true} />);
+    render(<Reticulyne editorMode="NON_INTERACTIVE" showTitleBar={true} />);
     expect(screen.queryByText('Untitled')).not.toBeNull();
   });
 
   test('showTitleBar=false forces title bar hidden even in EDITABLE mode', () => {
-    render(<Isoflow editorMode="EDITABLE" showTitleBar={false} />);
+    render(<Reticulyne editorMode="EDITABLE" showTitleBar={false} />);
     expect(screen.queryByText('Untitled')).toBeNull();
   });
 
   test('showTitleBar=undefined defers to editorMode (EXPLORABLE_READONLY shows title)', () => {
-    render(<Isoflow editorMode="EXPLORABLE_READONLY" />);
+    render(<Reticulyne editorMode="EXPLORABLE_READONLY" />);
     expect(screen.queryByText('Untitled')).not.toBeNull();
   });
 });

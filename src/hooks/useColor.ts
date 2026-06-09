@@ -9,7 +9,7 @@ export const useColor = (colorId?: string) => {
     if (colorId === undefined) {
       // Empty palette is valid input (colors is unbounded zod-side); fall
       // back to the built-in DEFAULT_COLOR rather than throwing, which
-      // would surface through IsoflowErrorBoundary and replace the
+      // would surface through ReticulyneErrorBoundary and replace the
       // whole editor with the failure UI.
       return colors[0] ?? DEFAULT_COLOR;
     }

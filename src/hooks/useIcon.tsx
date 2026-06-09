@@ -15,7 +15,7 @@ export const useIcon = (id: string | undefined) => {
     // A ModelItem can outlive its referenced icon (e.g. the host swaps
     // palettes mid-session via the imperative loadModel API). Fall back
     // to DEFAULT_ICON rather than throwing — a throw here surfaces
-    // through IsoflowErrorBoundary and replaces the whole editor with
+    // through ReticulyneErrorBoundary and replaces the whole editor with
     // the failure UI for every node that references the missing icon.
     const found = icons.find((i) => {
       return i.id === id;

@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Box } from '@mui/material';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import Isoflow, { INITIAL_DATA } from 'src/Isoflow';
+import Reticulyne, { INITIAL_DATA } from 'src/Reticulyne';
 import type { InitialData } from 'src/types';
 import type { EditorModeEnum } from 'src/types/common';
 import { icons, colors } from './examples/initialData';
@@ -76,7 +76,7 @@ const Shell = scrollParent ? (
   >
     <Box sx={{ width: '100vw', height: '200vh' }}>
       <Box sx={{ width: '100vw', height: '100vh' }}>
-        <Isoflow
+        <Reticulyne
           initialData={initialData}
           editorMode={editorMode}
           enableAnimation={enableAnimation}
@@ -86,7 +86,7 @@ const Shell = scrollParent ? (
   </Box>
 ) : (
   <Box sx={{ width: '100vw', height: '100vh' }}>
-    <Isoflow
+    <Reticulyne
       initialData={initialData}
       editorMode={editorMode}
       enableAnimation={enableAnimation}

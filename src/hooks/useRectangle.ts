@@ -8,7 +8,7 @@ export const useRectangle = (id: string) => {
   const rectangle = useMemo(() => {
     // A deleted rectangle's component goes through one final render cycle
     // before unmounting. Return null rather than throwing so the component
-    // can bail out cleanly instead of hitting IsoflowErrorBoundary.
+    // can bail out cleanly instead of hitting ReticulyneErrorBoundary.
     return getItemById(rectangles, id);
   }, [rectangles, id]);
 

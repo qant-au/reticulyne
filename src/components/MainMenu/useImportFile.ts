@@ -28,14 +28,14 @@ export const handleImportedJsonText = (
   load: (data: InitialData) => void
 ): void => {
   if (raw === null) {
-    console.error('[isoflow] imported file could not be read as text.');
+    console.error('[reticulyne] imported file could not be read as text.');
     return;
   }
   let modelData: unknown;
   try {
     modelData = JSON.parse(raw);
   } catch (parseErr) {
-    console.error('[isoflow] imported file is not valid JSON:', parseErr);
+    console.error('[reticulyne] imported file is not valid JSON:', parseErr);
     return;
   }
   // The shape check happens in load() via zod safeParse. The cast
@@ -71,7 +71,7 @@ export const useImportFile = () => {
 
       fileReader.onerror = () => {
         console.error(
-          '[isoflow] FileReader failed to read the imported file:',
+          '[reticulyne] FileReader failed to read the imported file:',
           fileReader.error
         );
       };

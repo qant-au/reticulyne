@@ -10,7 +10,7 @@ covers the quick highlights; everything below is the depth.
 
 ## Core reference
 
-- [API reference](api.md) — every prop on `<Isoflow>`, plus the `useIsoflow()` imperative hook.
+- [API reference](api.md) — every prop on `<Reticulyne>`, plus the `useReticulyne()` imperative hook.
 - [Embedding contract](embedding.md) — deeper notes on editor modes, container sizing, callback identity, security model, host-managed save, and side effects on import.
 - [Isopacks](isopacks.md) — what an isopack is, the bundled collections, and how to bring your own.
 

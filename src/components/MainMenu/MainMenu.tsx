@@ -82,7 +82,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
     ) {
       warnedMissingOnSaveRef.current = true;
       console.warn(
-        '[isoflow] mainMenuOptions includes "ACTION.SAVE" but no onSave callback ' +
+        '[reticulyne] mainMenuOptions includes "ACTION.SAVE" but no onSave callback ' +
           'was passed to <Reticulyne>. The Save menu entry will not render until both ' +
           'are wired.'
       );

@@ -35,7 +35,7 @@ Dark mode infrastructure was built in FEA7-04 (theme factory, `useResolvedThemeM
 
 ## Public API Changes
 
-### `IsoflowProps`
+### `ReticulyneProps`
 
 ```typescript
 // themeMode — default CHANGED from 'light' to 'auto' (BREAKING)
@@ -57,7 +57,7 @@ Internal additions (not public API):
 
 ## Component Changes
 
-### `src/Isoflow.tsx`
+### `src/Reticulyne.tsx`
 - Default `themeMode` → `'auto'`
 - Destructure `exportTheme = 'light'` from props
 - Build `modeAwareInitialData`: when no `initialData` is provided, derive the default node colour from `theme.customVars.customPalette.defaultColor` (dark: `#5b6ab1`, light: `#a5b8f3`) instead of the static legacy `customVars`
@@ -71,14 +71,14 @@ Internal additions (not public API):
 - `bgcolor: 'common.white'` → `bgcolor: 'background.paper'`
 
 ### `src/components/ExportImageDialog/ExportImageDialog.tsx`
-- Replace `import { customVars }` with `import { createIsoflowTheme }`
-- `backgroundColor` initial state: `createIsoflowTheme(exportTheme ?? 'light').customVars.customPalette.diagramBg` (read `exportTheme` from `uiStateStore`)
+- Replace `import { customVars }` with `import { createReticulyneTheme }`
+- `backgroundColor` initial state: `createReticulyneTheme(exportTheme ?? 'light').customVars.customPalette.diagramBg` (read `exportTheme` from `uiStateStore`)
 
 ---
 
 ## Testing
 
-- `npm test` — update `Isoflow.fea7-04.test.tsx`: default mode assertion + `exportTheme="dark"` smoke test
+- `npm test` — update `Reticulyne.fea7-04.test.tsx`: default mode assertion + `exportTheme="dark"` smoke test
 - `npm run lint` — clean pass
 - Manual QA: `bash restart.sh` → http://localhost:2223 → flip sidebar to **Dark**, verify connector arrows, label readability, default node colour, export dialog default background
 

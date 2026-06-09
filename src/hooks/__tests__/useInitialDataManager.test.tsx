@@ -196,7 +196,7 @@ describe('useInitialDataManager', () => {
     // Fallback when no onValidationError is provided: surface the
     // failure in the console with a recognisable prefix.
     expect(errorSpy).toHaveBeenCalled();
-    expect(errorSpy.mock.calls[0][0]).toMatch(/\[isoflow\]/);
+    expect(errorSpy.mock.calls[0][0]).toMatch(/\[reticulyne\]/);
     expect(slot.current.isReady).toBe(false);
     // Model store should not have been touched on rejection.
     expect(slot.current.getModel().title).toBe(beforeTitle);

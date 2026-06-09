@@ -18,8 +18,8 @@ reopen, and for maintainers working on the project today.
 ## Development setup
 
 ```bash
-git clone https://github.com/qant-au/isoflow.git
-cd isoflow
+git clone https://github.com/qant-au/reticulyne.git
+cd reticulyne
 nvm use            # picks up .nvmrc (Node 22 LTS)
 npm ci             # install — uses package-lock.json
 ```

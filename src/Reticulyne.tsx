@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
-import { createIsoflowTheme } from 'src/styles/theme';
+import { createReticulyneTheme } from 'src/styles/theme';
 import { useResolvedThemeMode } from 'src/hooks/useResolvedThemeMode';
 import type {
   Connector as ConnectorType,
@@ -185,7 +185,7 @@ export const Reticulyne = (props: ReticulyneProps) => {
   // per mode change instead of every parent render.
   const resolvedMode = useResolvedThemeMode(themeMode);
   const theme = useMemo(() => {
-    return createIsoflowTheme(resolvedMode);
+    return createReticulyneTheme(resolvedMode);
   }, [resolvedMode]);
   const modeAwareInitialData = useMemo(() => {
     if (appProps.initialData) return appProps.initialData;
@@ -254,7 +254,7 @@ const useReticulyne = () => {
       if (editorModeRef.current !== 'EDITABLE') {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
-            `[isoflow] Refusing model mutation in editorMode="${editorModeRef.current}". ` +
+            `[reticulyne] Refusing model mutation in editorMode="${editorModeRef.current}". ` +
               `Set editorMode="EDITABLE" to allow mutations through useReticulyne().Model.set.`
           );
         }
@@ -281,7 +281,7 @@ const useReticulyne = () => {
       if (editorModeRef.current !== 'EDITABLE') {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
-            `[isoflow] Refusing loadModel call in editorMode="${editorModeRef.current}". ` +
+            `[reticulyne] Refusing loadModel call in editorMode="${editorModeRef.current}". ` +
               `Set editorMode="EDITABLE" to allow programmatic loads.`
           );
         }
@@ -347,7 +347,7 @@ const useReticulyne = () => {
       if (editorModeRef.current === 'NON_INTERACTIVE') {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
-            `[isoflow] Refusing Connector.update in editorMode="${editorModeRef.current}".`
+            `[reticulyne] Refusing Connector.update in editorMode="${editorModeRef.current}".`
           );
         }
         return;

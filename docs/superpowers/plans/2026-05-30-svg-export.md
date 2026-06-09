@@ -4,7 +4,7 @@
 
 **Goal:** Add "Export as SVG" to the main menu with two download formats: a true-flat vector SVG and a foreignObject universal SVG, in a single dialog with a background-colour picker.
 
-**Architecture:** A new `ExportSvgDialog` mirrors the existing `ExportImageDialog` pattern: it mounts an off-screen `<Isoflow>` instance, waits for `onModelUpdated`, then enables two download buttons. Two new utilities in `exportOptions.ts` handle the actual export — one DOM-walking vector SVG and one `html-to-image.toSvg()` universal SVG. The feature is wired through a new `EXPORT.SVG` menu option and a new `EXPORT_SVG` dialog type.
+**Architecture:** A new `ExportSvgDialog` mirrors the existing `ExportImageDialog` pattern: it mounts an off-screen `<Reticulyne>` instance, waits for `onModelUpdated`, then enables two download buttons. Two new utilities in `exportOptions.ts` handle the actual export — one DOM-walking vector SVG and one `html-to-image.toSvg()` universal SVG. The feature is wired through a new `EXPORT.SVG` menu option and a new `EXPORT_SVG` dialog type.
 
 **Tech Stack:** React, Zustand, MUI, TypeScript, html-to-image (`toSvg`), Jest/RTL
 
@@ -39,7 +39,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
 | **Modify** | `src/config.ts` — add `'EXPORT.SVG'` to `MAIN_MENU_OPTIONS` |
 | **Modify** | `src/components/MainMenu/MainMenu.tsx` — add `EXPORT.SVG` handler |
 | **Modify** | `src/components/UiOverlay/DialogLayer.tsx` — render `ExportSvgDialog` |
-| **Create** | `src/__tests__/Isoflow.fea13-01.test.tsx` |
+| **Create** | `src/__tests__/Reticulyne.fea13-01.test.tsx` |
 | **Modify** | `docs/embedding.md` |
 | **Modify** | `README.md` |
 
@@ -308,9 +308,9 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
   import { ModelStore } from 'src/types';
   import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
   import { useUiStateStore } from 'src/stores/uiStateStore';
-  import { Isoflow } from 'src/Isoflow';
+  import { Reticulyne } from 'src/Reticulyne';
   import { Loader } from 'src/components/Loader/Loader';
-  import { createIsoflowTheme } from 'src/styles/theme';
+  import { createReticulyneTheme } from 'src/styles/theme';
   import { ColorPicker } from 'src/components/ColorSelector/ColorPicker';
 
   interface Props {
@@ -352,7 +352,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
     }, []);
 
     const [backgroundColor, setBackgroundColor] = useState<string>(() => {
-      return createIsoflowTheme(exportTheme).customVars.customPalette.diagramBg;
+      return createReticulyneTheme(exportTheme).customVars.customPalette.diagramBg;
     });
     const [transparent, setTransparent] = useState(false);
 
@@ -409,7 +409,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
                   height: unprojectedBounds.height
                 }}
               >
-                <Isoflow
+                <Reticulyne
                   editorMode="NON_INTERACTIVE"
                   onModelUpdated={onModelReady}
                   initialData={{
@@ -513,7 +513,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
 
   Run:
   ```bash
-  grep "exportAsVectorSvg\|exportAsUniversalSvg" /Users/adam/Projects/isoflow/src/utils/index.ts
+  grep "exportAsVectorSvg\|exportAsUniversalSvg" /Users/adam/Projects/reticulyne/src/utils/index.ts
   ```
 
   If the output is empty, `src/utils/index.ts` uses a wildcard re-export and you need to check whether `exportOptions.ts` is included. If it is not auto-included, add:
@@ -623,18 +623,18 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
 ## Task 5: Write smoke tests
 
 **Files:**
-- Create: `src/__tests__/Isoflow.fea13-01.test.tsx`
+- Create: `src/__tests__/Reticulyne.fea13-01.test.tsx`
 
 - [ ] **Step 1: Write the test file**
 
-  Create `src/__tests__/Isoflow.fea13-01.test.tsx`:
+  Create `src/__tests__/Reticulyne.fea13-01.test.tsx`:
 
   ```typescript
   /**
    * @jest-environment jsdom
    */
   import { render, cleanup } from '@testing-library/react';
-  import Isoflow from '../Isoflow';
+  import Reticulyne from '../Reticulyne';
   import type { InitialData } from 'src/types';
 
   beforeAll(() => {
@@ -705,7 +705,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
     test('renders without error with EXPORT.SVG in mainMenuOptions', () => {
       const onError = jest.fn();
       render(
-        <Isoflow
+        <Reticulyne
           onError={onError}
           initialData={initialData}
           mainMenuOptions={['EXPORT.SVG']}
@@ -717,7 +717,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
     test('renders without error with full default menu', () => {
       const onError = jest.fn();
       render(
-        <Isoflow
+        <Reticulyne
           onError={onError}
           initialData={initialData}
         />
@@ -728,7 +728,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
     test('renders without error with EXPORT.SVG alongside PNG and PDF', () => {
       const onError = jest.fn();
       render(
-        <Isoflow
+        <Reticulyne
           onError={onError}
           initialData={initialData}
           mainMenuOptions={['EXPORT.PNG', 'EXPORT.PDF', 'EXPORT.SVG']}
@@ -740,7 +740,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
     test('renders without error with empty mainMenuOptions', () => {
       const onError = jest.fn();
       render(
-        <Isoflow
+        <Reticulyne
           onError={onError}
           initialData={initialData}
           mainMenuOptions={[]}
@@ -754,7 +754,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
 - [ ] **Step 2: Run the new tests**
 
   ```bash
-  npx jest --no-coverage src/__tests__/Isoflow.fea13-01.test.tsx 2>&1 | tail -20
+  npx jest --no-coverage src/__tests__/Reticulyne.fea13-01.test.tsx 2>&1 | tail -20
   ```
 
   Expected: all 4 tests PASS.
@@ -770,7 +770,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
 - [ ] **Step 4: Commit**
 
   ```bash
-  git add src/__tests__/Isoflow.fea13-01.test.tsx
+  git add src/__tests__/Reticulyne.fea13-01.test.tsx
   git commit -m "test(FEA13-01): smoke tests for EXPORT.SVG menu option"
   ```
 
@@ -854,7 +854,7 @@ The isometric matrix `matrix(0.707, -0.409, 0.707, 0.409, 0, -0.816)` is the sam
 
 - `EXPORT.SVG` is placed after `EXPORT.PDF` in both the enum and the `MAIN_MENU_OPTIONS` array — consistent ordering
 - `ExportSvgDialog` does NOT debounce like `ExportImageDialog` because SVG export is on-demand (user clicks button) rather than auto-triggered
-- `onModelReady` uses a functional `setState` updater to avoid firing more than once — safe against rapid model updates during the Isoflow init phase
+- `onModelReady` uses a functional `setState` updater to avoid firing more than once — safe against rapid model updates during the Reticulyne init phase
 - `exportAsUniversalSvg` uses a dynamic `import('html-to-image')` to keep the initial bundle lighter
 - Vector SVG does not capture TextBox text — this is documented in embedding.md and is a v1 limitation
 - `fetchAsDataUri` handles already-inlined `data:` URIs as a no-op, making it safe for icons that are already base64

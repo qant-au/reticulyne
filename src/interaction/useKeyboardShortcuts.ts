@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
@@ -42,9 +42,17 @@ export const useKeyboardShortcuts = () => {
   const dialog = useUiStateStore((state) => {
     return state.dialog;
   });
+  // PRF-02: subscribe to mousePosition but keep it out of the keydown
+  // effect's dep array — the T textbox tool reads the live value via
+  // mousePositionRef at fire time, so the listener doesn't re-bind on
+  // every pointermove.
   const mousePosition = useUiStateStore((state) => {
     return state.mouse.position.tile;
   });
+  const mousePositionRef = useRef(mousePosition);
+  useEffect(() => {
+    mousePositionRef.current = mousePosition;
+  }, [mousePosition]);
   const {
     deleteViewItem,
     deleteTextBox,
@@ -155,7 +163,7 @@ export const useKeyboardShortcuts = () => {
       createTextBox({
         ...TEXTBOX_DEFAULTS,
         id: textBoxId,
-        tile: mousePosition
+        tile: mousePositionRef.current
       });
       uiStateActions.setMode({
         type: 'TEXTBOX',
@@ -388,7 +396,6 @@ export const useKeyboardShortcuts = () => {
     undo,
     redo,
     fitToView,
-    mousePosition,
     currentView
   ]);
 };

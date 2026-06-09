@@ -57,8 +57,16 @@ in the README's "Succession from Isoflow" section. The commit-level audit
 trail is `git log --grep '^[a-z]*(RNM-' main` — the full chain runs
 `RNM-01` through `RNM-09`, one commit per task ID, no rewrites or amends.
 The package is published to GitHub Packages
-(`registry: https://npm.pkg.github.com/`) and is deprecated under its prior
-name `@qant-au/isoflow` with a redirect notice.
+(`registry: https://npm.pkg.github.com/`).
+
+**Note on deprecation of the prior name.** GitHub Packages' npm registry
+does not currently support `npm deprecate` — the `PUT` to update the
+packument returns `400 Bad Request: version.ID cannot be empty`. Consumers
+still installing `@qant-au/isoflow` are redirected via the package's
+`repository.url` (which now points at `qant-au/reticulyne`) and via this
+release's GitHub Releases entry. A registry-level deprecation marker will
+be revisited if GitHub Packages adds support, or if the package migrates
+to the public npm registry.
 
 ## Pre-rename history
 

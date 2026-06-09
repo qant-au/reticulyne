@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qant-au/isoflow.git"
+    "url": "https://github.com/qant-au/reticulyne.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/",

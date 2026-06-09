@@ -1,4 +1,4 @@
-# Roadmap — `@qant-au/isoflow`
+# Roadmap — Reticulyne
 
 > **Status:** forward-looking ledger of features under consideration before
 > stabilisation. Not a commitment — items are picked up at the maintainer's
@@ -143,8 +143,6 @@ stable surface being locked down in 1.5.
 
 ### 1.3 Layer ordering UI
 
-*(Was item 1.5 in the previous catalogue; promoted by effort-to-value ratio.)*
-
 **What it does.** Inspector buttons and keyboard shortcuts for **Bring to
 Front / Send to Back / Forward One / Backward One**
 (`Ctrl+]` / `Ctrl+[` / `Ctrl+Shift+]` / `Ctrl+Shift+[`).
@@ -177,8 +175,6 @@ group only reorders within that group's children.
 ---
 
 ### 1.4 Real multi-select with bulk operations
-
-*(Was item 1.1.)*
 
 **What it does.** Click + shift-click to grow the selection; marquee-drag to
 select an area; with multiple items selected, delete / drag / colour /
@@ -219,8 +215,6 @@ even though there is only one user today.
 
 ### 1.5 Diff-based external updates that preserve UI state
 
-*(Was item 1.4.)*
-
 **What it does.** Host data refreshes every 5 seconds. The diagram updates node
 colours, status badges, and connector flow rates without losing the user's
 selection, pan offset, zoom, or expanded inspector panel. If the user is
@@ -255,8 +249,6 @@ remote-user mutations.
 ---
 
 ### 1.6 Stable, documented imperative API
-
-*(Was item 1.3.)*
 
 **What it does (embedder view).** The host gets a typed surface for driving the
 diagram from outside:
@@ -304,8 +296,6 @@ eventually plug in.
 ---
 
 ### 1.7 Grouping / nesting
-
-*(Was item 1.2.)*
 
 **What it does.** Select several items → Group (`Ctrl+G`). The group is a
 single draggable thing. Click into a group to edit contents; `Ctrl+Shift+G` to
@@ -400,8 +390,6 @@ re-uses the `PlaceIcon` mode entry point.
 
 ### 2.3 Auto-save indicator + dirty state
 
-*(Was item 2.4.)*
-
 **What it does.** A small "Saved 3 s ago" / "Saving…" / "Unsaved changes" pill
 in the title bar. Browser confirm on tab close with unsaved changes; red pill
 with retry button if `onSave` errors.
@@ -421,8 +409,6 @@ Document the debounce in `docs/embedding.md`.
 ---
 
 ### 2.10 Replace Quill rich-text editor (DEP-04 follow-up)
-
-*(Was item 2.8. Promoted to position 4 in Tier 2.)*
 
 **What it does.** Swaps `react-quill-new` → an actively maintained alternative
 (TipTap recommended) for the node-description rich-text editor at
@@ -507,15 +493,7 @@ start a connector.
 
 ---
 
-### 2.6 Dark mode (already listed as 1.1)
-
-*Promoted to Tier 1 position 1.1 as the P1 integration requirement. See 1.1.*
-
----
-
 ### 2.7 Search / find (Ctrl+F)
-
-*(Was item 2.3.)*
 
 **What it does.** `Ctrl+F` opens a search input; type to filter items by name
 or description; `Enter` jumps to the next match with a pan/zoom; `Shift+Enter`
@@ -535,8 +513,6 @@ Critical for diagrams whose IDs are system-generated (EC2 instance IDs, etc.).
 
 ### 2.8 Mini-map
 
-*(Was item 2.2.)*
-
 **What it does.** A ~200×150 px viewport bottom-right of the canvas showing the
 whole diagram with a rectangle outlining the visible area. Click or drag to pan.
 
@@ -553,8 +529,6 @@ pan. Throttle to 30 fps. Hide when diagram is empty. Off by default in
 ---
 
 ### 2.9 Snap-to-grid + smart guides
-
-*(Was item 2.1.)*
 
 **What it does.** During drag, items snap to the isometric tile grid (`Alt`
 disables). Smart guides: magenta lines appear when a dragged item aligns its
@@ -632,8 +606,6 @@ existing touch handlers; new `src/interaction/touchInput.ts` (mirrors
 
 ### 2.13 Custom icons / image upload
 
-*(Was item 2.6.)*
-
 **What it does.** "Upload custom icon" button in the icon picker. Drop an SVG /
 PNG; it appears in a "My Icons" collection that travels with the diagram JSON.
 
@@ -650,8 +622,6 @@ in `SECURITY.md`). Recommend max 200 KB; dedupe by hash.
 ---
 
 ### 2.14 Templates / starter diagrams
-
-*(Was item 2.7.)*
 
 **What it does.** "New Diagram" → modal with thumbnails: Blank, AWS 3-Tier Web
 App, K8s Cluster, Datacenter Rack, Generic Network.

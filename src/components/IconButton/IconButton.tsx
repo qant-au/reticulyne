@@ -15,7 +15,7 @@ export const IconButton = ({
   name,
   Icon,
   onClick,
-  isActive = false,
+  isActive,
   disabled = false,
   tooltipPosition = 'bottom'
 }: Props) => {
@@ -44,6 +44,8 @@ export const IconButton = ({
       <Button
         variant="text"
         onClick={onClick}
+        aria-label={name}
+        {...(isActive !== undefined ? { 'aria-pressed': isActive } : {})}
         sx={[
           {
             borderRadius: 0,

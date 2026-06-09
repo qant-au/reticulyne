@@ -1,4 +1,4 @@
-import PF from 'pathfinding';
+import { Grid, findPath as astarFindPath } from 'src/vendor/pathfinder/astar';
 import { Size, Coords } from 'src/types';
 
 interface Args {
@@ -18,7 +18,7 @@ export const findPath = ({
   to,
   obstacles = []
 }: Args): Coords[] => {
-  const grid = new PF.Grid(gridSize.width, gridSize.height);
+  const grid = new Grid(gridSize.width, gridSize.height);
 
   for (const obstacle of obstacles) {
     if (obstacle.x === from.x && obstacle.y === from.y) continue;
@@ -28,18 +28,9 @@ export const findPath = ({
     grid.setWalkableAt(obstacle.x, obstacle.y, false);
   }
 
-  const finder = new PF.AStarFinder({
-    heuristic: PF.Heuristic.manhattan,
-    diagonalMovement: PF.DiagonalMovement.Always
-  });
-  const path = finder.findPath(from.x, from.y, to.x, to.y, grid);
+  const path = astarFindPath(from.x, from.y, to.x, to.y, grid);
 
-  const pathTiles = path.map((tile) => {
-    return {
-      x: tile[0],
-      y: tile[1]
-    };
+  return path.map(([x, y]) => {
+    return { x, y };
   });
-
-  return pathTiles;
 };

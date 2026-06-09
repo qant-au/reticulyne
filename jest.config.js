@@ -11,7 +11,6 @@ module.exports = {
     '\\.(css|less|scss|sass)$': '<rootDir>/src/__tests__/mocks/styleMock.js',
     '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/src/__tests__/mocks/fileMock.js',
     '^react-quill-new$': '<rootDir>/src/__tests__/mocks/reactQuillMock.js',
-    '^chroma-js$': '<rootDir>/src/__tests__/mocks/chromaJsMock.js',
-    '^pathfinding$': '<rootDir>/src/__tests__/mocks/pathfindingMock.js'
+    '^chroma-js$': '<rootDir>/src/__tests__/mocks/chromaJsMock.js'
   }
 };

@@ -13,7 +13,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "module": "es6",
+    "module": "es2020",
     "moduleResolution": "node",
     "skipLibCheck": true
   },

@@ -11,7 +11,7 @@ import { ViewItem } from 'src/types';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { ExpandableLabel } from 'src/components/Label/ExpandableLabel';
-import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditor';
+import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
 
 interface Props {
   node: ViewItem;

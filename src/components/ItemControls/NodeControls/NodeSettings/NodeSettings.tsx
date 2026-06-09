@@ -1,6 +1,6 @@
 import { Slider, Box, TextField } from '@mui/material';
 import { ModelItem, ViewItem } from 'src/types';
-import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditor';
+import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { DeleteButton } from '../../components/DeleteButton';
 import { Section } from '../../components/Section';

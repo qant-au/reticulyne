@@ -14,7 +14,7 @@ module.exports = merge(base, {
   },
   // Emit separate `.map` files alongside the bundle.  Webpack appends a
   // `//# sourceMappingURL=...` comment to each emitted .js, so a
-  // consumer that imports `@qant-au/isoflow` and triggers an error
+  // consumer that imports `@reticulyne/core` and triggers an error
   // gets a readable stack pointing at TypeScript source rather than
   // the minified bundle.  The .map files ship inside `dist/` (which
   // is already in the `files` allowlist in package.json) and are

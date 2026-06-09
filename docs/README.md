@@ -1,6 +1,6 @@
 # Documentation
 
-Reference material for embedding and running `@qant-au/isoflow`. The README at the project root
+Reference material for embedding and running `@reticulyne/core`. The README at the project root
 covers the quick highlights; everything below is the depth.
 
 ## Getting started

@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 /**
  * BUG5-09 regression: the renderer's wheel listener calls
  * preventDefault() and is registered with `{ passive: false }`, so a
- * host page that mounts <Isoflow> inside a scrollable parent does
+ * host page that mounts <Reticulyne> inside a scrollable parent does
  * NOT see the parent scroll while the user is panning OR zooming the
  * canvas.
  *
@@ -25,7 +25,7 @@ test.describe('BUG5-09 — wheel events do not scroll an embedding parent', () =
       };
     });
     await page.goto('/');
-    await expect(page).toHaveTitle(/Isoflow/);
+    await expect(page).toHaveTitle(/Reticulyne/);
 
     const scrollParent = page.getByTestId('scroll-parent');
     await expect(scrollParent).toBeVisible();

@@ -27,7 +27,7 @@ test.describe('FEA5-04 — copy / paste keybindings', () => {
     });
 
     await page.goto('/');
-    await expect(page).toHaveTitle(/Isoflow/);
+    await expect(page).toHaveTitle(/Reticulyne/);
 
     const vp = page.viewportSize();
     expect(vp).not.toBeNull();

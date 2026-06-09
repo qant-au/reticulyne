@@ -65,7 +65,7 @@ test('ExportImageDialog does not error when closed during the debounce window (B
   });
 
   await page.goto('/');
-  await expect(page).toHaveTitle(/Isoflow/);
+  await expect(page).toHaveTitle(/Reticulyne/);
 
   const mainMenuButton = page.getByRole('button', { name: 'Main menu' });
   await expect(mainMenuButton).toBeVisible();

@@ -1,6 +1,6 @@
 # Installation
 
-`@qant-au/isoflow` is published to **GitHub Packages**, not the public npm registry. To install
+`@reticulyne/core` is published to **GitHub Packages**, not the public npm registry. To install
 you need to point your package manager at the scoped registry and authenticate with a GitHub
 token.
 
@@ -34,25 +34,25 @@ In CI, set `GITHUB_TOKEN` as a secret on the workflow instead of writing it into
 ## 4. Install
 
 ```bash
-npm install @qant-au/isoflow
+npm install @reticulyne/core
 ```
 
 Yarn / pnpm work the same way:
 
 ```bash
-yarn add @qant-au/isoflow
-pnpm add @qant-au/isoflow
+yarn add @reticulyne/core
+pnpm add @reticulyne/core
 ```
 
 ## Peer dependencies
 
-`@qant-au/isoflow@3` externalises its UI / state / theming stack so consumers can share a
+`@reticulyne/core@3` externalises its UI / state / theming stack so consumers can share a
 single copy with their own app instead of bundling duplicates. You need to install these
 yourself alongside the library:
 
 ```bash
 npm install \
-  @qant-au/isoflow \
+  @reticulyne/core \
   react react-dom \
   @mui/material @mui/icons-material \
   @emotion/react @emotion/styled \
@@ -63,20 +63,20 @@ npm install \
 |---|---|---|
 | `react` | `>=18` | Tested against React 19. |
 | `react-dom` | `>=18` | Tested against React 19. |
-| `@mui/material` | `^9.0.0` | MUI v9 (`^5` for `@qant-au/isoflow@2`). |
+| `@mui/material` | `^9.0.0` | MUI v9 (`^5` for `@reticulyne/core@2`). |
 | `@mui/icons-material` | `^9.0.0` | Same major as `@mui/material`. |
 | `@emotion/react` | `^11.14.0` | Required by MUI's CSS-in-JS engine. |
 | `@emotion/styled` | `^11.14.1` | Required by MUI's CSS-in-JS engine. |
 | `zustand` | `^5.0.13` | Used internally by the library; sharing a copy with the consumer's own zustand store is supported. |
 
-npm 7+ auto-installs declared peer deps, so a fresh `npm install @qant-au/isoflow` will pull
+npm 7+ auto-installs declared peer deps, so a fresh `npm install @reticulyne/core` will pull
 them in. If you're on npm 6 or you want explicit lockfile entries, install them directly.
 
 No CSS imports are required — styles are injected at runtime by Emotion.
 
 ## Migrating from v2 (MUI v5 → v9)
 
-If you were on `@qant-au/isoflow@2.x` (which had `@mui/material ^5.18.0` as a peer-dep),
+If you were on `@reticulyne/core@2.x` (which had `@mui/material ^5.18.0` as a peer-dep),
 the upgrade to v3 requires bumping your MUI install too:
 
 1. `npm install @mui/material@^9 @mui/icons-material@^9` in your application.
@@ -98,7 +98,7 @@ the upgrade to v3 requires bumping your MUI install too:
 
 ## Migrating from v1
 
-If you were on `@qant-au/isoflow@1.x` (which bundled MUI / Emotion / Zustand internally),
+If you were on `@reticulyne/core@1.x` (which bundled MUI / Emotion / Zustand internally),
 follow the v2 install snippet above first to install all peer-deps, then follow the
 v2 → v3 migration above.
 
@@ -122,7 +122,7 @@ versions of the platform). Internet Explorer, Opera Mini, and any vendor-discont
 browser are excluded.
 
 If your application needs to target older browsers, transpile the package output yourself
-in your consuming build (e.g. run Babel against `node_modules/@qant-au/isoflow/dist`).
+in your consuming build (e.g. run Babel against `node_modules/@reticulyne/core/dist`).
 Most consumers don't need to — the targets above cover ~99% of global traffic.
 
 ## Verify
@@ -138,11 +138,11 @@ for the worked example.
 - The `.npmrc` registry line is at the project root, not a stale entry elsewhere on the
   filesystem (`npm config get registry --location=project` to inspect).
 
-**`E404 Not Found` for `@qant-au/isoflow`** — `@qant-au` is not pointed at GitHub Packages.
+**`E404 Not Found` for `@reticulyne/core`** — `@qant-au` is not pointed at GitHub Packages.
 Re-check the `@qant-au:registry=...` line in `.npmrc`. The default registry is public npm,
 which doesn't host this package.
 
-**Working in a monorepo?** Each workspace that imports `@qant-au/isoflow` needs the registry
+**Working in a monorepo?** Each workspace that imports `@reticulyne/core` needs the registry
 configuration in scope. The easiest pattern is a single `.npmrc` at the monorepo root.
 
 ## Next steps

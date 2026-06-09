@@ -1,6 +1,6 @@
 # API reference
 
-The contract every consumer of `@qant-au/isoflow` can rely on: every prop, every callback,
+The contract every consumer of `@reticulyne/core` can rely on: every prop, every callback,
 the `useReticulyne` imperative hook, and the supporting type shapes.
 
 For deeper notes on editor modes, container sizing, and the security model, see
@@ -9,8 +9,8 @@ For deeper notes on editor modes, container sizing, and the security model, see
 ## Imports
 
 ```tsx
-import Reticulyne, { useReticulyne } from '@qant-au/isoflow';
-import type { ReticulyneProps, InitialData, Model } from '@qant-au/isoflow';
+import Reticulyne, { useReticulyne } from '@reticulyne/core';
+import type { ReticulyneProps, InitialData, Model } from '@reticulyne/core';
 ```
 
 `Reticulyne` is the default React component. `useReticulyne` is the imperative hook (only
@@ -145,6 +145,6 @@ The package also re-exports from `src/standaloneExports.ts`:
 - Schemas from `src/schemas/` — `modelSchema`, plus item / view / connector schemas.
 - Types — `ReticulyneProps`, `InitialData`, and the full `Model` tree from `src/types/model.ts`.
 
-These can be imported either from the main entry (`@qant-au/isoflow`) or from the standalone
-subpath (`@qant-au/isoflow/standalone`). The standalone subpath omits the component itself
+These can be imported either from the main entry (`@reticulyne/core`) or from the standalone
+subpath (`@reticulyne/core/standalone`). The standalone subpath omits the component itself
 and is safe to import in Node environments (server-side validation, scripts).

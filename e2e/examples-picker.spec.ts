@@ -2,12 +2,12 @@ import { expect, test } from '@playwright/test';
 
 /**
  * Examples-picker container (port 2223): exercises the dev/demo bundle
- * served by the `isoflow-examples` Docker image — `src/index.tsx` →
+ * served by the `reticulyne-examples` Docker image — `src/index.tsx` →
  * `<Examples>` → `<ExamplesSidebar>` + the currently-selected demo
  * (BasicEditor / DebugTools / ReadonlyMode / LiveDashboard /
  * ConnectorAnimations / ConnectorPulse / NodeIndicators).
  *
- * BasicEditor (default-selected) mounts `<Isoflow>` with the bundled
+ * BasicEditor (default-selected) mounts `<Reticulyne>` with the bundled
  * Airport management diagram from `src/examples/initialData.ts`. These
  * checks keep that surface honest: the sidebar is present with every
  * entry, the Airport title strip renders, the canvas is non-empty, the
@@ -23,7 +23,7 @@ import { expect, test } from '@playwright/test';
  * absolute URL — the override only matters when an embedder is mirrored
  * on a different host.
  */
-const BASE = process.env.ISOFLOW_EXAMPLES_BASE_URL ?? 'http://localhost:2223';
+const BASE = process.env.RETICULYNE_EXAMPLES_BASE_URL ?? 'http://localhost:2223';
 
 const EXAMPLE_NAMES = [
   'Basic editor',
@@ -50,7 +50,7 @@ test.describe('examples-picker @ :2223', () => {
     });
 
     await page.goto(BASE);
-    await expect(page).toHaveTitle(/Isoflow/);
+    await expect(page).toHaveTitle(/Reticulyne/);
 
     // Sidebar is expanded by default. Every example entry is visible.
     const sidebar = page.getByTestId('examples-sidebar');

@@ -1,8 +1,6 @@
 import { Button as MuiButton, SxProps } from '@mui/material';
-import {
-  ExpandMore as ReadMoreIcon,
-  ExpandLess as ReadLessIcon
-} from '@mui/icons-material';
+import ReadMoreIcon from '@mui/icons-material/ExpandMore';
+import ReadLessIcon from '@mui/icons-material/ExpandLess';
 
 interface Props {
   isExpanded: boolean;

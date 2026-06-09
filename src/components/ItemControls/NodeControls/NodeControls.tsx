@@ -1,9 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Box, Stack, Button } from '@mui/material';
-import {
-  ChevronRight as ChevronRightIcon,
-  ChevronLeft as ChevronLeftIcon
-} from '@mui/icons-material';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useIconCategories } from 'src/hooks/useIconCategories';
 import { useIcon } from 'src/hooks/useIcon';
 import { useScene } from 'src/hooks/useScene';

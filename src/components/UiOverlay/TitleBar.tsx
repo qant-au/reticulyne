@@ -5,7 +5,7 @@
 // Extracted from UiOverlay.tsx under QUA4-10.
 
 import { Box, Stack, Typography } from '@mui/material';
-import { ChevronRight } from '@mui/icons-material';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import type { Size } from 'src/types/common';
 

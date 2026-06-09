@@ -1,8 +1,6 @@
-import {
-  Add as ZoomInIcon,
-  Remove as ZoomOutIcon,
-  CropFreeOutlined as FitToScreenIcon
-} from '@mui/icons-material';
+import ZoomInIcon from '@mui/icons-material/Add';
+import ZoomOutIcon from '@mui/icons-material/Remove';
+import FitToScreenIcon from '@mui/icons-material/CropFreeOutlined';
 import { Stack, Box, Typography, Divider } from '@mui/material';
 import { toPx } from 'src/utils';
 import { UiElement } from 'src/components/UiElement/UiElement';

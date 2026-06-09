@@ -7,15 +7,36 @@
 // top-level JSX no longer mixes corner-positioned toolbars with
 // floating popovers.
 
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { Box } from '@mui/material';
 import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { DragAndDrop } from 'src/components/DragAndDrop/DragAndDrop';
 import { ContextMenuManager } from 'src/components/ContextMenu/ContextMenuManager';
-import { ExportImageDialog } from 'src/components/ExportImageDialog/ExportImageDialog';
-import { ExportSvgDialog } from 'src/components/ExportSvgDialog/ExportSvgDialog';
-import { KeyboardShortcutsDialog } from 'src/components/KeyboardShortcutsDialog/KeyboardShortcutsDialog';
 import type { DialogTypeEnum, Mode, Coords } from 'src/types';
+
+// PRF-11: keep the three export dialogs and their MUI subtrees out of
+// the main entry bundle. They are user-action-gated (open via main
+// menu / "?" shortcut) so the load happens off the critical path; a
+// null fallback is fine for the brief chunk-fetch.
+const ExportImageDialog = lazy(() => {
+  return import('src/components/ExportImageDialog/ExportImageDialog').then(
+    (m) => {
+      return { default: m.ExportImageDialog };
+    }
+  );
+});
+const ExportSvgDialog = lazy(() => {
+  return import('src/components/ExportSvgDialog/ExportSvgDialog').then((m) => {
+    return { default: m.ExportSvgDialog };
+  });
+});
+const KeyboardShortcutsDialog = lazy(() => {
+  return import('src/components/KeyboardShortcutsDialog/KeyboardShortcutsDialog').then(
+    (m) => {
+      return { default: m.KeyboardShortcutsDialog };
+    }
+  );
+});
 
 interface Props {
   mode: Mode;
@@ -43,13 +64,15 @@ export const DialogLayer = ({
           <DragAndDrop iconId={mode.id} tile={mouseTile} />
         </SceneLayer>
       )}
-      {dialog === 'EXPORT_IMAGE' && (
-        <ExportImageDialog onClose={onCloseDialog} />
-      )}
-      {dialog === 'EXPORT_SVG' && <ExportSvgDialog onClose={onCloseDialog} />}
-      {dialog === 'KEYBOARD_SHORTCUTS' && (
-        <KeyboardShortcutsDialog onClose={onCloseDialog} />
-      )}
+      <Suspense fallback={null}>
+        {dialog === 'EXPORT_IMAGE' && (
+          <ExportImageDialog onClose={onCloseDialog} />
+        )}
+        {dialog === 'EXPORT_SVG' && <ExportSvgDialog onClose={onCloseDialog} />}
+        {dialog === 'KEYBOARD_SHORTCUTS' && (
+          <KeyboardShortcutsDialog onClose={onCloseDialog} />
+        )}
+      </Suspense>
       <SceneLayer>
         <Box ref={setContextMenuAnchor} />
         <ContextMenuManager anchorEl={contextMenuAnchor ?? undefined} />

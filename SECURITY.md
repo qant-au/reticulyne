@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Please open a private security advisory on the [GitHub repository](https://github.com/qant-au/isoflow) (Security → Advisories → "Report a vulnerability"). Do not file a public issue for security reports.
+Please open a private security advisory on the [GitHub repository](https://github.com/qant-au/reticulyne) (Security → Advisories → "Report a vulnerability"). Do not file a public issue for security reports.
 
 ## Known accepted residual advisories
 
@@ -35,7 +35,7 @@ The standalone Docker image (built from this repository, served by nginx — see
 
 ### `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`
 
-- **Why `'unsafe-inline'`?** Isoflow's styling stack is Emotion + MUI v9, both of which inject `<style>` tags at runtime as components mount. A strict `style-src 'self'` would block every Emotion-injected rule and the editor would render unstyled. A nonce-based policy is in principle possible but is not supported out of the box by Emotion's runtime injector.
+- **Why `'unsafe-inline'`?** Reticulyne's styling stack is Emotion + MUI v9, both of which inject `<style>` tags at runtime as components mount. A strict `style-src 'self'` would block every Emotion-injected rule and the editor would render unstyled. A nonce-based policy is in principle possible but is not supported out of the box by Emotion's runtime injector.
 - **Why is the risk contained?** Inline *styles* cannot execute script. The CSS-injection surface lets an attacker re-skin the page (or, with a carefully-crafted CSS-leak primitive, exfiltrate measurable state from the same origin), but not break out of CSS into JavaScript. The XSS-execution path that would matter — inline `<script>` — is still closed by `script-src 'self'`.
 - **Why `https://fonts.googleapis.com`?** The standalone editor uses Google Fonts (Roboto). The corresponding font-file fetch is allowed by `font-src https://fonts.gstatic.com data:`.
 - **Closes when:** Emotion (or whichever CSS-in-JS layer we use at the time) supports nonce- or hash-based style injection out of the box, *and* MUI's emit path follows. Until then, this clause stays.
@@ -44,14 +44,14 @@ The standalone Docker image (built from this repository, served by nginx — see
 
 Tight by design. No inline scripts, no `eval`, no third-party CDN. This is the clause that contains the residual XSS risk from the `quill` advisory above: even if a payload lands in a `description` field and renders into the DOM, it cannot fetch or execute anything from off-origin.
 
-### `img-src 'self' data: blob: https://isoflow.io https://static.isoflow.io`
+### `img-src 'self' data: blob:`
 
 - `data:` and `blob:` are required for the in-bundle SVG icon packs and for the export-to-PNG path (which renders into a `blob:` URL before downloading).
-- `https://isoflow.io` / `https://static.isoflow.io` are the historical hosting origins for the icon-pack image assets. They remain in the allowlist for upstream-icon compatibility; removing them would break any external icon collection that references them.
+- **History:** through the prior `@qant-au/isoflow` line the allowlist also included `https://isoflow.io` and `https://static.isoflow.io` — the upstream hosting origins for the original icon-pack image assets. Those origins were removed during the Reticulyne v0.1.0 rename (RNM-04). The in-repo demo fixtures that previously referenced those URLs were rewritten to inline `data:` SVGs. Embedders who shipped icon collections referencing those external origins must self-host or migrate to `data:`/`blob:` URIs in their `iconCollections` payload.
 
 ### Embedders inheriting a strict CSP
 
-The CSP above is only applied by the standalone Docker image. A consumer embedding `<Isoflow>` inside another React app inherits *that app's* CSP. Because Emotion injects styles at runtime, the host policy must permit it — typically `style-src 'self' 'unsafe-inline'` (or a nonce equivalent). The `script-src` clause can stay as strict as the rest of your app needs.
+The CSP above is only applied by the standalone Docker image. A consumer embedding `<Reticulyne>` inside another React app inherits *that app's* CSP. Because Emotion injects styles at runtime, the host policy must permit it — typically `style-src 'self' 'unsafe-inline'` (or a nonce equivalent). The `script-src` clause can stay as strict as the rest of your app needs.
 
 ## Versioning of these notes
 

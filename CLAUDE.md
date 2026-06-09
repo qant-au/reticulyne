@@ -1,4 +1,4 @@
-# Claude Code instructions for `@reticulyne/core`
+# Claude Code instructions for `@qant-au/reticulyne`
 
 > Part of [Projects](../README.md)
 
@@ -48,7 +48,7 @@ Two side-by-side standalone Docker images come up via `bash restart.sh`:
 ## Documentation map
 
 - **[README.md](README.md)** — install, requirements, GitHub Packages auth, test surface, knowledge-graph note, security model.
-- **[docs/embedding.md](docs/embedding.md)** — embedding `@reticulyne/core` as a React component (full props/API contract, editor-mode semantics, `useReticulyne()` imperative API, worked example).
+- **[docs/embedding.md](docs/embedding.md)** — embedding `@qant-au/reticulyne` as a React component (full props/API contract, editor-mode semantics, `useReticulyne()` imperative API, worked example).
 - **[docs/docker.md](docs/docker.md)** — standalone Docker deployment (build, run, nginx headers, HEALTHCHECK, persistence model, troubleshooting).
 - **[SECURITY.md](SECURITY.md)** — vulnerability reporting + the residual-advisory ledger (each accepted advisory carries an in-source mitigation note).
 

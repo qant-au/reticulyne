@@ -140,12 +140,12 @@ An optional Three.js layer for connector rendering, complementing the existing S
 
 ## Installation
 
-This package is published to GitHub Packages as `@reticulyne/core`, not the public npm registry. Full setup (including `.npmrc` and token configuration) is in [docs/installation.md](docs/installation.md). The quick version:
+This package is published to GitHub Packages as `@qant-au/reticulyne`, not the public npm registry. Full setup (including `.npmrc` and token configuration) is in [docs/installation.md](docs/installation.md). The quick version:
 
 ```bash
 # After configuring .npmrc and exporting $GITHUB_TOKEN:
 npm install \
-  @reticulyne/core \
+  @qant-au/reticulyne \
   react react-dom \
   @mui/material @mui/icons-material \
   @emotion/react @emotion/styled \

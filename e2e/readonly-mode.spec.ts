@@ -9,7 +9,7 @@ import { expect, test } from '@playwright/test';
  * src/components/UiOverlay/UiOverlay.tsx.
  *
  * This is the rendered-side correlate of the data-layer gating in
- * useIsoflow() that QUA-04 / SEC3-01 added: `Model.set` rejects in
+ * useReticulyne() that QUA-04 / SEC3-01 added: `Model.set` rejects in
  * non-EDITABLE mode, and the UI should not surface mutation entry
  * points either.
  */
@@ -54,7 +54,7 @@ test('read-only mode hides editor-only UI affordances', async ({ page }) => {
   });
 
   await page.goto('/');
-  await expect(page).toHaveTitle(/Isoflow/);
+  await expect(page).toHaveTitle(/Reticulyne/);
 
   // EXPLORABLE_READONLY's availableTools is ['ZOOM_CONTROLS',
   // 'VIEW_TITLE']. Main menu and tool menu should NOT exist.

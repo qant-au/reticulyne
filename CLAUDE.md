@@ -1,4 +1,4 @@
-# Claude Code instructions for `@qant-au/isoflow`
+# Claude Code instructions for `@reticulyne/core`
 
 > Part of [Projects](../README.md)
 
@@ -33,22 +33,22 @@ Two side-by-side standalone Docker images come up via `bash restart.sh`:
 
 | URL | Container | What it serves |
 |---|---|---|
-| http://localhost:2222 | `isoflow` | Single full-screen editor (`<Isoflow>` component only — `src/index-docker.tsx`) |
-| http://localhost:2223 | `isoflow-examples` | Examples-picker UI with the BasicEditor / DebugTools / ReadonlyMode menu (`src/index.tsx`) |
+| http://localhost:2222 | `reticulyne` | Single full-screen editor (`<Reticulyne>` component only — `src/index-docker.tsx`) |
+| http://localhost:2223 | `reticulyne-examples` | Examples-picker UI with the BasicEditor / DebugTools / ReadonlyMode menu (`src/index.tsx`) |
 
 `bash restart.sh` rebuilds both images, stops any prior containers, starts the new ones, waits for HTTP 200 on each, and refreshes Graphify. Knobs documented in [`docs/docker.md`](docs/docker.md).
 
 ## Test surface
 
 - **Unit + component**: `npm test` (Jest under jsdom). Suites live next to the code in `src/**/__tests__/`.
-- **End-to-end (browser)**: `npm run test:e2e` (Playwright + Chromium against the live `isoflow` container on port 2222). First run needs `npm run test:e2e:install` for the Chromium binary.
+- **End-to-end (browser)**: `npm run test:e2e` (Playwright + Chromium against the live `reticulyne` container on port 2222). First run needs `npm run test:e2e:install` for the Chromium binary.
 - **Linting**: `npm run lint` (runs `tsc --noEmit` then `eslint ./src`). The repo's react-hooks rules `refs`, `set-state-in-effect`, and `set-state-in-render` are intentionally downgraded from error to warning — see the comment in `eslint.config.js` for the React-19-migration rationale.
 - **Pack-contents check**: CI asserts only `dist/`, `README.md`, `LICENSE`, `package.json` roots ship in the published tarball; see `.github/workflows/ci.yml`.
 
 ## Documentation map
 
 - **[README.md](README.md)** — install, requirements, GitHub Packages auth, test surface, knowledge-graph note, security model.
-- **[docs/embedding.md](docs/embedding.md)** — embedding `@qant-au/isoflow` as a React component (full props/API contract, editor-mode semantics, `useIsoflow()` imperative API, worked example).
+- **[docs/embedding.md](docs/embedding.md)** — embedding `@reticulyne/core` as a React component (full props/API contract, editor-mode semantics, `useReticulyne()` imperative API, worked example).
 - **[docs/docker.md](docs/docker.md)** — standalone Docker deployment (build, run, nginx headers, HEALTHCHECK, persistence model, troubleshooting).
 - **[SECURITY.md](SECURITY.md)** — vulnerability reporting + the residual-advisory ledger (each accepted advisory carries an in-source mitigation note).
 

@@ -26,7 +26,7 @@ test.describe('FEA5-03 — undo / redo keybindings', () => {
     });
 
     await page.goto('/');
-    await expect(page).toHaveTitle(/Isoflow/);
+    await expect(page).toHaveTitle(/Reticulyne/);
 
     // Park focus on the canvas so the window-level keydown handler
     // receives the events.

@@ -50,7 +50,7 @@ Reference material lives under [`docs/`](docs/README.md):
 
 - [Installation](docs/installation.md) — install from GitHub Packages.
 - [Quick start](docs/quickstart.md) — minimal embed example.
-- [API reference](docs/api.md) — props and the `useIsoflow()` imperative hook.
+- [API reference](docs/api.md) — props and the `useReticulyne()` imperative hook.
 - [Embedding contract](docs/embedding.md) — modes, sizing, callback identity, security model.
 - [Isopacks](docs/isopacks.md) — icon collections.
 - [Standalone Docker](docs/docker.md) — run the editor as a self-hosted SPA.
@@ -63,7 +63,7 @@ Reference material lives under [`docs/`](docs/README.md):
 - **Editor modes** — Editable, explorable-readonly, and non-interactive modes for embedding in viewers, dashboards, or full editors.
 - **Export options** — Export diagrams as JSON, PNG, PDF, or SVG from the main menu. PDF generation is client-side via jsPDF; SVG export offers two formats: a true-flat vector SVG (Illustrator/Inkscape/Figma) and a foreignObject universal SVG (full-fidelity in browsers and Figma). All exports are client-side with no network calls.
 - **8-directional connector routing** — A* pathfinder uses diagonal movement (N/S/E/W plus all four 45° diagonals), producing shorter, less cluttered paths especially in densely connected diagrams.
-- **Live dashboards** *(opt-in via `enableAnimation`)* — Animate connectors, fire signal pulses (`useIsoflow().Connector.pulse`) and decorate nodes with host-supplied gauges (`nodeIndicatorComponent`) to drive the diagram from a poller / websocket. See [Live dashboards in the embedding docs](docs/embedding.md#live-dashboards) and the runnable [`LiveDashboard` example](src/examples/LiveDashboard/LiveDashboard.tsx).
+- **Live dashboards** *(opt-in via `enableAnimation`)* — Animate connectors, fire signal pulses (`useReticulyne().Connector.pulse`) and decorate nodes with host-supplied gauges (`nodeIndicatorComponent`) to drive the diagram from a poller / websocket. See [Live dashboards in the embedding docs](docs/embedding.md#live-dashboards) and the runnable [`LiveDashboard` example](src/examples/LiveDashboard/LiveDashboard.tsx).
 
 ## Planned features
 
@@ -140,14 +140,12 @@ An optional Three.js layer for connector rendering, complementing the existing S
 
 ## Installation
 
-> The package is currently still published as `@qant-au/isoflow`. The rename to `@reticulyne/core` lands with Reticulyne v0.1.0 (Stage 2 of the rename work). Install instructions below reflect the currently published package name.
-
-This package is published to GitHub Packages, not the public npm registry. Full setup (including `.npmrc` and token configuration) is in [docs/installation.md](docs/installation.md). The quick version:
+This package is published to GitHub Packages as `@reticulyne/core`, not the public npm registry. Full setup (including `.npmrc` and token configuration) is in [docs/installation.md](docs/installation.md). The quick version:
 
 ```bash
 # After configuring .npmrc and exporting $GITHUB_TOKEN:
 npm install \
-  @qant-au/isoflow \
+  @reticulyne/core \
   react react-dom \
   @mui/material @mui/icons-material \
   @emotion/react @emotion/styled \
@@ -163,7 +161,7 @@ Reticulyne renders node and connector `description` fields as HTML through a Qui
 - ✅ **What the library does for you.** A module-load override of Quill's `Link` blot rejects `javascript:`, `data:`, `vbscript:`, `file:`, and `blob:` URL protocols (including percent-encoded variants) on every `<a href>` Quill touches. This covers both user-typed links and `value`-prop HTML re-parsed through Quill's clipboard converter. The editor is also locked to a small `formats` allowlist (`bold`, `italic`, `underline`, `strike`, `link`) — Quill drops unknown tags it sees during paste.
 - ❌ **What the library does NOT do for you.** It does not strip arbitrary HTML elements from the `description` string before that string ever reaches Quill. If your application hydrates `initialData` from an untrusted source (consumer-uploaded JSON, third-party API, a database row originally populated by an end user), constructs like `<iframe srcdoc="...">`, `<svg onload="...">`, `<img src=x onerror="...">`, or `<style>` injections can land in the DOM.
 
-**The rule:** treat every `items[].description` you pass into `<Isoflow initialData={...} />` (and every description that comes back through `onModelUpdated`, before rendering it anywhere else) the way you'd treat any other user-provided HTML. The standard remediation is [DOMPurify](https://github.com/cure53/DOMPurify):
+**The rule:** treat every `items[].description` you pass into `<Reticulyne initialData={...} />` (and every description that comes back through `onModelUpdated`, before rendering it anywhere else) the way you'd treat any other user-provided HTML. The standard remediation is [DOMPurify](https://github.com/cure53/DOMPurify):
 
 ```tsx
 import DOMPurify from 'dompurify';
@@ -178,7 +176,7 @@ const safeInitialData = {
   })
 };
 
-<Isoflow initialData={safeInitialData} />;
+<Reticulyne initialData={safeInitialData} />;
 ```
 
 The full embed-side contract — including read/write asymmetry and the `onModelUpdated` round-trip — is in [docs/embedding.md](docs/embedding.md#security-model). The residual-advisory ledger lives in [SECURITY.md](SECURITY.md).

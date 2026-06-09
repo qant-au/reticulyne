@@ -103,7 +103,7 @@ test('non-axis-aligned connector renders along the correct diagonal', async ({
   }, tinyIconSvg);
 
   await page.goto('/');
-  await expect(page).toHaveTitle(/Isoflow/);
+  await expect(page).toHaveTitle(/Reticulyne/);
 
   // The connector renders as a pair of stacked <polyline>s (white
   // outline + coloured stroke). Both share the same `points`

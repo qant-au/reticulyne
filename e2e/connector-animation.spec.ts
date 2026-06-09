@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
  * FEA5-06 — per-connector animation toggle (looping).
  *
  * Loads a fixture with `animated: true` on the connector AND
- * `enableAnimation: true` on Isoflow. Both flags are required for
+ * `enableAnimation: true` on Reticulyne. Both flags are required for
  * the moving glyph to render. Verifies:
  *   - the SVG <animateMotion> element materialises while both flags
  *     are true
@@ -73,7 +73,7 @@ test('animated connector emits <animateMotion>, toggle removes it', async ({
   });
 
   await page.goto('/');
-  await expect(page).toHaveTitle(/Isoflow/);
+  await expect(page).toHaveTitle(/Reticulyne/);
 
   // The static connector polyline appears first; the animated glyph
   // is the second SVG fragment we verify exists. <animateMotion> is

@@ -53,7 +53,7 @@ test('Edit line panel meets the new requirements', async ({ page }) => {
   }, tinyIconSvg);
 
   await page.goto('/');
-  await expect(page).toHaveTitle(/Isoflow/);
+  await expect(page).toHaveTitle(/Reticulyne/);
 
   // Wait for the polyline to render, then click it to open the panel.
   const polyline = page.locator('svg polyline').first();

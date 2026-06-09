@@ -26,7 +26,7 @@ test('loads the editor and accepts a mouse move + click', async ({ page }) => {
 
   await page.goto('/');
 
-  await expect(page).toHaveTitle(/Isoflow/);
+  await expect(page).toHaveTitle(/Reticulyne/);
 
   // The renderer wraps everything in a top-level absolutely-positioned
   // Box. Wait for it to be present + occupy non-zero area before

@@ -65,7 +65,7 @@ test('exports the current view as PNG via the main menu', async ({ page }) => {
   });
 
   await page.goto('/');
-  await expect(page).toHaveTitle(/Isoflow/);
+  await expect(page).toHaveTitle(/Reticulyne/);
 
   // The main menu button is an MUI Tooltip-wrapped IconButton with
   // the accessible name "Main menu" — see src/components/MainMenu.

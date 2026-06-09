@@ -29,7 +29,7 @@ async function readZoomPercent(page: Page): Promise<number> {
 test.describe('FEA5-01 — wheel input semantics', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/Isoflow/);
+    await expect(page).toHaveTitle(/Reticulyne/);
     // Park the cursor in the middle of the canvas so wheel events
     // land on the renderer, not on the toolbar.
     const viewport = page.viewportSize();

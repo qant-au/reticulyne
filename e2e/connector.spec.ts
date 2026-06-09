@@ -79,7 +79,7 @@ test('renders a connector between two placed icons', async ({ page }) => {
   });
 
   await page.goto('/');
-  await expect(page).toHaveTitle(/Isoflow/);
+  await expect(page).toHaveTitle(/Reticulyne/);
 
   // The connector renders as an SVG <polyline> inside the scene
   // layer. There's exactly one such polyline for the one connector

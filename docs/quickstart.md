@@ -5,7 +5,7 @@ A minimal example. Assumes you've completed [installation](installation.md).
 ## Minimal render
 
 ```tsx
-import Reticulyne from '@qant-au/isoflow';
+import Reticulyne from '@reticulyne/core';
 
 export function App() {
   return (
@@ -87,7 +87,7 @@ a dynamic import with SSR disabled:
 import dynamic from 'next/dynamic';
 
 export const ReticulyneDynamic = dynamic(
-  () => import('@qant-au/isoflow').then((m) => m.default),
+  () => import('@reticulyne/core').then((m) => m.default),
   { ssr: false }
 );
 ```

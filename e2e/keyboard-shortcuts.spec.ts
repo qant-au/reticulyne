@@ -31,7 +31,7 @@ const readZoomPercent = async (page: Page): Promise<number> => {
 test.describe('FEA5-02 — keyboard shortcuts', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/Isoflow/);
+    await expect(page).toHaveTitle(/Reticulyne/);
     // Park focus on the canvas — keyboard handlers attach to window
     // so any focus that isn't an editable surface will do, but
     // moving the mouse onto the canvas ensures we're not pointer-

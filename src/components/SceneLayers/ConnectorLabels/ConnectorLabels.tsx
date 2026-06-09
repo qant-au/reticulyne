@@ -1,20 +1,22 @@
-import { useScene } from 'src/hooks/useScene';
+import { memo, useMemo } from 'react';
+import { useSceneConnectorsList } from 'src/hooks/sceneLists';
 import { ConnectorLabel } from './ConnectorLabel';
 
-interface Props {
-  connectors: ReturnType<typeof useScene>['connectors'];
-}
+export const ConnectorLabels = memo(() => {
+  const connectors = useSceneConnectorsList();
+  const labelled = useMemo(() => {
+    return connectors.filter((connector) => {
+      return Boolean(connector.description);
+    });
+  }, [connectors]);
 
-export const ConnectorLabels = ({ connectors }: Props) => {
   return (
     <>
-      {connectors
-        .filter((connector) => {
-          return Boolean(connector.description);
-        })
-        .map((connector) => {
-          return <ConnectorLabel key={connector.id} connector={connector} />;
-        })}
+      {labelled.map((connector) => {
+        return <ConnectorLabel key={connector.id} connector={connector} />;
+      })}
     </>
   );
-};
+});
+
+ConnectorLabels.displayName = 'ConnectorLabels';

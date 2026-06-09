@@ -14,7 +14,6 @@ import { TextBoxes } from 'src/components/SceneLayers/TextBoxes/TextBoxes';
 import { SizeIndicator } from 'src/components/DebugUtils/SizeIndicator';
 import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { TransformControlsManager } from 'src/components/TransformControlsManager/TransformControlsManager';
-import { useScene } from 'src/hooks/useScene';
 import { RendererProps } from 'src/types/rendererProps';
 
 export const Renderer = ({
@@ -38,7 +37,6 @@ export const Renderer = ({
   const { setInteractionsElement } = useInteractionManager(
     enableGlobalDragHandlers
   );
-  const { items, rectangles, connectors, textBoxes } = useScene();
   useKeyboardShortcuts();
 
   useEffect(() => {
@@ -71,7 +69,7 @@ export const Renderer = ({
       }}
     >
       <SceneLayer>
-        <Rectangles rectangles={rectangles} />
+        <Rectangles />
       </SceneLayer>
       <Box
         sx={{
@@ -90,16 +88,16 @@ export const Renderer = ({
         </SceneLayer>
       )}
       <SceneLayer>
-        <Connectors connectors={connectors} />
+        <Connectors />
       </SceneLayer>
       <SceneLayer>
-        <TextBoxes textBoxes={textBoxes} />
+        <TextBoxes />
       </SceneLayer>
       <SceneLayer>
-        <ConnectorLabels connectors={connectors} />
+        <ConnectorLabels />
       </SceneLayer>
       <SceneLayer>
-        <ConnectorIndicators connectors={connectors} />
+        <ConnectorIndicators />
       </SceneLayer>
       {enableDebugTools && (
         <SceneLayer>
@@ -118,7 +116,7 @@ export const Renderer = ({
         }}
       />
       <SceneLayer>
-        <Nodes nodes={items} />
+        <Nodes />
       </SceneLayer>
       <SceneLayer>
         <TransformControlsManager />

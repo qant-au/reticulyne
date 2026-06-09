@@ -1,14 +1,11 @@
-import { useMemo } from 'react';
-import type { useScene } from 'src/hooks/useScene';
+import { memo, useMemo } from 'react';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useActiveHighlightId } from 'src/hooks/useActiveHighlightId';
+import { useSceneConnectorsList } from 'src/hooks/sceneLists';
 import { Connector } from './Connector';
 
-interface Props {
-  connectors: ReturnType<typeof useScene>['connectors'];
-}
-
-export const Connectors = ({ connectors }: Props) => {
+export const Connectors = memo(() => {
+  const connectors = useSceneConnectorsList();
   const itemControls = useUiStateStore((state) => {
     return state.itemControls;
   });
@@ -30,9 +27,13 @@ export const Connectors = ({ connectors }: Props) => {
     return null;
   }, [mode, itemControls]);
 
+  const ordered = useMemo(() => {
+    return [...connectors].reverse();
+  }, [connectors]);
+
   return (
     <>
-      {[...connectors].reverse().map((connector) => {
+      {ordered.map((connector) => {
         return (
           <Connector
             key={connector.id}
@@ -46,4 +47,6 @@ export const Connectors = ({ connectors }: Props) => {
       })}
     </>
   );
-};
+});
+
+Connectors.displayName = 'Connectors';

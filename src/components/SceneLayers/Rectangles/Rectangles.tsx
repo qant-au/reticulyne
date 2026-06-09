@@ -1,32 +1,35 @@
-import { useScene } from 'src/hooks/useScene';
+import { memo, useMemo } from 'react';
 import { useActiveHighlightId } from 'src/hooks/useActiveHighlightId';
+import { useSceneRectanglesList } from 'src/hooks/sceneLists';
 import { Rectangle } from './Rectangle';
 
-interface Props {
-  rectangles: ReturnType<typeof useScene>['rectangles'];
-}
-
-export const Rectangles = ({ rectangles }: Props) => {
+export const Rectangles = memo(() => {
+  const rectangles = useSceneRectanglesList();
   const activeHighlightId = useActiveHighlightId();
+
+  const ordered = useMemo(() => {
+    return [...rectangles]
+      .sort((a, b) => {
+        return (a.zIndex ?? 0) - (b.zIndex ?? 0);
+      })
+      .reverse();
+  }, [rectangles]);
 
   return (
     <>
-      {[...rectangles]
-        .sort((a, b) => {
-          return (a.zIndex ?? 0) - (b.zIndex ?? 0);
-        })
-        .reverse()
-        .map((rectangle) => {
-          return (
-            <Rectangle
-              key={rectangle.id}
-              {...rectangle}
-              isDimmed={
-                activeHighlightId !== null && activeHighlightId !== rectangle.id
-              }
-            />
-          );
-        })}
+      {ordered.map((rectangle) => {
+        return (
+          <Rectangle
+            key={rectangle.id}
+            {...rectangle}
+            isDimmed={
+              activeHighlightId !== null && activeHighlightId !== rectangle.id
+            }
+          />
+        );
+      })}
     </>
   );
-};
+});
+
+Rectangles.displayName = 'Rectangles';

@@ -1,17 +1,19 @@
-import { ViewItem } from 'src/types';
+import { memo, useMemo } from 'react';
 import { useActiveHighlightId } from 'src/hooks/useActiveHighlightId';
+import { useSceneItemsList } from 'src/hooks/sceneLists';
 import { Node } from './Node/Node';
 
-interface Props {
-  nodes: ViewItem[];
-}
-
-export const Nodes = ({ nodes }: Props) => {
+export const Nodes = memo(() => {
+  const nodes = useSceneItemsList();
   const activeHighlightId = useActiveHighlightId();
+
+  const ordered = useMemo(() => {
+    return [...nodes].reverse();
+  }, [nodes]);
 
   return (
     <>
-      {[...nodes].reverse().map((node) => {
+      {ordered.map((node) => {
         return (
           <Node
             key={node.id}
@@ -25,4 +27,6 @@ export const Nodes = ({ nodes }: Props) => {
       })}
     </>
   );
-};
+});
+
+Nodes.displayName = 'Nodes';

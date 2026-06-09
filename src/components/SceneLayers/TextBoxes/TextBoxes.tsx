@@ -1,17 +1,19 @@
-import { useScene } from 'src/hooks/useScene';
+import { memo, useMemo } from 'react';
 import { useActiveHighlightId } from 'src/hooks/useActiveHighlightId';
+import { useSceneTextBoxesList } from 'src/hooks/sceneLists';
 import { TextBox } from './TextBox';
 
-interface Props {
-  textBoxes: ReturnType<typeof useScene>['textBoxes'];
-}
-
-export const TextBoxes = ({ textBoxes }: Props) => {
+export const TextBoxes = memo(() => {
+  const textBoxes = useSceneTextBoxesList();
   const activeHighlightId = useActiveHighlightId();
+
+  const ordered = useMemo(() => {
+    return [...textBoxes].reverse();
+  }, [textBoxes]);
 
   return (
     <>
-      {[...textBoxes].reverse().map((textBox) => {
+      {ordered.map((textBox) => {
         return (
           <TextBox
             key={textBox.id}
@@ -24,4 +26,6 @@ export const TextBoxes = ({ textBoxes }: Props) => {
       })}
     </>
   );
-};
+});
+
+TextBoxes.displayName = 'TextBoxes';

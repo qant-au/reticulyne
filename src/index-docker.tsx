@@ -18,7 +18,7 @@ import { icons, colors } from './examples/initialData';
 // the hook is a single optional-chained read at module load.
 declare global {
   interface Window {
-    __ISOFLOW_E2E__?: {
+    __RETICULYNE_E2E__?: {
       initialData?: InitialData;
       editorMode?: keyof typeof EditorModeEnum;
       /**
@@ -41,7 +41,7 @@ declare global {
   }
 }
 
-const e2eConfig = window.__ISOFLOW_E2E__;
+const e2eConfig = window.__RETICULYNE_E2E__;
 const initialData = e2eConfig?.initialData ?? {
   ...INITIAL_DATA,
   icons,
@@ -54,7 +54,7 @@ const scrollParent = e2eConfig?.scrollParent ?? false;
 // off by default so a production docker deployment matches the
 // pre-FEA5-06 behaviour. Pass `?animate=1` on the URL to flip the
 // toggle on for manual review without rebuilding the image, or set
-// `__ISOFLOW_E2E__.enableAnimation` from a Playwright spec.
+// `__RETICULYNE_E2E__.enableAnimation` from a Playwright spec.
 const enableAnimation =
   e2eConfig?.enableAnimation ??
   new URLSearchParams(window.location.search).get('animate') === '1';

@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Playwright config for the Isoflow editor.
+ * Playwright config for the Reticulyne editor.
  *
  * - The tests hit the standalone Docker container served by `bash restart.sh`
  *   on http://localhost:2222 by default. Override with PLAYWRIGHT_BASE_URL.

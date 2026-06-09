@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
  * useIsoProjection's tile→pixel math, and the SVG render. The Zustand
  * v5 render loop landed in DEP-05 was caught by exactly this surface.
  *
- * The fixture is injected via `window.__ISOFLOW_E2E__`, a Docker-entry-
+ * The fixture is injected via `window.__RETICULYNE_E2E__`, a Docker-entry-
  * only hook (not in the published library). See src/index-docker.tsx.
  */
 test('renders a connector between two placed icons', async ({ page }) => {
@@ -32,7 +32,7 @@ test('renders a connector between two placed icons', async ({ page }) => {
     const tinyIconSvg =
       'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 fill=%22%23888%22/%3E%3C/svg%3E';
 
-    window.__ISOFLOW_E2E__ = {
+    window.__RETICULYNE_E2E__ = {
       initialData: {
         title: 'e2e connector fixture',
         items: [

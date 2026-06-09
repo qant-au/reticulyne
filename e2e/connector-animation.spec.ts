@@ -29,7 +29,7 @@ test('animated connector emits <animateMotion>, toggle removes it', async ({
     const tinyIconSvg =
       'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 fill=%22%23888%22/%3E%3C/svg%3E';
 
-    window.__ISOFLOW_E2E__ = {
+    window.__RETICULYNE_E2E__ = {
       enableAnimation: true,
       initialData: {
         title: 'e2e animated-connector fixture',

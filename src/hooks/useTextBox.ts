@@ -8,7 +8,7 @@ export const useTextBox = (id: string) => {
   const textBox = useMemo(() => {
     // A deleted text box's component goes through one final render cycle
     // before unmounting. Return null rather than throwing so the component
-    // can bail out cleanly instead of hitting IsoflowErrorBoundary.
+    // can bail out cleanly instead of hitting ReticulyneErrorBoundary.
     return getItemById(textBoxes, id);
   }, [textBoxes, id]);
 

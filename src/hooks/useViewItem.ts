@@ -8,7 +8,7 @@ export const useViewItem = (id: string) => {
   const viewItem = useMemo(() => {
     // A deleted item's child components go through one final render cycle
     // before unmounting. Return null rather than throwing so the component
-    // can bail out cleanly instead of hitting IsoflowErrorBoundary.
+    // can bail out cleanly instead of hitting ReticulyneErrorBoundary.
     return getItemById(items, id);
   }, [items, id]);
 

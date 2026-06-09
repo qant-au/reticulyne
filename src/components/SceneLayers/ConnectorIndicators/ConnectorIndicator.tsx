@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Box } from '@mui/material';
 import { useScene } from 'src/hooks/useScene';
 import { connectorPathTileToGlobal, getTilePosition } from 'src/utils';
-import type { ConnectorIndicatorComponent } from 'src/types/isoflowProps';
+import type { ConnectorIndicatorComponent } from 'src/types/reticulyneProps';
 import type { Connector as ConnectorModel, View } from 'src/types';
 
 interface Props {

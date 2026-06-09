@@ -3,7 +3,7 @@ import { Icon, Model } from './model';
 import type {
   ConnectorIndicatorComponent,
   NodeIndicatorComponent
-} from './isoflowProps';
+} from './reticulyneProps';
 import { ItemReference } from './scene';
 
 interface AddItemControls {

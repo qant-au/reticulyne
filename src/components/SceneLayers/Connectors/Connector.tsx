@@ -47,7 +47,7 @@ export const Connector = ({
   // connector is deleted but before this component unmounts. All hook
   // calls below use _connector (the always-valid prop) so they are
   // unconditional. The guard before the return keeps deleted connectors
-  // out of the DOM without hitting IsoflowErrorBoundary.
+  // out of the DOM without hitting ReticulyneErrorBoundary.
   const connector = useConnector(_connector.id);
   const enableAnimation = useUiStateStore((state) => {
     return state.enableAnimation;

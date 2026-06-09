@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen, cleanup } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import type { InitialData } from 'src/types';
 
 beforeAll(() => {
@@ -90,7 +90,7 @@ describe('FEA7-03 connectorIndicatorComponent', () => {
   test('renders one slot per connector when supplied', () => {
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={initialData}
         connectorIndicatorComponent={({ connector }) => {
@@ -106,7 +106,7 @@ describe('FEA7-03 connectorIndicatorComponent', () => {
 
   test('renders no slot when omitted', () => {
     const onError = jest.fn();
-    render(<Isoflow onError={onError} initialData={initialData} />);
+    render(<Reticulyne onError={onError} initialData={initialData} />);
     expect(onError).not.toHaveBeenCalled();
     expect(screen.queryAllByTestId('connector-indicator-slot')).toHaveLength(0);
   });
@@ -114,7 +114,7 @@ describe('FEA7-03 connectorIndicatorComponent', () => {
   test('passes a connector with id and anchors to the indicator', () => {
     const captured: { id: string; anchorCount: number }[] = [];
     render(
-      <Isoflow
+      <Reticulyne
         initialData={initialData}
         connectorIndicatorComponent={({ connector }) => {
           captured.push({

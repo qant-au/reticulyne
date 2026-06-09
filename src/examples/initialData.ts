@@ -1,4 +1,4 @@
-import { Colors, Icons, InitialData } from 'src/Isoflow';
+import { Colors, Icons, InitialData } from 'src/Reticulyne';
 import { flattenCollections } from 'src/vendor/isopacks/utils';
 import isoflowIsopack from 'src/vendor/isopacks/isoflow';
 import awsIsopack from 'src/vendor/isopacks/aws';

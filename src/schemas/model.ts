@@ -37,7 +37,7 @@ const refineModel = (
 export const modelSchema = modelObjectSchema.superRefine(refineModel);
 
 // InitialData = Model plus two optional view hints the consumer can pass
-// when calling <Isoflow initialData={...} /> or useIsoflow().loadModel(...).
+// when calling <Reticulyne initialData={...} /> or useReticulyne().loadModel(...).
 // `fitToView` recomputes zoom on mount; `view` activates a specific view by
 // id. Documented in docs/api.md.
 export const initialDataSchema = modelObjectSchema

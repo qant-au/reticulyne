@@ -3,7 +3,7 @@
 // and closes the menu. Follows the QUA4-09 / FEA4-04 pattern shared
 // by useExportJson and useExportPdf.
 //
-// The onSave callback is stored on the UI-state store by Isoflow.tsx
+// The onSave callback is stored on the UI-state store by Reticulyne.tsx
 // (via uiStateActions.setOnSave) so this hook can reach it without
 // prop-drilling. Identity churn is bounded — the only subscriber
 // that reacts to its presence is the MainMenu render branch.
@@ -35,7 +35,7 @@ export const useSaveModel = () => {
       // Kept as a guard in case a future menu change races the prop.
       console.warn(
         '[isoflow] "Save" menu entry clicked without an onSave callback wired. ' +
-          'Pass <Isoflow onSave={...} /> alongside listing "ACTION.SAVE" in mainMenuOptions.'
+          'Pass <Reticulyne onSave={...} /> alongside listing "ACTION.SAVE" in mainMenuOptions.'
       );
       return;
     }

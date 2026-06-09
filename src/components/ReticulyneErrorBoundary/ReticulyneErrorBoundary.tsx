@@ -11,7 +11,7 @@ interface State {
   hasError: boolean;
 }
 
-export class IsoflowErrorBoundary extends Component<Props, State> {
+export class ReticulyneErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };

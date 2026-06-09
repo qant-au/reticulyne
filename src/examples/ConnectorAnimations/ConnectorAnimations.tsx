@@ -3,7 +3,7 @@
 // Three nodes (client → service → store) with three connectors, each
 // animating a different glyph so the surface is visually distinct.
 import { Box, Typography } from '@mui/material';
-import Isoflow from 'src/Isoflow';
+import Reticulyne from 'src/Reticulyne';
 import { icons, colors } from '../initialData';
 import type { InitialData } from 'src/types';
 import { useExamplesThemeMode } from '../themeModeContext';
@@ -71,7 +71,7 @@ export const ConnectorAnimations = () => {
   const { themeMode } = useExamplesThemeMode();
   return (
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-      <Isoflow
+      <Reticulyne
         initialData={animationsInitialData}
         enableAnimation
         themeMode={themeMode}
@@ -94,7 +94,7 @@ export const ConnectorAnimations = () => {
         <Typography variant="caption" component="div">
           Each connector sets <code>glyph</code> + <code>animated: true</code>;
           the host enables looping via <code>enableAnimation</code> on{' '}
-          <code>&lt;Isoflow&gt;</code>.
+          <code>&lt;Reticulyne&gt;</code>.
         </Typography>
       </Box>
     </Box>

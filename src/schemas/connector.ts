@@ -62,7 +62,7 @@ export const connectorSchema = z
     direction: z.enum(connectorDirectionOptions).optional(),
     glyph: z.enum(connectorGlyphOptions).optional(),
     // FEA5-06: persistent per-connector animation flag. The runtime
-    // is also gated by IsoflowProps.enableAnimation; setting this to
+    // is also gated by ReticulyneProps.enableAnimation; setting this to
     // true on a host that hasn't opted in is a no-op visually.
     animated: z.boolean().optional(),
     // FEA7-01: animation-rate multiplier in [0, 1]. 0 = stopped,

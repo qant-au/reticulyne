@@ -24,7 +24,7 @@ export type InitialData = Model & {
   view?: string;
 };
 
-export interface IsoflowProps {
+export interface ReticulyneProps {
   initialData?: InitialData;
   mainMenuOptions?: MainMenuOptions;
   onModelUpdated?: (Model: Model) => void;
@@ -54,7 +54,7 @@ export interface IsoflowProps {
   showTitleBar?: boolean;
   /**
    * Optional callback fired when `initialData` (or a fresh
-   * `loadModel()` payload from `useIsoflow`) fails schema validation.
+   * `loadModel()` payload from `useReticulyne`) fails schema validation.
    * Receives the array of Zod issues from the failed parse.
    *
    * When omitted, the failure is logged to `console.error` instead.
@@ -94,7 +94,7 @@ export interface IsoflowProps {
   /**
    * When `false`, pointer event listeners attach to the renderer element
    * rather than `window`, preventing drag events from leaking into host-page
-   * sibling widgets when Isoflow is embedded in a larger app. Defaults to
+   * sibling widgets when Reticulyne is embedded in a larger app. Defaults to
    * `true` for backwards compatibility.
    *
    * All pointer input (mouse, touch, stylus) is handled via the Pointer
@@ -106,9 +106,9 @@ export interface IsoflowProps {
    * user-agent's `prefers-color-scheme` media query and updates live as it
    * changes. Pass `'light'` or `'dark'` to pin the mode explicitly.
    *
-   * The mode is baked into Isoflow's internal MUI `<ThemeProvider>`
+   * The mode is baked into Reticulyne's internal MUI `<ThemeProvider>`
    * (not inherited from any outer host theme) so embedders can mix
-   * a dark Isoflow inside an otherwise-light app and vice versa.
+   * a dark Reticulyne inside an otherwise-light app and vice versa.
    *
    * **Breaking change (FEA9-01):** Default changed from `'light'` to
    * `'auto'`. Embedders that relied on the implicit light default should
@@ -161,11 +161,11 @@ export interface IsoflowProps {
    */
   highlightedItemId?: string;
   /**
-   * Optional children rendered inside the Isoflow provider tree.
+   * Optional children rendered inside the Reticulyne provider tree.
    * The intended use is a "driver" component that calls
-   * `useIsoflow()` to drive the editor from outside — pulse
+   * `useReticulyne()` to drive the editor from outside — pulse
    * connectors on a timer, update colours from a poller, etc.
-   * `useIsoflow` requires being a descendant of `<Isoflow>` to
+   * `useReticulyne` requires being a descendant of `<Reticulyne>` to
    * see the contextual stores; this prop is the supported way to
    * plant such a descendant.
    *

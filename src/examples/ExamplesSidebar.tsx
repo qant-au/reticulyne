@@ -120,7 +120,7 @@ export const ExamplesSidebar = ({
           })}
         </Stack>
         <Divider />
-        {/* FEA7-04 demo: drives every example's Isoflow themeMode prop
+        {/* FEA7-04 demo: drives every example's Reticulyne themeMode prop
             via the examples-themed context so the picker can showcase
             light / auto / dark side by side. */}
         <Box

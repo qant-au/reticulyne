@@ -33,7 +33,7 @@ export const useResolvedThemeMode = (themeMode: ThemeMode): ResolvedMode => {
 
     // The older `addListener`/`removeListener` API was removed in
     // most browsers but Safari < 14 still requires it; using the
-    // modern signature is fine for everything Isoflow's peer-deps
+    // modern signature is fine for everything Reticulyne's peer-deps
     // matrix supports (React 19 + MUI 9). Initial value was read
     // via `useState(readPrefersDark)` so no immediate setState is
     // needed here — the listener catches every subsequent change.

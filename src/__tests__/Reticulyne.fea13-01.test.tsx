@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, cleanup } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import type { InitialData } from 'src/types';
 
 beforeAll(() => {
@@ -77,7 +77,7 @@ describe('FEA13-01 SVG export menu option', () => {
   test('renders without error with EXPORT.SVG in mainMenuOptions', () => {
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={initialData}
         mainMenuOptions={['EXPORT.SVG']}
@@ -88,14 +88,14 @@ describe('FEA13-01 SVG export menu option', () => {
 
   test('renders without error with full default menu', () => {
     const onError = jest.fn();
-    render(<Isoflow onError={onError} initialData={initialData} />);
+    render(<Reticulyne onError={onError} initialData={initialData} />);
     expect(onError).not.toHaveBeenCalled();
   });
 
   test('renders without error with EXPORT.SVG alongside PNG and PDF', () => {
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={initialData}
         mainMenuOptions={['EXPORT.PNG', 'EXPORT.PDF', 'EXPORT.SVG']}
@@ -107,7 +107,7 @@ describe('FEA13-01 SVG export menu option', () => {
   test('renders without error with empty mainMenuOptions', () => {
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={initialData}
         mainMenuOptions={[]}

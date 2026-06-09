@@ -9,10 +9,10 @@ import {
   act
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import type { Model } from 'src/types';
 
-// jsdom shims — copied from Isoflow.smoke.test.tsx since the renderer
+// jsdom shims — copied from Reticulyne.smoke.test.tsx since the renderer
 // touches ResizeObserver and matchMedia on mount.
 beforeAll(() => {
   if (!('ResizeObserver' in globalThis)) {
@@ -71,7 +71,7 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
   test('renders the Save menu entry and fires onSave with the current model when clicked', async () => {
     const onSave = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         mainMenuOptions={['ACTION.SAVE']}
         onSave={onSave}
         initialData={{
@@ -101,7 +101,7 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
   });
 
   test('suppresses the Save entry when ACTION.SAVE is in mainMenuOptions but onSave is missing', async () => {
-    render(<Isoflow mainMenuOptions={['ACTION.SAVE']} />);
+    render(<Reticulyne mainMenuOptions={['ACTION.SAVE']} />);
 
     await openMainMenu();
 
@@ -119,7 +119,7 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
 
   test('suppresses the Save entry when onSave is supplied but ACTION.SAVE is not in mainMenuOptions', async () => {
     const onSave = jest.fn();
-    render(<Isoflow mainMenuOptions={['EXPORT.JSON']} onSave={onSave} />);
+    render(<Reticulyne mainMenuOptions={['EXPORT.JSON']} onSave={onSave} />);
 
     await openMainMenu();
 

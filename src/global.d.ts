@@ -5,7 +5,7 @@ declare global {
   let REPOSITORY_URL: string;
 
   interface Window {
-    Isoflow: {
+    Reticulyne: {
       getUnprojectedBounds: () => Size & Coords;
       fitToView: () => void;
     };

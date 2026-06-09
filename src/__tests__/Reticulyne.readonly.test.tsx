@@ -9,15 +9,15 @@ import { ModelProvider } from 'src/stores/modelStore';
 import { SceneProvider } from 'src/stores/sceneStore';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { HistoryProvider } from 'src/stores/historyStore';
-import { useIsoflow } from '../Isoflow';
+import { useReticulyne } from '../Reticulyne';
 
 afterEach(() => {
   cleanup();
 });
 
 type Captured = {
-  set: ReturnType<typeof useIsoflow>['Model']['set'];
-  get: ReturnType<typeof useIsoflow>['Model']['get'];
+  set: ReturnType<typeof useReticulyne>['Model']['set'];
+  get: ReturnType<typeof useReticulyne>['Model']['get'];
 };
 
 const HookProbe = ({
@@ -30,7 +30,7 @@ const HookProbe = ({
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const { Model } = useIsoflow();
+  const { Model } = useReticulyne();
 
   useEffect(() => {
     uiStateActions.setEditorMode(mode);
@@ -65,7 +65,7 @@ const Harness = ({
   );
 };
 
-describe('useIsoflow read-only enforcement', () => {
+describe('useReticulyne read-only enforcement', () => {
   let warnSpy: jest.SpyInstance;
 
   beforeEach(() => {

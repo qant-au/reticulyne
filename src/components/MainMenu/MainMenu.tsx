@@ -83,7 +83,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
       warnedMissingOnSaveRef.current = true;
       console.warn(
         '[isoflow] mainMenuOptions includes "ACTION.SAVE" but no onSave callback ' +
-          'was passed to <Isoflow>. The Save menu entry will not render until both ' +
+          'was passed to <Reticulyne>. The Save menu entry will not render until both ' +
           'are wired.'
       );
     }
@@ -317,7 +317,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
                         color: 'text.secondary'
                       }}
                     >
-                      Isoflow v{PACKAGE_VERSION}
+                      Reticulyne v{PACKAGE_VERSION}
                     </Typography>
                   </MenuItem>
                 )}

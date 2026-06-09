@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen, cleanup } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import type { InitialData } from 'src/types';
 
 beforeAll(() => {
@@ -71,7 +71,7 @@ describe('FEA5-07 nodeIndicatorComponent', () => {
   test('renders inside each node when supplied', () => {
     const onError = jest.fn();
     render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={minimalInitialData}
         nodeIndicatorComponent={({ item }) => {
@@ -86,14 +86,14 @@ describe('FEA5-07 nodeIndicatorComponent', () => {
 
   test('renders no slot when omitted', () => {
     const onError = jest.fn();
-    render(<Isoflow onError={onError} initialData={minimalInitialData} />);
+    render(<Reticulyne onError={onError} initialData={minimalInitialData} />);
     expect(onError).not.toHaveBeenCalled();
     expect(screen.queryAllByTestId('node-indicator-slot')).toHaveLength(0);
   });
 
   test('passes the ModelItem and ViewItem to the indicator', () => {
     render(
-      <Isoflow
+      <Reticulyne
         initialData={minimalInitialData}
         nodeIndicatorComponent={({ item, view }) => {
           return (

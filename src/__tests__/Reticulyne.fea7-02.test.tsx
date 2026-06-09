@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, cleanup } from '@testing-library/react';
-import Isoflow from '../Isoflow';
+import Reticulyne from '../Reticulyne';
 import { getConnectorPath } from 'src/utils/connector';
 import type { InitialData, View } from 'src/types';
 
@@ -169,7 +169,7 @@ describe('FEA7-02 obstacle-aware connector routing', () => {
   test('renders without error and produces a non-empty polyline', () => {
     const onError = jest.fn();
     const { container } = render(
-      <Isoflow
+      <Reticulyne
         onError={onError}
         initialData={wrapInInitialData(obstacleScenario)}
       />

@@ -9,7 +9,7 @@ const base = require('./base.config.js');
 module.exports = merge(base, {
   mode: 'production',
   entry: {
-    'index': './src/Isoflow.tsx',
+    'index': './src/Reticulyne.tsx',
     '/standaloneExports': './src/standaloneExports.ts'
   },
   // Emit separate `.map` files alongside the bundle.  Webpack appends a

@@ -43,6 +43,22 @@ const getModeFunction = (mode: ModeActions, e: SlimMouseEvent) => {
 export const useInteractionManager = (enableGlobalDragHandlers = true) => {
   const rendererRef = useRef<HTMLElement | null>(null);
   const reducerTypeRef = useRef<string | undefined>(undefined);
+  // PRF-01: narrow selectors for values that drive deps. Live state
+  // needed inside handlers is read from refs at fire time so the
+  // useCallback identities stay stable across mutations and the window
+  // listeners only re-bind on genuine effect-dep changes.
+  const editorMode = useUiStateStore((state) => {
+    return state.editorMode;
+  });
+  const modeType = useUiStateStore((state) => {
+    return state.mode.type;
+  });
+  const rendererEl = useUiStateStore((state) => {
+    return state.rendererEl;
+  });
+  const uiStateActions = useUiStateStore((state) => {
+    return state.actions;
+  });
   const uiState = useUiStateStore((state) => {
     return state;
   });
@@ -50,38 +66,51 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     return state;
   });
   const scene = useScene();
-  const { size: rendererSize } = useResizeObserver(uiState.rendererEl);
+  const uiStateRef = useRef(uiState);
+  const modelRef = useRef(model);
+  const sceneRef = useRef(scene);
+  useEffect(() => {
+    uiStateRef.current = uiState;
+  }, [uiState]);
+  useEffect(() => {
+    modelRef.current = model;
+  }, [model]);
+  useEffect(() => {
+    sceneRef.current = scene;
+  }, [scene]);
+  const { size: rendererSize } = useResizeObserver(rendererEl);
 
   const onMouseEvent = useCallback(
     (e: MouseEvent) => {
       if (!rendererRef.current) return;
 
-      const mode = modes[uiState.mode.type];
+      const liveUiState = uiStateRef.current;
+      const mode = modes[liveUiState.mode.type];
       const modeFunction = getModeFunction(mode, e);
 
       if (!modeFunction) return;
 
       const nextMouse = getMouse({
         interactiveElement: rendererRef.current,
-        zoom: uiState.zoom,
-        scroll: uiState.scroll,
-        lastMouse: uiState.mouse,
+        zoom: liveUiState.zoom,
+        scroll: liveUiState.scroll,
+        lastMouse: liveUiState.mouse,
         mouseEvent: e,
         rendererSize
       });
 
-      uiState.actions.setMouse(nextMouse);
+      uiStateActions.setMouse(nextMouse);
 
       const baseState: State = {
-        model,
-        scene,
-        uiState,
+        model: modelRef.current,
+        scene: sceneRef.current,
+        uiState: liveUiState,
         rendererRef: rendererRef.current,
         rendererSize,
         isRendererInteraction: rendererRef.current === e.target
       };
 
-      if (reducerTypeRef.current !== uiState.mode.type) {
+      if (reducerTypeRef.current !== liveUiState.mode.type) {
         const prevReducer = reducerTypeRef.current
           ? modes[reducerTypeRef.current]
           : null;
@@ -96,34 +125,36 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       }
 
       modeFunction(baseState);
-      reducerTypeRef.current = uiState.mode.type;
+      reducerTypeRef.current = liveUiState.mode.type;
     },
-    [model, scene, uiState, rendererSize]
+    [uiStateActions, rendererSize]
   );
 
   const onContextMenu = useCallback(
     (e: Event) => {
       e.preventDefault();
 
+      const liveUiState = uiStateRef.current;
+      const liveScene = sceneRef.current;
       const itemAtTile = getItemAtTile({
-        tile: uiState.mouse.position.tile,
-        scene
+        tile: liveUiState.mouse.position.tile,
+        scene: liveScene
       });
 
       if (itemAtTile?.type === 'RECTANGLE') {
-        uiState.actions.setContextMenu({
+        uiStateActions.setContextMenu({
           item: itemAtTile,
-          tile: uiState.mouse.position.tile
+          tile: liveUiState.mouse.position.tile
         });
-      } else if (uiState.contextMenu) {
-        uiState.actions.setContextMenu(null);
+      } else if (liveUiState.contextMenu) {
+        uiStateActions.setContextMenu(null);
       }
     },
-    [uiState.mouse, scene, uiState.contextMenu, uiState.actions]
+    [uiStateActions]
   );
 
   useEffect(() => {
-    if (uiState.mode.type === 'INTERACTIONS_DISABLED') return;
+    if (modeType === 'INTERACTIONS_DISABLED') return undefined;
 
     // When enableGlobalDragHandlers is false, confine to the interactions
     // overlay element so drag events don't leak to host-page siblings
@@ -164,20 +195,20 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       if (action.kind === 'zoom') {
         zoomBuffer = action.nextZoomBuffer;
         for (let i = 0; i < action.steps; i += 1) {
-          uiState.actions.incrementZoom();
+          uiStateActions.incrementZoom();
         }
         for (let i = 0; i < -action.steps; i += 1) {
-          uiState.actions.decrementZoom();
+          uiStateActions.decrementZoom();
         }
       } else {
-        uiState.actions.panScroll({ x: action.panDx, y: action.panDy });
+        uiStateActions.panScroll({ x: action.panDx, y: action.panDy });
       }
     };
 
     // passive: false is required for preventDefault() to take effect —
     // Chrome treats wheel listeners as passive by default and ignores
     // preventDefault on passive listeners.
-    uiState.rendererEl?.addEventListener('wheel', onScroll, { passive: false });
+    rendererEl?.addEventListener('wheel', onScroll, { passive: false });
 
     if (enableGlobalDragHandlers) {
       window.addEventListener('pointermove', onMouseEvent);
@@ -192,7 +223,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     }
 
     return () => {
-      uiState.rendererEl?.removeEventListener('wheel', onScroll);
+      rendererEl?.removeEventListener('wheel', onScroll);
       if (enableGlobalDragHandlers) {
         window.removeEventListener('pointermove', onMouseEvent);
         window.removeEventListener('pointerdown', onPointerDown);
@@ -206,12 +237,12 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       }
     };
   }, [
-    uiState.editorMode,
+    editorMode,
     onMouseEvent,
-    uiState.mode.type,
+    modeType,
     onContextMenu,
-    uiState.actions,
-    uiState.rendererEl,
+    uiStateActions,
+    rendererEl,
     enableGlobalDragHandlers
   ]);
 

@@ -45,3 +45,6 @@ yarn-error.log*
 
 # IDE state — local-only, not shared via git
 /.idea
+
+# Scout posture scans — session artefacts, regenerable
+scout-out/

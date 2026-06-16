@@ -19,18 +19,22 @@ type Icon = {
 };
 ```
 
-A collection groups icons under an `id`:
+The editor consumes a flat `Icon[]` — exported as the `Icons` type. There is no
+"collection" type in the public API. Grouping icons under a named collection is a
+purely **host-side convention**: define whatever shape suits your app, then
+flatten it to `Icon[]` before passing it in. For example:
 
 ```ts
-type ProcessedCollection = {
+// Your own shape — not exported by Reticulyne; the editor never sees it.
+type IconCollection = {
   id: string;
   name: string;
   icons: Icon[];
 };
 ```
 
-When you have multiple collections, flatten them into a single `Icon[]` list before passing
-to the editor:
+When you have multiple such collections, flatten them into a single `Icon[]` list
+before passing to the editor:
 
 ```ts
 const icons = collections.flatMap((c) =>
@@ -70,7 +74,7 @@ These collections power the [standalone Docker editor](docker.md) and the in-rep
 not maintain or depend on a separate icon package.
 
 If you need the same cloud-provider icons in an application that embeds
-`@qant-au/reticulyne` as an npm dependency, supply your own `ProcessedCollection`-shaped data
+`@qant-au/reticulyne` as an npm dependency, supply your own `Icon[]` data
 through the plugin interface below.
 
 ## Custom collections (plugin framework)
@@ -79,7 +83,7 @@ You can mix any number of collections together. Each icon needs a stable `id` (t
 references icons by `id`, so renames break diagrams that already use the icon).
 
 ```ts
-const customCollection: ProcessedCollection = {
+const customCollection: IconCollection = {
   id: 'my-org',
   name: 'My organisation',
   icons: [
@@ -96,9 +100,9 @@ const icons = customCollection.icons.map((icon) => ({
 <Reticulyne initialData={{ title: 'Example', icons, colors: [], items: [], views: [] }} />;
 ```
 
-The plugin interface is intentionally minimal — any data that satisfies `ProcessedCollection`
-works. There is no registration step and no runtime API; you build the array and pass it
-in.
+The plugin interface is intentionally minimal — any `Icon[]` works (the host-side
+`IconCollection` grouping above is optional sugar). There is no registration step
+and no runtime API; you build the array and pass it in.
 
 ## Best practice
 

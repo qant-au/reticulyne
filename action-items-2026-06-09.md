@@ -122,7 +122,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `docs/quickstart.md:52`
 - **Refs:** Review #19 (Section 6)
 
-### 19. Either export `ProcessedCollection` or rewrite `docs/isopacks.md` to describe the actual contract — `DOC-06`
+### ~~19. Either export `ProcessedCollection` or rewrite `docs/isopacks.md` to describe the actual contract~~ — `DOC-06` ✅ done — docs rewritten to the exported `Icon[]`/`Icons` contract (no new export)
 - **Why:** docs/isopacks.md and README.md cite `ProcessedCollection` as the icon-collections contract. The type is **not exported anywhere**. The actual exported types are `Icons` and `Icon`, with `collection?: string` discriminator.
 - **What:** Either (a) actually export a `ProcessedCollection` type from `src/schemas` matching the documented shape plus a `mergeCollections()` helper, OR (b) rewrite `docs/isopacks.md` to describe the actual `Icon[]` contract with `{ id, name, icons }` grouping shown as a host-side convention. Update README L62 to match.
 - **Where:** `docs/isopacks.md:25-30`; `README.md:62`

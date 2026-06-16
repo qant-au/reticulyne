@@ -59,7 +59,7 @@ Reference material lives under [`docs/`](docs/README.md):
 ## Key features
 
 - **Drag-and-drop editor** — Express your architecture with icons, regions and connectors.
-- **Extensible icon system** — Bring your own collections via the `ProcessedCollection` interface; see [docs/isopacks.md](docs/isopacks.md) for the contract. The standalone Docker container ships with the AWS, Azure, GCP, Kubernetes, and Isoflow icon collections pre-loaded.
+- **Extensible icon system** — Bring your own icons as a flat `Icon[]` (exported as the `Icons` type); see [docs/isopacks.md](docs/isopacks.md) for the contract. The standalone Docker container ships with the AWS, Azure, GCP, Kubernetes, and Isoflow icon collections pre-loaded.
 - **Editor modes** — Editable, explorable-readonly, and non-interactive modes for embedding in viewers, dashboards, or full editors.
 - **Export options** — Export diagrams as JSON, PNG, PDF, or SVG from the main menu. PDF generation is client-side via jsPDF; SVG export offers two formats: a true-flat vector SVG (Illustrator/Inkscape/Figma) and a foreignObject universal SVG (full-fidelity in browsers and Figma). All exports are client-side with no network calls.
 - **8-directional connector routing** — A* pathfinder uses diagonal movement (N/S/E/W plus all four 45° diagonals), producing shorter, less cluttered paths especially in densely connected diagrams.

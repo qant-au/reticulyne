@@ -13,6 +13,16 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Security
+
+- **Icon URL scheme allowlist (SEC-01).** `iconSchema.url` now rejects schemes
+  other than `http(s):`, `blob:`, relative paths, and image-only `data:` URIs
+  (`png`/`jpeg`/`gif`/`webp`/`svg+xml`). Models carrying `javascript:`, `file:`,
+  or non-image `data:` icon URLs that previously validated will now fail schema
+  validation (routed to `onValidationError`). SVG icons inlined during SVG export
+  are additionally stripped of `<script>`, `<foreignObject>`, and `on*` handlers.
+  This is a 0.x-permitted breaking change (see the versioning policy above).
+
 ## [0.1.0] - 2026-06-09
 
 The renamed identity. This is **a naming reset, not a content reset** — the

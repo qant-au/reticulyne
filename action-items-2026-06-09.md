@@ -168,7 +168,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟡 Medium — Security hardening
 
-### 26. Tighten icon URL schema + sanitize SVGs at export time — `SEC-01`
+### ~~26. Tighten icon URL schema + sanitize SVGs at export time~~ — `SEC-01` ✅ done — `iconSchema.url` scheme allowlist + hand-rolled SVG sanitizer in the export inliner (+ tests, docs)
 - **Why:** `iconSchema.url` is `z.string().max(...)` — no protocol allowlist. URLs feed into `<img src=...>` (browser-blocked from JS exec) but **also** into `exportAsVectorSvg` → `fetchAsDataUri()` for inlining. Opening the exported SVG under `file:` scheme executes embedded `<script>` / `<foreignObject>` / event handlers.
 - **What:** Restrict `iconSchema.url` to `https:`, `http:`, `data:image/{png,jpeg,gif,webp,svg+xml}`, `blob:`. Strip `<script>`, `<foreignObject>`, `on*` attributes when inlining SVG via `fetchAsDataUri`. Document the constraint in `docs/embedding.md` alongside existing DOMPurify guidance.
 - **Where:** `src/schemas/icons.ts:13`; `src/schemas/common.ts:53`; `src/utils/exportOptions.ts:259`

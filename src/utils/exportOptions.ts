@@ -2,6 +2,7 @@ import { toPng, toSvg } from 'html-to-image';
 import FileSaver from 'file-saver';
 import { jsPDF } from 'jspdf';
 import { Model, Size } from '../types';
+import { sanitizeSvgDataUri } from './sanitizeSvgDataUri';
 
 export const generateGenericFilename = (extension: string) => {
   return `reticulyne-export-${new Date().toISOString()}.${extension}`;
@@ -135,17 +136,19 @@ export const exportAsPdf = async (el: HTMLDivElement, size?: Size) => {
 
 /**
  * Convert an <img> src to a base64 data URI. Returns the src unchanged
- * if it is already a data URI.
+ * if it is already a data URI. SVG payloads are sanitised (SEC-01) before
+ * being handed back for inlining so an exported SVG can't carry embedded
+ * <script>/<foreignObject>/on* handlers.
  */
 const fetchAsDataUri = async (src: string): Promise<string> => {
-  if (src.startsWith('data:')) return src;
+  if (src.startsWith('data:')) return sanitizeSvgDataUri(src);
   const res = await fetch(src);
   if (!res.ok) throw new Error(`Failed to fetch icon: ${res.status}`);
   const fetchedBlob = await res.blob();
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
-      resolve(reader.result as string);
+      resolve(sanitizeSvgDataUri(reader.result as string));
     };
     reader.onerror = reject;
     reader.readAsDataURL(fetchedBlob);

@@ -52,6 +52,7 @@ Tight by design. No inline scripts, no `eval`, no third-party CDN. This is the c
 ### `img-src 'self' data: blob:`
 
 - `data:` and `blob:` are required for the in-bundle SVG icon packs and for the export-to-PNG path (which renders into a `blob:` URL before downloading).
+- **Icon URL hardening (SEC-01):** independent of the CSP, `iconSchema.url` is scheme-restricted at validation time to `http(s):`, `blob:`, relative paths, and image-only `data:` URIs — `javascript:`, `file:`, and `data:text/html` are rejected. SVG icons inlined during SVG export are stripped of `<script>`, `<foreignObject>`, and `on*` handlers so an exported file opened from a `file:` origin can't execute embedded content.
 - **History:** through the prior `@qant-au/isoflow` line the allowlist also included `https://isoflow.io` and `https://static.isoflow.io` — the upstream hosting origins for the original icon-pack image assets. Those origins were removed during the Reticulyne v0.1.0 rename (RNM-04). The in-repo demo fixtures that previously referenced those URLs were rewritten to inline `data:` SVGs. Embedders who shipped icon collections referencing those external origins must self-host or migrate to `data:`/`blob:` URIs in their `iconCollections` payload.
 
 ### Embedders inheriting a strict CSP

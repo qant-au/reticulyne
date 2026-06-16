@@ -7,6 +7,12 @@
     "outDir": "./dist",
     "noImplicitAny": true,
     "target": "es6",
+    // Declare the ECMAScript + DOM APIs the code actually uses (e.g.
+    // Array.prototype.at) explicitly. `target: es6` only implies the ES2015
+    // lib, so without this the project leaned on a transitive @types/node to
+    // leak newer typings — which broke type-checking when that dep bumped
+    // (DEP-02). `target` stays es6 so emitted syntax is still downlevelled.
+    "lib": ["es2022", "dom", "dom.iterable"],
     "jsx": "react-jsx",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,

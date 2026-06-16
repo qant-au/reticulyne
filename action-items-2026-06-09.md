@@ -14,7 +14,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟠 High (do before next release)
 
-### 1. Rotate the live `MOONSHOT_API_KEY` and exclude `.env*` from Docker context — `SEC-10`
+### 1. Rotate the live `MOONSHOT_API_KEY` and exclude `.env*` from Docker context — `SEC-10` 🔶 `.dockerignore` half done (`45c0b24`); **key rotation still pending — manual, external (Moonshot console)**
 - **Why:** A plaintext `sk-...` key is sitting in `.env.graphify`. Gitignored — never committed — but reachable by any local-malware threat model, and not excluded from the Docker build context.
 - **What:** Confirm the key is still active and rotate at the Moonshot console. Move secrets to a system keyring or `direnv`/`op` lookup rather than a plaintext dotfile. Add `.env*` to `.dockerignore` (covered separately by `BLD-02`).
 - **Where:** `/Users/adam/Projects/reticulyne/.env.graphify`
@@ -68,31 +68,31 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/components/Renderer/Renderer.tsx:55-123`
 - **Refs:** Review #25 (Section 9 — a11y)
 
-### 10. Scope `useKeyboardShortcuts` listener off `window` — `FEA-07`
+### ~~10. Scope `useKeyboardShortcuts` listener off `window` — `FEA-07`~~ ✅ done (`99074ea`)
 - **Why:** Shortcuts attach to `window.addEventListener('keydown', ...)`. An embedder mounting `<Reticulyne>` in a sidebar/modal preview gets their global keystrokes hijacked when the canvas doesn't have focus. Pressing `V`/`H`/`R`/`C`/`T`/`+`/`-`/`0`/`1`/`F`/`?` anywhere on the host changes Reticulyne's tool or zoom.
 - **What:** Attach the listener to `uiState.rendererEl` (or a containing element with a `tabIndex`), OR gate every shortcut on `document.activeElement` being inside the renderer subtree. Add a symmetric `enableGlobalKeyboardShortcuts` prop mirroring FEA10-01's `enableGlobalDragHandlers`.
 - **Where:** `src/interaction/useKeyboardShortcuts.ts:368-371`
 - **Refs:** Review #26 (Section 9 — a11y)
 
-### 11. Move `ModelStore` / `UiStateStore` / `SceneStore` Zustand-shaped types off the public surface — `QUA-03`
+### ~~11. Move `ModelStore` / `UiStateStore` / `SceneStore` Zustand-shaped types off the public surface — `QUA-03`~~ ✅ done (`4ce7fef`)
 - **Why:** `ModelStore = Model & { actions: { get: StoreApi<ModelStore>['getState']; set: StoreApi<ModelStore>['setState'] } }` and siblings expose `zustand.StoreApi` directly in the published `.d.ts`. A careless embedder importing `ModelStore` can poke at `actions.set` and freeze the internal store shape as part of the public API. ROADMAP 1.6 explicitly calls this out.
 - **What:** Move `ModelStore`, `SceneStore`, `UiStateStore`, `UiStateActions`, `UiState`, `Scene`, `SceneConnector`, `SceneTextBox`, `SceneConnectorOverlay`, `Mouse`, `Scroll`, all `Mode` variants, `ItemControls`, `ContextMenu`, `IconCollectionState`, `ClipboardEntry` to a new `src/types/internal.ts`. Stop re-exporting through `standaloneExports.ts` and the main entry.
 - **Where:** `src/types/model.ts:56-61`; `src/types/scene.ts:78-83`; `src/types/ui.ts:194-231`; `src/standaloneExports.ts:8`
 - **Refs:** Review #16 (Sections 4a, 5)
 
-### 12. Add TSDoc to every `useReticulyne()`-returned method — `FEA-02`
+### ~~12. Add TSDoc to every `useReticulyne()`-returned method — `FEA-02`~~ ✅ done (`8b191ca`)
 - **Why:** `ReticulyneProps` fields have rich JSDoc surfaced in IDE hover. The hook's returned methods (`getModel`, `loadModel`, `setEditorMode`, `setZoom`, `Connector.get`/`update`/`pulse`, etc.) have `//` comments but no `/** */` blocks. Behaviour gates ("no-op outside EDITABLE", "bypasses undo", "supersedes any in-flight pulse") live only in `docs/embedding.md`.
 - **What:** Convert each member's leading comment into a TSDoc block so it lands in the emitted `.d.ts`. Bare minimum: `loadModel`, `setEditorMode`, `Connector.update`, `Connector.pulse`.
 - **Where:** `src/Reticulyne.tsx:224-420`
 - **Refs:** Review #12 (Section 5)
 
-### 13. Mark `useReticulyne().Model` and `.uiState` as `@deprecated` — `FEA-03`
+### ~~13. Mark `useReticulyne().Model` and `.uiState` as `@deprecated` — `FEA-03`~~ ✅ done (`8b191ca`)
 - **Why:** IDE autocomplete shows them as siblings of `getModel`/`loadModel`, indistinguishable in rank. ROADMAP 1.6 plans to drop them in a breaking change; embedders adopting them today have no warning.
 - **What:** `/** @deprecated Escape hatch — prefer the typed accessors above; will be removed before v1.0. */` on `Model` and `uiState` object-literal keys.
 - **Where:** `src/Reticulyne.tsx:416-419`
 - **Refs:** Review #13 (Section 5)
 
-### 14. Bring `docs/api.md` prop table to parity with `embedding.md` — `DOC-01`
+### ~~14. Bring `docs/api.md` prop table to parity with `embedding.md` — `DOC-01`~~ ✅ done (`6f8a48e`)
 - **Why:** `api.md` claims to be "every prop … contract" but stops at `onSave`. Missing 9 props including the breaking-default-change `themeMode`. The `useReticulyne` table at L108-119 also omits `Connector.get`/`update`/`pulse`. An embedder reading only `api.md` misses `themeMode`'s breaking-change behaviour.
 - **What:** Add rows for `enableAnimation`, `enableGlobalDragHandlers`, `themeMode`, `exportTheme`, `nodeIndicatorComponent`, `connectorIndicatorComponent`, `highlightedItemId`, `iconCollections`, `showTitleBar`, `children`. Add `Connector.get`, `Connector.update`, `Connector.pulse` to the hook table. OR restructure `api.md` as a thin index deferring to `embedding.md`.
 - **Where:** `docs/api.md:24-37, 108-119`

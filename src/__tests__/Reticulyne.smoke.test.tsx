@@ -145,7 +145,9 @@ describe('initialData reference stability (BUG5-11)', () => {
     // After initial seed the callback has fired at least once and the
     // model has a synthesised view.
     expect(onModelUpdated).toHaveBeenCalled();
-    const initialModel = onModelUpdated.mock.calls.at(-1)?.[0] as Model;
+    const initialModel = onModelUpdated.mock.calls[
+      onModelUpdated.mock.calls.length - 1
+    ]?.[0] as Model;
     expect(initialModel.views).toHaveLength(1);
     const firstViewId = initialModel.views[0].id;
 
@@ -173,7 +175,9 @@ describe('initialData reference stability (BUG5-11)', () => {
 
     // And if the callback did fire again for some other reason, the
     // view id must be the original one (model wasn't re-seeded).
-    const lastModel = onModelUpdated.mock.calls.at(-1)?.[0] as Model;
+    const lastModel = onModelUpdated.mock.calls[
+      onModelUpdated.mock.calls.length - 1
+    ]?.[0] as Model;
     expect(lastModel.views[0].id).toBe(firstViewId);
   });
 });

@@ -128,7 +128,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `docs/isopacks.md:25-30`; `README.md:62`
 - **Refs:** Review #20 (Section 6)
 
-### 20. Refresh in-range dependency bumps via `npm update` — `DEP-02`
+### ~~20. Refresh in-range dependency bumps via `npm update`~~ — `DEP-02` ✅ done — lockfile refreshed; suite green (prod audit still clean)
 - **Why:** Lockfile is behind manifest ranges for ~12 in-range bumps (`react 19.2.6 → 19.2.7`, `@mui/material 9.0.1 → 9.1.0`, `zustand 5.0.13 → 5.0.14`, `@typescript-eslint/* 8.59.3 → 8.61.0`, `webpack 5.106.2 → 5.107.2`, `webpack-merge 5.8.0 → 5.10.0`, `ts-jest 29.4.9 → 29.4.11`, `ts-loader 9.5.7 → 9.6.0`, `eslint-plugin-prettier`, `@types/react 19.2.14 → 19.2.17`). Drift, not pin policy.
 - **What:** Run `npm update`. Run `npm test && npm run lint && npm run build`. Commit lockfile delta as `chore(DEP-NN): refresh in-range deps`.
 - **Where:** `package.json` + `package-lock.json`

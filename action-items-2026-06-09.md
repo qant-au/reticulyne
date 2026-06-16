@@ -158,7 +158,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/components/MainMenu/useImportFile.ts:31, 38, 73`
 - **Refs:** Review #10 (Sections 4a, 4f)
 
-### 25. File a forward-looking FEA item for React 19 idiom adoption — `FEA-01`
+### ~~25. File a forward-looking FEA item for React 19 idiom adoption~~ — `FEA-01` ✅ done — ROADMAP §3.6 added
 - **Why:** Codebase is React-19-*compatible* (passes strict hook rules) but not React-19-*idiomatic*. Zero hits for `useActionState`, `useFormStatus`, `<Suspense`, `React.use(`. Not a defect today but worth filing.
 - **What:** Add an `FEA-NN` roadmap entry. Candidate fit: `loadModel` could return a Promise that consumers wrap in `<Suspense>`.
 - **Where:** N/A (roadmap task)

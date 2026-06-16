@@ -134,7 +134,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `package.json` + `package-lock.json`
 - **Refs:** Review #21 (Section 7)
 
-### 21. Pin GitHub Actions to commit SHAs (especially in `release.yml`) — `BLD-03`
+### ~~21. Pin GitHub Actions to commit SHAs (especially in `release.yml`)~~ — `BLD-03` ✅ done — all `uses:` pinned to 40-char SHAs + `.github/dependabot.yml` added
 - **Why:** All `uses:` lines pin to floating tags (`@v4`). A compromised maintainer or stolen PAT can repoint `v4` to a malicious commit. `release.yml` holds `packages: write` — highest-priority target.
 - **What:** Pin each `uses:` to a 40-char SHA with a `# v4.1.1`-style comment. Enable `.github/dependabot.yml` with `github-actions` ecosystem and `pin-only` versioning so Renovate-style bumps continue.
 - **Where:** `.github/workflows/ci.yml:18, 20, 82, 84, 92, 130`; `.github/workflows/release.yml:15, 17`

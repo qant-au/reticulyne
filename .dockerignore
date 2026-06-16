@@ -18,6 +18,7 @@ e2e
 docs
 coverage
 *.log
+.env*
 .DS_Store
 .nvmrc
 .eslintrc

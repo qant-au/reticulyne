@@ -35,6 +35,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       exportTheme: 'light' as const,
       showTitleBar: undefined,
       onSave: undefined,
+      onValidationError: undefined,
       nodeIndicatorComponent: undefined,
       connectorIndicatorComponent: undefined,
       selectionDimEnabled: false,
@@ -131,6 +132,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setOnSave: (onSave) => {
           set({ onSave });
+        },
+        setOnValidationError: (onValidationError) => {
+          set({ onValidationError });
         },
         setNodeIndicatorComponent: (component) => {
           set({ nodeIndicatorComponent: component });

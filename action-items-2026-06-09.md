@@ -174,7 +174,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/schemas/icons.ts:13`; `src/schemas/common.ts:53`; `src/utils/exportOptions.ts:259`
 - **Refs:** Review #27 (Section 2a)
 
-### 27. Validate `useReticulyne().Model.set` payload — `SEC-02`
+### ~~27. Validate `useReticulyne().Model.set` payload~~ — `SEC-02` ✅ done — merge-then-validate against `initialDataSchema`, routed to `onValidationError`
 - **Why:** `Model.set` only gates on `editorMode !== 'EDITABLE'`. It does not validate against `initialDataSchema`. A host wiring it to a remote payload (websocket, broker, iframe message) inherits the validation surface.
 - **What:** Either (a) run payload through `initialDataSchema.safeParse` inside `gatedSet`, with `onValidationError` fallback; OR (b) add explicit prose in `docs/embedding.md` that `Model.set` is unvalidated and the host MUST validate before calling. Pairs with ROADMAP 1.6.
 - **Where:** `src/Reticulyne.tsx:250-270`

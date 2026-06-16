@@ -24,6 +24,7 @@ import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
+import { initialDataSchema } from 'src/schemas/model';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
 
 const App = ({
@@ -100,6 +101,13 @@ const App = ({
   useEffect(() => {
     uiStateActions.setOnSave(onSave);
   }, [onSave, uiStateActions]);
+
+  // SEC-02: mirror onValidationError onto the store too, so the
+  // imperative useReticulyne().Model.set (built in a separate hook scope)
+  // can route merge-then-validate failures through the same callback.
+  useEffect(() => {
+    uiStateActions.setOnValidationError(onValidationError);
+  }, [onValidationError, uiStateActions]);
 
   useEffect(() => {
     return () => {
@@ -247,6 +255,17 @@ const useReticulyne = () => {
     editorModeRef.current = editorMode;
   }, [editorMode]);
 
+  // SEC-02: read the host's onValidationError off the store (mirrored
+  // there by App) and keep it in a ref, mirroring editorModeRef, so the
+  // long-lived gatedSet closure always sees the latest callback.
+  const onValidationError = useUiStateStore((state) => {
+    return state.onValidationError;
+  });
+  const onValidationErrorRef = useRef(onValidationError);
+  useEffect(() => {
+    onValidationErrorRef.current = onValidationError;
+  }, [onValidationError]);
+
   const initialDataManager = useInitialDataManager();
 
   const Model = useMemo<ModelStore['actions']>(() => {
@@ -262,6 +281,43 @@ const useReticulyne = () => {
         }
         return;
       }
+
+      // SEC-02: merge-then-validate. Model.set is a zustand setState, so
+      // the payload may be a partial object or an updater function, plus
+      // an optional `replace` flag. Resolve it against the current store,
+      // strip the runtime `actions` key (modelFromModelStore), and run the
+      // resulting Model through the same schema loadModel uses. Apply only
+      // if it passes; otherwise route to onValidationError (the same path
+      // useInitialDataManager uses) without mutating state.
+      const [partial, replace] = args as [
+        (
+          | Partial<ModelStore>
+          | ((state: ModelStore) => Partial<ModelStore> | ModelStore)
+        ),
+        boolean | undefined
+      ];
+      const current = ModelActions.get();
+      const resolvedPartial =
+        typeof partial === 'function' ? partial(current) : partial;
+      const candidateStore = replace
+        ? (resolvedPartial as ModelStore)
+        : ({ ...current, ...resolvedPartial } as ModelStore);
+      const candidateModel = modelFromModelStore(candidateStore);
+
+      const result = initialDataSchema.safeParse(candidateModel);
+      if (!result.success) {
+        const cb = onValidationErrorRef.current;
+        if (cb) {
+          cb(result.error.issues);
+        } else {
+          console.error(
+            '[reticulyne] Model.set rejected — payload failed schema validation:',
+            result.error.issues
+          );
+        }
+        return;
+      }
+
       return ModelActions.set(...args);
     }) as ModelStore['actions']['set'];
 

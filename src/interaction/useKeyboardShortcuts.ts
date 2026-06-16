@@ -29,9 +29,15 @@ const isEditableFocus = (target: EventTarget | null): boolean => {
 // (Ctrl+C copy, Ctrl+V paste, Ctrl+D duplicate). We dispatch the
 // chord handler only when the modifier is held, and the bare letter
 // only when it's NOT held — so the conventions don't collide.
-export const useKeyboardShortcuts = () => {
+export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
   const editorMode = useUiStateStore((state) => {
     return state.editorMode;
+  });
+  // FEA-07: when shortcuts are scoped, bind to the renderer element so
+  // keys only fire while the canvas (or a descendant) has focus, instead
+  // of hijacking the host page's global keystrokes.
+  const rendererEl = useUiStateStore((state) => {
+    return state.rendererEl;
   });
   const itemControls = useUiStateStore((state) => {
     return state.itemControls;
@@ -373,11 +379,22 @@ export const useKeyboardShortcuts = () => {
       }
     };
 
-    window.addEventListener('keydown', onKeyDown);
+    // FEA10-01-style scoping: window (default) keeps the historic global
+    // behaviour; the renderer element confines shortcuts to canvas focus.
+    // When scoped, the target is null until `rendererEl` is set, at which
+    // point the effect re-runs and binds.
+    const target: Window | HTMLElement | null = enableGlobalKeyboardShortcuts
+      ? window
+      : rendererEl;
+    if (!target) return undefined;
+
+    target.addEventListener('keydown', onKeyDown as EventListener);
     return () => {
-      window.removeEventListener('keydown', onKeyDown);
+      target.removeEventListener('keydown', onKeyDown as EventListener);
     };
   }, [
+    enableGlobalKeyboardShortcuts,
+    rendererEl,
     editorMode,
     itemControls,
     dialog,

@@ -102,6 +102,16 @@ export interface ReticulyneProps {
    */
   enableGlobalDragHandlers?: boolean;
   /**
+   * When `false`, the keyboard-shortcut listener attaches to the renderer
+   * element (made focusable) rather than `window`, so single-key tool and
+   * zoom shortcuts (`V`/`H`/`R`/`C`/`T`/`+`/`-`/`0`/`1`/`F`/`?`) only fire
+   * while the canvas has focus. This stops an embedded `<Reticulyne>` from
+   * hijacking the host page's global keystrokes (FEA-07). Defaults to
+   * `true` for backwards compatibility — the symmetric counterpart of
+   * `enableGlobalDragHandlers`.
+   */
+  enableGlobalKeyboardShortcuts?: boolean;
+  /**
    * Colour palette for the editor (FEA7-04). Default `'auto'` follows the
    * user-agent's `prefers-color-scheme` media query and updates live as it
    * changes. Pass `'light'` or `'dark'` to pin the mode explicitly.

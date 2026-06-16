@@ -36,6 +36,7 @@ const App = ({
   enableDebugTools = false,
   enableAnimation = false,
   enableGlobalDragHandlers = true,
+  enableGlobalKeyboardShortcuts = true,
   editorMode = 'EDITABLE',
   renderer,
   showTitleBar,
@@ -164,6 +165,7 @@ const App = ({
         <Renderer
           {...renderer}
           enableGlobalDragHandlers={enableGlobalDragHandlers}
+          enableGlobalKeyboardShortcuts={enableGlobalKeyboardShortcuts}
         />
         <UiOverlay />
         {children}

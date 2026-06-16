@@ -19,9 +19,11 @@ import { RendererProps } from 'src/types/rendererProps';
 export const Renderer = ({
   showGrid,
   backgroundColor,
-  enableGlobalDragHandlers = true
+  enableGlobalDragHandlers = true,
+  enableGlobalKeyboardShortcuts = true
 }: RendererProps & {
   enableGlobalDragHandlers?: boolean;
+  enableGlobalKeyboardShortcuts?: boolean;
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const interactionsRef = useRef<HTMLDivElement | null>(null);
@@ -37,7 +39,7 @@ export const Renderer = ({
   const { setInteractionsElement } = useInteractionManager(
     enableGlobalDragHandlers
   );
-  useKeyboardShortcuts();
+  useKeyboardShortcuts(enableGlobalKeyboardShortcuts);
 
   useEffect(() => {
     if (!containerRef.current || !interactionsRef.current) return;
@@ -56,6 +58,11 @@ export const Renderer = ({
       role="application"
       aria-label="Diagram canvas"
       aria-roledescription="isometric diagram editor"
+      // FEA-07: when shortcuts are scoped off `window`, the canvas must be
+      // focusable so clicking it (or tabbing to it) routes keydown to the
+      // renderer-bound listener. Left unset in the default global mode so
+      // existing embedders' tab order is unchanged.
+      tabIndex={enableGlobalKeyboardShortcuts ? undefined : 0}
       sx={{
         position: 'absolute',
         top: 0,

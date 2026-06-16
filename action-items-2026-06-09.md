@@ -20,49 +20,49 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `/Users/adam/Projects/reticulyne/.env.graphify`
 - **Refs:** Review #2 (Section 2g)
 
-### 2. Replace or fork `pathfinding@0.4.18` (unmaintained) — `SEC-04`
+### ~~2. Replace or fork `pathfinding@0.4.18` (unmaintained) — `SEC-04`~~ ✅ done (`0a3ecc0`)
 - **Why:** Pre-1.0, no upstream release since ~2022. Any future advisory has no patch path. CommonJS-interop pain already required a dedicated `pathfindingMock.js` to make tests work.
 - **What:** Either (a) vendor the small A* / BFS subset the editor uses (~200 LOC), (b) fork-and-pin under `@qant-au/pathfinding`, or (c) replace with `ngraph.path`. Bump `@types/pathfinding` to `0.1.0` in either case. Document the decision in `SECURITY.md` alongside other residuals.
 - **Where:** `package.json:111`; `src/utils/pathfinder.ts:1`; `src/__tests__/mocks/pathfindingMock.js`
 - **Refs:** Review #1 (Section 2c)
 
-### 3. Narrow `useInteractionManager` store subscriptions — `PRF-01`
+### ~~3. Narrow `useInteractionManager` store subscriptions — `PRF-01`~~ ✅ done (`e626de8`)
 - **Why:** `useUiStateStore(s => s)` and `useModelStore(s => s)` subscribe to whole stores. Every pointermove updates `state.mouse`, invalidates the `onMouseEvent` `useCallback`, re-binds `window.addEventListener` for `pointermove`/`pointerdown`/`pointerup`/`contextmenu`/`wheel`. On a 120 Hz pointer, hundreds-to-thousands of listener add/remove cycles per second.
 - **What:** Replace whole-store selectors with narrow ones — `useUiStateStore(s => s.mode)`, `s => s.actions`, `s => s.rendererEl`, etc. Stash live `uiState`/`model` in refs synced via a tiny effect; `onMouseEvent` reads from refs, so it doesn't depend on changing references.
 - **Where:** `src/interaction/useInteractionManager.ts:46-51, 55, 73, 125`
 - **Refs:** Review #3 (Section 3a)
 
-### 4. Narrow `useKeyboardShortcuts` deps — stop re-binding `keydown` per pointermove — `PRF-02`
+### ~~4. Narrow `useKeyboardShortcuts` deps — stop re-binding `keydown` per pointermove — `PRF-02`~~ ✅ done (`5e2b6e0`)
 - **Why:** `mousePosition` (used only as `tile:` payload for the `T` textbox tool) is in the effect's dep array; every pointermove changes it and causes `removeEventListener` + `addEventListener` for `keydown`. Same for `currentView`.
 - **What:** Read `mousePosition`/`currentView` from a ref synced via a separate effect, OR call `useUiStateStore.getState()` at handler-fire time.
 - **Where:** `src/interaction/useKeyboardShortcuts.ts:45-47, 372-393`
 - **Refs:** Review #4 (Section 3a)
 
-### 5. Split `useScene` into narrow hooks; add `React.memo` to SceneLayers leaves — `PRF-03` (and `PRF-04`)
+### ~~5. Split `useScene` into narrow hooks; add `React.memo` to SceneLayers leaves — `PRF-03` (and `PRF-04`)~~ ✅ done (`b9f8473`)
 - **Why:** `useScene` subscribes to whole `model` and `scene` stores; consumers re-render on every mutation. The `useMemo` blocks merge `{ ...CONNECTOR_DEFAULTS, ...connector, ...sceneConnector }` per item per render — fresh object identity defeats any downstream `React.memo`. `Renderer.tsx` cascades this through every layer; no `React.memo` exists in `SceneLayers`.
 - **What:** Split `useScene` into narrow hooks (`useSceneConnectorsList`, `useSceneItemsList`, …) each component subscribes to itself; memoize per-id via `Map<id, merged>`. Wrap `Connectors`, `Nodes`, `Rectangles`, `TextBoxes` parents in `React.memo`. Move `.reverse()`/`.sort()` into `useMemo`s.
 - **Where:** `src/hooks/useScene.ts:27-29, 39-82`; `src/components/Renderer/Renderer.tsx:41`; `src/components/SceneLayers/Connectors/Connectors.tsx:35`; `Nodes.tsx:14`; `Rectangles.tsx:15`
 - **Refs:** Review #5, #6 (Section 3a)
 
-### 6. Switch MUI icon imports to per-icon subpath — `PRF-10`
+### ~~6. Switch MUI icon imports to per-icon subpath — `PRF-10`~~ ✅ done (`66801b4`)
 - **Why:** All ten icon-importing files use `from '@mui/icons-material'` (barrel). The prod config externalises `^@mui\//`, so consumer bundlers do the tree-shake — but a consumer using CommonJS or a non-tree-shaking bundler ships the entire ~6 MB icon barrel.
 - **What:** Switch each import to per-icon subpath (`from '@mui/icons-material/Search'`). The existing example at `src/examples/ExamplesSidebar.tsx:14-15` shows the pattern.
 - **Where:** `src/components/ZoomControls/ZoomControls.tsx:5`; `MainMenu/MainMenu.tsx:19`; `ItemControls/NodeControls/NodeControls.tsx:6`; `ItemControls/IconSelectionControls/IconCollection.tsx:6`; `Label/ExpandButton.tsx:5`; `HelpButton/HelpButton.tsx:1`; `UiOverlay/TitleBar.tsx:8`; `ItemControls/components/DeleteButton.tsx:1`; `ItemControls/IconSelectionControls/Searchbox.tsx:2`; `ItemControls/TextBoxControls/TextBoxControls.tsx:9`
 - **Refs:** Review #7 (Section 3b)
 
-### 7. Lazy-load heavy dialogs and the Quill MarkdownEditor — `PRF-11`
+### ~~7. Lazy-load heavy dialogs and the Quill MarkdownEditor — `PRF-11`~~ ✅ done (`285f163`)
 - **Why:** `dist/index.js` is 1.0 MB. Heavy MUI components (`ExportImageDialog`, `ExportSvgDialog`, `KeyboardShortcutsDialog`, `MarkdownEditor`/Quill) are all statically imported. A "diagram viewer" consumer who never opens export dialogs ships ~1 MB of code they'll never execute.
 - **What:** Wrap each in `React.lazy()` and an appropriate `<Suspense>` boundary. Quill is the heaviest single chunk; ship as its own dynamic chunk.
 - **Where:** `src/components/ExportImageDialog/`, `src/components/ExportSvgDialog/`, `src/components/KeyboardShortcutsDialog/`, `src/components/MarkdownEditor/`
 - **Refs:** Review #8 (Section 3b)
 
-### 8. Add `aria-label={name}` to `IconButton` — `QUA-10`
+### ~~8. Add `aria-label={name}` to `IconButton` — `QUA-10`~~ ✅ done (`966ab3e`)
 - **Why:** Every `IconButton` in the toolbar (Select, Pan, Add-item, Rectangle, Connector, Text, menu, zoom) wraps a `<Button>` with icon SVG and no text. MUI's `<Tooltip title={name}>` wires `aria-describedby`, not `aria-label` — screen readers read the canvas editor's primary control surface as a row of unlabelled buttons. One change fixes the whole repo.
 - **What:** In `IconButton.tsx`, add `aria-label={name}` to the underlying `<Button>`. Add `aria-pressed={isActive}` for toggle semantics.
 - **Where:** `src/components/IconButton/IconButton.tsx:1-80`
 - **Refs:** Review #24 (Section 9 — a11y)
 
-### 9. Add `role="application"` and labelling to the canvas root — `QUA-11`
+### ~~9. Add `role="application"` and labelling to the canvas root — `QUA-11`~~ ✅ done (`32e96d8`)
 - **Why:** Renderer root is a generic `<div>` — no role, no `aria-label`, no `aria-roledescription`. AT users have no way to know the editor surface exists.
 - **What:** Wrap the renderer root in `role="application" aria-label="Diagram canvas" aria-roledescription="isometric diagram editor"`. Minimal fix — full canvas a11y is a separate roadmap-scale initiative.
 - **Where:** `src/components/Renderer/Renderer.tsx:55-123`

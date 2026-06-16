@@ -104,7 +104,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/Reticulyne.tsx:422`; `CHANGELOG.md:22`; `docs/embedding.md`
 - **Refs:** Review #15 (Section 5)
 
-### 16. State a SemVer policy for 0.x — `DOC-02`
+### ~~16. State a SemVer policy for 0.x~~ — `DOC-02` ✅ done — versioning-policy paragraph added to CHANGELOG.md
 - **Why:** CHANGELOG.md cites SemVer adherence, but the 0.x contract is "anything may change in any minor". The "naming reset, not content reset" framing creates ambiguity about whether the API is stable (content didn't change) or unstable (version restarted).
 - **What:** Add a short paragraph to README.md or CHANGELOG.md: "While on 0.x, minor releases may include breaking changes to props, hook return shape, or exported types. v1.0 will mark API stabilisation; until then, treat each minor as potentially breaking and read the release notes."
 - **Where:** `README.md` or `CHANGELOG.md`

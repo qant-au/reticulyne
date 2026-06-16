@@ -5,6 +5,12 @@ All notable changes to `@qant-au/reticulyne` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+**Versioning policy (0.x).** While the package is on a `0.x` line, minor
+releases may include breaking changes to props, the `useReticulyne()` return
+shape, or exported types — this is permitted by SemVer for pre-1.0 versions.
+`v1.0.0` will mark API stabilisation. Until then, treat every minor release as
+potentially breaking and read the release notes before upgrading.
+
 ## [Unreleased]
 
 ## [0.1.0] - 2026-06-09

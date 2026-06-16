@@ -400,21 +400,65 @@ const useReticulyne = () => {
       }, durationMs);
     };
 
-    return { get, update, pulse };
+    return {
+      /**
+       * Return the connector with the given id, with style defaults
+       * merged in, or `undefined` if no connector matches across any view.
+       */
+      get,
+      /**
+       * Imperatively patch a connector's visual properties. Bypasses the
+       * undo/redo history stack, so a live-data driver won't pollute
+       * Ctrl+Z. No-op (warns in dev) when `editorMode` is
+       * `NON_INTERACTIVE`.
+       */
+      update,
+      /**
+       * Fire a one-shot visual pulse on a connector. Writes to the runtime
+       * scene overlay only — never touches the model. A new pulse on the
+       * same id supersedes any in-flight pulse. Default duration 1500ms.
+       */
+      pulse
+    };
   }, [ModelActions, sceneStoreActions, historyActions, currentViewId]);
 
   return {
     // Documented imperative API.
+    /** Return a snapshot of the current model. */
     getModel,
+    /**
+     * Replace the editor's contents with a new validated model. No-op
+     * (warns in dev) unless `editorMode` is `EDITABLE`; set
+     * `editorMode="EDITABLE"` before calling to allow programmatic loads.
+     */
     loadModel,
+    /**
+     * Switch the editor mode (`EDITABLE` | `EXPLORABLE` |
+     * `NON_INTERACTIVE`). Gates the write-path methods above.
+     */
     setEditorMode,
+    /** Set the zoom level directly (clamped to the editor's min/max). */
     setZoom,
+    /** Step the zoom level up by one increment. */
     incrementZoom,
+    /** Step the zoom level down by one increment. */
     decrementZoom,
+    /** The live renderer DOM element, or `null` before mount. */
     rendererEl,
+    /**
+     * Imperative connector namespace (`get` / `update` / `pulse`) for
+     * live-data hosts. See each member for gating and history semantics.
+     */
     Connector,
-    // Escape hatches. Prefer the documented methods above.
+    /**
+     * @deprecated Escape hatch — direct zustand model store access.
+     * Prefer the typed accessors above; will be removed before v1.0.
+     */
     Model,
+    /**
+     * @deprecated Escape hatch — direct UI-state actions access.
+     * Prefer the typed accessors above; will be removed before v1.0.
+     */
     uiState: uiStateActions
   };
 };

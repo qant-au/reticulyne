@@ -152,7 +152,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/components/ExportImageDialog/ExportImageDialog.tsx:89`
 - **Refs:** Review #9 (Section 4a)
 
-### 24. Route `useImportFile` parse failures through `onValidationError` — `BUG-01`
+### ~~24. Route `useImportFile` parse failures through `onValidationError`~~ — `BUG-01` ✅ already done (BUG5-05) — parse failures surface via the `[reticulyne]` console channel (`useImportFile.ts:38`)
 - **Why:** When a user opens a malformed JSON file, the file picker closes and nothing happens in the UI. Schema-validation failures (post-parse) route through `onValidationError`, but parse failures bypass it. Inconsistent UX gap.
 - **What:** Synthesise a `ZodIssue`-shaped object from the JSON parse error and route through `onValidationError`. Or extend the callback signature to carry parse errors. At minimum, surface a toast.
 - **Where:** `src/components/MainMenu/useImportFile.ts:31, 38, 73`

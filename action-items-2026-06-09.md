@@ -14,7 +14,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟠 High (do before next release)
 
-### 1. Rotate the live `MOONSHOT_API_KEY` and exclude `.env*` from Docker context — `SEC-10` 🔶 `.dockerignore` half done (`45c0b24`); **key rotation still pending — manual, external (Moonshot console)**
+### ~~1. Rotate the live `MOONSHOT_API_KEY` and exclude `.env*` from Docker context~~ — `SEC-10` ✅ done — key rotated + removed from `.env.graphify`; `.dockerignore` covered earlier (`45c0b24`)
 - **Why:** A plaintext `sk-...` key is sitting in `.env.graphify`. Gitignored — never committed — but reachable by any local-malware threat model, and not excluded from the Docker build context.
 - **What:** Confirm the key is still active and rotate at the Moonshot console. Move secrets to a system keyring or `direnv`/`op` lookup rather than a plaintext dotfile. Add `.env*` to `.dockerignore` (covered separately by `BLD-02`).
 - **Where:** `/Users/adam/Projects/reticulyne/.env.graphify`

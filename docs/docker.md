@@ -82,11 +82,11 @@ The custom nginx config (`docker/nginx.conf`) ships:
   - `Referrer-Policy: no-referrer-when-downgrade`
   - `X-Frame-Options: SAMEORIGIN` (legacy fallback — modern browsers honour the CSP `frame-ancestors` directive below)
   - `Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()`
-  - `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://reticulyne.io https://static.reticulyne.io; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'`
+  - `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'`
 - **`server_tokens off`** so the nginx version isn't disclosed.
 - **`autoindex off`** so directory contents aren't listed.
 
-The CSP allows the Google Fonts CDN (used by the bundled standalone `index.html` for Noto Sans) and `reticulyne.io` (vendored icon-pack image hosts). If you fork the image and replace the font or icon sources, update the CSP accordingly.
+The CSP allows the Google Fonts CDN (used by the bundled standalone `index.html` for Noto Sans). Images are restricted to `'self'`, `data:`, and `blob:` — the bundled icon packs are inlined as `data:` URIs, so no external image origins are allowed. If you fork the image and replace the font sources or add externally-hosted icons, update the CSP accordingly.
 
 ## Healthcheck
 

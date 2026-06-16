@@ -110,7 +110,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `README.md` or `CHANGELOG.md`
 - **Refs:** Review #17 (Sections 5, 6)
 
-### 17. Fix `docs/docker.md` CSP claim — strip `reticulyne.io` origins — `DOC-04`
+### ~~17. Fix `docs/docker.md` CSP claim — strip `reticulyne.io` origins~~ — `DOC-04` ✅ done — img-src now matches `docker/nginx.conf`
 - **Why:** docs/docker.md L85 documents `img-src 'self' data: blob: https://reticulyne.io https://static.reticulyne.io`. Actual nginx.conf (correctly, per CHANGELOG RNM-04) has `img-src 'self' data: blob:` — the `reticulyne.io` origins were removed during the rename. L89's accompanying prose is also wrong.
 - **What:** Update `docs/docker.md:85` to remove the `reticulyne.io` origins; rewrite L89 to drop the claim. Match the actual `docker/nginx.conf` and `SECURITY.md`'s history note at L50.
 - **Where:** `docs/docker.md:85, 89`

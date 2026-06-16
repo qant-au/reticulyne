@@ -98,7 +98,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `docs/api.md:24-37, 108-119`
 - **Refs:** Review #14 (Sections 5, 6)
 
-### 15. Decide and document the `useIsoflow` back-compat trade — `FEA-04`
+### ~~15. Decide and document the `useIsoflow` back-compat trade~~ — `FEA-04` ✅ done — clean cut (no alias), documented in CHANGELOG + embedding.md
 - **Why:** CHANGELOG.md L22 says the rename was "same return shape and semantics", implying continuity. But no `useIsoflow` alias is exported — embedders upgrading get TypeScript errors with no soft deprecation. Documentation and code disagree about whether this is a clean cut or a smooth migration.
 - **What:** Either (a) add `export const useIsoflow = useReticulyne;` decorated with `/** @deprecated Renamed to useReticulyne. */` for one minor cycle, OR (b) add explicit "no back-compat shims; rename in your imports" wording to CHANGELOG.md and docs/embedding.md.
 - **Where:** `src/Reticulyne.tsx:422`; `CHANGELOG.md:22`; `docs/embedding.md`

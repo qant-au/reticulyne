@@ -20,6 +20,9 @@ line restarts because the package name did.
 - **Component**: `Isoflow` → `Reticulyne` (named + default export). Public
   imports change: `import Reticulyne from '@qant-au/reticulyne'`.
 - **Hook**: `useIsoflow` → `useReticulyne` — same return shape and semantics.
+  This is a clean rename with **no back-compat alias**: `useIsoflow` is not
+  re-exported, so every call site raises a TypeScript error until you rename the
+  import. Update `import { useIsoflow }` → `import { useReticulyne }`.
 - **Props interface**: `IsoflowProps` → `ReticulyneProps`. Same fields.
 - **Error boundary**: `IsoflowErrorBoundary` → `ReticulyneErrorBoundary`
   (file + directory + class rename).

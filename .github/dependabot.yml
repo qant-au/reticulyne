@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Keep the SHA-pinned GitHub Actions (BLD-03) fresh. Dependabot updates
+  # the pinned commit SHA in place and rewrites the trailing `# vX.Y.Z`
+  # comment, so the workflows stay pinned-by-SHA while still tracking
+  # upstream releases.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci

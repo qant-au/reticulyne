@@ -116,7 +116,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `docs/docker.md:85, 89`
 - **Refs:** Review #18 (Section 6)
 
-### 18. Fix `docs/quickstart.md` — `window.alert` was removed — `DOC-05`
+### ~~18. Fix `docs/quickstart.md` — `window.alert` was removed~~ — `DOC-05` ✅ done — now describes the `onValidationError` contract
 - **Why:** quickstart.md L52 says "Invalid data triggers an alert at mount and the editor renders empty." The `window.alert` was replaced by the `onValidationError` callback contract (docs/embedding.md L61 already says so). New embedders following quickstart see no alert and wonder why.
 - **What:** Replace L52 with: "Invalid data is rejected by Zod; the editor renders empty and the failure is routed to `onValidationError` (or to `console.error` if you don't supply that prop)."
 - **Where:** `docs/quickstart.md:52`

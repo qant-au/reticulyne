@@ -18,7 +18,6 @@ import {
   connectorGlyphOptions,
   connectorAnimationFlowOptions
 } from 'src/schemas';
-import { StoreApi } from 'zustand';
 
 export {
   connectorStyleOptions,
@@ -53,9 +52,7 @@ export type Connector = z.infer<typeof connectorSchema>;
 export type TextBox = z.infer<typeof textBoxSchema>;
 export type Rectangle = z.infer<typeof rectangleSchema>;
 
-export type ModelStore = Model & {
-  actions: {
-    get: StoreApi<ModelStore>['getState'];
-    set: StoreApi<ModelStore>['setState'];
-  };
-};
+// `ModelStore` (the zustand store shape) lives in `./internal` (QUA-03)
+// so it stays off the published public surface — `standaloneExports.ts`
+// re-exports `./model` wholesale, and we don't want `StoreApi` leaking
+// into the package `.d.ts`.

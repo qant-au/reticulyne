@@ -674,6 +674,26 @@ Much bigger than it looks once threading, mentions, notifications, resolution,
 and persistence are in scope. **Defer until collab lands** — they share
 infrastructure.
 
+### 3.6 React 19 idiom adoption — `FEA-01`
+
+**What it does.** Moves the codebase from React-19-*compatible* to
+React-19-*idiomatic*. Today there are zero uses of `useActionState`,
+`useFormStatus`, `<Suspense>`, or `React.use()` — the strict hook rules pass,
+but none of React 19's new data/async primitives are leveraged.
+
+**Why Tier 3.** Pure modernisation; no user-visible behaviour change and no
+schema impact. Not a defect today — filed so the opportunity is tracked rather
+than rediscovered later.
+
+**Where it fits.**
+- `loadModel(data)` (`src/Reticulyne.tsx`) could return a `Promise` so a consumer
+  can wrap hydration in `<Suspense>` instead of polling `editorMode`.
+- The export dialogs (`ExportImageDialog`, `ExportSvgDialog`) are natural homes
+  for `useActionState` / `useFormStatus` to model the async export + pending UI.
+
+**Effort.** Medium, best done incrementally per surface rather than as one sweep.
+Low priority — revisit once the higher tiers settle.
+
 ---
 
 ## Application-layer — Docker shell enhancements

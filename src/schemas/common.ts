@@ -61,6 +61,42 @@ export const constrainedStrings = {
   description: z.string().max(1000)
 };
 
+// SEC-01 icon-URL scheme allowlist. Icon urls feed both <img src> (where
+// the browser blocks script execution) AND exportAsVectorSvg's
+// fetchAsDataUri inlining — and an inlined SVG opened from a `file:`
+// origin executes embedded handlers. Unlike <a href> links (see
+// sanitizeLinkUrl.ts) icons legitimately use data: and blob:, but only
+// *image* data: (never data:text/html), and never javascript:/file:/etc.
+// Relative URLs (no scheme) are allowed for host-served icon assets.
+const ALLOWED_ICON_DATA_SUBTYPES = ['png', 'jpeg', 'gif', 'webp', 'svg+xml'];
+
+export const isAllowedIconUrl = (url: string): boolean => {
+  const trimmed = url.trim();
+  if (!trimmed) return true; // empty is a no-op, not a scheme risk
+
+  const lowered = trimmed.toLowerCase();
+  // Reject percent-encoded scheme smuggling up front (e.g. javascript%3a).
+  if (lowered.startsWith('javascript%3a')) return false;
+
+  const colonIdx = trimmed.indexOf(':');
+  if (colonIdx === -1) return true; // no scheme → relative URL
+
+  const scheme = lowered.slice(0, colonIdx);
+  // A ':' that is not in a valid scheme position (e.g. inside a relative
+  // path) means this is not a scheme-bearing URL → treat as relative.
+  if (!/^[a-z][a-z0-9+.-]*$/.test(scheme)) return true;
+
+  if (scheme === 'https' || scheme === 'http' || scheme === 'blob') return true;
+  if (scheme === 'data') {
+    const mime = /^data:([^;,]+)/i.exec(trimmed)?.[1]?.toLowerCase() ?? '';
+    return (
+      mime.startsWith('image/') &&
+      ALLOWED_ICON_DATA_SUBTYPES.includes(mime.slice('image/'.length))
+    );
+  }
+  return false;
+};
+
 export const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, {
   message: 'Must be a 6-digit hex colour (e.g. #ff0000)'
 });

@@ -86,7 +86,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
           return setImageData(data);
         })
         .catch((err) => {
-          console.log(err);
+          console.error('[reticulyne] image export failed:', err);
           setExportError(true);
         });
     }, 2000);

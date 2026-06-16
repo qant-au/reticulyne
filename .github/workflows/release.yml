@@ -23,9 +23,38 @@ jobs:
 
       - run: npm ci
 
+      - name: Audit production dependencies
+        # Gate the release on the same advisory bar as CI: fail on any
+        # moderate-or-higher advisory in the production dependency graph.
+        # Low-severity advisories are tracked in SECURITY.md; `--omit=dev`
+        # excludes devDependencies so a transitive jest / webpack-dev-server
+        # advisory doesn't block publish.
+        run: npm audit --omit=dev --audit-level=moderate
+
+      - run: npm run lint
+
       - run: npm test
 
       - run: npm run build
+
+      - name: Verify pack contents
+        # Mirror CI's tarball check so a drifted `files` field or a
+        # `tsconfig.build.json` exclude regression can't publish test
+        # fixtures, vendor code, or example components.
+        run: |
+          npm pack --dry-run --json > pack-report.json
+          node -e "
+            const r = JSON.parse(require('fs').readFileSync('pack-report.json', 'utf8'));
+            const files = (r[0]?.files ?? []).map((f) => f.path);
+            const allowedTop = new Set(['dist', 'README.md', 'LICENSE', 'package.json']);
+            const offenders = files.filter((p) => !allowedTop.has(p.split('/')[0]));
+            if (offenders.length) {
+              console.error('Unexpected files in published tarball:');
+              offenders.forEach((f) => console.error('  ' + f));
+              process.exit(1);
+            }
+            console.log('pack contents OK — ' + files.length + ' files, all under allowed roots');
+          "
 
       - run: npm publish
         env:

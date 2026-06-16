@@ -140,7 +140,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `.github/workflows/ci.yml:18, 20, 82, 84, 92, 130`; `.github/workflows/release.yml:15, 17`
 - **Refs:** Review #22 (Section 8)
 
-### 22. Gate `release.yml` on lint, audit, and pack-contents — `BLD-04`
+### ~~22. Gate `release.yml` on lint, audit, and pack-contents~~ — `BLD-04` ✅ done — release job now mirrors CI (audit → lint → test → build → pack → publish)
 - **Why:** `release.yml` runs only `npm ci → npm test → npm run build → npm publish`. No lint, no `npm audit --omit=dev --audit-level=moderate`, no pack-contents verification. A tag pushed from a branch that never saw `main` could publish a lint-failing or audit-failing build.
 - **What:** Either (a) copy lint, audit, and pack-contents steps from `ci.yml` into `release.yml` before `npm publish`, OR (b) restructure `release.yml` to trigger on `workflow_run` of a successful CI run, gated on tag pattern.
 - **Where:** `.github/workflows/release.yml:24-32`

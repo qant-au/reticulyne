@@ -146,7 +146,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `.github/workflows/release.yml:24-32`
 - **Refs:** Review #23 (Section 8)
 
-### 23. Fix the `console.log(err)` in ExportImageDialog — `QUA-02`
+### ~~23. Fix the `console.log(err)` in ExportImageDialog~~ — `QUA-02` ✅ done — upgraded to `console.error('[reticulyne] image export failed:', err)`
 - **Why:** Inconsistent with house style (`.error` + `[reticulyne]` prefix), and the UI already shows an error toast.
 - **What:** Either delete (UI signal is sufficient) or upgrade to `console.error('[reticulyne] image export failed:', err)`.
 - **Where:** `src/components/ExportImageDialog/ExportImageDialog.tsx:89`

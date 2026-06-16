@@ -319,6 +319,12 @@ Identity stability is handled by the component — passing a fresh inline closur
 
 ## Imperative API: `useReticulyne()`
 
+> **Renamed from `useIsoflow`.** The hook keeps the same return shape and
+> semantics, but the old name is **not** re-exported — there is no back-compat
+> alias. Upgrading from `@qant-au/isoflow` means renaming
+> `import { useIsoflow }` → `import { useReticulyne }`; every unrenamed call site
+> raises a TypeScript error.
+
 Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 
 | Member | Signature | Notes |

@@ -49,8 +49,9 @@ without a remount.
 />
 ```
 
-Invalid data triggers an alert at mount and the editor renders empty. See
-[api.md](api.md#initialdata) for the full shape.
+Invalid data is rejected by Zod; the editor renders empty and the failure is
+routed to `onValidationError` (or to `console.error` if you don't supply that
+prop). See [api.md](api.md#initialdata) for the full shape.
 
 ## Capturing edits
 

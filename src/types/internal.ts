@@ -6,6 +6,7 @@
 // of these names leak into the package's `.d.ts` — in particular the
 // `*Store` types that expose `zustand.StoreApi` stay private.
 import { StoreApi } from 'zustand';
+import type { ZodIssue } from 'zod';
 import {
   EditorModeEnum,
   type Coords,
@@ -234,6 +235,11 @@ export interface UiState {
   // state so the MainMenu (a child of the App) can read it through
   // the existing zustand subscription path.
   onSave: ((model: Model) => void) | undefined;
+  // SEC-02: host-supplied validation-error callback, mirrored onto the
+  // store (like onSave) so useReticulyne().Model.set can route
+  // merge-then-validate failures through the same channel the
+  // <Reticulyne onValidationError> prop uses for initialData/loadModel.
+  onValidationError: ((issues: ZodIssue[]) => void) | undefined;
   // Host-supplied per-node decorator (FEA5-07). When defined, the
   // Node renderer reads it through the uiState store and renders it
   // inside every Node.
@@ -273,6 +279,9 @@ export interface UiStateActions {
   setExportTheme: (mode: 'light' | 'dark') => void;
   setShowTitleBar: (show: boolean | undefined) => void;
   setOnSave: (onSave: ((model: Model) => void) | undefined) => void;
+  setOnValidationError: (
+    onValidationError: ((issues: ZodIssue[]) => void) | undefined
+  ) => void;
   setNodeIndicatorComponent: (
     component: NodeIndicatorComponent | undefined
   ) => void;

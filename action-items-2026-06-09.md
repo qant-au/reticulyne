@@ -247,7 +247,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/types/model.ts:38-46`
 - **Refs:** Review #39 (Section 4a)
 
-### 39. Rename `Isoflow` to `Reticulyne` in e2e comment — `QUA-05`
+### ~~39. Rename `Isoflow` to `Reticulyne` in e2e comment~~ — `QUA-05` ✅ done — `examples-picker.spec.ts:148`
 - **What:** One-line edit of stale rename artefact.
 - **Where:** `e2e/examples-picker.spec.ts:148`
 - **Refs:** Review #40 (Section 4b)

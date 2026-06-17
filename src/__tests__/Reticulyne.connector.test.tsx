@@ -188,18 +188,14 @@ describe('useReticulyne().Connector (QUA-07)', () => {
       act(() => {
         jest.advanceTimersByTime(600);
       });
-      expect(
-        api().getScene().connectorOverlays.connector1
-      ).toBeDefined();
+      expect(api().getScene().connectorOverlays.connector1).toBeDefined();
 
       // The second pulse's own timer clears it once its full duration
       // elapses.
       act(() => {
         jest.advanceTimersByTime(1000);
       });
-      expect(
-        api().getScene().connectorOverlays.connector1
-      ).toBeUndefined();
+      expect(api().getScene().connectorOverlays.connector1).toBeUndefined();
     } finally {
       jest.useRealTimers();
     }

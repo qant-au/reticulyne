@@ -186,7 +186,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/Reticulyne.tsx:325-372`
 - **Refs:** Review #29 (Section 2b)
 
-### 29. Add `src/vendor/isopacks/VENDOR.md` provenance metadata — `SEC-06`
+### ~~29. Add `src/vendor/isopacks/VENDOR.md` provenance metadata~~ — `SEC-06` ✅ done — records `@isoflow/isopacks@0.0.10`, vendor commit `c21dd91`, pack inventory, closure criterion
 - **Why:** No `VERSION`, `README`, `PATCHES`, or `CHANGELOG`. A future maintainer has no basis to evaluate whether to bump or whether a hypothetical CVE applies.
 - **What:** Add `VENDOR.md` recording: (a) upstream source URL + git SHA / npm version, (b) sync date, (c) any local modifications, (d) closure criterion.
 - **Where:** `src/vendor/isopacks/`

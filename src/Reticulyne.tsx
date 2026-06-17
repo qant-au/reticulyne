@@ -25,6 +25,7 @@ import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { initialDataSchema } from 'src/schemas/model';
+import { connectorSchema } from 'src/schemas/connector';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
 
 const App = ({
@@ -410,13 +411,43 @@ const useReticulyne = () => {
         }
         return;
       }
+      // SEC-03: validate the patch before it reaches the reducer. A host
+      // driving Connector.update from untrusted live data could otherwise
+      // push out-of-enum `direction`/`style`/`glyph`, a non-id `color`, or
+      // a non-number `width`. Validate only the patched fields against a
+      // partial of connectorSchema; route failures to onValidationError
+      // (same path as Model.set / SEC-02) without mutating state.
+      const parsed = connectorSchema
+        .pick({
+          color: true,
+          width: true,
+          style: true,
+          direction: true,
+          glyph: true,
+          animated: true
+        })
+        .partial()
+        .safeParse(patch);
+      if (!parsed.success) {
+        const cb = onValidationErrorRef.current;
+        if (cb) {
+          cb(parsed.error.issues);
+        } else {
+          console.error(
+            '[reticulyne] Connector.update rejected — patch failed schema validation:',
+            parsed.error.issues
+          );
+        }
+        return;
+      }
+
       const state = {
         model: ModelActions.get(),
         scene: sceneStoreActions.get()
       };
       const newState = reducers.view({
         action: 'UPDATE_CONNECTOR',
-        payload: { id, ...patch },
+        payload: { id, ...parsed.data },
         ctx: { viewId: currentViewId, state }
       });
       // Bypass undo/redo recording — host-driven imperative writes

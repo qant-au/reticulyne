@@ -180,7 +180,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/Reticulyne.tsx:250-270`
 - **Refs:** Review #28 (Section 2b)
 
-### 28. Validate `Connector.update` patch — `SEC-03`
+### ~~28. Validate `Connector.update` patch~~ — `SEC-03` ✅ done — `connectorSchema.pick(...).partial().safeParse(patch)`, routed to `onValidationError`
 - **Why:** `Connector.update(id, patch)` accepts `Partial<Pick<...>>` and passes it directly to the reducer without per-field validation. A host driving from untrusted live-data could push out-of-enum `direction`, oversized `color`, contract violations.
 - **What:** Validate `patch` against a partial of `connectorSchema` inside `Connector.update`. Mirror per-field bounds from `src/schemas/connector.ts`.
 - **Where:** `src/Reticulyne.tsx:325-372`
@@ -213,7 +213,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/interaction/modes/Connector.ts:18-51`; `src/stores/reducers/connector.ts:22-52`; `src/utils/pathfinder.ts`
 - **Refs:** Review #33 (Section 3a). _Confidence: Low — needs profile to confirm scale of bottleneck._
 
-### 33. Make `recordPriorState` a true no-op after first burst-call — `PRF-06`
+### ~~33. Make `recordPriorState` a true no-op after first burst-call~~ — `PRF-06` ✅ done — already implemented; early-return guard at `historyStore.tsx:86`
 - **What:** Skip `clearTimeout`+`setTimeout`+`set({...})` when `pendingPrior` is already populated. Currently fires history-store notifications per move.
 - **Where:** `src/interaction/modes/DragItems.ts:89-114`; `src/hooks/useScene.ts:101-118`
 - **Refs:** Review #34 (Section 3a)
@@ -252,7 +252,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `e2e/examples-picker.spec.ts:148`
 - **Refs:** Review #40 (Section 4b)
 
-### 40. Audit the two `eslint-disable-next-line` escapes — `QUA-06`
+### ~~40. Audit the two `eslint-disable-next-line` escapes~~ — `QUA-06` ✅ done — both escapes already carry rationale comments (`Reticulyne.tsx:~208-211`, `ExportImageDialog.tsx:131-133`)
 - **What:** Document both as long-term acceptable (with rationale) or open a follow-up to restructure the ExportImageDialog effect as a `useMemo`-driven cache key.
 - **Where:** `src/Reticulyne.tsx:201`; `src/components/ExportImageDialog/ExportImageDialog.tsx:133`
 - **Refs:** Review #41 (Section 4c)

@@ -242,7 +242,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟡 Medium — Code health
 
-### 38. Fix `ConnectorStyle` latent typing bug — `QUA-04`
+### ~~38. Fix `ConnectorStyle` latent typing bug~~ — `QUA-04` ✅ done — now `(typeof connectorStyleOptions)[number]` → `'SOLID' | 'DOTTED' | 'DASHED'`
 - **What:** Change `ConnectorStyle = keyof typeof connectorStyleOptions` to `(typeof connectorStyleOptions)[number]['value']` (or whichever shape matches intended union). Currently produces `'0' | '1' | 'length' | …`.
 - **Where:** `src/types/model.ts:38-46`
 - **Refs:** Review #39 (Section 4a)

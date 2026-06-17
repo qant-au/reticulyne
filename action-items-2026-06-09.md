@@ -192,7 +192,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/vendor/isopacks/`
 - **Refs:** Review #30 (Section 2d)
 
-### 30. Add `Strict-Transport-Security` header to nginx.conf — `SEC-07`
+### ~~30. Add `Strict-Transport-Security` header to nginx.conf~~ — `SEC-07` ✅ done — HSTS added to all three header blocks; documented in SECURITY.md + docker.md
 - **Why:** Image is intended for deployment behind a TLS-terminating reverse proxy. Without HSTS, a downgrade-attacker on the same network as a client can MITM the first request before TLS is forced.
 - **What:** `add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;` in both the server block and `location = /index.html`. Note in SECURITY.md that the header assumes HTTPS-only ingress.
 - **Where:** `docker/nginx.conf`

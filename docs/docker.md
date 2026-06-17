@@ -79,6 +79,7 @@ The custom nginx config (`docker/nginx.conf`) ships:
 - **gzip:** on for `application/javascript`, `text/css`, `application/json`, `image/svg+xml`, `font/woff*`, and the usual peers.
 - **Security headers** (applied to every response):
   - `X-Content-Type-Options: nosniff`
+  - `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` (assumes HTTPS-only ingress — see [`SECURITY.md`](../SECURITY.md); drop it if you knowingly serve over plain HTTP)
   - `Referrer-Policy: no-referrer-when-downgrade`
   - `X-Frame-Options: SAMEORIGIN` (legacy fallback — modern browsers honour the CSP `frame-ancestors` directive below)
   - `Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()`

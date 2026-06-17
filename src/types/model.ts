@@ -34,15 +34,7 @@ export type ModelItem = z.infer<typeof modelItemSchema>;
 export type Views = z.infer<typeof viewsSchema>;
 export type View = z.infer<typeof viewSchema>;
 export type ViewItem = z.infer<typeof viewItemSchema>;
-// Note: `ConnectorStyle` is a latent typing bug — `keyof typeof
-// <const-array>` gives array-index keys ('0' | '1' | 'length' | ...)
-// rather than the union of literal values. No consumer of
-// `ConnectorStyle` currently exists (call sites use
-// `Connector['style']` directly), so the bug is unobserved.
-// `ConnectorDirection` below is declared correctly via the
-// indexed-access pattern; flipping `ConnectorStyle` to match is a
-// small follow-up tracked in TODO.md.
-export type ConnectorStyle = keyof typeof connectorStyleOptions;
+export type ConnectorStyle = (typeof connectorStyleOptions)[number];
 export type ConnectorDirection = (typeof connectorDirectionOptions)[number];
 export type ConnectorGlyph = (typeof connectorGlyphOptions)[number];
 export type ConnectorAnimationFlow =

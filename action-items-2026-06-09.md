@@ -262,7 +262,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** new `src/__tests__/Reticulyne.connector.test.tsx`
 - **Refs:** Review #42 (Section 4d)
 
-### 42. Add a Quill body XSS test — `QUA-08`
+### ~~42. Add a Quill body XSS test~~ — `QUA-08` ✅ done — `descriptionXss.test.ts` drives real Quill (mapped to its UMD dist) + the exported `EDITOR_FORMATS`; asserts `<img onerror>`/`<script>` stripped, bold survives (non-vacuous)
 - **What:** Set `description = '<img src=x onerror=alert(1)>'` on a node, render, assert no `onerror` attribute survives. Locks in the implicit sanitization SECURITY.md depends on.
 - **Where:** `src/components/MarkdownEditor/__tests__/`
 - **Refs:** Review #43 (Section 4d)

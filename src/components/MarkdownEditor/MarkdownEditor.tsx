@@ -27,7 +27,18 @@ interface Props {
   styles?: React.CSSProperties;
 }
 
-const tools = ['bold', 'italic', 'underline', 'strike', 'link'];
+// The Quill format allowlist. Load-bearing for XSS containment (see
+// SECURITY.md): Quill strips any format not in this list when parsing
+// `value`-prop HTML, so `<img>`/`<script>`/etc. carrying `onerror` and
+// friends never reach the DOM. Exported so the sanitisation can be
+// asserted directly (QUA-08).
+export const EDITOR_FORMATS = [
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'link'
+];
 
 export const MarkdownEditor = ({
   value,
@@ -39,7 +50,7 @@ export const MarkdownEditor = ({
   const modules = useMemo(() => {
     if (!readOnly)
       return {
-        toolbar: tools
+        toolbar: EDITOR_FORMATS
       };
 
     return { toolbar: false };
@@ -75,7 +86,7 @@ export const MarkdownEditor = ({
         value={value ?? ''}
         readOnly={readOnly}
         onChange={onChange}
-        formats={tools}
+        formats={EDITOR_FORMATS}
         modules={modules}
       />
     </Box>

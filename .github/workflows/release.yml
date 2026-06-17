@@ -58,4 +58,10 @@ jobs:
 
       - run: npm publish
         env:
+          # The committed .npmrc authenticates GitHub Packages via ${GITHUB_TOKEN}
+          # (the @qant-au ecosystem convention), so the publish step must expose
+          # that name — not just NODE_AUTH_TOKEN — or npm sends an empty token and
+          # GitHub Packages returns E401. Both are set so setup-node's userconfig
+          # (NODE_AUTH_TOKEN) and the project .npmrc (GITHUB_TOKEN) agree.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

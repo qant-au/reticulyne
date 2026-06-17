@@ -32,13 +32,7 @@ interface Props {
 // `value`-prop HTML, so `<img>`/`<script>`/etc. carrying `onerror` and
 // friends never reach the DOM. Exported so the sanitisation can be
 // asserted directly (QUA-08).
-export const EDITOR_FORMATS = [
-  'bold',
-  'italic',
-  'underline',
-  'strike',
-  'link'
-];
+export const EDITOR_FORMATS = ['bold', 'italic', 'underline', 'strike', 'link'];
 
 export const MarkdownEditor = ({
   value,

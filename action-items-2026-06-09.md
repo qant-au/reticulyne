@@ -267,7 +267,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/components/MarkdownEditor/__tests__/`
 - **Refs:** Review #43 (Section 4d)
 
-### 43. Add a JSON export → import round-trip test — `QUA-09`
+### ~~43. Add a JSON export → import round-trip test~~ — `QUA-09` ✅ done — `exportImportRoundTrip.test.ts` (real `exportAsJSON` + `handleImportedJsonText` + `initialDataSchema`, `toEqual` fixture; + malformed-JSON negative case)
 - **What:** Use `INITIAL_DATA` → export to JSON → import back → assert byte-equal (or schema-equal) model.
 - **Where:** new test under `src/__tests__/`
 - **Refs:** Review #44 (Section 4d)

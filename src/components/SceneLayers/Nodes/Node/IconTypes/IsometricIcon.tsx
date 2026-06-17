@@ -24,6 +24,7 @@ export const IsometricIcon = ({ url, onImageLoaded }: Props) => {
     <Box
       ref={ref}
       component="img"
+      loading="lazy"
       onLoad={onImageLoaded}
       src={url}
       sx={{

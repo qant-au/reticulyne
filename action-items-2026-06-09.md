@@ -228,7 +228,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/components/SceneLayer/SceneLayer.tsx:29-40`
 - **Refs:** Review #36 (Section 3a). _Confidence: Low — would benefit from a profile capture during pan._
 
-### 36. Add `loading="lazy"` to node icon `<img>` tags — `PRF-13`
+### ~~36. Add `loading="lazy"` to node icon `<img>` tags~~ — `PRF-13` ✅ done — both `IsometricIcon.tsx` + `NonIsometricIcon.tsx`
 - **What:** Add `loading="lazy"` to both `IsometricIcon.tsx:23` and `NonIsometricIcon.tsx`. Free win for large diagrams.
 - **Where:** `src/components/SceneLayers/Nodes/Node/IconTypes/IsometricIcon.tsx`; `NonIsometricIcon.tsx`
 - **Refs:** Review #37 (Section 3c)

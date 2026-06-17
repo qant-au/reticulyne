@@ -21,6 +21,7 @@ export const NonIsometricIcon = ({ icon }: Props) => {
       >
         <Box
           component="img"
+          loading="lazy"
           src={icon.url}
           alt={`icon-${icon.id}`}
           // maxWidth/maxHeight/height overrides are defensive against

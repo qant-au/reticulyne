@@ -257,7 +257,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/Reticulyne.tsx:201`; `src/components/ExportImageDialog/ExportImageDialog.tsx:133`
 - **Refs:** Review #41 (Section 4c)
 
-### 41. Add `useReticulyne` Connector-namespace test suite — `QUA-07`
+### ~~41. Add `useReticulyne` Connector-namespace test suite~~ — `QUA-07` ✅ done — `Reticulyne.connector.test.tsx` (get/update/pulse, SEC-03 validation, NON_INTERACTIVE no-op, pulse supersede)
 - **What:** Tests for `Connector.get`/`update`/`pulse` covering gates (`NON_INTERACTIVE` no-op), pulse supersede semantics, and `update` validation post-SEC-03.
 - **Where:** new `src/__tests__/Reticulyne.connector.test.tsx`
 - **Refs:** Review #42 (Section 4d)

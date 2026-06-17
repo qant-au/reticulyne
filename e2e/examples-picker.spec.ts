@@ -145,7 +145,7 @@ test.describe('examples-picker @ :2223', () => {
 
     await page.getByTestId('sidebar-item-2').click(); // Read-only mode
 
-    // ReadonlyMode uses the same Airport initialData but wraps Isoflow
+    // ReadonlyMode uses the same Airport initialData but wraps Reticulyne
     // in EXPLORABLE_READONLY — the main menu button disappears, while
     // the title strip stays.
     await expect(page.getByRole('button', { name: 'Main menu' })).toHaveCount(0);

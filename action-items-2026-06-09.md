@@ -198,7 +198,7 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `docker/nginx.conf`
 - **Refs:** Review #31 (Section 2f)
 
-### 31. Validate URL schemes in `fetchAsDataUri` — `SEC-11`
+### ~~31. Validate URL schemes in `fetchAsDataUri`~~ — `SEC-11` ✅ done — reuses SEC-01 `isAllowedIconUrl` before `fetch()`; documented in embedding.md
 - **Why:** `exportAsVectorSvg` calls `fetch(imgEl.src)` for every node icon. Standalone Docker CSP blocks cross-origin, but embedders with permissive `connect-src` inherit a "browser-as-port-scanner" primitive when icon URLs come from untrusted `initialData`.
 - **What:** In `fetchAsDataUri`, validate `src` against allowlist of safe schemes (`https:`, `data:`, `blob:`, same-origin `http:` and relative URLs) before fetching. Document in `docs/embedding.md`.
 - **Where:** `src/utils/exportOptions.ts:142`

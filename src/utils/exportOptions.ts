@@ -3,6 +3,7 @@ import FileSaver from 'file-saver';
 import { jsPDF } from 'jspdf';
 import { Model, Size } from '../types';
 import { sanitizeSvgDataUri } from './sanitizeSvgDataUri';
+import { isAllowedIconUrl } from '../schemas/common';
 
 export const generateGenericFilename = (extension: string) => {
   return `reticulyne-export-${new Date().toISOString()}.${extension}`;
@@ -139,9 +140,19 @@ export const exportAsPdf = async (el: HTMLDivElement, size?: Size) => {
  * if it is already a data URI. SVG payloads are sanitised (SEC-01) before
  * being handed back for inlining so an exported SVG can't carry embedded
  * <script>/<foreignObject>/on* handlers.
+ *
+ * SEC-11: validate the scheme before fetch(). Icon urls can originate from
+ * untrusted initialData; without this guard an embedder running a permissive
+ * connect-src could be coerced into fetching file:/javascript:/cross-origin
+ * targets (a "browser-as-port-scanner" primitive). We reuse the SEC-01 icon
+ * allowlist (http(s)/blob/relative path/image-only data:) so the export path
+ * enforces the same scheme policy as the schema entry point.
  */
 const fetchAsDataUri = async (src: string): Promise<string> => {
   if (src.startsWith('data:')) return sanitizeSvgDataUri(src);
+  if (!isAllowedIconUrl(src)) {
+    throw new Error(`Refusing to fetch icon from disallowed URL: ${src}`);
+  }
   const res = await fetch(src);
   if (!res.ok) throw new Error(`Failed to fetch icon: ${res.status}`);
   const fetchedBlob = await res.blob();

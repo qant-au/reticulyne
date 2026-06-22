@@ -57,3 +57,11 @@ Two side-by-side standalone Docker images come up via `bash restart.sh`:
 - When working on a structured review/audit, **one commit per task ID** with the ID in the subject line as `<type>(<id>): <subject>` (e.g. `fix(SEC-01): bump zod to patch DoS advisory`). Task IDs follow `<TYPE>-NN` where TYPE is one of `SEC`, `BLD`, `DEP`, `QUA`, `BUG`, `PRF`, `FEA`, `DOC`. Subsequent review passes append a digit to the type to avoid collision in `git log` (e.g. `SEC3-01` for the third pass).
 - **Do not rebase, force-push, or amend earlier commits.** Each commit stands as evidence of one task's verification state.
 - **Do not push to the remote** unless explicitly asked.
+
+## Port registry
+
+Every host port used anywhere under `/Users/adam/Projects` — **including this project's** — is recorded in one complete source of truth: [`/Users/adam/Projects/PORTS.md`](/Users/adam/Projects/PORTS.md).
+
+- **Need a port (new or changed)?** Open `PORTS.md`, find this project's reserved range in the legend, and take the lowest unused port in that range.
+- **After** adding/changing/removing any port binding (`docker-compose ports:`, `restart.sh`, dev `--port`): add/update the row in `PORTS.md` **in the same commit**.
+- **Validate:** `python3 /Users/adam/Projects/scripts/check-ports.py` (errors on unregistered ports and collisions).

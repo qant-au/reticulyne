@@ -158,4 +158,21 @@ export const DEFAULT_ICON: Icon = {
 
 export const DEFAULT_LABEL_HEIGHT = 20;
 export const PROJECT_BOUNDING_BOX_PADDING = 3;
-export const MARKDOWN_EMPTY_VALUE = '<p><br></p>';
+// What a cleared TipTap editor serialises to. (Quill emitted `<p><br></p>`;
+// legacy stored descriptions may still carry that form — see isEmptyMarkdown.)
+export const MARKDOWN_EMPTY_VALUE = '<p></p>';
+
+// A description counts as empty (label hidden) when it is blank or one of the
+// empty-paragraph forms — the current TipTap `<p></p>` or the legacy Quill
+// `<p><br></p>`. Normalising on read means no data migration is needed
+// (DEP-05-05).
+const EMPTY_MARKDOWN_VALUES = new Set([
+  '',
+  '<p></p>',
+  '<p><br></p>',
+  '<p><br/></p>'
+]);
+
+export const isEmptyMarkdown = (value?: string): boolean => {
+  return value == null || EMPTY_MARKDOWN_VALUES.has(value.trim());
+};

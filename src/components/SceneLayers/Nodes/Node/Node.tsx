@@ -3,7 +3,7 @@ import { Box, Typography, Stack } from '@mui/material';
 import {
   PROJECTED_TILE_SIZE,
   DEFAULT_LABEL_HEIGHT,
-  MARKDOWN_EMPTY_VALUE
+  isEmptyMarkdown
 } from 'src/config';
 import { getTilePosition } from 'src/utils';
 import { useIcon } from 'src/hooks/useIcon';
@@ -34,12 +34,7 @@ export const Node = ({ node, order, isDimmed }: Props) => {
   }, [node.tile]);
 
   const description = useMemo(() => {
-    if (
-      !modelItem ||
-      modelItem.description === undefined ||
-      modelItem.description === MARKDOWN_EMPTY_VALUE
-    )
-      return null;
+    if (!modelItem || isEmptyMarkdown(modelItem.description)) return null;
 
     return modelItem.description;
   }, [modelItem]);
@@ -84,10 +79,9 @@ export const Node = ({ node, order, isDimmed }: Props) => {
                     {modelItem.name}
                   </Typography>
                 )}
-                {modelItem.description &&
-                  modelItem.description !== MARKDOWN_EMPTY_VALUE && (
-                    <MarkdownEditor value={modelItem.description} readOnly />
-                  )}
+                {!isEmptyMarkdown(modelItem.description) && (
+                  <MarkdownEditor value={modelItem.description} readOnly />
+                )}
               </Stack>
             </ExpandableLabel>
           </Box>

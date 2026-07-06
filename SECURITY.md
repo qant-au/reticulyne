@@ -11,13 +11,14 @@ The following `npm audit` advisories are knowingly carried in the published pack
 ### `GHSA-v3m3-f69x-jf25` — `quill@2.0.3` XSS via HTML export
 
 - **Severity (audit):** low.
-- **Reachable via:** `react-quill-new ^3.8.3 → quill ^2.0.3`. `react-quill-new` is the rich-text editor used for node descriptions.
-- **Status upstream:** unpatched. The latest published `quill` is `2.0.3`. `npm audit` suggests the "fix" is to downgrade `react-quill-new` to `3.7.0`, but that release predates the advisory disclosure and ships Quill 1.x — a breaking API change that re-introduces other classes of known-vulnerable code. The downgrade is not a viable mitigation; staying on `^3.8.3` with the in-source link-blot override is the better trade.
-- **Mitigation in source:** two layered defences, both inside `src/components/MarkdownEditor/`:
-  1. `sanitizeLinkUrl.ts` overrides Quill's `Link.sanitize` at module load to reject `javascript:`, `data:`, `vbscript:`, `file:`, and `blob:` URL protocols (including percent-encoded variants). The override runs on both user-typed links and any value-prop-supplied HTML, since Quill's `clipboard.convert` parses incoming HTML through the same Blot registration.
-  2. `MarkdownEditor.tsx` configures the editor with `formats={['bold', 'italic', 'underline', 'strike', 'link']}`. Quill drops formats it doesn't recognise during clipboard paste, so a pasted `<img>`, `<iframe>`, `<script>`, or `<style>` is stripped on its way in. **This allowlist is load-bearing for the mitigation.** Widening it (e.g. adding `'image'` or `'video'`) reopens vectors the current design closes and must be paired with a re-assessment of this advisory.
-- **Residual risk:** the advisory's exploit path is HTML clipboard pasting that constructs an XSS payload outside the `<a>` blot, e.g. via `<iframe>` or `<svg>` namespaces. Consumers loading `initialData` from untrusted sources should sanitise the `description` field of every model item with DOMPurify (or equivalent) before passing it in. The full embedder contract — including a runnable DOMPurify example — is in [`docs/embedding.md`](docs/embedding.md#security-model), and the consumer-facing summary is in [`README.md`](README.md#security).
-- **Closes when:** an upstream `quill@>=2.0.4` ships with the patch, or this fork moves to a different rich-text editor (e.g. TipTap or Lexical). Tracked as **DEP-04 / DEP-04-follow-up** in the productionisation plan.
+- **Was reachable via:** `react-quill-new ^3.8.3 → quill ^2.0.3`, the former rich-text editor for node descriptions.
+- **Status:** **closed by `DEP-04-follow-up`.** The editor was migrated from Quill to **TipTap** (`@tiptap/react` v3 with a minimal primitive set — Document/Paragraph/Text + Bold/Italic/Underline/Strike/Link). `react-quill-new` and its transitive `quill` are gone from the dependency tree, so `npm audit` no longer reports this advisory. Kept in this ledger as a historical entry.
+- **Why the migration is a net security improvement, not just a version bump.** Quill's old mitigation was a *paste-time* format allowlist: it filtered `<img>`/`<iframe>`/`<script>`/`<style>` on clipboard paste but could still let markup embedded directly in a `description` *value* survive to the DOM (hence the consumer-side DOMPurify recommendation). TipTap is schema-based, and the schema is the boundary. Registering only the five inline marks means:
+  1. **Parse-in (`generateJSON`, the `value` prop, editor content).** Incoming HTML is parsed against a ProseMirror schema built solely from the registered nodes/marks. Any tag with no parse rule (`<script>`, `<iframe>`, `<svg>`, `<img>`, `<style>`, `<form>`) is dropped, and any attribute not declared by an extension (`onerror`, `onload`, `srcdoc`, `style`) never enters the document. Unlike Quill this runs on the way *in*, so untrusted `initialData` HTML is neutralised before it can render.
+  2. **Serialize-out (`generateHTML`, read-only display).** Output is regenerated purely from the schema, so it can only contain `<p>/<strong>/<em>/<u>/<s>/<a href>`.
+  3. **Links.** `sanitizeLinkUrl.ts` is retained and wired into a `SafeLink` extension (`MarkdownEditor.tsx`) that routes every `href` through it on both parse and render, rejecting `javascript:`/`data:`/`vbscript:`/`file:`/`blob:` (and percent-encoded variants). Unlike the old Quill `Link` blot override, this is a per-editor extension with **no global module-load side effect**.
+- **Load-bearing invariant (unchanged in spirit):** the extension set in `EDITOR_EXTENSIONS` is the containment boundary. Adding an image, raw-HTML, or `iframe` extension reopens vectors this design closes and must be paired with a re-assessment.
+- **Consumer impact:** DOMPurifying the `description` field before passing `initialData` is now **optional hardening** rather than required, because the editor re-parses the value through the schema before rendering. Descriptions rendered *outside* Reticulyne remain the consumer's responsibility. See [`docs/embedding.md`](docs/embedding.md#security-model) and [`README.md`](README.md#security).
 
 ### `webpack-dev-server` — XSS source-code disclosure
 
@@ -47,7 +48,7 @@ The standalone Docker image (built from this repository, served by nginx — see
 
 ### `script-src 'self'`
 
-Tight by design. No inline scripts, no `eval`, no third-party CDN. This is the clause that contains the residual XSS risk from the `quill` advisory above: even if a payload lands in a `description` field and renders into the DOM, it cannot fetch or execute anything from off-origin.
+Tight by design. No inline scripts, no `eval`, no third-party CDN. It is defense-in-depth over the editor's own schema-based sanitisation (see the `quill`→TipTap entry above): even in the unlikely event a payload reached a `description` field and rendered into the DOM, it could not fetch or execute anything from off-origin.
 
 ### `img-src 'self' data: blob:`
 
@@ -67,9 +68,10 @@ The CSP above is only applied by the standalone Docker image. A consumer embeddi
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (v4.5.0):
-- `npm audit --omit=dev`: 2 low — both in the `quill` chain documented above.
-- `npm audit` (including dev): 2 low — same two entries; no dev-only advisories remain. The CI pipeline gates on `npm audit --omit=dev --audit-level=moderate`; the two low-severity entries above are below the threshold by design.
+Current counts (post-DEP-04-follow-up):
+- `npm audit --omit=dev`: 1 moderate — `dompurify@3.4.10` via `jspdf` ([`GHSA-cmwh-pvxp-8882`](https://github.com/advisories/GHSA-cmwh-pvxp-8882)), disclosed after the TipTap migration and unrelated to it (jspdf powers PDF export, not the editor). Not yet triaged; tracked separately as **DEP-06**. The two low-severity `quill` entries are **resolved** — the editor was migrated off Quill (see the entry above).
+- `npm audit` (including dev): 2 moderate — the `dompurify` entry above plus `http-proxy-middleware` ([`GHSA-64mm-vxmg-q3vj`](https://github.com/advisories/GHSA-64mm-vxmg-q3vj)) in the dev-only `webpack-dev-server` chain.
+- **CI note:** the pipeline gates on `npm audit --omit=dev --audit-level=moderate`. The new `dompurify` moderate sits **at** that threshold and will trip the gate until DEP-06 lands (e.g. a `dompurify` override to the patched `3.4.11`); it must be resolved separately from this migration, not folded into it.
 
 ### `SEC6-01` — overrode transitive `uuid` to clear `GHSA-w5hq-g745-h8pq`
 

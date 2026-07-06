@@ -68,10 +68,18 @@ The CSP above is only applied by the standalone Docker image. A consumer embeddi
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (post-DEP-04-follow-up):
-- `npm audit --omit=dev`: 1 moderate — `dompurify@3.4.10` via `jspdf` ([`GHSA-cmwh-pvxp-8882`](https://github.com/advisories/GHSA-cmwh-pvxp-8882)), disclosed after the TipTap migration and unrelated to it (jspdf powers PDF export, not the editor). Not yet triaged; tracked separately as **DEP-06**. The two low-severity `quill` entries are **resolved** — the editor was migrated off Quill (see the entry above).
-- `npm audit` (including dev): 2 moderate — the `dompurify` entry above plus `http-proxy-middleware` ([`GHSA-64mm-vxmg-q3vj`](https://github.com/advisories/GHSA-64mm-vxmg-q3vj)) in the dev-only `webpack-dev-server` chain.
-- **CI note:** the pipeline gates on `npm audit --omit=dev --audit-level=moderate`. The new `dompurify` moderate sits **at** that threshold and will trip the gate until DEP-06 lands (e.g. a `dompurify` override to the patched `3.4.11`); it must be resolved separately from this migration, not folded into it.
+Current counts (post-DEP-06):
+- `npm audit --omit=dev`: **0 vulnerabilities.** The two low-severity `quill` entries were resolved by migrating the editor off Quill (DEP-04-follow-up), and the `dompurify` moderate by the override below (DEP-06).
+- `npm audit` (including dev): **0 vulnerabilities.** The dev-only `http-proxy-middleware` moderate is cleared by the override below (DEP-06).
+- **CI note:** the pipeline gates on `npm audit --omit=dev --audit-level=moderate`; there is currently nothing at or above that threshold.
+
+### `DEP-06` — overrode transitive `dompurify` to clear `GHSA-cmwh-pvxp-8882`
+
+`jspdf@4.2.1 → dompurify@3.4.10` pinned a version in the vulnerable range (`<=3.4.10`) of [`GHSA-cmwh-pvxp-8882`](https://github.com/advisories/GHSA-cmwh-pvxp-8882) (permanent `ALLOWED_ATTR` pollution via `setConfig()`, an incomplete fix of the 3.4.7 hook-pollution patch). This advisory is **production-reachable** — `jspdf` is a runtime dependency (PNG/PDF export) and ships in `dist/` — and was disclosed after, and independently of, the TipTap migration; the editor itself no longer bundles a sanitiser. Added `"dompurify": "^3.4.11"` to the top-level `overrides` block so every transitive resolution dedupes onto the upstream-patched release. `npm ls dompurify` now returns a single `dompurify@3.4.11` and `npm audit` (both with and without `--omit=dev`) reports it cleared. The `^3.4.11` shape picks up any future 3.x patch automatically.
+
+### `DEP-06` — overrode transitive `http-proxy-middleware` to clear `GHSA-64mm-vxmg-q3vj`
+
+`webpack-dev-server@5.2.5 → http-proxy-middleware@2.0.9` pinned a version in the vulnerable range (`>=0.16.0 <2.0.10`) of [`GHSA-64mm-vxmg-q3vj`](https://github.com/advisories/GHSA-64mm-vxmg-q3vj) (a `router` host+path substring match allowing Host-header-driven backend routing bypass). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`), and reticulyne's dev server declares no `proxy`/`router` config, so the vulnerable path isn't exercised in practice — but it surfaced in the full `npm audit`. Added `"http-proxy-middleware": "^2.0.10"` to the `overrides` block; `2.0.10` satisfies webpack-dev-server's declared `^2.0.9` range, so it's a clean patch dedupe. `npm ls http-proxy-middleware` now returns a single `2.0.10` and `npm audit` no longer reports the advisory.
 
 ### `SEC6-01` — overrode transitive `uuid` to clear `GHSA-w5hq-g745-h8pq`
 

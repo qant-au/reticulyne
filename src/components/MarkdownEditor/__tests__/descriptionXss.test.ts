@@ -1,65 +1,75 @@
 /**
  * @jest-environment jsdom
  */
-import type QuillType from 'quill';
-import { EDITOR_FORMATS } from '../MarkdownEditor';
+import { generateHTML, generateJSON } from '@tiptap/html';
+import { EDITOR_EXTENSIONS } from '../MarkdownEditor';
 
-// `quill` ships ESM (jest can't transform node_modules under jsdom), so the
-// jest config maps it to its UMD dist build whose `module.exports` IS the
-// Quill class. esModuleInterop is off, so a default `import` would resolve
-// to undefined at runtime — require() returns the class directly. The
-// `import type` above keeps the real typings for `Quill`.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const Quill = require('quill') as typeof QuillType;
-
-// QUA-08: a node `description` is rendered through Quill with a strict
-// format allowlist (EDITOR_FORMATS). SECURITY.md relies on that allowlist
-// to strip dangerous markup — anything not in the list (e.g. `<img>`,
-// `<script>`) is dropped when Quill parses the supplied HTML, so an
-// `onerror`/`onload` handler can never reach the DOM. These tests drive
-// the real `quill` package (react-quill-new is mocked to null in jest, so
-// a component render would assert "no onerror" vacuously) and confirm the
-// payload is neutralised.
-
-const mountQuill = () => {
-  const el = document.createElement('div');
-  document.body.appendChild(el);
-  return new Quill(el, { formats: EDITOR_FORMATS });
+// QUA-08 / DEP-04-follow-up: a node `description` is stored as an HTML string
+// and rendered by regenerating it through the TipTap/ProseMirror schema built
+// from EDITOR_EXTENSIONS. That schema is the XSS boundary (see SECURITY.md):
+// `generateJSON` parses the supplied HTML into a document containing only the
+// registered nodes/marks — every unknown tag (`<img>`, `<script>`,
+// `<iframe>`, `<svg>`, `<style>`) and every undeclared attribute
+// (`onerror`, `onload`, `srcdoc`) is dropped — and `generateHTML`
+// re-serialises purely from that document. The SafeLink extension additionally
+// routes every href through sanitizeLinkUrl. These tests exercise the real
+// extension set and confirm the payloads are neutralised on the way IN.
+const clean = (html: string): string => {
+  return generateHTML(generateJSON(html, EDITOR_EXTENSIONS), EDITOR_EXTENSIONS);
 };
 
-afterEach(() => {
-  document.body.innerHTML = '';
-});
-
 describe('MarkdownEditor description XSS containment (QUA-08)', () => {
-  test('strips an <img onerror=...> payload', () => {
-    const q = mountQuill();
-    q.clipboard.dangerouslyPasteHTML('<img src=x onerror=alert(1)>Hello');
-
-    const html = q.root.innerHTML;
-    expect(q.root.querySelector('[onerror]')).toBeNull();
-    expect(q.root.querySelector('img')).toBeNull();
-    expect(html).not.toMatch(/onerror/i);
-    // The benign text alongside the payload survives.
-    expect(q.getText()).toContain('Hello');
+  test('strips an <img onerror=...> payload but keeps benign text', () => {
+    const out = clean('<img src=x onerror=alert(1)>Hello');
+    expect(out).not.toMatch(/<img/i);
+    expect(out).not.toMatch(/onerror/i);
+    expect(out).toContain('Hello');
   });
 
   test('strips a <script> payload', () => {
-    const q = mountQuill();
-    q.clipboard.dangerouslyPasteHTML('<script>alert(1)</script>safe');
-
-    expect(q.root.querySelector('script')).toBeNull();
-    expect(q.root.innerHTML).not.toMatch(/<script/i);
-    expect(q.getText()).toContain('safe');
+    const out = clean('<script>alert(1)</script>safe');
+    expect(out).not.toMatch(/<script/i);
+    expect(out).toContain('safe');
   });
 
-  test('keeps an allowlisted format (bold) so the test is not vacuous', () => {
-    const q = mountQuill();
-    q.clipboard.dangerouslyPasteHTML('<strong>bold</strong>');
+  test('strips an <iframe> payload', () => {
+    const out = clean('<iframe src="https://evil.example"></iframe>text');
+    expect(out).not.toMatch(/<iframe/i);
+    expect(out).toContain('text');
+  });
 
-    // `bold` IS in EDITOR_FORMATS, so it must survive — proving the
-    // allowlist genuinely runs (and the <img>/<script> drops above are
-    // real, not a side effect of nothing rendering).
-    expect(q.root.querySelector('strong, b')).not.toBeNull();
+  test('strips an <svg onload=...> payload', () => {
+    const out = clean('<svg onload=alert(1)></svg>x');
+    expect(out).not.toMatch(/<svg/i);
+    expect(out).not.toMatch(/onload/i);
+    expect(out).toContain('x');
+  });
+
+  test('keeps an allowlisted mark (bold) so the test is not vacuous', () => {
+    // `bold` IS in EDITOR_EXTENSIONS, so it must survive — proving the schema
+    // genuinely runs (and the drops above are real, not a side effect of
+    // nothing rendering). TipTap serialises bold as <strong>.
+    const out = clean('<strong>bold</strong>');
+    expect(out).toMatch(/<strong>bold<\/strong>/);
+  });
+
+  test('drops links with a forbidden protocol (javascript:) — no href reaches the DOM', () => {
+    const out = clean('<a href="javascript:alert(1)">click</a>');
+    expect(out).not.toMatch(/javascript:/i);
+    expect(out).not.toMatch(/<a\b/i); // link mark dropped entirely
+    expect(out).toContain('click'); // text content survives
+  });
+
+  test('drops links with a data: protocol', () => {
+    const out = clean('<a href="data:text/html,payload">click</a>');
+    expect(out).not.toMatch(/data:/i);
+    expect(out).not.toMatch(/<a\b/i);
+    expect(out).toContain('click');
+  });
+
+  test('preserves links with an allowed protocol (https:)', () => {
+    const out = clean('<a href="https://ok.example/path">ok</a>');
+    expect(out).toMatch(/href="https:\/\/ok\.example\/path"/);
+    expect(out).toContain('ok');
   });
 });

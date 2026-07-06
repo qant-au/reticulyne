@@ -37,6 +37,19 @@ module.exports = {
       {
         test: /\.svg$/i,
         type: 'asset/inline'
+      },
+      {
+        // MUI v9 ships ESM `.mjs` internals whose relative/bare imports omit
+        // the file extension (e.g. `@mui/material/internal/Transition.mjs`
+        // imports `react-transition-group/TransitionGroupContext`). Webpack 5
+        // treats imports from `.mjs` (and `"type":"module"` files) as
+        // "fully specified", so an extensionless request fails to resolve when
+        // MUI is bundled (dev / docker / docker-examples). The prod library
+        // build externalises MUI so it never hits this. Relaxing
+        // fullySpecified for JS modules restores Node-style extension
+        // resolution and is the documented fix for this MUI+webpack combo.
+        test: /\.m?js$/,
+        resolve: { fullySpecified: false }
       }
     ]
   },

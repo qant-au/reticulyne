@@ -552,26 +552,28 @@ The top-level [README §Security](../README.md#security) carries the short versi
 
 Only one field on the model is HTML: `Model.items[].description`. Everything else (titles, names, ids, view metadata, colours, icon urls) is plain string / structured data and is rendered through React's text-node escaping. Connector and view-item *names* are likewise plain text.
 
-The `description` field is rendered through a Quill `ReactQuill` instance ([`src/components/MarkdownEditor/MarkdownEditor.tsx`](../src/components/MarkdownEditor/MarkdownEditor.tsx)). Quill writes the string into a contenteditable `<div>`, so it executes the same HTML the browser would execute given that input.
+The `description` field is rendered through a **TipTap** editor ([`src/components/MarkdownEditor/MarkdownEditor.tsx`](../src/components/MarkdownEditor/MarkdownEditor.tsx)). Both paths run the string through a ProseMirror schema before it reaches the DOM: the editable path parses it into the document via `useEditor({ content })`, and the read-only path (used for on-canvas labels) regenerates display HTML with `generateHTML(generateJSON(value))`. Because that schema only knows five inline marks, the rendered HTML can only ever be those marks — the input string is never written to the DOM verbatim.
 
 ### What the library does for you
 
-1. **Quill `Link` blot override** ([`src/components/MarkdownEditor/sanitizeLinkUrl.ts`](../src/components/MarkdownEditor/sanitizeLinkUrl.ts)). Installed at module load, applied to every `<a href>` Quill touches. Allowed protocols: `http`, `https`, `mailto`, `tel`. Forbidden protocols (replaced with `about:blank`): `javascript`, `data`, `vbscript`, `file`, `blob` — including percent-encoded variants such as `javascript%3a`. Covers both user-typed links and `value`-prop HTML re-parsed through Quill's clipboard converter.
-2. **Formats allowlist.** The editor is configured with `formats={['bold', 'italic', 'underline', 'strike', 'link']}`. Quill drops registered formats it doesn't recognise during clipboard paste — so an `<img>`, `<iframe>`, or `<script>` arriving via *paste* is stripped on its way into the editor. **Do not widen this allowlist** (e.g. by adding `'image'` or `'video'`) without re-evaluating the security model: those formats reopen vectors this design currently closes.
+1. **Schema-based sanitisation (both directions).** The editor registers only `Document`, `Paragraph`, `Text`, and the marks `Bold`, `Italic`, `Underline`, `Strike`, `Link` (`EDITOR_EXTENSIONS` in [`MarkdownEditor.tsx`](../src/components/MarkdownEditor/MarkdownEditor.tsx)). ProseMirror's parser has no rule for any other tag, so `<script>`, `<iframe>`, `<svg>`, `<img>`, `<style>`, `<form>` and every undeclared attribute (`onerror`, `onload`, `srcdoc`, `style`) are dropped when the `value`/`initialData` HTML is parsed **in**, and the serialiser can only emit the registered marks on the way **out**. **Do not widen `EDITOR_EXTENSIONS`** (e.g. an image, `iframe`, or raw-HTML extension) without re-evaluating this: those reopen vectors the current design closes.
+2. **`SafeLink` protocol rejection** ([`src/components/MarkdownEditor/sanitizeLinkUrl.ts`](../src/components/MarkdownEditor/sanitizeLinkUrl.ts)). The `Link` mark is extended so every `href` is routed through `sanitizeLinkUrl` on both parse and render. Allowed protocols: `http`, `https`, `mailto`, `tel`; forbidden (link dropped / replaced): `javascript`, `data`, `vbscript`, `file`, `blob` — including percent-encoded variants such as `javascript%3a`. This applies to user-typed links and to `value`-prop HTML alike.
 3. **JSON validation.** Both the `initialData` prop and the in-editor "open JSON file" flow run every model through `initialDataSchema.safeParse()` (Zod) before any state mutation. Cross-references (view items must exist in model items, connector anchors must reference valid items) are also validated. This protects you from malformed data but **does not sanitise HTML in the `description` field** — Zod has no opinion on HTML.
 4. **Icon URL allowlist + export-time SVG sanitisation** (SEC-01). `iconSchema.url` is restricted at validation time to `http(s):`, `blob:`, relative paths, and image-only `data:` URIs (`png`/`jpeg`/`gif`/`webp`/`svg+xml`); `javascript:`, `file:`, and non-image `data:` (e.g. `data:text/html`) are rejected, so a crafted `initialData` can't smuggle an executable URL into an `<img src>`. When you export to SVG, every inlined SVG icon is additionally stripped of `<script>`, `<foreignObject>`, and `on*` handlers — so an exported file opened directly from a `file:` origin can't execute embedded content. The export inliner also re-checks each icon URL against the same allowlist *before* fetching it (SEC-11), so even an embedder running a permissive `connect-src` can't be coerced into fetching `file:`/cross-protocol targets through the export path.
 
 ### What the library does NOT do for you
 
-The mitigations above protect Quill's *input* path. They do not run on the `description` string between when you put it on the prop and when Quill renders it. Specifically:
+Unlike the previous Quill implementation, the schema now **does** run on the `description` *value* between the prop and the render, so the vectors that used to survive no longer do:
 
-- HTML elements outside the small toolbar allowlist that are present in the `description` *value* you pass in are rendered as-is by Quill. `<iframe srcdoc="...">`, `<svg onload="...">`, `<img src=x onerror="...">`, `<style>...</style>`, `<form>`, and similar live elements survive.
-- Inline-handler attributes (`onclick`, `onmouseover`, `onerror`, `onload`, …) on otherwise-allowed tags are not stripped.
-- `onModelUpdated` returns the model with `description` strings exactly as Quill produced them. If you display those descriptions anywhere outside of Reticulyne (preview pane, search results, PDF export), the contract is the same.
+- `<iframe srcdoc="...">`, `<svg onload="...">`, `<img src=x onerror="...">`, `<style>...</style>`, `<form>` — dropped on parse, in both the editable and read-only paths.
+- Inline-handler attributes (`onclick`, `onmouseover`, `onerror`, `onload`, …) — never survive, because the schema declares no such attributes on any node or mark.
+- `onModelUpdated` returns `description` strings that have already been normalised by the schema (re-serialised from the parsed document), so what comes out is HTML restricted to the five marks.
+
+What remains **your** responsibility is anything you do with a `description` **outside** Reticulyne — a preview pane, search results, a server-side render, a non-Reticulyne HTML sink, or trusting a stored value verbatim later. Reticulyne only guarantees the markup it renders itself.
 
 ### The rule for embedders
 
-**Treat every `items[].description` you receive from a user (or from any system a user can influence) as untrusted HTML, and sanitise it before it crosses the `<Reticulyne>` boundary.** The standard tool is [DOMPurify](https://github.com/cure53/DOMPurify); any HTML sanitiser with a strict allowlist works.
+**Inside Reticulyne, a `description` is sanitised for you.** If you render descriptions anywhere else — or want defense-in-depth because the same strings flow through other systems — sanitise them there. [DOMPurify](https://github.com/cure53/DOMPurify) with an allowlist matching the editor's marks makes a round-trip lossless:
 
 ```tsx
 import DOMPurify from 'dompurify';
@@ -603,7 +605,7 @@ const sanitised = {
 />;
 ```
 
-If your `description` content only ever comes from already-trusted sources (a fixed configuration file, internal admin tooling without third-party input), the sanitisation step is optional. If you're not sure, sanitise.
+For rendering *inside* Reticulyne this step is optional — the schema already sanitises. Add it when descriptions are consumed elsewhere too, or when you'd simply rather sanitise at the trust boundary regardless.
 
 ### Other notes
 
@@ -613,5 +615,5 @@ If your `description` content only ever comes from already-trusted sources (a fi
 ## Globals and side effects on import
 
 - A small block of global CSS is injected (Emotion `<GlobalStyles>`) when `<Reticulyne>` first mounts. Scoped to selectors the editor controls; no overrides of body / `*` styles.
-- Quill (the rich-text editor used for descriptions) registers a custom `Link` blot at module load that restricts allowed URL protocols. This is a one-time side effect; subsequent `<Reticulyne>` mounts share it.
+- The rich-text editor (TipTap, used for descriptions) registers no global editor state. Its link-protocol guard is a per-editor `SafeLink` extension, not a module-load global mutation — an improvement on the previous Quill implementation, which patched a shared `Link` blot at import.
 - No global event listeners are registered on `window` outside the component's lifecycle. All listeners are removed in their effect's cleanup.

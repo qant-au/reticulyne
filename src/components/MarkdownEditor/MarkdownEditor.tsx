@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Box, IconButton, Stack } from '@mui/material';
 import {
   useEditor,
@@ -157,21 +157,32 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
 };
 
 const EditableMarkdown = ({ value, onChange, height = 120, styles }: Props) => {
+  // The HTML the editor last emitted, so a genuinely external `value` change
+  // (selecting a different node) can be told apart from the echo of our own
+  // onChange. Initialised to the incoming value so the mount pass is a no-op:
+  // we must never call editor.getHTML()/setContent() before the editor's
+  // ProseMirror schema is ready — that throws in the production build.
+  const lastEmittedRef = useRef(value ?? '');
+
   const editor = useEditor({
     extensions: EDITOR_EXTENSIONS,
     content: value ?? '',
     onUpdate: ({ editor: e }) => {
-      return onChange?.(e.getHTML());
+      const html = e.getHTML();
+      lastEmittedRef.current = html;
+      onChange?.(html);
     }
   });
 
-  // Sync external `value` changes (e.g. selecting a different node) into the
-  // editor without clobbering the caret while the user is typing — only reset
-  // when the incoming value differs from what the editor already holds.
+  // Sync a genuinely external `value` into the editor without clobbering the
+  // caret while the user types. Skipped at mount (value already matches
+  // lastEmittedRef) and skipped for the echo of our own edit, so setContent
+  // only runs after the editor is fully mounted and its schema is ready.
   useEffect(() => {
     if (!editor) return;
     const next = value ?? '';
-    if (next !== editor.getHTML()) {
+    if (next !== lastEmittedRef.current) {
+      lastEmittedRef.current = next;
       editor.commands.setContent(next, { emitUpdate: false });
     }
   }, [editor, value]);

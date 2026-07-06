@@ -1,4 +1,4 @@
-// PRF-11: lazy split for Quill (react-quill-new + quill).
+// PRF-11: lazy split for TipTap (@tiptap/react + prosemirror).
 //
 // MarkdownEditor is the single heaviest dependency in the entry
 // bundle. It's rendered inline at two sites (Node description label,
@@ -23,8 +23,8 @@ const MarkdownEditorImpl = lazy(() => {
   });
 });
 
-// Strip Quill-emitted HTML down to plain text for the fallback. Quill
-// values are HTML strings; for the brief moment before the editor
+// Strip editor-emitted HTML down to plain text for the fallback. The
+// stored values are HTML strings; for the brief moment before the editor
 // hydrates, we render the textual content instead of raw markup.
 const stripHtml = (html: string): string => {
   return html

@@ -60,7 +60,7 @@ Two side-by-side standalone Docker images come up via `bash restart.sh`:
 
 ## Port registry
 
-Every host port used anywhere under `/Users/adam/Projects` — **including this project's** — is recorded in one complete source of truth: [`/Users/adam/Projects/PORTS.md`](/Users/adam/Projects/PORTS.md).
+Every host port used anywhere under `/Users/adam/Projects` — **including this project's** — is recorded in one complete source of truth: [`/Users/adam/Projects/claude-skills-shared/PORTS.md`](/Users/adam/Projects/claude-skills-shared/PORTS.md).
 
 - **Need a port (new or changed)?** Open `PORTS.md`, find this project's reserved range in the legend, and take the lowest unused port in that range.
 - **After** adding/changing/removing any port binding (`docker-compose ports:`, `restart.sh`, dev `--port`): add/update the row in `PORTS.md` **in the same commit**.

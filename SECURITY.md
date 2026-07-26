@@ -19,6 +19,7 @@ The following `npm audit` advisories are knowingly carried in the published pack
   3. **Links.** `sanitizeLinkUrl.ts` is retained and wired into a `SafeLink` extension (`MarkdownEditor.tsx`) that routes every `href` through it on both parse and render, rejecting `javascript:`/`data:`/`vbscript:`/`file:`/`blob:` (and percent-encoded variants). Unlike the old Quill `Link` blot override, this is a per-editor extension with **no global module-load side effect**.
 - **Load-bearing invariant (unchanged in spirit):** the extension set in `EDITOR_EXTENSIONS` is the containment boundary. Adding an image, raw-HTML, or `iframe` extension reopens vectors this design closes and must be paired with a re-assessment.
 - **Consumer impact:** DOMPurifying the `description` field before passing `initialData` is now **optional hardening** rather than required, because the editor re-parses the value through the schema before rendering. Descriptions rendered *outside* Reticulyne remain the consumer's responsibility. See [`docs/embedding.md`](docs/embedding.md#security-model) and [`README.md`](README.md#security).
+- **Dependabot state, for future readers:** alert #135 shows as `dismissed` (reason `not_used`), **not** `fixed`. It was dismissed on 2026-05-17 — while Quill was still in the tree and no upstream patch existed — which is *before* the TipTap migration removed the package. GitHub never re-opens a manually-dismissed alert to mark it fixed, so `dismissed` is the terminal state here and is expected. The substantive check is the tree, not the alert: `grep -c quill package-lock.json` returns `0`.
 
 ### `webpack-dev-server` — XSS source-code disclosure
 
@@ -68,18 +69,29 @@ The CSP above is only applied by the standalone Docker image. A consumer embeddi
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (post-DEP-06):
-- `npm audit --omit=dev`: **0 vulnerabilities.** The two low-severity `quill` entries were resolved by migrating the editor off Quill (DEP-04-follow-up), and the `dompurify` moderate by the override below (DEP-06).
-- `npm audit` (including dev): **0 vulnerabilities.** The dev-only `http-proxy-middleware` moderate is cleared by the override below (DEP-06).
+Current counts (post-DEP-07):
+- `npm audit --omit=dev`: **0 vulnerabilities.** The two low-severity `quill` entries were resolved by migrating the editor off Quill (DEP-04-follow-up), and the `dompurify` advisories by the override below (DEP-06, bumped in DEP-07). `dompurify` is the only runtime package in the residual set.
+- `npm audit` (including dev): **6 advisories, all dev-only** — `body-parser` (low), `webpack-dev-server` (moderate), and `brace-expansion` / `js-yaml` / `postcss` / `shell-quote` (high). None is reachable from the published `dist/`; each is pinned by a `devDependency` whose own declared range forbids the patched major (see DEP-07 below). Tracked for a dedicated dev-toolchain bump rather than papered over with force-overrides that would fight `minimatch`/`eslint` resolution.
 - **CI note:** the pipeline gates on `npm audit --omit=dev --audit-level=moderate`; there is currently nothing at or above that threshold.
 
 ### `DEP-06` — overrode transitive `dompurify` to clear `GHSA-cmwh-pvxp-8882`
 
 `jspdf@4.2.1 → dompurify@3.4.10` pinned a version in the vulnerable range (`<=3.4.10`) of [`GHSA-cmwh-pvxp-8882`](https://github.com/advisories/GHSA-cmwh-pvxp-8882) (permanent `ALLOWED_ATTR` pollution via `setConfig()`, an incomplete fix of the 3.4.7 hook-pollution patch). This advisory is **production-reachable** — `jspdf` is a runtime dependency (PNG/PDF export) and ships in `dist/` — and was disclosed after, and independently of, the TipTap migration; the editor itself no longer bundles a sanitiser. Added `"dompurify": "^3.4.11"` to the top-level `overrides` block so every transitive resolution dedupes onto the upstream-patched release. `npm ls dompurify` now returns a single `dompurify@3.4.11` and `npm audit` (both with and without `--omit=dev`) reports it cleared. The `^3.4.11` shape picks up any future 3.x patch automatically.
 
+**Bumped to `^3.4.12` in `DEP-07`.** [`GHSA-c2j3-45gr-mqc4`](https://github.com/advisories/GHSA-c2j3-45gr-mqc4) (low) was disclosed against `<=3.4.11`, moving the floor one patch. Because this is the one *runtime*-scope package in the residual set, the override was raised rather than accepted. `npm ls dompurify` now returns a single `dompurify@3.4.12` under `jspdf@4.2.1`.
+
 ### `DEP-06` — overrode transitive `http-proxy-middleware` to clear `GHSA-64mm-vxmg-q3vj`
 
 `webpack-dev-server@5.2.5 → http-proxy-middleware@2.0.9` pinned a version in the vulnerable range (`>=0.16.0 <2.0.10`) of [`GHSA-64mm-vxmg-q3vj`](https://github.com/advisories/GHSA-64mm-vxmg-q3vj) (a `router` host+path substring match allowing Host-header-driven backend routing bypass). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`), and reticulyne's dev server declares no `proxy`/`router` config, so the vulnerable path isn't exercised in practice — but it surfaced in the full `npm audit`. Added `"http-proxy-middleware": "^2.0.10"` to the `overrides` block; `2.0.10` satisfies webpack-dev-server's declared `^2.0.9` range, so it's a clean patch dedupe. `npm ls http-proxy-middleware` now returns a single `2.0.10` and `npm audit` no longer reports the advisory.
+
+### `DEP-07` — overrode transitive `fast-uri` and `brace-expansion` to clear the post-v0.2.0 highs
+
+Two high-severity dev-only advisories landed against the `webpack-dev-server` and `nodemon` chains after the v0.2.0 release.
+
+- **`fast-uri`** — `webpack-dev-server@5.2.5 → schema-utils@4.3.3 → ajv@8.20.0 → fast-uri@3.1.2` sat in the range of both [`GHSA-4c8g-83qw-93j6`](https://github.com/advisories/GHSA-4c8g-83qw-93j6) (`>=3.0.0 <3.1.3`) and [`GHSA-v2hh-gcrm-f6hx`](https://github.com/advisories/GHSA-v2hh-gcrm-f6hx) (`>=3.0.0 <=3.1.3`). Added `"fast-uri": "^3.1.4"`, which clears both and satisfies `ajv`'s declared range, so it dedupes cleanly across the two `ajv` paths (`ajv` and `ajv-formats → ajv`). `npm ls fast-uri` now returns `3.1.4` deduped.
+- **`brace-expansion`** — [`GHSA-3jxr-9vmj-r5cp`](https://github.com/advisories/GHSA-3jxr-9vmj-r5cp) (exponential-time expansion of consecutive non-expanding `{}` groups) covers `>=3.0.0 <5.0.7`. Only the `nodemon@3.1.14 → minimatch@10.2.5 → brace-expansion@5.0.6` copy fell in that range. The override is deliberately **scoped** — `"brace-expansion@>=3.0.0 <5.0.7": "^5.0.8"` — rather than a bare `"brace-expansion": "^5.0.8"`.
+
+**Why the scoped form, and why the remaining copies stay.** The tree also carries `brace-expansion@1.1.15` (via `minimatch@3.1.5`, pinned by `eslint@9`, `@eslint/config-array`, `@eslint/eslintrc`, `eslint-plugin-react`, `test-exclude`) and `@2.1.1` (via `minimatch@9.0.9` under `glob@10`). Those `minimatch` majors declare `^1.1.7` / `^2.0.1`, so a blanket override would force a four-major jump across the entire lint and test toolchain — breaking resolution to silence a **dev-only** DoS in a glob parser that only ever sees repo-authored patterns. `npm audit`'s advisory range for this family is broader than the Dependabot alert's and still flags those copies; they are accepted here on reachability grounds. **Closes when** `eslint` and `glob` move to a `minimatch` major that depends on `brace-expansion@>=5.0.7`.
 
 ### `SEC6-01` — overrode transitive `uuid` to clear `GHSA-w5hq-g745-h8pq`
 

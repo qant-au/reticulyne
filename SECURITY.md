@@ -69,9 +69,10 @@ The CSP above is only applied by the standalone Docker image. A consumer embeddi
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (post-DEP-07):
+Current counts (post-DEP-08):
 - `npm audit --omit=dev`: **0 vulnerabilities.** The two low-severity `quill` entries were resolved by migrating the editor off Quill (DEP-04-follow-up), and the `dompurify` advisories by the override below (DEP-06, bumped in DEP-07). `dompurify` is the only runtime package in the residual set.
-- `npm audit` (including dev): **29 entries, all dev-only, covering 5 distinct advisories.** `body-parser` (low), `webpack-dev-server` (moderate), and `brace-expansion` / `js-yaml` / `postcss` / `shell-quote` (high). The count is dominated by `brace-expansion`'s residual `GHSA-mh99-v99m-4gvg`, which audit attributes to all ~23 of its transitive dependents (`eslint`, `jest`, `glob`, `ts-jest`, …) as well as the package itself — see DEP-07 for why that one is accepted. None is reachable from the published `dist/`. `js-yaml`, `postcss`, `shell-quote`, and `webpack-dev-server` each have an in-major patch available and are tracked for a dedicated dev-toolchain bump.
+- `npm audit` (including dev): **24 entries, all dev-only, and all one advisory** — `brace-expansion`'s accepted residual [`GHSA-mh99-v99m-4gvg`](https://github.com/advisories/GHSA-mh99-v99m-4gvg) (high), which audit attributes to every transitive dependent (`eslint`, `jest`, `glob`, `ts-jest`, …) as well as the package itself. See DEP-07 for why it is accepted and what closes it. Nothing here is reachable from the published `dist/`. **This is the floor** — every other advisory in the tree is resolved.
+- **Dependabot board: 0 open alerts.** The `js-yaml` / `postcss` / `shell-quote` / `webpack-dev-server` advisories were cleared in DEP-08 below.
 - **CI note:** the pipeline gates on `npm audit --omit=dev --audit-level=moderate`; there is currently nothing at or above that threshold.
 
 ### `DEP-06` — overrode transitive `dompurify` to clear `GHSA-cmwh-pvxp-8882`
@@ -100,6 +101,24 @@ Two high-severity dev-only advisories landed against the `webpack-dev-server` an
 **Why three per-major overrides instead of one.** A bare `"brace-expansion": "^5.0.8"` would force every copy to 5.x, a four-major jump against `minimatch@3`/`@9`, which declare `^1.1.7` and `^2.0.1` — that fights resolution across the whole lint and test toolchain. Because upstream backported this fix to `1.1.16` and `2.1.2`, the range-scoped form (`"brace-expansion@>=1.0.0 <2.0.0"`, `">=2.0.0 <3.0.0"`, `">=3.0.0 <5.0.7"`) clears `GHSA-3jxr-9vmj-r5cp` on every path while keeping each consumer inside its declared major. `npm ls brace-expansion` returns exactly `1.1.16`, `2.1.2`, `5.0.8`.
 
   **Residual — `GHSA-mh99-v99m-4gvg` on the 1.x/2.x paths (accepted).** A *second*, distinct `brace-expansion` advisory ([`GHSA-mh99-v99m-4gvg`](https://github.com/advisories/GHSA-mh99-v99m-4gvg), unbounded expansion length → OOM crash, high) has a vulnerable range of `<=5.0.7` — it is patched **only in 5.0.8**, with no 1.x or 2.x backport. So the `1.1.16` and `2.1.2` copies still carry it, and the only mechanical fix is exactly the four-major jump rejected above (`npm audit`'s own `fixAvailable` proposes a `isSemVerMajor` *downgrade* of `eslint-plugin-react` to 7.22.0, which is worse). Accepted on reachability: **dev-only**, not present in the published `dist/`, and the glob patterns these copies expand are repo-authored config globs, never attacker-supplied input. Note this advisory inflates `npm audit`'s raw count considerably, because audit reports every transitive *dependent* (`eslint`, `jest`, `glob`, `minimatch`, `test-exclude`, `ts-jest`, …) alongside the package itself. **Closes when** `eslint` and `glob` ship `minimatch` majors that depend on `brace-expansion@>=5.0.8`.
+
+### `DEP-08` — bumped the dev toolchain to clear the last five Dependabot alerts
+
+The `DEP-07` dependency-graph refresh surfaced five dev-only alerts left over from before the graph went stale. **All five resolved without a single new override** — every patched release existed in-major and every consuming parent's declared range already permitted it. The lockfile was simply holding older still-satisfying versions, which `npm install` will not move; `npm update <pkg>` is the mechanism that does.
+
+| Package | Advisory | Reached via | Parent's declared range | Was → now |
+|---|---|---|---|---|
+| `postcss` | [`GHSA-r28c-9q8g-f849`](https://github.com/advisories/GHSA-r28c-9q8g-f849) (high) | `css-loader@7.1.4` + its `postcss-modules-*` (all deduped) | `^8.4.40` | 8.5.15 → **8.5.23** |
+| `shell-quote` | [`GHSA-395f-4hp3-45gv`](https://github.com/advisories/GHSA-395f-4hp3-45gv) (high) | `webpack-dev-server → launch-editor@2.14.1` | `^1.8.4` | 1.8.4 → **1.10.0** |
+| `js-yaml` | [`GHSA-52cp-r559-cp3m`](https://github.com/advisories/GHSA-52cp-r559-cp3m) (high) | `eslint@9 → @eslint/eslintrc` | `^4.1.1` | 4.2.0 → **4.3.0** |
+| `webpack-dev-server` | [`GHSA-m28w-2pqf-7qgj`](https://github.com/advisories/GHSA-m28w-2pqf-7qgj), [`GHSA-f5vj-f2hx-8m93`](https://github.com/advisories/GHSA-f5vj-f2hx-8m93) (moderate) | direct `devDependency` | `^5.2.4` | 5.2.5 → **5.2.6** |
+| `body-parser` | [`GHSA-v422-hmwv-36x6`](https://github.com/advisories/GHSA-v422-hmwv-36x6) (low) | `webpack-dev-server → express@4.22.2` | `~1.20.5` | 1.20.5 → **1.20.6** |
+
+Two declared floors were raised in `package.json` so a future install cannot silently resolve back below an advisory: `devDependencies.webpack-dev-server` `^5.2.4` → `^5.2.6`, and `overrides.js-yaml` `^4.2.0` → `^4.3.0`. `postcss`, `shell-quote`, and `body-parser` are transitive and needed no `package.json` change at all. `body-parser` carried no Dependabot alert and was cleared opportunistically once its parent range turned out to permit the patch.
+
+**The `js-yaml` override stays — do not delete it.** It is easy to misread `overrides.js-yaml` as the thing pinning the vulnerable release; it was not. `^4.2.0` already permitted 4.3.0, and only the lockfile held 4.2.0. The override exists for a different reason (commit `9843c7c`): `ts-jest → babel-plugin-istanbul → @istanbuljs/load-nyc-config` is unmaintained and declares `js-yaml@^3.13.1`, which pulled a vulnerable `js-yaml@3.14.2` subtree. The override drags that path onto 4.x, where `load-nyc-config`'s only call — `.load()` — is 4.x-safe. Removing it reintroduces `3.14.2`. `npm ls js-yaml` must show **no** 3.x copy.
+
+> **Ledger label note.** Commit `9843c7c` (2026-06-17) also called itself `DEP-07` for that js-yaml override, but never wrote an entry into this file. The `DEP-07` heading above is the independent `fast-uri`/`brace-expansion` work, referenced by commits `182a123` and `47a4486`. The existing heading was deliberately left alone rather than renamed, so `DEP-07` is ambiguous in git history — this note is the disambiguation.
 
 ### `SEC6-01` — overrode transitive `uuid` to clear `GHSA-w5hq-g745-h8pq`
 

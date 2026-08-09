@@ -13,6 +13,74 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Added — real multi-select (ROADMAP 1.4)
+
+Selection is no longer one item at a time.
+
+- **`Shift`+click** adds an item to the selection, or removes it if already in.
+- **Marquee drag** on empty canvas selects everything the band touches;
+  `Shift`+drag unions with the existing selection. Intersection, not
+  containment — a band crossing a large rectangle catches it.
+- **`Ctrl/Cmd+A`** selects every item, text box, connector and rectangle on
+  the view. Connector anchors are excluded; they are sub-parts, selected only
+  by dragging one directly.
+- **Delete, nudge and drag** apply to the whole selection. A dragged or nudged
+  group keeps its internal spacing.
+- **Multi-edit inspector panel** when more than one item is selected: type
+  breakdown, Delete, and layer order. Layer order acts on **rectangles only**
+  — the reducer still throws for other kinds (ROADMAP 1.3) — and the panel
+  says so when the selection is mixed.
+- **`Shift+2`** fits the viewport to the selection (`Shift+1` / `F` still fit
+  the whole diagram).
+
+The selection lives in a new `selection: ItemReference[]` slice on the UI
+store. `itemControls` is unchanged in shape and remains the single inspector
+target; the store writes the two together so they cannot drift. Existing
+consumers of `itemControls` needed no changes.
+
+`Ctrl/Cmd+C`, `Ctrl/Cmd+X` and `Ctrl/Cmd+D` deliberately stay **single-item**,
+acting on the most recently selected item: the clipboard slice holds one entry
+by construction. The `?` dialog labels them "active item" rather than implying
+they cover the selection.
+
+### Changed — tool hotkeys realigned onto Excalidraw's (UXA-01)
+
+**Breaking for anyone with the old keys in muscle memory or in their own
+docs.** An operator moving between an Excalidraw canvas and this one should
+not be retrained, so the tool layer now matches Excalidraw's, letter and
+number alike.
+
+| Action | Was | Now |
+|---|---|---|
+| Connector | `C` | `A`, `C`, `5` |
+| Add item | `A` | `I`, `9` |
+| Select | `V`, `S` | `V`, `S`, `1` |
+| Rectangle | `R` | `R`, `2` |
+| Text | `T` | `T`, `8` |
+| Reset zoom | bare `0` or `1` | `Ctrl/Cmd+0` |
+| Fit to view | `F` | `F`, `Shift+1` |
+| Toggle item highlighting | `I` | `Alt+I` |
+
+Bare `0` and `1` are no longer zoom keys — they belong to Excalidraw's tool
+row, and that collision was the single worst source of friction. `Ctrl/Cmd+=`
+and `Ctrl/Cmd+-` join the existing bare `=` / `-` as zoom aliases.
+`Ctrl/Cmd+X` (cut) is new (UXA-04).
+
+Excalidraw's `D` / `O` / `L` / `P` / `E` (diamond, ellipse, line, freedraw,
+eraser) stay unbound: free-form vector tools with no meaning on a tile-based
+isometric grid.
+
+### Fixed — dragging, panning and rectangle-drawing were silently dead
+
+`getMouse` switched on the legacy `mousedown` / `mousemove` event names, but
+the editor migrated to the Pointer Events API in FEA10-01 and dispatches
+`pointerdown` / `pointermove` / `pointerup`. Every event fell through to the
+`default` branch, so `mouse.mousedown` was pinned at `null` and every code
+path guarding on it did nothing: `DragItems`, `Pan`, `DrawRectangle` — and,
+once written, the new marquee. Found while building 1.4, which cannot work
+without it. No test covered it because none dispatched real pointer events at
+`getMouse`; `src/utils/__tests__/coordinates.pointer.test.ts` now does.
+
 ### Security
 
 - **Icon URL scheme allowlist (SEC-01).** `iconSchema.url` now rejects schemes

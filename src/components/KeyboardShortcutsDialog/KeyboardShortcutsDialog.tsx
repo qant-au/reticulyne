@@ -22,25 +22,30 @@ interface ShortcutSection {
   shortcuts: Shortcut[];
 }
 
+// UXA-01: the tool row mirrors Excalidraw's, letter and number both, so
+// muscle memory carries between the two editors. Excalidraw's free-form
+// tools (diamond, ellipse, line, freedraw, eraser) have no isometric
+// equivalent and are deliberately unbound.
 const SHORTCUT_SECTIONS: ShortcutSection[] = [
   {
     title: 'Tools',
     shortcuts: [
-      { keys: ['V', 'S'], description: 'Select' },
+      { keys: ['V', 'S', '1'], description: 'Select' },
       { keys: ['H'], description: 'Hand' },
-      { keys: ['A'], description: 'Add item' },
-      { keys: ['R'], description: 'Rectangle' },
-      { keys: ['C'], description: 'Connector' },
-      { keys: ['T'], description: 'Text' }
+      { keys: ['R', '2'], description: 'Rectangle' },
+      { keys: ['A', 'C', '5'], description: 'Connector' },
+      { keys: ['T', '8'], description: 'Text' },
+      { keys: ['I', '9'], description: 'Add item' }
     ]
   },
   {
     title: 'Zoom & Navigation',
     shortcuts: [
-      { keys: ['+'], description: 'Zoom in' },
-      { keys: ['-'], description: 'Zoom out' },
-      { keys: ['0'], description: 'Reset zoom' },
-      { keys: ['F'], description: 'Fit to view' },
+      { keys: ['+', '⌘/Ctrl', '='], description: 'Zoom in' },
+      { keys: ['-', '⌘/Ctrl', '-'], description: 'Zoom out' },
+      { keys: ['⌘/Ctrl', '0'], description: 'Reset zoom' },
+      { keys: ['F', '⇧', '1'], description: 'Fit to view' },
+      { keys: ['⇧', '2'], description: 'Fit to selection' },
       { keys: ['Space', 'drag'], description: 'Pan' }
     ]
   },
@@ -49,15 +54,21 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
     shortcuts: [
       { keys: ['⌘/Ctrl', 'Z'], description: 'Undo' },
       { keys: ['⌘/Ctrl', '⇧', 'Z'], description: 'Redo' },
-      { keys: ['⌘/Ctrl', 'C'], description: 'Copy' },
+      { keys: ['⌘/Ctrl', 'C'], description: 'Copy active item' },
+      { keys: ['⌘/Ctrl', 'X'], description: 'Cut active item' },
       { keys: ['⌘/Ctrl', 'V'], description: 'Paste' },
-      { keys: ['⌘/Ctrl', 'D'], description: 'Duplicate' },
-      { keys: ['Del', '⌫'], description: 'Delete' }
+      { keys: ['⌘/Ctrl', 'D'], description: 'Duplicate active item' },
+      { keys: ['Del', '⌫'], description: 'Delete selection' }
     ]
   },
   {
     title: 'Selection',
     shortcuts: [
+      { keys: ['Click'], description: 'Select' },
+      { keys: ['⇧', 'Click'], description: 'Add / remove from selection' },
+      { keys: ['Drag'], description: 'Marquee select' },
+      { keys: ['⇧', 'Drag'], description: 'Add marquee to selection' },
+      { keys: ['⌘/Ctrl', 'A'], description: 'Select all' },
       { keys: ['↑', '↓', '←', '→'], description: 'Nudge' },
       { keys: ['⇧', '↑↓←→'], description: 'Nudge ×5' },
       { keys: ['Esc'], description: 'Deselect' }
@@ -67,7 +78,7 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
     title: 'General',
     shortcuts: [
       { keys: ['?'], description: 'Toggle this dialog' },
-      { keys: ['I'], description: 'Toggle item highlighting' }
+      { keys: ['Alt', 'I'], description: 'Toggle item highlighting' }
     ]
   }
 ];

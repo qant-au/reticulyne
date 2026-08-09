@@ -174,7 +174,21 @@ group only reorders within that group's children.
 
 ---
 
-### 1.4 Real multi-select with bulk operations
+### ~~1.4 Real multi-select with bulk operations~~
+
+_Shipped 2026-08-10 (iso-003). Selection model, Shift+click, marquee drag,
+group drag/nudge/delete, and the multi-edit panel all landed; `Ctrl+A` and
+`Shift+2` came with it (UXA-07). Two deliberate departures from the sketch
+below: the selection lives in a new `selection: ItemReference[]` slice with
+`itemControls` kept as the single inspector target and maintained in step by
+the store, rather than widening `itemControls` into a discriminated union —
+that left all eleven existing consumers untouched. And the multi-edit panel
+offers delete + layer order only, not colour: colour is per-type and would
+silently no-op on the members of a mixed selection that lack the field.
+Bulk colour is left open. The band renders as a tile-space parallelogram
+rather than a screen-space rectangle, because the selection it performs IS a
+tile-space box; a screen rect would draw a region different from the one it
+selects._
 
 **What it does.** Click + shift-click to grow the selection; marquee-drag to
 select an area; with multiple items selected, delete / drag / colour /
@@ -892,23 +906,23 @@ leave.
 
 | Action | Excalidraw | Reticulyne today | Status | Fix tracked under |
 |---|---|---|---|---|
-| Selection tool | `1` or `V` | `V` / `S` | **MISMATCH** — `1` collides with Reticulyne's reset-zoom | UXA-01 |
+| Selection tool | `1` or `V` | `1` / `V` / `S` | MATCH | ~~UXA-01~~ done |
 | Hand / pan tool | `H` | `H` | MATCH | — |
-| Rectangle tool | `R` or `2` | `R` | MISMATCH (number alias missing) | UXA-01 |
-| Text tool | `T` or `8` | `T` | MISMATCH (number alias missing) | UXA-01 |
-| Arrow / connector | `A` or `5` | `C` | **MISMATCH** — `A` collides with Reticulyne's Add-item | UXA-01 |
-| Add image / icon | `9` | `A` | **MISMATCH** — reuses Excalidraw's arrow key | UXA-01 |
-| Reset zoom | `Ctrl/Cmd+0` | bare `0` or `1` | **MISMATCH** — bare digits collide with Excalidraw's tool keys | UXA-01 |
-| Zoom in | `Ctrl/Cmd+=` | bare `=` | MISMATCH (modifier alias missing) | UXA-01 |
-| Zoom out | `Ctrl/Cmd+-` | bare `-` | MISMATCH (modifier alias missing) | UXA-01 |
-| Fit to view | `Shift+1` | `F` | MISMATCH (Shift+1 alias missing) | UXA-01 |
-| Fit to selection | `Shift+2` | n/a | GAP — depends on multi-select | UXA-07 (after 1.4) |
+| Rectangle tool | `R` or `2` | `R` / `2` | MATCH | ~~UXA-01~~ done |
+| Text tool | `T` or `8` | `T` / `8` | MATCH | ~~UXA-01~~ done |
+| Arrow / connector | `A` or `5` | `A` / `C` / `5` | MATCH (`C` kept as a Reticulyne alias) | ~~UXA-01~~ done |
+| Add image / icon | `9` | `I` / `9` | MATCH (`I` = Icon; Excalidraw's eye-dropper has no equivalent) | ~~UXA-01~~ done |
+| Reset zoom | `Ctrl/Cmd+0` | `Ctrl/Cmd+0` | MATCH — bare `0` / `1` released to the tool row | ~~UXA-01~~ done |
+| Zoom in | `Ctrl/Cmd+=` | `Ctrl/Cmd+=` / bare `=` | MATCH | ~~UXA-01~~ done |
+| Zoom out | `Ctrl/Cmd+-` | `Ctrl/Cmd+-` / bare `-` | MATCH | ~~UXA-01~~ done |
+| Fit to view | `Shift+1` | `Shift+1` / `F` | MATCH | ~~UXA-01~~ done |
+| Fit to selection | `Shift+2` | `Shift+2` | MATCH | ~~UXA-07~~ done |
 | Space+drag pan | wired | dialog-documented, **not wired** | GAP | UXA-02 |
 | Alt+drag duplicate | wired | unbound (Alt has no Reticulyne bindings) | GAP | UXA-03 |
-| Shift+click extend select | wired | unbound | GAP | 1.4 |
-| Marquee drag-select | wired | unbound | GAP | 1.4 |
-| Select all | `Ctrl/Cmd+A` | unbound | GAP | UXA-07 (after 1.4) |
-| Cut | `Ctrl/Cmd+X` | unbound | GAP | UXA-04 |
+| Shift+click extend select | wired | wired | MATCH | ~~1.4~~ done |
+| Marquee drag-select | wired | wired (tile-space band) | MATCH | ~~1.4~~ done |
+| Select all | `Ctrl/Cmd+A` | `Ctrl/Cmd+A` | MATCH | ~~UXA-07~~ done |
+| Cut | `Ctrl/Cmd+X` | `Ctrl/Cmd+X` | MATCH (active item only — single-entry clipboard) | ~~UXA-04~~ done |
 | Copy | `Ctrl/Cmd+C` | `Ctrl/Cmd+C` | MATCH | — |
 | Paste | `Ctrl/Cmd+V` | `Ctrl/Cmd+V` | MATCH | — |
 | Duplicate | `Ctrl/Cmd+D` (or `Alt+drag`) | `Ctrl/Cmd+D` | MATCH for `Ctrl/Cmd+D`; gap on `Alt+drag` | UXA-03 |
@@ -924,7 +938,7 @@ leave.
 | Nudge | arrow keys (`Shift` = ×N) | arrow keys (`Shift` = ×5) | MATCH | — |
 | Help dialog | `?` | `?` | MATCH | — |
 | Toggle theme (light↔dark) | `Alt+Shift+D` | n/a (prop-only) | GAP | UXA-08 |
-| Toggle selection dimming | n/a | `I` | DOMAIN — Reticulyne-only feature | — |
+| Toggle selection dimming | n/a | `Alt+I` | DOMAIN — Reticulyne-only; moved off bare `I` by UXA-01 | — |
 | Lock element | `Ctrl/Cmd+Shift+L` | n/a | GAP — Reticulyne has no lock concept | left open |
 | Eraser | `E` or `0` | n/a | DOMAIN | — |
 | Diamond | `D` or `3` | n/a | DOMAIN | — |
@@ -975,7 +989,15 @@ Ordered by bang-for-buck. Total estimated effort ≈ 3 days across the family;
 none requires a schema change. All items are scoped to `EDITABLE` mode unless
 noted.
 
-#### UXA-01 Tool hotkey realignment (full parity)
+#### ~~UXA-01 Tool hotkey realignment (full parity)~~
+
+_Shipped 2026-08-10 (iso-003), as specified below, with two additions the
+sketch did not cover: `C` was kept as a second connector alias alongside the
+new `A`, so existing Reticulyne muscle memory is not broken in the other
+direction; and bare `I` moving to Add-item displaced the FEA12-01
+selection-dimming toggle, which is now `Alt+I` (matched on `e.code`, since
+macOS turns Option+I into a dead key). `UXA-04` (Cut) and `UXA-07` (`Ctrl+A`,
+`Shift+2`) landed in the same change — see their entries._
 
 **What it does.** Rebinds tool hotkeys so an Excalidraw user's muscle memory
 carries over directly. New bindings:
@@ -1079,7 +1101,13 @@ reducer already wired into the context menu
 
 ---
 
-#### UXA-04 Cut (`Ctrl/Cmd+X`)
+#### ~~UXA-04 Cut (`Ctrl/Cmd+X`)~~
+
+_Shipped 2026-08-10 (iso-003). Acts on the active item, not the whole
+selection: the clipboard slice holds a single `ClipboardEntry` by
+construction (FEA5-04), so copy / cut / duplicate all stay single-item until
+that is widened. The `?` dialog now says "active item" on those three rows
+rather than implying they cover a multi-selection._
 
 **What it does.** Copy + delete in one shot. Same key as Excalidraw.
 
@@ -1121,7 +1149,14 @@ the reducer to non-rectangle item types).
 
 ---
 
-#### UXA-07 `Ctrl+A` select-all + `Shift+2` fit-to-selection (depends on 1.4)
+#### ~~UXA-07 `Ctrl+A` select-all + `Shift+2` fit-to-selection (depends on 1.4)~~
+
+_Shipped 2026-08-10 (iso-003) alongside 1.4. `fitToSelection` lives on
+`useDiagramUtils` and reuses `getFitToViewParams` by handing it a view
+filtered to the selection, rather than teaching `fitToView.ts` about
+selection sets. It no-ops on an empty selection — `getProjectBounds` falls
+back to a zero-size box at the origin, which would fling the viewport to a
+corner. `Ctrl+A` excludes connector anchors, matching the marquee._
 
 **What it does.** Once multi-select is wired (1.4): bind `Ctrl/Cmd+A` to
 select every item in the current diagram / floor, and `Shift+2` to fit the

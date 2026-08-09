@@ -176,7 +176,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'PAN'}
             />
             <IconButton
-              name="Add item (A)"
+              name="Add item (I)"
               Icon={<AddIcon />}
               onClick={() => {
                 uiStateActions.setItemControls({
@@ -203,7 +203,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'RECTANGLE.DRAW'}
             />
             <IconButton
-              name="Connector (C)"
+              name="Connector (A)"
               Icon={<ConnectorIcon />}
               onClick={() => {
                 uiStateActions.setMode({

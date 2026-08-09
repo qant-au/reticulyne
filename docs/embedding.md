@@ -63,7 +63,7 @@ All props are optional. The component renders a fully-functional editor with sen
 | `enableGlobalDragHandlers` | `boolean` | `true` | When `false`, pointer event listeners attach to the renderer element rather than `window`, preventing drag events from leaking into host-page sibling widgets (FEA10-01). Defaults to `true` for backwards compatibility. All pointer input (mouse, touch, stylus) is handled via the Pointer Events API regardless of this setting. |
 | `nodeIndicatorComponent` | `(args: { item: ModelItem, view: ViewItem }) => ReactNode` | `undefined` | Per-node decorator (FEA5-07). Rendered inside every Node, positioned at the node's tile and receiving its `ModelItem` + `ViewItem`. Use it to overlay live indicators — status pips, gauges, badges, mini-charts — driven by host state that isn't part of the model. See [Live dashboards](#live-dashboards). |
 | `connectorIndicatorComponent` | `(args: { connector: Connector, view: View }) => ReactNode` | `undefined` | Per-connector decorator (FEA7-03). Rendered at every connector's midpoint as an absolutely-positioned overlay, receiving the connector's schema-level model and the parent `View`. Mirrors `nodeIndicatorComponent` for link-level telemetry — throughput, latency, error-rate, link-down — driven by host state that isn't part of the model. |
-| `highlightedItemId` | `string` | `undefined` | When set, the editor highlights the item with this ID and dims all others to `opacity: 0.2` with a CSS transition (FEA12-01). Drives focus from host-side navigation without touching interaction state. When omitted, the `I` keyboard shortcut controls dimming based on the current interactive selection instead. |
+| `highlightedItemId` | `string` | `undefined` | When set, the editor highlights the item with this ID and dims all others to `opacity: 0.2` with a CSS transition (FEA12-01). Drives focus from host-side navigation without touching interaction state. When omitted, the `Alt+I` keyboard shortcut controls dimming based on the current interactive selection instead. |
 | `themeMode` | `'light'` \| `'dark'` \| `'auto'` | `'auto'` | Controls the editor colour scheme. `'light'` and `'dark'` force the respective palette. `'auto'` (the default) mirrors the OS/browser `prefers-color-scheme` setting and switches live when the user changes their system preference. |
 | `exportTheme` | `'light'` \| `'dark'` | `'light'` | Controls the initial background colour in the export dialog (PNG / PDF). `'light'` seeds the dialog with the light-mode diagram background (`#f6faff`); `'dark'` seeds it with the dark-mode background (`#1a1d24`). The user can still change the background colour inside the dialog before downloading. |
 | `children` | `ReactNode` | `undefined` | Optional children rendered inside the Reticulyne provider tree. Intended use is a "driver" child component that calls [`useReticulyne()`](#imperative-api-usereticulyne) to drive the editor from outside — pulse connectors on a timer, update colours from a poller, etc. Driver components typically return `null`. |
@@ -74,25 +74,30 @@ All props are optional. The component renders a fully-functional editor with sen
 
 | Key | Action |
 |-----|--------|
-| `V`, `S` | Select tool |
+| `V`, `S`, `1` | Select tool |
 | `H` | Hand (pan) tool |
-| `A` | Add item |
-| `R` | Rectangle tool |
-| `C` | Connector tool |
-| `T` | Text tool |
+| `R`, `2` | Rectangle tool |
+| `A`, `C`, `5` | Connector tool |
+| `T`, `8` | Text tool |
+| `I`, `9` | Add item |
 | `+` / `-` | Zoom in / out |
-| `0` | Reset zoom |
-| `F` | Fit to view |
+| `⌘/Ctrl 0` | Reset zoom |
+| `F`, `⇧ 1` | Fit to view |
+| `⇧ 2` | Fit to selection |
 | `⌘/Ctrl Z` | Undo |
 | `⌘/Ctrl ⇧ Z` | Redo |
-| `⌘/Ctrl C` | Copy |
+| `⌘/Ctrl C` | Copy active item |
+| `⌘/Ctrl X` | Cut active item |
 | `⌘/Ctrl V` | Paste |
-| `⌘/Ctrl D` | Duplicate |
-| `Del` / `⌫` | Delete selected |
-| `↑↓←→` | Nudge selected item |
+| `⌘/Ctrl D` | Duplicate active item |
+| `⌘/Ctrl A` | Select all |
+| `⇧ Click` | Add / remove from selection |
+| Drag on empty canvas | Marquee select (`⇧` to add to the selection) |
+| `Del` / `⌫` | Delete selection |
+| `↑↓←→` | Nudge selection |
 | `⇧ ↑↓←→` | Nudge ×5 |
 | `Esc` | Deselect |
-| `I` | Toggle item highlighting (dims all items except the selected one) |
+| `Alt I` | Toggle item highlighting (dims all items except the selected one) |
 | `?` | Toggle keyboard shortcuts dialog |
 
 ### Container sizing
@@ -145,35 +150,57 @@ The host page never sees these wheel events bubble — the renderer's wheel list
 
 The editor wires the conventions used by Figma, Miro, Excalidraw and tldraw. All shortcuts are window-level and are suppressed while focus is on a text input / textarea / contenteditable surface (e.g. an item-description editor), so they never collide with the host's own typing.
 
-**Tools — `EDITABLE` mode only.** Bare letter, no modifier.
+The tool layer mirrors **Excalidraw's**, letter and number alike, so an operator moving between an Excalidraw canvas and this one is not retrained. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
+
+**Tools — `EDITABLE` mode only.** Bare key, no modifier.
 
 | Key | Tool |
 |---|---|
-| `V` or `S` | Select |
+| `V`, `S` or `1` | Select |
 | `H` | Hand / Pan |
-| `A` | Add item |
-| `R` | Rectangle |
-| `C` | Connector |
-| `T` | Text (creates a textbox at the current mouse tile) |
+| `R` or `2` | Rectangle |
+| `A`, `C` or `5` | Connector (`A` is Excalidraw's arrow; `C` is kept as a Reticulyne alias) |
+| `T` or `8` | Text (creates a textbox at the current mouse tile) |
+| `I` or `9` | Add item (`I` = Icon) |
 
 **Zoom and viewport — `EDITABLE` + `EXPLORABLE_READONLY`.**
 
 | Key | Action |
 |---|---|
-| `+` / `=` | Zoom in |
-| `-` / `_` | Zoom out |
-| `0` or `1` | Reset zoom to 100% |
-| `F` | Fit to screen |
+| `+` / `=` (or `Ctrl/Cmd +=`) | Zoom in |
+| `-` / `_` (or `Ctrl/Cmd +-`) | Zoom out |
+| `Ctrl/Cmd + 0` | Reset zoom to 100% |
+| `F` or `Shift + 1` | Fit to screen |
+| `Shift + 2` | Fit to selection (no-op when nothing is selected) |
 
-**Selection-dependent — `EDITABLE` mode only.** Requires an item to be selected.
+**Selection — `EDITABLE` mode only.**
+
+| Gesture / Key | Action |
+|---|---|
+| Click | Select one item |
+| `Shift` + click | Add the item to the selection, or remove it if already in |
+| Drag on empty canvas | Marquee select everything the band touches |
+| `Shift` + drag | Add the marquee's contents to the existing selection |
+| `Ctrl/Cmd + A` | Select every item, text box, connector and rectangle on the view |
+| `Esc` | Deselect (works in any editor mode) |
+| `Delete` / `Backspace` | Delete every selected item |
+| `↑` `↓` `←` `→` | Nudge the whole selection by one tile (+`Shift` for 5 tiles) |
+| Drag a selected item | Move the whole selection, preserving its internal spacing |
+
+With more than one item selected, the inspector shows a multi-edit panel: a
+type breakdown, Delete, and layer order. Layer order applies to rectangles
+only — the reducer does not support the other kinds yet — and the panel says
+so when the selection is mixed.
+
+**Clipboard — `EDITABLE` mode only.** These act on the **active item** (the
+one most recently added to the selection), not the whole selection: the
+clipboard holds a single entry by construction.
 
 | Key | Action |
 |---|---|
-| `Esc` | Deselect (works in any editor mode) |
-| `Delete` / `Backspace` | Delete the selected item |
-| `↑` `↓` `←` `→` | Nudge by one tile (+`Shift` for 5 tiles) |
-| `Ctrl/Cmd + D` | Duplicate the selected item (skips connectors) |
-| `Ctrl/Cmd + C` | Copy the selected item to the editor's clipboard |
+| `Ctrl/Cmd + D` | Duplicate the active item (skips connectors) |
+| `Ctrl/Cmd + C` | Copy the active item to the editor's clipboard |
+| `Ctrl/Cmd + X` | Cut the active item |
 | `Ctrl/Cmd + V` | Paste with a one-tile offset (works repeatedly) |
 
 **Undo / redo — `EDITABLE` mode only.**

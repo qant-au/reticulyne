@@ -145,10 +145,18 @@ export const getMouse = ({
     tile: CoordsUtils.subtract(newPosition.tile, lastMouse.position.tile)
   };
 
+  // Both the Pointer Events names and the legacy Mouse Events names are
+  // accepted. FEA10-01 migrated the interaction manager to Pointer Events
+  // but left this switch matching only `mousedown` / `mousemove`, so every
+  // real event fell through to `default` and `mouse.mousedown` was pinned
+  // at null — which silently disabled every drag path that guards on it
+  // (DragItems, Pan, DrawRectangle, and now Marquee).
   const getMousedown = (): Mouse['mousedown'] => {
     switch (mouseEvent.type) {
+      case 'pointerdown':
       case 'mousedown':
         return newPosition;
+      case 'pointermove':
       case 'mousemove':
         return lastMouse.mousedown;
       default:

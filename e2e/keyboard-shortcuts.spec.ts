@@ -1,10 +1,11 @@
 import { expect, test, Page } from '@playwright/test';
 
 /**
- * FEA5-02 — keyboard shortcuts.
+ * FEA5-02 — keyboard shortcuts, as realigned onto Excalidraw's by UXA-01.
  *
- * Tool letters (V/S/H/A/R/C/T), zoom hotkeys (+/-/0/1/F) and the
- * duplicate chord (Ctrl/Cmd+D). The active tool is observable via
+ * Tool letters (V/S/H/I/R/A/C/T) with their number-row aliases, zoom
+ * hotkeys (+/-/Ctrl+0/F) and the duplicate chord (Ctrl/Cmd+D). Bare 0 and
+ * 1 are no longer zoom keys. The active tool is observable via
  * the toolbar button highlight — Playwright can't read MUI's
  * `primary.light` background reliably, but the buttons gain
  * `MuiButton-text` with the active background colour, and the
@@ -57,25 +58,30 @@ test.describe('FEA5-02 — keyboard shortcuts', () => {
     expect(afterEquals).toBeGreaterThan(afterMinus);
   });
 
-  test('"0" resets zoom to 100%', async ({ page }) => {
+  // UXA-01 moved reset-zoom off the bare digits and onto Ctrl/Cmd+0, so
+  // that 0 and 1 are free for Excalidraw's tool row. These two tests
+  // previously asserted the bare-digit behaviour.
+  test('"Ctrl+0" resets zoom to 100%', async ({ page }) => {
     await page.keyboard.press('-');
     await page.keyboard.press('-');
     await page.waitForTimeout(80);
     expect(await readZoomPercent(page)).toBeLessThan(100);
 
-    await page.keyboard.press('0');
+    await page.keyboard.press('Control+0');
     await page.waitForTimeout(80);
     expect(await readZoomPercent(page)).toBe(100);
   });
 
-  test('"1" also resets zoom to 100%', async ({ page }) => {
+  test('bare "0" and "1" no longer reset zoom', async ({ page }) => {
     await page.keyboard.press('-');
     await page.waitForTimeout(80);
-    expect(await readZoomPercent(page)).toBeLessThan(100);
+    const zoomed = await readZoomPercent(page);
+    expect(zoomed).toBeLessThan(100);
 
+    await page.keyboard.press('0');
     await page.keyboard.press('1');
     await page.waitForTimeout(80);
-    expect(await readZoomPercent(page)).toBe(100);
+    expect(await readZoomPercent(page)).toBe(zoomed);
   });
 
   test('"F" calls fitToView without crashing', async ({ page }) => {
@@ -113,6 +119,8 @@ test.describe('FEA5-02 — keyboard shortcuts', () => {
     // aria-label values; if not, the Tooltip popper renders them
     // on hover. We assert the static path.
     const allAriaAndText = tooltipTitles.join(' ') + ' ' + allText;
-    expect(allAriaAndText).toMatch(/Select \(V\)|Pan \(H\)|Add item \(A\)|Fit to screen \(F\)/);
+    expect(allAriaAndText).toMatch(
+      /Select \(V\)|Pan \(H\)|Add item \(I\)|Fit to screen \(F\)/
+    );
   });
 });

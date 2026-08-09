@@ -20,7 +20,7 @@ import type {
 } from 'src/types';
 import { CoordsUtils } from 'src/utils';
 import type { useScene } from 'src/hooks/useScene';
-import type { State } from 'src/types/interactions';
+import type { State, Modifiers } from 'src/types/interactions';
 
 export type SceneShape = ReturnType<typeof useScene>;
 
@@ -59,6 +59,9 @@ export const makeUiStateActions = () => {
     setZoom: jest.fn(),
     setScroll: jest.fn(),
     setItemControls: jest.fn(),
+    setSelection: jest.fn(),
+    toggleSelected: jest.fn(),
+    clearSelection: jest.fn(),
     setContextMenu: jest.fn(),
     setMouse: jest.fn(),
     setRendererEl: jest.fn(),
@@ -78,17 +81,20 @@ export const makeUiState = (overrides: {
   mode: Mode;
   mouse?: Partial<Mouse>;
   scroll?: Partial<Scroll>;
+  selection?: ItemReference[];
+  editorMode?: UiStateStore['editorMode'];
 }): UiStateStore => {
   const actions = makeUiStateActions();
   return {
     view: 'view1',
     mainMenuOptions: [],
-    editorMode: 'EDITABLE',
+    editorMode: overrides.editorMode ?? 'EDITABLE',
     iconCategoriesState: [],
     mode: overrides.mode,
     dialog: null,
     isMainMenuOpen: false,
     itemControls: null,
+    selection: overrides.selection ?? [],
     contextMenu: null,
     zoom: 1,
     scroll: makeScroll(overrides.scroll ?? {}),
@@ -143,6 +149,9 @@ export const makeState = (overrides: {
   rendererRef?: HTMLElement;
   rendererSize?: { width: number; height: number };
   isRendererInteraction?: boolean;
+  selection?: ItemReference[];
+  editorMode?: UiStateStore['editorMode'];
+  modifiers?: Partial<Modifiers>;
 }): State => {
   return {
     model: {} as unknown as ModelStore,
@@ -150,13 +159,20 @@ export const makeState = (overrides: {
     uiState: makeUiState({
       mode: overrides.mode,
       mouse: overrides.mouse,
-      scroll: overrides.scroll
+      scroll: overrides.scroll,
+      selection: overrides.selection,
+      editorMode: overrides.editorMode
     }),
     rendererRef:
       overrides.rendererRef ??
       (document.createElement('div') as unknown as HTMLElement),
     rendererSize: overrides.rendererSize ?? { width: 1000, height: 1000 },
-    isRendererInteraction: overrides.isRendererInteraction ?? true
+    isRendererInteraction: overrides.isRendererInteraction ?? true,
+    modifiers: {
+      shift: false,
+      ctrlOrMeta: false,
+      ...overrides.modifiers
+    }
   };
 };
 

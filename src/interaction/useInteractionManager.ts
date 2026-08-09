@@ -7,6 +7,7 @@ import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
 import { Cursor } from './modes/Cursor';
 import { DragItems } from './modes/DragItems';
+import { Marquee } from './modes/Marquee';
 import { DrawRectangle } from './modes/Rectangle/DrawRectangle';
 import { TransformRectangle } from './modes/Rectangle/TransformRectangle';
 import { Connector } from './modes/Connector';
@@ -18,6 +19,7 @@ import { interpretWheelEvent } from './wheelInput';
 const modes: { [k in string]: ModeActions } = {
   CURSOR: Cursor,
   DRAG_ITEMS: DragItems,
+  MARQUEE: Marquee,
   // TODO: Adopt this notation for all modes (i.e. {node.type}.{action})
   'RECTANGLE.DRAW': DrawRectangle,
   'RECTANGLE.TRANSFORM': TransformRectangle,
@@ -107,7 +109,13 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         uiState: liveUiState,
         rendererRef: rendererRef.current,
         rendererSize,
-        isRendererInteraction: rendererRef.current === e.target
+        isRendererInteraction: rendererRef.current === e.target,
+        // 1.4: Shift extends the selection; captured here because mode
+        // handlers only ever see `State`, never the event itself.
+        modifiers: {
+          shift: e.shiftKey,
+          ctrlOrMeta: e.ctrlKey || e.metaKey
+        }
       };
 
       if (reducerTypeRef.current !== liveUiState.mode.type) {

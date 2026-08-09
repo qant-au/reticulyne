@@ -67,6 +67,25 @@ export const isWithinBounds = (tile: Coords, bounds: Coords[]) => {
   return tile.x >= lowX && tile.x <= highX && tile.y >= lowY && tile.y <= highY;
 };
 
+// 1.4: do two tile-space boxes overlap at all? Used by the marquee
+// hit-test for items that occupy an area rather than a single tile
+// (rectangles, text boxes), where `isWithinBounds` on a single corner
+// would miss a box the band crosses through the middle.
+//
+// Inclusive on both edges, matching `isWithinBounds` — tiles are unit
+// cells, so boxes sharing an edge tile do overlap on that tile.
+export const doBoundsIntersect = (a: Coords[], b: Coords[]) => {
+  const boxA = sortByPosition(a);
+  const boxB = sortByPosition(b);
+
+  return (
+    boxA.lowX <= boxB.highX &&
+    boxA.highX >= boxB.lowX &&
+    boxA.lowY <= boxB.highY &&
+    boxA.highY >= boxB.lowY
+  );
+};
+
 // Returns the four corners of a grid that encapsulates all tiles
 // passed in (at least 1 tile needed)
 export const getBoundingBox = (

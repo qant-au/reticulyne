@@ -14,6 +14,7 @@ import { TextBoxes } from 'src/components/SceneLayers/TextBoxes/TextBoxes';
 import { SizeIndicator } from 'src/components/DebugUtils/SizeIndicator';
 import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { TransformControlsManager } from 'src/components/TransformControlsManager/TransformControlsManager';
+import { MarqueeBand } from 'src/components/MarqueeBand/MarqueeBand';
 import { RendererProps } from 'src/types/rendererProps';
 
 export const Renderer = ({
@@ -127,6 +128,10 @@ export const Renderer = ({
       </SceneLayer>
       <SceneLayer>
         <TransformControlsManager />
+      </SceneLayer>
+      {/* Above the outlines so the band stays visible over what it catches */}
+      <SceneLayer>
+        <MarqueeBand />
       </SceneLayer>
     </Box>
   );

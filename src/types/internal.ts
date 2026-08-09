@@ -95,6 +95,21 @@ interface AddItemControls {
 
 export type ItemControls = ItemReference | AddItemControls;
 
+// 1.4: the multi-selection set. `selection` is authoritative; `itemControls`
+// stays the single "inspector target" it has always been so the existing
+// single-item panels, transform anchors and dimming keep working untouched.
+//
+// The two are maintained together by the store — `setItemControls` rewrites
+// `selection`, and `setSelection` rewrites `itemControls` — so there is one
+// writer per mutation and the pair cannot drift. The invariant is:
+//
+//   selection.length === 0  ->  itemControls is null or { type: 'ADD_ITEM' }
+//   selection.length >= 1   ->  itemControls === selection[selection.length - 1]
+//
+// i.e. the inspector target is always the most recently added member of the
+// selection, which is what a user means by "the one I just clicked".
+export type Selection = ItemReference[];
+
 export interface Mouse {
   position: {
     screen: Coords;
@@ -127,6 +142,24 @@ export interface DragItemsMode {
   showCursor: boolean;
   items: ItemReference[];
   isInitialMovement: boolean;
+}
+
+// 1.4: marquee ("rubber band") drag-select. Entered from CURSOR when the
+// user presses on empty canvas and moves. `from` is the tile the drag
+// started on, `to` tracks the pointer.
+//
+// `base` is the selection as it stood when the drag began — empty for a
+// plain drag, the existing selection for a Shift-drag. The live selection
+// is recomputed every move as `base ∪ caught`, never accumulated onto the
+// previous frame's result: accumulating means shrinking the band can only
+// ever add, so items swept up early stay stuck to the selection for the
+// rest of the gesture.
+export interface MarqueeMode {
+  type: 'MARQUEE';
+  showCursor: boolean;
+  from: Coords;
+  to: Coords;
+  base: ItemReference[];
 }
 
 export interface PanMode {
@@ -174,6 +207,7 @@ export type Mode =
   | DrawRectangleMode
   | TransformRectangleMode
   | DragItemsMode
+  | MarqueeMode
   | TextBoxMode;
 // End mode types
 
@@ -218,6 +252,9 @@ export interface UiState {
   dialog: keyof typeof DialogTypeEnum | null;
   isMainMenuOpen: boolean;
   itemControls: ItemControls | null;
+  // 1.4: see the `Selection` doc comment above for the invariant tying
+  // this to `itemControls`. Empty array = nothing selected.
+  selection: Selection;
   contextMenu: ContextMenu | null;
   zoom: number;
   scroll: Scroll;
@@ -271,6 +308,11 @@ export interface UiStateActions {
   panScroll: (delta: Coords) => void;
   setClipboard: (entry: ClipboardEntry | null) => void;
   setItemControls: (itemControls: ItemControls | null) => void;
+  // 1.4 selection actions. All three keep `itemControls` in step.
+  setSelection: (selection: Selection) => void;
+  // Adds the reference if absent, removes it if present (Shift+click).
+  toggleSelected: (item: ItemReference) => void;
+  clearSelection: () => void;
   setContextMenu: (contextMenu: ContextMenu | null) => void;
   setMouse: (mouse: Mouse) => void;
   setRendererEl: (el: HTMLDivElement) => void;

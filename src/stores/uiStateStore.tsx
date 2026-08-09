@@ -30,6 +30,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         delta: null
       },
       itemControls: null,
+      selection: [],
       enableDebugTools: false,
       enableAnimation: false,
       exportTheme: 'light' as const,
@@ -61,6 +62,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
               offset: CoordsUtils.zero()
             },
             itemControls: null,
+            selection: [],
             zoom: 1
           });
         },
@@ -71,7 +73,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
           set({ dialog });
         },
         setIsMainMenuOpen: (isMainMenuOpen) => {
-          set({ isMainMenuOpen, itemControls: null });
+          set({ isMainMenuOpen, itemControls: null, selection: [] });
         },
         incrementZoom: () => {
           const { zoom } = get();
@@ -109,8 +111,44 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
             }
           });
         },
+        // 1.4: `itemControls` and `selection` are written as a pair, always,
+        // so the invariant documented on `Selection` cannot drift. Callers
+        // that only ever meant single-select keep calling setItemControls
+        // and get a one-element (or empty) selection for free.
         setItemControls: (itemControls) => {
-          set({ itemControls });
+          const selection =
+            itemControls && itemControls.type !== 'ADD_ITEM'
+              ? [itemControls]
+              : [];
+          set({ itemControls, selection });
+        },
+        setSelection: (selection) => {
+          set({
+            selection,
+            // The inspector follows the most recently added member — that is
+            // the one the user just clicked or the last the marquee swept up.
+            itemControls:
+              selection.length > 0 ? selection[selection.length - 1] : null
+          });
+        },
+        toggleSelected: (item) => {
+          const { selection } = get();
+          const without = selection.filter((s) => {
+            return !(s.type === item.type && s.id === item.id);
+          });
+          // Present -> remove it. Absent -> append, so it becomes the
+          // inspector target.
+          const next =
+            without.length === selection.length
+              ? [...selection, item]
+              : without;
+          set({
+            selection: next,
+            itemControls: next.length > 0 ? next[next.length - 1] : null
+          });
+        },
+        clearSelection: () => {
+          set({ selection: [], itemControls: null });
         },
         setContextMenu: (contextMenu) => {
           set({ contextMenu });

@@ -8,11 +8,7 @@
 import { EditorModeEnum } from 'src/types';
 
 export type ToolName =
-  | 'MAIN_MENU'
-  | 'ZOOM_CONTROLS'
-  | 'TOOL_MENU'
-  | 'ITEM_CONTROLS'
-  | 'VIEW_TITLE';
+  'MAIN_MENU' | 'ZOOM_CONTROLS' | 'TOOL_MENU' | 'ITEM_CONTROLS' | 'VIEW_TITLE';
 
 export interface EditorModeMapping {
   [k: string]: ToolName[];

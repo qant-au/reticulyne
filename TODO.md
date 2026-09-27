@@ -20,4 +20,6 @@ prefix: iso
   shipped in c9010ac (2.1 hotspots, visual only: edge snapping needs an anchor-side schema field) + b8d2ab8 (2.2 dblclick add)
 - [x] ROADMAP 2.3 save status, dirty state and opt-in auto-save @due(2026-09-28) @id(iso-007)
   shipped in FEA14-05; autoSaveDebounce opt-in (default false). 516 unit, 48/48 e2e
+- [x] ROADMAP 2.5 drag from a port to draw a connector @due(2026-09-28) @id(iso-008)
+  shipped in FEA14-06: port drag to connect; ends resolved by port and at release. 50/50 e2e
 

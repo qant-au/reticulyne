@@ -88,8 +88,14 @@ export const useScene = () => {
     };
   }, [model.actions, scene.actions]);
 
-  const historyStore = useHistoryStore((state) => {
-    return state;
+  // PRF-07: two narrow selectors, not the whole store. Selecting `state`
+  // re-rendered every useScene consumer on each undo-stack push; `actions`
+  // is stable and `isApplying` only flips around an undo/redo.
+  const historyIsApplying = useHistoryStore((state) => {
+    return state.isApplying;
+  });
+  const historyActions = useHistoryStore((state) => {
+    return state.actions;
   });
 
   // setState is the single chokepoint for every model mutation, so
@@ -100,8 +106,8 @@ export const useScene = () => {
   // undo BACK onto the past stack.
   const setState = useCallback(
     (newState: State) => {
-      if (!historyStore.isApplying) {
-        historyStore.actions.recordPriorState({
+      if (!historyIsApplying) {
+        historyActions.recordPriorState({
           model: model.actions.get(),
           scene: scene.actions.get()
         });
@@ -109,12 +115,7 @@ export const useScene = () => {
       model.actions.set(newState.model);
       scene.actions.set(newState.scene);
     },
-    [
-      model.actions,
-      scene.actions,
-      historyStore.isApplying,
-      historyStore.actions
-    ]
+    [model.actions, scene.actions, historyIsApplying, historyActions]
   );
 
   const undo = useCallback(() => {
@@ -122,32 +123,32 @@ export const useScene = () => {
       model: model.actions.get(),
       scene: scene.actions.get()
     };
-    const priorState = historyStore.actions.undo(current);
+    const priorState = historyActions.undo(current);
     if (priorState === null) return;
-    historyStore.actions.setIsApplying(true);
+    historyActions.setIsApplying(true);
     try {
       model.actions.set(priorState.model);
       scene.actions.set(priorState.scene);
     } finally {
-      historyStore.actions.setIsApplying(false);
+      historyActions.setIsApplying(false);
     }
-  }, [model.actions, scene.actions, historyStore.actions]);
+  }, [model.actions, scene.actions, historyActions]);
 
   const redo = useCallback(() => {
     const current: State = {
       model: model.actions.get(),
       scene: scene.actions.get()
     };
-    const nextState = historyStore.actions.redo(current);
+    const nextState = historyActions.redo(current);
     if (nextState === null) return;
-    historyStore.actions.setIsApplying(true);
+    historyActions.setIsApplying(true);
     try {
       model.actions.set(nextState.model);
       scene.actions.set(nextState.scene);
     } finally {
-      historyStore.actions.setIsApplying(false);
+      historyActions.setIsApplying(false);
     }
-  }, [model.actions, scene.actions, historyStore.actions]);
+  }, [model.actions, scene.actions, historyActions]);
 
   const createModelItem = useCallback(
     (newModelItem: ModelItem) => {
@@ -240,17 +241,17 @@ export const useScene = () => {
       // setState above) so the recordPriorState guard short-circuits.
       const skipHistory = opts?.recordHistory === false;
       if (skipHistory) {
-        historyStore.actions.setIsApplying(true);
+        historyActions.setIsApplying(true);
         try {
           setState(newState);
         } finally {
-          historyStore.actions.setIsApplying(false);
+          historyActions.setIsApplying(false);
         }
         return;
       }
       setState(newState);
     },
-    [getState, setState, currentViewId, historyStore.actions]
+    [getState, setState, currentViewId, historyActions]
   );
 
   const deleteConnector = useCallback(

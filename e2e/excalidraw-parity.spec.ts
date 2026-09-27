@@ -122,7 +122,10 @@ test('2.12: pinching in zooms out', async ({ browser }) => {
   await expect(zoomChip).toHaveText('100%');
 
   const cdp = await context.newCDPSession(page);
-  const touch = (type: string, spread: number) => {
+  const touch = (
+    type: 'touchStart' | 'touchMove' | 'touchEnd',
+    spread: number
+  ) => {
     return cdp.send('Input.dispatchTouchEvent', {
       type,
       touchPoints:

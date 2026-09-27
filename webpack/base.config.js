@@ -35,8 +35,13 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       },
       {
+        // PRF-12: inline small SVGs as data URIs, emit anything over 4 KB
+        // as a file so a large asset cannot bloat the JS bundle. No SVG is
+        // imported today; an emitted file in dist/ would then trip
+        // scripts/check-pack-contents.mjs, which is the prompt to decide.
         test: /\.svg$/i,
-        type: 'asset/inline'
+        type: 'asset',
+        parser: { dataUrlCondition: { maxSize: 4 * 1024 } }
       },
       {
         // MUI v9 ships ESM `.mjs` internals whose relative/bare imports omit

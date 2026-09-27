@@ -188,9 +188,22 @@ The tool layer mirrors **Excalidraw's**, letter and number alike, so an operator
 | Drag a selected item | Move the whole selection, preserving its internal spacing |
 
 With more than one item selected, the inspector shows a multi-edit panel: a
-type breakdown, Delete, and layer order. Layer order applies to rectangles
-only — the reducer does not support the other kinds yet — and the panel says
-so when the selection is mixed.
+type breakdown, Delete, and layer order.
+
+**Layer order — `EDITABLE` mode only.** Rectangles, connectors and text boxes
+each have a layer order within their own kind; a rectangle never passes a text
+box. Nodes have none: each node's z-index is its isometric depth, so the node
+nearer the viewer always paints in front, and layer actions leave nodes where
+they are. A multi-selection moves as one block, keeps its internal order, and
+is a single undo step. The same four actions are in the inspector, in the
+right-click menu of a rectangle, connector or text box, and on the keyboard:
+
+| Key | Action |
+|---|---|
+| `Ctrl/Cmd + ]` | Bring forward |
+| `Ctrl/Cmd + [` | Send backward |
+| `Ctrl/Cmd + Shift + ]` (Mac also `Cmd + Opt + ]`) | Bring to front |
+| `Ctrl/Cmd + Shift + [` (Mac also `Cmd + Opt + [`) | Send to back |
 
 **Clipboard — `EDITABLE` mode only.** These act on the **active item** (the
 one most recently added to the selection), not the whole selection: the
@@ -444,7 +457,7 @@ The `Rectangle` schema accepts four optional styling overrides in addition to th
 | `transparency` | `number` (0–1) | Fill alpha, where `0` = fully opaque and `1` = fully transparent. Applied on top of `colorValue` or the palette colour. Omit or set to `0` for a solid fill. |
 | `zIndex` | `integer` | Per-rectangle z-order override. Higher values render in front of lower values. Rectangles with the same `zIndex` (or no `zIndex`) keep their relative order from the layer controls (Bring to Front etc.). |
 
-These fields are designed for embedders that push status colours from external systems (e.g. monitoring dashboards, compliance tools) without needing to pre-register palette entries. The editor inspector panel exposes **Fill colour**, **Border colour**, and **Transparency** controls when a rectangle is selected. `zIndex` is an API-only field — interactive layer ordering continues to work via the existing Bring to Front / Send to Back context-menu actions.
+These fields are designed for embedders that push status colours from external systems (e.g. monitoring dashboards, compliance tools) without needing to pre-register palette entries. The editor inspector panel exposes **Fill colour**, **Border colour**, and **Transparency** controls when a rectangle is selected. `zIndex` is an API-only field — interactive layer ordering works through the Layer order buttons, the context menu and the `Ctrl/Cmd + ]` / `[` hotkeys (see Layer order above).
 
 Example using `Model.set` (the escape-hatch raw accessor on `useReticulyne()`):
 

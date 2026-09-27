@@ -7,6 +7,7 @@ import { ControlsContainer } from '../components/ControlsContainer';
 import { Header } from '../components/Header';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
+import { LayerOrderSection } from '../components/LayerOrderSection';
 
 const HEX_RE = /^#[0-9a-fA-F]{6}$/;
 
@@ -89,6 +90,7 @@ export const RectangleControls = ({ id }: Props) => {
           }}
         />
       </Box>
+      <LayerOrderSection targets={[{ type: 'RECTANGLE', id }]} />
       <Section>
         <Box>
           <DeleteButton

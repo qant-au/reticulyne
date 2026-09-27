@@ -15,6 +15,15 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Layer ordering for connectors and text boxes, not just rectangles**
+  (ROADMAP 1.3). Front / Forward / Backward / Back buttons in each inspector
+  and in the multi-select panel, the right-click menu on connectors and text
+  boxes, and Excalidraw's hotkeys: `Ctrl/Cmd+]` / `[`, with `Shift` for
+  to-front / to-back (UXA-06). A multi-selection moves as one block in one
+  undo step; previously the multi-select panel moved rectangles one at a
+  time, which reversed their relative order and cost one undo per item.
+  Nodes keep their isometric depth order and are never moved.
+
 - **`useReticulyne().setView(viewId)`** shows another view (floor) of the
   model. The editor has no view switcher of its own, so this is how a host
   offers one. Allowed in every editor mode; clears the selection; warns and
@@ -27,6 +36,8 @@ potentially breaking and read the release notes before upgrading.
 
 ### Changed
 
+- The right-click menu no longer opens in read-only editor modes; every
+  entry in it edits the diagram.
 - `file-saver` is gone from the runtime dependencies. Downloads go through
   an inline blob-URL helper; the file names and contents are unchanged
   (DEP-01).

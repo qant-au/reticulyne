@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
-import { Box, Button, Stack, Typography } from '@mui/material';
-import FlipToFrontIcon from '@mui/icons-material/FlipToFront';
-import FlipToBackIcon from '@mui/icons-material/FlipToBack';
+import { Box, Typography } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { ItemReference } from 'src/types';
@@ -9,6 +7,7 @@ import { ControlsContainer } from '../components/ControlsContainer';
 import { Header } from '../components/Header';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
+import { LayerOrderSection } from '../components/LayerOrderSection';
 
 const TYPE_LABELS: Record<ItemReference['type'], [string, string]> = {
   ITEM: ['node', 'nodes'],
@@ -47,32 +46,29 @@ export const MultiSelectControls = () => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const {
-    deleteViewItem,
-    deleteTextBox,
-    deleteRectangle,
-    deleteConnector,
-    changeLayerOrder
-  } = useScene();
+  const { deleteViewItem, deleteTextBox, deleteRectangle, deleteConnector } =
+    useScene();
 
   const summary = useMemo(() => {
     return summarise(selection);
   }, [selection]);
 
-  // Layer ordering is rectangle-only today: the reducer throws
-  // `Invalid item type` for anything else (see
-  // src/stores/reducers/layerOrdering.ts, and ROADMAP 1.3, which is the item
-  // that would widen it). So the section renders only when the selection
-  // contains a rectangle, and acts on exactly the rectangles — offering
-  // buttons that crash on a mixed selection is not an option, and silently
-  // doing nothing for the other members is not much better.
-  const rectangles = useMemo(() => {
+  // 1.3: rectangles, connectors and text boxes each order within their own
+  // layer and move as one block. Nodes are depth-sorted (z-index -x - y),
+  // so they have no layer order to change and are left out.
+  const orderable = useMemo(() => {
     return selection.filter((item) => {
-      return item.type === 'RECTANGLE';
+      return (
+        item.type === 'RECTANGLE' ||
+        item.type === 'CONNECTOR' ||
+        item.type === 'TEXTBOX'
+      );
     });
   }, [selection]);
 
-  const isMixed = rectangles.length > 0 && rectangles.length < selection.length;
+  const hasNodes = selection.some((item) => {
+    return item.type === 'ITEM';
+  });
 
   const deleteAll = () => {
     // Clear the selection first: every delete below rewrites the scene, and
@@ -109,48 +105,14 @@ export const MultiSelectControls = () => {
           {summary}
         </Typography>
       </Section>
-      {rectangles.length > 0 && (
-        <Section title="Layer order">
-          <Stack direction="row" spacing={1}>
-            <Button
-              size="small"
-              variant="outlined"
-              startIcon={<FlipToFrontIcon />}
-              onClick={() => {
-                rectangles.forEach((item) => {
-                  changeLayerOrder('BRING_TO_FRONT', item);
-                });
-              }}
-            >
-              Front
-            </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              startIcon={<FlipToBackIcon />}
-              onClick={() => {
-                rectangles.forEach((item) => {
-                  changeLayerOrder('SEND_TO_BACK', item);
-                });
-              }}
-            >
-              Back
-            </Button>
-          </Stack>
-          {isMixed && (
-            <Typography
-              variant="caption"
-              sx={{ color: 'text.disabled', display: 'block', pt: 1 }}
-            >
-              Applies to the{' '}
-              {rectangles.length === 1
-                ? '1 rectangle'
-                : `${rectangles.length} rectangles`}{' '}
-              only.
-            </Typography>
-          )}
-        </Section>
-      )}
+      <LayerOrderSection
+        targets={orderable}
+        note={
+          hasNodes
+            ? 'Nodes keep their depth order and are not moved.'
+            : undefined
+        }
+      />
       <Section>
         <Box>
           <DeleteButton onClick={deleteAll} />

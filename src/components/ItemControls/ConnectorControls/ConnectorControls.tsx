@@ -23,6 +23,7 @@ import { useScene } from 'src/hooks/useScene';
 import { ControlsContainer } from '../components/ControlsContainer';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
+import { LayerOrderSection } from '../components/LayerOrderSection';
 
 // User-facing labels for the connector-direction dropdown (FEA4-02).
 // All-caps to match the surrounding form controls and remove the
@@ -326,6 +327,7 @@ export const ConnectorControls = ({ id }: Props) => {
           </Box>
         </Box>
       )}
+      <LayerOrderSection targets={[{ type: 'CONNECTOR', id }]} />
       <Section>
         <Box>
           <DeleteButton

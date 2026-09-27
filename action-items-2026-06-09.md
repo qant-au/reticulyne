@@ -324,17 +324,20 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟡 Medium — Dependency hygiene
 
-### 52. Bump `@types/jest` to `^30` to match runtime — `DEP-03`
+### ~~52. Bump `@types/jest` to `^30` to match runtime — `DEP-03`~~
+_Done 2026-09-27 (`93cba15`) - `@types/jest` ^30; typecheck clean, unit tests pass._
 - **What:** Runtime is `jest@^30.4.2`; types are `@types/jest@^29.5.14`. Bump to `^30`.
 - **Where:** `package.json:71`
 - **Refs:** Review #53 (Section 7)
 
-### 53. Plan separate task IDs for cross-major upgrades — `DEP-04`
+### ~~53. Plan separate task IDs for cross-major upgrades — `DEP-04`~~
+_Done 2026-09-27 - one commit per major: webpack-merge 6 (`184da8f`, DEP-13), webpack-cli 7 (`b0e1279`, DEP-14); `@testing-library/jest-dom` was removed rather than upgraded (#54). TypeScript (now 7) and ESLint 10 were NOT taken: across the qant-au repos those majors are one fleet-wide decision, and `.github/dependabot.yml` ignores their majors so a bot cannot take them piecemeal._
 - **What:** `eslint 9 → 10`, `typescript 5 → 6`, `webpack-cli 5 → 7`, `webpack-merge 5 → 6`, `@testing-library/jest-dom 5 → 6` — one task ID and one PR each.
 - **Where:** `package.json`
 - **Refs:** Review #54 (Section 7)
 
-### 54. Remove four likely-unused devDependencies — `DEP-05`
+### ~~54. Remove four likely-unused devDependencies — `DEP-05`~~
+_Done 2026-09-27 (`8ac539a`, `2c493f4`) - all four removed. `8ac539a` first kept `jsdom` on the claim that the test env resolved it; measured, that was wrong (`navigator.userAgent` in the suite reports jsdom/26.1.0, the copy nested under jest-environment-jsdom), so `2c493f4` removed it too. Lint, unit tests, build and 35/35 e2e pass._
 - **What:** Drop `@testing-library/jest-dom`, `jsdom` (direct), `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser`. Verify `npm run lint && npm test && npm run build` still pass.
 - **Where:** `package.json:64, 86, 74, 75`
 - **Refs:** Review #55 (Section 7)
@@ -436,7 +439,8 @@ _Done 2026-09-27 - `dompurify` is overridden to `^3.4.16` (DEP-09, `0e8e8e9`); `
 - **What:** Monitor for jspdf bump.
 - **Refs:** Review #70 (Section 2c)
 
-### 70. Replace `file-saver` with inline DOM-API saveAs — `DEP-01`
+### ~~70. Replace `file-saver` with inline DOM-API saveAs — `DEP-01`~~
+_Done 2026-09-27 (`6188a89`) - inline `downloadFile` (blob: URL, attached `<a download>`, delayed revoke); `file-saver` and `@types/file-saver` removed. New unit tests plus `e2e/export-json.spec.ts`, which proves a real browser download carries the model._
 - **What:** ~20-LOC helper drops both `file-saver` and `@types/file-saver`. Removes a supply-chain edge.
 - **Where:** `src/utils/exportOptions.ts:2, 37`; `src/components/MainMenu/useExportJson.ts:3`
 - **Refs:** Review #71 (Section 2c)

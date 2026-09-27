@@ -15,9 +15,11 @@ afterEach(() => {
   cleanup();
 });
 
+// 1.6 removed the Model escape hatch; setTitle writes through the same
+// gated path, so the gate is exercised through it.
 type Captured = {
-  set: ReturnType<typeof useReticulyne>['Model']['set'];
-  get: ReturnType<typeof useReticulyne>['Model']['get'];
+  set: ReturnType<typeof useReticulyne>['setTitle'];
+  get: ReturnType<typeof useReticulyne>['getModel'];
 };
 
 const HookProbe = ({
@@ -30,15 +32,15 @@ const HookProbe = ({
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const { Model } = useReticulyne();
+  const { setTitle, getModel } = useReticulyne();
 
   useEffect(() => {
     uiStateActions.setEditorMode(mode);
   }, [mode, uiStateActions]);
 
   useEffect(() => {
-    onReady({ set: Model.set, get: Model.get });
-  }, [Model, onReady]);
+    onReady({ set: setTitle, get: getModel });
+  }, [setTitle, getModel, onReady]);
 
   return null;
 };
@@ -78,7 +80,7 @@ describe('useReticulyne read-only enforcement', () => {
     warnSpy.mockRestore();
   });
 
-  test('rejects Model.set in EXPLORABLE_READONLY mode', () => {
+  test('rejects setTitle in EXPLORABLE_READONLY mode', () => {
     let captured: Captured | null = null;
     act(() => {
       render(
@@ -94,7 +96,7 @@ describe('useReticulyne read-only enforcement', () => {
     expect(captured).not.toBeNull();
     const before = captured!.get();
     act(() => {
-      captured!.set({ title: 'mutated' });
+      captured!.set('mutated');
     });
     const after = captured!.get();
 
@@ -104,7 +106,7 @@ describe('useReticulyne read-only enforcement', () => {
     );
   });
 
-  test('rejects Model.set in NON_INTERACTIVE mode', () => {
+  test('rejects setTitle in NON_INTERACTIVE mode', () => {
     let captured: Captured | null = null;
     act(() => {
       render(
@@ -119,12 +121,12 @@ describe('useReticulyne read-only enforcement', () => {
 
     const before = captured!.get();
     act(() => {
-      captured!.set({ title: 'mutated' });
+      captured!.set('mutated');
     });
     expect(captured!.get().title).toBe(before.title);
   });
 
-  test('allows Model.set in EDITABLE mode', () => {
+  test('allows setTitle in EDITABLE mode', () => {
     let captured: Captured | null = null;
     act(() => {
       render(
@@ -138,7 +140,7 @@ describe('useReticulyne read-only enforcement', () => {
     });
 
     act(() => {
-      captured!.set({ title: 'edited' });
+      captured!.set('edited');
     });
     expect(captured!.get().title).toBe('edited');
     expect(warnSpy).not.toHaveBeenCalled();

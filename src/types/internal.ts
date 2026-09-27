@@ -22,6 +22,7 @@ import type {
   Rectangle
 } from './model';
 import type { ItemReference, ConnectorPath } from './scene';
+import type { QueuedPatch } from './imperative';
 import { DialogTypeEnum, type AnchorPosition } from './ui';
 import type {
   ConnectorIndicatorComponent,
@@ -294,6 +295,11 @@ export interface UiState {
   // 2.8: undefined = shown when EDITABLE only.
   showMiniMap: boolean | undefined;
   searchMatches: string[];
+  // 1.6: host click callbacks, fired by the interaction manager.
+  onNodeClick: ((id: string) => void) | undefined;
+  onConnectorClick: ((id: string) => void) | undefined;
+  // 1.5: imperative patches that arrived mid-gesture, applied when it ends.
+  patchQueue: QueuedPatch[];
   // Worklist 19: a list, so a multi-selection copies as one.
   clipboard: ClipboardEntry[];
   // Host-supplied save callback (FEA5-03). The MainMenu's
@@ -358,10 +364,19 @@ export interface UiStateActions {
   setIconPaletteOpen: (open: boolean) => void;
   setShowMiniMap: (show: boolean | undefined) => void;
   setSearchMatches: (ids: string[]) => void;
+  setClickHandlers: (handlers: {
+    onNodeClick: ((id: string) => void) | undefined;
+    onConnectorClick: ((id: string) => void) | undefined;
+  }) => void;
+  enqueuePatch: (entry: QueuedPatch) => void;
+  /** Empties the queue and returns what was in it. */
+  takePatches: () => QueuedPatch[];
   setOnSave: (onSave: SaveHandler | undefined) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;
   /** Read at call time, for async code that must not use a stale render. */
   getSaveStatus: () => SaveStatus;
+  /** The whole store, read at call time (imperative API and patch queue). */
+  get: () => UiState & { actions: UiStateActions };
   setOnValidationError: (
     onValidationError: ((issues: ZodIssue[]) => void) | undefined
   ) => void;

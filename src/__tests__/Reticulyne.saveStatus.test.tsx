@@ -7,7 +7,7 @@ import Reticulyne, { useReticulyne } from '../Reticulyne';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { model as fixtureModel } from 'src/fixtures/model';
 import { fingerprintModel, performSave } from 'src/utils/save';
-import type { Model, SaveStatus } from 'src/types';
+import type { Model, SaveStatus, UiStateActions } from 'src/types';
 
 // ROADMAP 2.3: save status, dirty tracking and opt-in auto-save.
 
@@ -113,10 +113,16 @@ describe('performSave', () => {
   });
 });
 
-type Api = ReturnType<typeof useReticulyne> & { status: () => SaveStatus };
+type Api = ReturnType<typeof useReticulyne> & {
+  status: () => SaveStatus;
+  ui: UiStateActions;
+};
 
 const Probe = ({ onReady }: { onReady: (api: Api) => void }) => {
   const api = useReticulyne();
+  const ui = useUiStateStore((state) => {
+    return state.actions;
+  });
   const status = useUiStateStore((state) => {
     return state.saveStatus;
   });
@@ -127,11 +133,12 @@ const Probe = ({ onReady }: { onReady: (api: Api) => void }) => {
   useEffect(() => {
     onReady({
       ...api,
+      ui,
       status: () => {
         return ref.current;
       }
     });
-  }, [api, onReady]);
+  }, [api, ui, onReady]);
   return null;
 };
 
@@ -236,8 +243,8 @@ describe('save controller (2.3)', () => {
     let pending: Promise<void> = Promise.resolve();
     act(() => {
       pending = performSave(onSave, api().getModel(), {
-        getStatus: api().uiState.getSaveStatus,
-        setStatus: api().uiState.setSaveStatus
+        getStatus: api().ui.getSaveStatus,
+        setStatus: api().ui.setSaveStatus
       });
     });
     act(() => {

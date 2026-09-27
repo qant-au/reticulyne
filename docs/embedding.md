@@ -51,6 +51,10 @@ All props are optional. The component renders a fully-functional editor with sen
 | `showTitleBar` | `boolean` | `undefined` (follows editorMode) | Override title-bar visibility. `false` = always hidden; `true` = always shown; omitted = controlled by editor mode (`EDITABLE` / `EXPLORABLE_READONLY` show it, `NON_INTERACTIVE` hides it). |
 | `showAlignmentGuides` | `boolean` | `true` | While dragging, draw a guide to the nearest other item on the same tile X or Y line. Items already sit on whole tiles, so there is no separate snap setting. |
 | `showMiniMap` | `boolean` | `undefined` (shown in `EDITABLE`) | The overview map, bottom-right: the whole diagram with the visible area outlined; click or drag in it to move the view. `true` / `false` force it on or off in any mode. |
+| `onNodeClick` | `(id: string) => void` | `undefined` | A node was clicked (press and release without dragging). Fires in `EDITABLE` and `EXPLORABLE_READONLY`, whether or not the click also changed the selection. |
+| `onConnectorClick` | `(id: string) => void` | `undefined` | As `onNodeClick`, for a connector. |
+| `onSelectionChange` | `(selection: SelectedRef[]) => void` | `undefined` | The selection changed, from any source (click, marquee, keyboard, `select()`). Receives `{ type, id }` copies; not called on mount. |
+| `onViewportChange` | `(viewport: Viewport) => void` | `undefined` | Zoom, pan or the current view changed: `{ zoom, scroll: { x, y }, viewId }`. Fires on every step of a pan or pinch, so throttle in the host if the handler is expensive. Not called on mount. |
 | `iconCollections` | `{ allow?: string[]; deny?: string[] }` | `undefined` (no filtering) | Filter icon collections by name (case-insensitive). `allow` keeps only matched collections; `deny` removes matched collections. Both can be combined. When omitted, all icons from `initialData.icons` pass through. |
 | `onModelUpdated` | `(model: Model) => void` | `undefined` | Callback invoked whenever the model changes. Callback identity does **not** need to be memoised — the component stores it in a ref to avoid identity churn. |
 | `width` | `number \| string` | `'100%'` | Width passed to the root `Box`. Numbers are treated as px; strings are passed verbatim (e.g. `'640px'`, `'50vw'`). |
@@ -127,10 +131,10 @@ The renderer uses a `ResizeObserver` on its DOM root, so it responds to layout c
 | Mode | Pointer interactions | UI affordances | Model-mutation API |
 |---|---|---|---|
 | `EDITABLE` | All (pan, zoom, drag items, draw connectors, place icons, transform) | Main menu, item controls, context menu | Accepted |
-| `EXPLORABLE_READONLY` | Pan, zoom, selection | No add/edit controls; selection-inspector still rendered | Rejected — `Model.set` and `loadModel` log a dev-mode warning and return |
+| `EXPLORABLE_READONLY` | Pan, zoom, selection | No add/edit controls; selection-inspector still rendered | Rejected — `setTitle` and `loadModel` log a dev-mode warning and return; `applyPatch` and `Connector.update` are accepted, for live data |
 | `NON_INTERACTIVE` | None | None visible | Rejected |
 
-The data-layer guard is enforced inside `useReticulyne` — calling `useReticulyne().Model.set(...)` or `useReticulyne().loadModel(...)` from outside `EDITABLE` mode is a silent no-op (with a dev-mode `console.warn`). Read access via `getModel()` is always allowed.
+The data-layer guard is enforced inside `useReticulyne` — calling `useReticulyne().setTitle(...)` or `useReticulyne().loadModel(...)` from outside `EDITABLE` mode is a silent no-op (with a dev-mode `console.warn`). Read access via `getModel()` is always allowed.
 
 ## Wheel / trackpad input
 
@@ -423,14 +427,27 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `loadModel(data)` | `(data: InitialData) => void` | Validate + hydrate fresh data. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor) of the model. Allowed in every editor mode; clears the selection; warns and does nothing for an unknown id. The editor has no view-switcher UI of its own, so this is how a host offers one. |
-| `setZoom(z)` | `(z: number) => void` | Set absolute zoom. |
+| `setZoom(z)` | `(z: number) => void` | Set absolute zoom, clamped to 0.2 to 1. |
 | `incrementZoom()` / `decrementZoom()` | `() => void` | Step zoom by `ZOOM_INCREMENT` (0.2). |
 | `rendererEl` | `HTMLDivElement \| null` | The renderer's outer DOM node — useful for export-to-image or programmatic focus. |
 | `Connector.get(id)` | `(id: string) => Connector \| undefined` | Returns the connector (defaults merged) for the given id, or `undefined` if no view contains it. |
 | `Connector.update(id, patch)` | `(id, patch) => void` | Mutate `color` / `width` / `style` / `direction` / `glyph` / `animated` from the host. **Bypasses the undo stack** so a live-data poller doesn't fill Ctrl+Z. Gated on `editorMode !== 'NON_INTERACTIVE'` — warns and no-ops otherwise. |
 | `Connector.pulse(id, opts?)` | `(id, { durationMs?, glyph? }?) => void` | Fire a one-shot signal pulse — the chosen glyph travels the connector once over `durationMs` (default 1500). Runtime-only: writes to the scene-store overlay, never persisted to the model, never recorded in history. Each call supersedes any pulse already in-flight on that connector. |
-| `Model` *(escape hatch)* | `{ get, set }` | Raw zustand actions. `set` is gated by editorMode. Prefer the named methods above. |
-| `uiState` *(escape hatch)* | `UiStateActions` | Full UI store action bag. Prefer the named methods above. |
+| `applyPatch(patch, opts?)` | `(patch: DiagramPatch, { pushToUndo? }?) => void` | Live update by id: node `name` / `description` / `icon` / `tile`; connector, rectangle and text-box styling. Never touches the selection, zoom or pan. Ids that no longer exist are skipped. During a drag, a marquee or a connector or rectangle being drawn, the patch waits and lands when the gesture ends. Validated first (a bad patch goes to `onValidationError`, nothing changes). Not on the undo stack unless `pushToUndo: true`. Refused in `NON_INTERACTIVE`. |
+| `updateNode(id, patch, opts?)` | `(id, NodePatch, opts?) => void` | `applyPatch` for one node. |
+| `setConnectorRate(id, rate, opts?)` | `(id, rate: number) => void` | Connector animation rate, 0 (stopped) to 1. Shows only with `enableAnimation`. |
+| `getNode(id)` | `(id) => NodeInfo \| undefined` | `{ id, name, description?, icon?, tile }`, a copy; `tile` is `null` when the node is not on the current view. |
+| `getViewport()` | `() => Viewport` | `{ zoom, scroll: { x, y }, viewId }`. |
+| `getSelection()` | `() => SelectedRef[]` | `{ type, id }` copies, oldest first. |
+| `focusNode(id, opts?)` | `(id, { zoom? }?) => void` | Centre the view on a node, optionally at a new zoom (clamped). Allowed in every mode; warns and does nothing if the node is not on the current view. |
+| `fitToView()` | `() => void` | Zoom and pan so the whole current view fits. Allowed in every mode. |
+| `select(ids)` | `(ids: string \| string[]) => void` | Replace the selection with these nodes, connectors, rectangles or text boxes on the current view; unknown ids are skipped. `EDITABLE` only. |
+| `clearSelection()` | `() => void` | Clear the selection. |
+
+The `Model` and `uiState` escape hatches were removed in 1.6 (breaking; see the CHANGELOG).
+Model writes go through `applyPatch`, `setTitle` or `loadModel`; view and selection through the
+methods above. There is no `setNodeStatus`: node status is host state, drawn with
+`nodeIndicatorComponent` (see Live dashboards).
 
 Worked examples. `loadModel` is gated on the editor mode **as of the last
 render**, so it cannot be unlocked and called in the same tick: calling
@@ -509,41 +526,23 @@ The `Rectangle` schema accepts four optional styling overrides in addition to th
 
 These fields are designed for embedders that push status colours from external systems (e.g. monitoring dashboards, compliance tools) without needing to pre-register palette entries. The editor inspector panel exposes **Fill colour**, **Border colour**, and **Transparency** controls when a rectangle is selected. `zIndex` is an API-only field — interactive layer ordering works through the Layer order buttons, the context menu and the `Ctrl/Cmd + ]` / `[` hotkeys (see Layer order above).
 
-Example using `Model.set` (the escape-hatch raw accessor on `useReticulyne()`):
+Example using `applyPatch` from a driver child:
 
 ```typescript
 import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
 
 function StatusOverlay() {
-  const { Model, getModel } = useReticulyne();
+  const { applyPatch } = useReticulyne();
 
   function paintAlert(rectangleId: string) {
-    const current = getModel();
-    Model.set({
-      ...current,
-      views: current.views.map((view) => ({
-        ...view,
-        rectangles: (view.rectangles ?? []).map((r) =>
-          r.id === rectangleId
-            ? { ...r, colorValue: '#d32f2f', transparency: 0.3 }
-            : r
-        )
-      }))
+    applyPatch({
+      rectangles: { [rectangleId]: { colorValue: '#d32f2f', transparency: 0.3 } }
     });
   }
 
   function clearAlert(rectangleId: string) {
-    const current = getModel();
-    Model.set({
-      ...current,
-      views: current.views.map((view) => ({
-        ...view,
-        rectangles: (view.rectangles ?? []).map((r) =>
-          r.id === rectangleId
-            ? { ...r, colorValue: undefined, transparency: undefined }
-            : r
-        )
-      }))
+    applyPatch({
+      rectangles: { [rectangleId]: { colorValue: undefined, transparency: undefined } }
     });
   }
 

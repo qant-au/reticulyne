@@ -13,7 +13,24 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Removed (breaking)
+
+- **`useReticulyne().Model` and `.uiState`** (ROADMAP 1.6). The raw
+  zustand escape hatches are gone. Write through `applyPatch`, `setTitle` or
+  `loadModel`; read through `getModel`, `getNode`, `getViewport` and
+  `getSelection`; drive the view and selection with the methods below.
+
 ### Added
+
+- **Live updates that keep UI state** (ROADMAP 1.5). `useReticulyne().applyPatch`
+  changes nodes, connectors, rectangles and text boxes by id without touching
+  the selection, zoom or pan; waits out a drag or draw in progress; skips ids
+  that no longer exist; stays off the undo stack unless `pushToUndo`.
+  `updateNode` and `setConnectorRate` are shorthands for it.
+- **Typed imperative API** (ROADMAP 1.6). `getNode`, `getViewport`,
+  `getSelection`, `focusNode`, `fitToView`, `select`, `clearSelection`,
+  and the events `onNodeClick`, `onConnectorClick`, `onSelectionChange`
+  and `onViewportChange`. `setZoom` now clamps to the editor range.
 
 - **Icon library panel** (ROADMAP 2.11). A toolbar toggle opens the icon
   picker as a persistent right-hand panel; drag icons straight onto tiles.

@@ -40,6 +40,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       iconPaletteOpen: false,
       showMiniMap: undefined,
       searchMatches: [],
+      onNodeClick: undefined,
+      onConnectorClick: undefined,
+      patchQueue: [],
       onSave: undefined,
       saveStatus: {
         state: 'idle',
@@ -192,6 +195,17 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         setSearchMatches: (searchMatches) => {
           set({ searchMatches });
         },
+        setClickHandlers: ({ onNodeClick, onConnectorClick }) => {
+          set({ onNodeClick, onConnectorClick });
+        },
+        enqueuePatch: (entry) => {
+          set({ patchQueue: [...get().patchQueue, entry] });
+        },
+        takePatches: () => {
+          const queued = get().patchQueue;
+          if (queued.length > 0) set({ patchQueue: [] });
+          return queued;
+        },
         setShowTitleBar: (showTitleBar) => {
           set({ showTitleBar });
         },
@@ -203,6 +217,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         getSaveStatus: () => {
           return get().saveStatus;
+        },
+        get: () => {
+          return get();
         },
         setOnValidationError: (onValidationError) => {
           set({ onValidationError });

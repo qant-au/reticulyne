@@ -4,6 +4,7 @@ import type { EditorModeEnum, MainMenuOptions } from './common';
 import type { Connector, Model, ModelItem, View, ViewItem } from './model';
 import type { RendererProps } from './rendererProps';
 import type { SelectedRef, Viewport } from './imperative';
+import type { DiagramTemplate } from 'src/templates';
 
 export type NodeIndicatorComponent = (props: {
   item: ModelItem;
@@ -88,6 +89,12 @@ export interface ReticulyneProps {
    * (see SECURITY.md).
    */
   onIconUpload?: IconUploadHandler;
+  /**
+   * 2.14: the starter diagrams "New from template" offers. Default: the
+   * bundled `TEMPLATES` (blank, three-tier web, AWS, Kubernetes, office
+   * network). Pass your own to replace them; an empty array hides the entry.
+   */
+  templates?: DiagramTemplate[];
   /** 1.6: as `onNodeClick`, for a connector. */
   onConnectorClick?: (id: string) => void;
   /**

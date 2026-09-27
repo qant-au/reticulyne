@@ -726,7 +726,14 @@ in `SECURITY.md`). Recommend max 200 KB; dedupe by hash.
 
 ---
 
-### 2.14 Templates / starter diagrams
+### ~~2.14 Templates / starter diagrams~~
+
+_Shipped 2026-09-28. Five bundled templates (Blank, Three-tier web app, AWS web application,
+Kubernetes service, Office network); the datacenter rack was left out because no bundled icon
+reads as a rack. Thumbnails are drawn from the template data, not stored images. A template
+holds the drawing only and opens with the host's icons and colours, so it stays brand-agnostic;
+`templates` overrides the set. Every template is loaded through the model schema in the unit
+suite. Building them found BUG14-03 (connectors inside a rectangle drew nothing)._
 
 **What it does.** "New Diagram" → modal with thumbnails: Blank, AWS 3-Tier Web
 App, K8s Cluster, Datacenter Rack, Generic Network.

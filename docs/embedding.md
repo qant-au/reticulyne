@@ -52,6 +52,7 @@ All props are optional. The component renders a fully-functional editor with sen
 | `showAlignmentGuides` | `boolean` | `true` | While dragging, draw a guide to the nearest other item on the same tile X or Y line. Items already sit on whole tiles, so there is no separate snap setting. |
 | `showMiniMap` | `boolean` | `undefined` (shown in `EDITABLE`) | The overview map, bottom-right: the whole diagram with the visible area outlined; click or drag in it to move the view. `true` / `false` force it on or off in any mode. |
 | `onIconUpload` | `(file: File) => Promise<{ url: string; name?: string }>` | `undefined` | Adds **Upload icon** to the icon picker (editable diagrams only). Receives the chosen SVG, PNG, JPEG, GIF or WebP file (at most 200 KB), stores it, and resolves with its URL; the icon joins a **My icons** collection saved in the diagram and is armed for placing. Reject with an `Error` to show its message in the picker. The same URL uploaded twice is one icon. Pass the exported `readIconAsDataUrl` to embed the file in the diagram JSON with no server (files up to about 48 KB). Sanitising SVG is the host's job (see SECURITY.md). An `iconCollections` allow-list keeps My icons; only a `deny` entry drops it. |
+| `templates` | `DiagramTemplate[]` | the bundled `TEMPLATES` | What **New from template** offers: blank, three-tier web app, AWS web application, Kubernetes service and office network by default. A template holds items and views only; it opens with the editor's own icons and colours, and a node whose icon the editor lacks opens without one. Pass your own list to replace them (`TEMPLATES` and `templateToInitialData` are exported), or `[]` to hide the entry. |
 | `onNodeClick` | `(id: string) => void` | `undefined` | A node was clicked (press and release without dragging). Fires in `EDITABLE` and `EXPLORABLE_READONLY`, whether or not the click also changed the selection. |
 | `onConnectorClick` | `(id: string) => void` | `undefined` | As `onNodeClick`, for a connector. |
 | `onSelectionChange` | `(selection: SelectedRef[]) => void` | `undefined` | The selection changed, from any source (click, marquee, keyboard, `select()`). Receives `{ type, id }` copies; not called on mount. |
@@ -277,6 +278,7 @@ Available values (`MainMenuOptionsEnum`):
 | Value | What it renders |
 |---|---|
 | `'ACTION.OPEN'` | Open a diagram from a local JSON file |
+| `'ACTION.NEW_FROM_TEMPLATE'` | Replace the diagram with a starter diagram (see the `templates` prop) |
 | `'EXPORT.JSON'` | Download the current model as JSON |
 | `'EXPORT.PNG'` | Export the diagram as a PNG image |
 | `'EXPORT.PDF'` | Export the diagram as a PDF |

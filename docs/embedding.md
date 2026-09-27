@@ -569,7 +569,7 @@ The "host updates bypass undo" rule is deliberate: a poller calling `Connector.u
 
 The package declares `react` and `react-dom` as peers with the range `>=18` and is tested against React 19.
 
-CSS is injected at runtime via Emotion (an Reticulyne dependency, not a peer). No stylesheet imports are required from the consumer side.
+CSS is injected at runtime via Emotion (a Reticulyne dependency, not a peer). No stylesheet imports are required from the consumer side.
 
 ## Security model
 

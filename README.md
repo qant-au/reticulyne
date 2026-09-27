@@ -135,6 +135,11 @@ An optional Three.js layer for connector rendering, complementing the existing S
 - **React** 18 or 19 (peer dependency) and a matching `react-dom`.
 - **MUI v9**, **Emotion**, and **Zustand** as peer dependencies (v3 onwards — see [Installation](#installation)). v1 bundled MUI/Emotion/Zustand internally; v2 externalised them as peer-deps at MUI v5; v3 bumps the peer-dep range to MUI v9.
 - **Node.js** 22 LTS for development against this repository (`.nvmrc`). Consumers are not subject to this — the published package is browser-targeted.
+- **Browsers:** Chrome 117+, Edge 121+, Firefox 121+, Safari 17+ (macOS and iOS). This is
+  MUI v9's published support floor, which is the binding constraint; Reticulyne's own code
+  needs only Pointer Events and `ResizeObserver`, which all of these have. (The
+  `browserslist` field in `package.json` is not read by the build: there is no Babel or
+  PostCSS step.)
 - A bundler that can consume CommonJS or ESM (webpack, Vite, Rollup, Parcel, esbuild, Next.js).
 - Authentication to **GitHub Packages** to install — see [docs/installation.md](docs/installation.md).
 

@@ -447,17 +447,20 @@ _Done 2026-09-27 (`417b6c4`) - `prepublishOnly: npm run lint && npm test && npm 
 - **Where:** `package.json:44-56`
 - **Refs:** Review #72 (Section 2e)
 
-### 72. Tighten `.dockerignore` — `BLD-02`
+### ~~72. Tighten `.dockerignore` — `BLD-02`~~
+_Done 2026-09-27 - `.env*` was already excluded; added `testing`, `scripts`, `.idea`, `CLAUDE.md`, `ROADMAP.md`, `TODO.md`, `SECURITY.md`, `CHANGELOG.md` and the review files (as globs, so `code-review-instructions.md` and future passes are covered). Both images rebuild and 34/34 e2e pass._
 - **What:** Add `.env*`, `testing/`, `code-review-instructions.md`, `ROADMAP.md`, `TODO.md`, `CLAUDE.md`, `SECURITY.md`, `CHANGELOG.md`, `.idea/`.
 - **Where:** `.dockerignore`
 - **Refs:** Review #73 (Section 2f)
 
-### 73. Tighten `Referrer-Policy` to `strict-origin-when-cross-origin` — `SEC-08`
+### ~~73. Tighten `Referrer-Policy` to `strict-origin-when-cross-origin` — `SEC-08`~~
+_Done 2026-09-27 - `strict-origin-when-cross-origin` in all three header blocks; confirmed with `curl -I` on :2222, :2223 and a JS asset._
 - **What:** Same compatibility with Google Fonts; leaks less.
 - **Where:** `docker/nginx.conf:43`
 - **Refs:** Review #74 (Section 2f)
 
-### 74. Add COOP / CORP headers — `SEC-09`
+### ~~74. Add COOP / CORP headers — `SEC-09`~~
+_Done 2026-09-27 - COOP and CORP `same-origin` in all three header blocks, with the COEP deferral reasoned in the nginx.conf comment. Served on pages and assets; 34/34 e2e pass on the rebuilt images._
 - **What:** `Cross-Origin-Opener-Policy "same-origin"` and `Cross-Origin-Resource-Policy "same-origin"` for static assets. Defer COEP.
 - **Where:** `docker/nginx.conf`
 - **Refs:** Review #75 (Section 2f)

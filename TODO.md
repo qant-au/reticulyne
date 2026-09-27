@@ -14,4 +14,6 @@ prefix: iso
   shipped in 48f0d76 + 5fa50e7 + f2b4fbc. UXA-01 (tool hotkeys onto Excalidraw's, plus UXA-04 cut and UXA-07 select-all/fit-to-selection) and ROADMAP 1.4 (selection slice, shift-click, marquee, group drag/nudge/delete, multi-edit panel). Blocker found and fixed first: getMouse ignored pointer events since FEA10-01, so DragItems/Pan/DrawRectangle were all silently dead. 474 unit tests green (up from 397), 7 new browser e2e green. Left open and noted in ROADMAP: bulk colour (per-type), layer order for non-rectangles (1.3), multi-item clipboard
 - [x] ROADMAP 1.3 layer ordering for rectangles, connectors and text boxes, plus UXA-06 hotkeys @due(2026-09-27) @id(iso-004)
   shipped in bb012d9 + 17a76d9 (FEA14-01): reducer, inspector, multi-select, context menu, UXA-06 hotkeys; nodes deliberately excluded (depth-sorted). 495 unit, 39/39 e2e
+- [x] ROADMAP 1.2 diagram title in the UI and the API @due(2026-09-27) @id(iso-005)
+  shipped in FEA14-02: rename dialog, getTitle/setTitle, optional title, JSON export named after it. 508 unit, 41/41 e2e
 

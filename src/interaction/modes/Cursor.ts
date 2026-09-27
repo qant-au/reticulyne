@@ -16,7 +16,8 @@ import {
   generateId,
   CoordsUtils,
   getAnchorTile,
-  connectorPathTileToGlobal
+  connectorPathTileToGlobal,
+  getNodeAtPointerPort
 } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
 
@@ -85,9 +86,40 @@ const mousedown: ModeActionsAction = ({
   uiState,
   scene,
   isRendererInteraction,
-  modifiers
+  modifiers,
+  rendererSize
 }) => {
   if (uiState.mode.type !== 'CURSOR' || !isRendererInteraction) return;
+
+  // ROADMAP 2.5: a press on one of a node's ports starts a connector from
+  // that node, without switching tools. Connector mode then draws it live
+  // and commits or cancels on release. Shift is left to multi-select (1.4).
+  if (uiState.editorMode === 'EDITABLE' && !modifiers.shift) {
+    const portNode = getNodeAtPointerPort({
+      mouse: uiState.mouse,
+      zoom: uiState.zoom,
+      scroll: uiState.scroll,
+      rendererSize,
+      nodes: scene.items
+    });
+    if (portNode) {
+      const connectorId = generateId();
+      scene.createConnector({
+        id: connectorId,
+        color: scene.colors[0].id,
+        anchors: [
+          { id: generateId(), ref: { item: portNode.id } },
+          { id: generateId(), ref: { item: portNode.id } }
+        ]
+      });
+      uiState.actions.setMode({
+        type: 'CONNECTOR',
+        showCursor: true,
+        id: connectorId
+      });
+      return;
+    }
+  }
 
   const itemAtTile = getItemAtTile({
     tile: uiState.mouse.position.tile,

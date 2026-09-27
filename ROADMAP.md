@@ -510,7 +510,12 @@ lockstep, and Docker smoke pass.
 
 ---
 
-### 2.5 Left-click drag to draw connectors **[NEW]**
+### ~~2.5 Left-click drag to draw connectors~~
+
+_Shipped 2026-09-28. Press within 12 px of a port (capped at a third of the centre-to-port
+distance, so at low zoom a node stays draggable) and connector mode takes over. Ends are
+resolved by port as well as by tile, and again at release, so a quick flick onto a target's
+port still connects. Still no edge snapping (see 2.1)._
 
 **What it does.** Without switching the toolbar to Connector mode, the user can
 hover a node (port hotspots appear, per 2.1), then left-click-drag from a

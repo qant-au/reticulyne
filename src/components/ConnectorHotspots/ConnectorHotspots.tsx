@@ -4,12 +4,13 @@ import { Svg } from 'src/components/Svg/Svg';
 import { useIsoProjection } from 'src/hooks/useIsoProjection';
 import { useSceneItemsList } from 'src/hooks/sceneLists';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { CoordsUtils } from 'src/utils';
+import { CoordsUtils, getNodeAtPort, nodesNearTile } from 'src/utils';
+import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import type { Coords } from 'src/types';
 
-// ROADMAP 2.1: in connector mode, the node under the pointer shows a port
-// on each of its four tile edges, so a new user can see where a connector
-// will attach, both before starting one and while choosing its end.
+// ROADMAP 2.1 / 2.5: the node under the pointer shows a port on each of
+// its four tile edges: in connector mode, and in the plain cursor mode of
+// an editable diagram, where pressing a port starts a connector (2.5).
 //
 // Discoverability only. A connector anchor references a node, not an edge
 // of it (the schema has no side), so every port leads to the same anchor.
@@ -54,19 +55,44 @@ export const ConnectorHotspots = () => {
   const modeType = useUiStateStore((state) => {
     return state.mode.type;
   });
-  const tile = useUiStateStore((state) => {
-    return state.mouse.position.tile;
+  const editorMode = useUiStateStore((state) => {
+    return state.editorMode;
   });
+  const mouse = useUiStateStore((state) => {
+    return state.mouse;
+  });
+  const zoom = useUiStateStore((state) => {
+    return state.zoom;
+  });
+  const scroll = useUiStateStore((state) => {
+    return state.scroll;
+  });
+  const rendererEl = useUiStateStore((state) => {
+    return state.rendererEl;
+  });
+  const { size: rendererSize } = useResizeObserver(rendererEl);
   const items = useSceneItemsList();
 
+  const active =
+    modeType === 'CONNECTOR' ||
+    (modeType === 'CURSOR' && editorMode === 'EDITABLE' && !mouse.mousedown);
+
   const hovered = useMemo(() => {
-    if (modeType !== 'CONNECTOR') return null;
+    if (!active) return null;
+    const { tile, screen } = mouse.position;
     return (
       items.find((item) => {
         return CoordsUtils.isEqual(item.tile, tile);
-      }) ?? null
+      }) ??
+      // On a port the pointer can be over the neighbouring tile; keep
+      // the ports lit there, or they would vanish as you reach them.
+      getNodeAtPort(screen, nodesNearTile(tile, items), {
+        zoom,
+        scroll,
+        rendererSize
+      })
     );
-  }, [modeType, items, tile]);
+  }, [active, items, mouse.position, zoom, scroll, rendererSize]);
 
   if (!hovered) return null;
   return <Ports tile={hovered.tile} />;

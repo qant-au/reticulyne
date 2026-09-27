@@ -15,6 +15,12 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Drag from a port to connect** (ROADMAP 2.5). With the ordinary cursor, a
+  node shows its ports on hover; dragging from one to another node draws a
+  connector, and releasing elsewhere cancels. Dragging from a node's centre
+  still moves it. Ports shrink their capture area when zoomed out so they
+  never swallow the whole node.
+
 - **Save status and dirty state** (ROADMAP 2.3). With `onSave` supplied, the
   title bar shows Unsaved changes / Saving… / Saved / Save failed with Retry,
   and the browser asks before closing a tab with unsaved changes. `onSave` may

@@ -76,7 +76,7 @@ This file is updated in lockstep with `npm audit`. After every dependency bump, 
 Current counts (post-DEP-11):
 - `npm audit --omit=dev`: **0 vulnerabilities.** Runtime-scope advisories were last cleared by DEP-09 (`dompurify`) and DEP-10 (TipTap).
 - `npm audit` (including dev): **0 vulnerabilities.** The accepted `brace-expansion` residual closed in DEP-11 once upstream backported its fix. There is no accepted residual in the tree.
-- **Dependabot board:** expected to return to **0 open alerts** once GitHub re-snapshots the dependency graph for the DEP-11 lockfile.
+- **Dependabot board: 0 open alerts** (measured 2026-09-27 after the DEP-11 push).
 - **CI note:** the pipeline gates on `npm audit --omit=dev --audit-level=moderate`; there is currently nothing at or above that threshold.
 
 ### `DEP-06` — overrode transitive `dompurify` to clear `GHSA-cmwh-pvxp-8882`

@@ -40,7 +40,6 @@ without a remount.
 <Reticulyne
   initialData={{
     title: 'My diagram',
-    version: '',
     icons: [],     // see isopacks.md
     colors: [],
     items: [],

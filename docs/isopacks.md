@@ -63,11 +63,15 @@ The icons appear in the icon panel and can be dragged onto the canvas.
 
 The repository ships five icon collections embedded under `src/vendor/isopacks/`:
 
-- **reticulyne** — general infrastructure icons (server, storage, switch, etc.)
+- **isoflow** — general infrastructure icons (server, storage, switch, etc.)¹
 - **aws** — Amazon Web Services
 - **azure** — Microsoft Azure
 - **gcp** — Google Cloud Platform
 - **kubernetes** — Kubernetes resource types
+
+¹ The general pack keeps its pre-rename id `isoflow` so diagrams saved before the
+Isoflow → Reticulyne rename still resolve their icons. Filter it with
+`iconCollections: { allow: ['isoflow'] }`; `'reticulyne'` matches nothing.
 
 These collections power the [standalone Docker editor](docker.md) and the in-repo examples
 (see `src/examples/initialData.ts`). They are part of this single project — this fork does

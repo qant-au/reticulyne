@@ -80,7 +80,7 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 | `'VERSION'` | on | Shows the running package version. |
 
 The `'LINK.DISCORD'` identifier from earlier versions has been removed in v4.0.0 — it
-only ever pointed at upstream `markmanx/reticulyne`'s Discord, and the fork no longer
+only ever pointed at upstream `markmanx/isoflow`'s Discord, and the fork no longer
 surfaces upstream-project branding. Consumers that previously opted in with
 `mainMenuOptions: ['LINK.DISCORD', ...]` will see a TypeScript error and should drop the
 identifier.
@@ -101,7 +101,8 @@ The `Model` shape (all arrays default to empty):
 ```ts
 type Model = {
   title: string;
-  version: string;
+  description?: string;
+  version?: string; // optional, max 10 chars; free-form, not validated as semver
   icons: Icons;
   colors: Colors;
   items: ModelItems;

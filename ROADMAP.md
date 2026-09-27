@@ -48,8 +48,26 @@ Three groups shape what belongs in which tier:
 
 ### Existing codebase review (cross-checked at commit `c2c28114`)
 
-See the full enumeration in prior ROADMAP versions; the ten corrections
-remain valid and are not repeated here.
+The review corrected ten claims in the source recommendations. As they stood at
+`c2c28114` (some code has moved since; names are the pre-rename ones):
+
+1. Selection lived in `itemControls` (`uiStateStore`), not a `selection` field.
+   Widened by 1.4 into a `selection` array alongside it.
+2. A right-click context menu with Duplicate and the four layer-order actions
+   already existed.
+3. The layer-ordering reducer only handled rectangles (still true; see 1.3).
+4. There were three stores plus history (`modelStore`, `sceneStore`,
+   `uiStateStore`), not two.
+5. `useIsoflow()` (now `useReticulyne()`) already was the imperative surface.
+6. "Patches skip undo" was already implemented, via
+   `updateConnector(..., { recordHistory: false })`.
+7. Connectors already had a `direction` field, so telemetry animation needs a
+   different name.
+8. Pathfinding was already wired (`pathfinding@0.4.18`, since replaced under
+   SEC-04).
+9. There was no `connectorIndicatorComponent`; a real gap.
+10. Theming was already MUI-driven, so dark mode was a `palette.mode` branch,
+    not a refactor (shipped as FEA7-04 / FEA9-01).
 
 ### FossFlow fork analysis (May 2026)
 
@@ -598,23 +616,27 @@ extended.
 two-finger pinch gesture zooms the canvas; a single-finger drag pans in non-
 editable modes. Existing mouse and trackpad interactions are unchanged.
 
-**Why Tier 2.** `onTouchStart` / `onTouchMove` / `onTouchEnd` are already wired
-in `useInteractionManager.ts` but only map single-touch to mouse events.
-Multi-touch pinch is the gap. The live-dashboard use case is commonly viewed on
-tablets.
+**Why Tier 2.** Since FEA10-01 all input arrives as Pointer Events, so a touch
+is already a `pointerdown` / `pointermove` / `pointerup` with
+`pointerType === 'touch'`. Each finger is a separate pointer, handled as if it
+were the only one. Multi-touch pinch is the gap. The live-dashboard use case is
+commonly viewed on tablets.
 
-**Where in code.** `src/interaction/useInteractionManager.ts:130-155` — extend
-existing touch handlers; new `src/interaction/touchInput.ts` (mirrors
-`wheelInput.ts` structure).
+**Where in code.** `src/interaction/useInteractionManager.ts` (`onPointerDown`
+and the `pointermove` / `pointerup` listeners); new `src/interaction/touchInput.ts`
+(mirrors `wheelInput.ts` structure).
 
 **Approach sketch.**
-- `touchstart` with 2 touches: record initial inter-touch distance and midpoint.
-- `touchmove` with 2 touches: compute new distance → zoom delta (same pipeline
-  as wheel zoom); midpoint movement → pan delta. Apply both.
+- Track active touch pointers in a `Map<pointerId, point>`; drop entries on
+  `pointerup` / `pointercancel`.
+- When the map holds two pointers: record the initial distance and midpoint.
+- On `pointermove` with two tracked: new distance → zoom delta (same pipeline
+  as wheel zoom); midpoint movement → pan delta. Apply both, and suppress the
+  single-pointer mode handler for that gesture.
+- Set `touch-action: none` on the renderer so the browser does not claim the
+  gesture for page zoom or scroll.
 - Single-finger drag-to-pan: only in `EXPLORABLE_READONLY` mode — conflicts
   with node dragging in `EDITABLE`.
-- `preventDefault()` on handled touch events to suppress browser scroll
-  interference (same pattern as wheel events, already `passive: false`).
 
 **Effort.** Medium. ~1.5 days.
 

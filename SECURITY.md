@@ -69,10 +69,10 @@ The CSP above is only applied by the standalone Docker image. A consumer embeddi
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (post-DEP-08):
-- `npm audit --omit=dev`: **0 vulnerabilities.** The two low-severity `quill` entries were resolved by migrating the editor off Quill (DEP-04-follow-up), and the `dompurify` advisories by the override below (DEP-06, bumped in DEP-07). `dompurify` is the only runtime package in the residual set.
-- `npm audit` (including dev): **24 entries, all dev-only, and all one advisory** — `brace-expansion`'s accepted residual [`GHSA-mh99-v99m-4gvg`](https://github.com/advisories/GHSA-mh99-v99m-4gvg) (high), which audit attributes to every transitive dependent (`eslint`, `jest`, `glob`, `ts-jest`, …) as well as the package itself. See DEP-07 for why it is accepted and what closes it. Nothing here is reachable from the published `dist/`. **This is the floor** — every other advisory in the tree is resolved.
-- **Dependabot board: 0 open alerts.** The `js-yaml` / `postcss` / `shell-quote` / `webpack-dev-server` advisories were cleared in DEP-08 below.
+Current counts (post-DEP-11):
+- `npm audit --omit=dev`: **0 vulnerabilities.** Runtime-scope advisories were last cleared by DEP-09 (`dompurify`) and DEP-10 (TipTap).
+- `npm audit` (including dev): **0 vulnerabilities.** The accepted `brace-expansion` residual closed in DEP-11 once upstream backported its fix. There is no accepted residual in the tree.
+- **Dependabot board:** expected to return to **0 open alerts** once GitHub re-snapshots the dependency graph for the DEP-11 lockfile.
 - **CI note:** the pipeline gates on `npm audit --omit=dev --audit-level=moderate`; there is currently nothing at or above that threshold.
 
 ### `DEP-06` — overrode transitive `dompurify` to clear `GHSA-cmwh-pvxp-8882`
@@ -104,6 +104,8 @@ Two high-severity dev-only advisories landed against the `webpack-dev-server` an
 
   **Residual — `GHSA-mh99-v99m-4gvg` on the 1.x/2.x paths (accepted).** A *second*, distinct `brace-expansion` advisory ([`GHSA-mh99-v99m-4gvg`](https://github.com/advisories/GHSA-mh99-v99m-4gvg), unbounded expansion length → OOM crash, high) has a vulnerable range of `<=5.0.7` — it is patched **only in 5.0.8**, with no 1.x or 2.x backport. So the `1.1.16` and `2.1.2` copies still carry it, and the only mechanical fix is exactly the four-major jump rejected above (`npm audit`'s own `fixAvailable` proposes a `isSemVerMajor` *downgrade* of `eslint-plugin-react` to 7.22.0, which is worse). Accepted on reachability: **dev-only**, not present in the published `dist/`, and the glob patterns these copies expand are repo-authored config globs, never attacker-supplied input. Note this advisory inflates `npm audit`'s raw count considerably, because audit reports every transitive *dependent* (`eslint`, `jest`, `glob`, `minimatch`, `test-exclude`, `ts-jest`, …) alongside the package itself. **Closes when** `eslint` and `glob` ship `minimatch` majors that depend on `brace-expansion@>=5.0.8`.
 
+  **Closed in `DEP-11`.** Upstream backported the fix to the 1.x and 2.x lines after all (`1.1.21`, `2.1.7`), so the range-scoped overrides now carry it on every path without any major jump. `npm ls brace-expansion` returns `1.1.21`, `2.1.7`, `5.0.12`, and `npm audit` no longer reports `GHSA-mh99-v99m-4gvg` or the follow-on `GHSA-rgw5-rvv9-x895`.
+
 ### `DEP-08` — bumped the dev toolchain to clear the last five Dependabot alerts
 
 The `DEP-07` dependency-graph refresh surfaced five dev-only alerts left over from before the graph went stale. **All five resolved without a single new override** — every patched release existed in-major and every consuming parent's declared range already permitted it. The lockfile was simply holding older still-satisfying versions, which `npm install` will not move; `npm update <pkg>` is the mechanism that does.
@@ -130,6 +132,19 @@ Two advisories landed against `@tiptap/core <=3.30.4`, both **production-reachab
 - [`GHSA-j95f-988m-3j2f`](https://github.com/advisories/GHSA-j95f-988m-3j2f) — quadratic ReDoS in block and inline Markdown attribute parsing.
 
 Every `@tiptap/*` package declares an **exact** peer on `@tiptap/core`, so the family can only move together; `npm update` alone was a no-op because the optional `@tiptap/extension-bubble-menu` / `-floating-menu` (pulled in by `@tiptap/react`) were held at 3.27.1 by the lockfile and pinned `core` in place. All twelve direct ranges were raised `^3.27.1` → `^3.31.3` (so a future install cannot resolve back below the advisory) and the family was re-resolved as a unit. `npm ls` shows all fourteen `@tiptap/*` packages at 3.31.3; `npm audit --omit=dev` reports 0. Verified with the 474 unit tests, a production build, and `e2e/description-editor.spec.ts` (including the XSS-drop case) against the rebuilt container.
+
+### `DEP-11` — cleared the post-DEP-08 dev-toolchain advisories
+
+Seventeen Dependabot alerts reopened between 2026-07-26 and 2026-09-27, all against transitive **dev-only** packages: `fast-uri` (5), `undici` (5), `js-yaml` (2), `browserslist` (2), `nanoid`, `brace-expansion` (`GHSA-rgw5-rvv9-x895` plus the old `GHSA-mh99-v99m-4gvg` residual), `qs`, `baseline-browser-mapping`. Every patched release was in-major, so `npm audit fix` resolved all of them from the lockfile alone. The existing override floors were then raised to the resolved releases so a future install cannot fall back below them:
+
+| Override | Before | After |
+|---|---|---|
+| `fast-uri` | `^3.1.4` | `^3.1.8` |
+| `js-yaml` | `^4.3.0` | `^4.3.2` |
+| `qs` | `^6.15.2` | `^6.16.0` |
+| `brace-expansion` 1.x / 2.x / 3–5.0.6 | `^1.1.16` / `^2.1.2` / `^5.0.8` | `^1.1.21` / `^2.1.7` / `^5.0.12` |
+
+No new overrides were added; `undici`, `browserslist`, `nanoid` and `baseline-browser-mapping` needed only the lockfile refresh. Verified with lint, the 474 unit tests, a production build, and `e2e/multi-select.spec.ts` against the dev server (the path the bumped `express`/`qs` stack serves).
 
 ### `SEC6-01` — overrode transitive `uuid` to clear `GHSA-w5hq-g745-h8pq`
 

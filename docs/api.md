@@ -123,6 +123,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `getModel()` | `() => Model` | Serialised current model. |
 | `loadModel(data)` | `(data: InitialData) => void` | Validate + hydrate fresh data. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
+| `setView(viewId)` | `(viewId: string) => void` | Show another view (floor). Allowed in every editor mode; clears the selection; warns and no-ops on an unknown id. |
 | `setZoom(z)` | `(z: number) => void` | Set absolute zoom. |
 | `incrementZoom()` | `() => void` | Step zoom up by `ZOOM_INCREMENT` (0.2). |
 | `decrementZoom()` | `() => void` | Step zoom down by `ZOOM_INCREMENT`. |
@@ -133,7 +134,8 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `Model` *(escape hatch)* | `{ get, set }` | Raw zustand actions. `set` is gated by `editorMode`. Prefer the named methods above. |
 | `uiState` *(escape hatch)* | `UiStateActions` | Full UI store action bag. Prefer the named methods above. |
 
-A worked round-trip example is in [embedding.md](embedding.md#imperative-api-usereticulyne).
+Worked examples, including why `setEditorMode('EDITABLE')` followed by `loadModel()` in the
+same tick is refused, are in [embedding.md](embedding.md#imperative-api-usereticulyne).
 
 ### Failure modes
 
@@ -160,6 +162,13 @@ The package also re-exports from `src/standaloneExports.ts`:
 - `INITIAL_DATA`, `INITIAL_SCENE_STATE` — the default-empty model and scene state.
 - Schemas from `src/schemas/` — `modelSchema`, plus item / view / connector schemas.
 - Types — `ReticulyneProps`, `InitialData`, and the full `Model` tree from `src/types/model.ts`.
+- Option maps, as **runtime values** (FEA-05): `EditorModeEnum`, `MainMenuOptionsEnum`,
+  `ProjectionOrientationEnum`, `AnchorPositionOptions`, `DialogTypeEnum`,
+  `LayerOrderingActionOptions`, `tileOriginOptions`, `ItemReferenceTypeOptions`. Each is an
+  `as const` object whose keys equal its values, e.g.
+  `editorMode={EditorModeEnum.EDITABLE}`.
+- Their union types, **type-only**: `MainMenuOptions`, `AnchorPosition`, `LayerOrderingAction`,
+  `TileOrigin`, `ItemReferenceType`. Use `import type` for these.
 
 These can be imported either from the main entry (`@qant-au/reticulyne`) or from the standalone
 subpath (`@qant-au/reticulyne/standalone`). The standalone subpath omits the component itself

@@ -83,7 +83,8 @@ const collectObstacleTiles = (
   view: View,
   rectangleFrom: Coords,
   searchAreaSize: { width: number; height: number },
-  anchorItemIds: Set<string>
+  anchorItemIds: Set<string>,
+  anchorTiles: Coords[]
 ): Coords[] => {
   const obstacles: Coords[] = [];
   const localMaxX = searchAreaSize.width - 1;
@@ -103,6 +104,16 @@ const collectObstacleTiles = (
 
   for (const rect of view.rectangles ?? []) {
     const bounds = [rect.from, rect.to];
+    // A zone the connector starts or ends in is where it lives, not
+    // something to route around: blocking it walls the endpoint in, and
+    // every connector to a node inside a zone drew nothing.
+    if (
+      anchorTiles.some((tile) => {
+        return isWithinBounds(tile, bounds);
+      })
+    ) {
+      continue;
+    }
     const sorted = sortByPosition(bounds);
     for (let x = sorted.lowX; x <= sorted.highX; x += 1) {
       for (let y = sorted.lowY; y <= sorted.highY; y += 1) {
@@ -177,7 +188,8 @@ export const getConnectorPath = ({
     view,
     rectangle.from,
     searchAreaSize,
-    anchorItemIds
+    anchorItemIds,
+    anchorPosition
   );
 
   const tiles = positionsNormalisedFromSearchArea.reduce<Coords[]>(

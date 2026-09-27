@@ -68,7 +68,9 @@ describe('FEA7-02 pathfinder obstacles', () => {
     }).not.toThrow();
   });
 
-  test('returns an empty path when no route is possible', () => {
+  // It returned [] until 2.14, which drew nothing: a connector that
+  // vanished. Now a walled-in target gets the direct route instead.
+  test('takes the direct route when no route is possible', () => {
     // Wall the destination off completely. Diagonal movement is
     // enabled, so the wall has to cover orthogonal AND diagonal
     // neighbours of the target.
@@ -82,7 +84,8 @@ describe('FEA7-02 pathfinder obstacles', () => {
         { x: 4, y: 3 }
       ]
     });
-    expect(path).toEqual([]);
+    expect(path[0]).toEqual({ x: 0, y: 0 });
+    expect(path[path.length - 1]).toEqual({ x: 4, y: 4 });
   });
 });
 

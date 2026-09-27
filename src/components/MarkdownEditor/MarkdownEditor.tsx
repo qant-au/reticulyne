@@ -156,7 +156,12 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
   );
 };
 
-const EditableMarkdown = ({ value, onChange, height = 120, styles }: Props) => {
+const EditableMarkdown = ({
+  value,
+  onChange,
+  height = 120,
+  styles
+}: Omit<Props, 'readOnly'>) => {
   // The HTML the editor last emitted, so a genuinely external `value` change
   // (selecting a different node) can be told apart from the echo of our own
   // onChange. Initialised to the incoming value so the mount pass is a no-op:

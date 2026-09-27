@@ -122,6 +122,15 @@ Two declared floors were raised in `package.json` so a future install cannot sil
 
 > **Ledger label note.** Commit `9843c7c` (2026-06-17) also called itself `DEP-07` for that js-yaml override, but never wrote an entry into this file. The `DEP-07` heading above is the independent `fast-uri`/`brace-expansion` work, referenced by commits `182a123` and `47a4486`. The existing heading was deliberately left alone rather than renamed, so `DEP-07` is ambiguous in git history — this note is the disambiguation.
 
+### `DEP-10` — bumped the TipTap family to 3.31.3
+
+Two advisories landed against `@tiptap/core <=3.30.4`, both **production-reachable** because the TipTap editor ships in `dist/`:
+
+- [`GHSA-cp6q-959q-f8rh`](https://github.com/advisories/GHSA-cp6q-959q-f8rh) — `mergeAttributes()` turns an own `__proto__` key into inherited, executable DOM attributes.
+- [`GHSA-j95f-988m-3j2f`](https://github.com/advisories/GHSA-j95f-988m-3j2f) — quadratic ReDoS in block and inline Markdown attribute parsing.
+
+Every `@tiptap/*` package declares an **exact** peer on `@tiptap/core`, so the family can only move together; `npm update` alone was a no-op because the optional `@tiptap/extension-bubble-menu` / `-floating-menu` (pulled in by `@tiptap/react`) were held at 3.27.1 by the lockfile and pinned `core` in place. All twelve direct ranges were raised `^3.27.1` → `^3.31.3` (so a future install cannot resolve back below the advisory) and the family was re-resolved as a unit. `npm ls` shows all fourteen `@tiptap/*` packages at 3.31.3; `npm audit --omit=dev` reports 0. Verified with the 474 unit tests, a production build, and `e2e/description-editor.spec.ts` (including the XSS-drop case) against the rebuilt container.
+
 ### `SEC6-01` — overrode transitive `uuid` to clear `GHSA-w5hq-g745-h8pq`
 
 `webpack-dev-server@5.2.4 → sockjs@0.3.24` pinned `uuid@8.3.2`, which is in the vulnerable range (`< 11.1.1`) of `GHSA-w5hq-g745-h8pq` / `CVE-2026-41907` (silent partial buffer writes in `v3()/v5()/v6()` when caller-supplied `buf` is undersized or `offset` overflows). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`) and sockjs only ever calls `v4()` (`node_modules/sockjs/lib/transport.js:9`), so the vulnerable code path isn't even exercised in practice — but Dependabot kept the alert open. Added a top-level `"overrides": { "uuid": "^11.1.1" }` block in `package.json` so the transitive copy dedupes onto our already-patched direct dependency. `npm ls uuid` now returns a single `uuid@11.1.1` entry and the Dependabot alert auto-closes once the lockfile lands on `main`.

@@ -176,11 +176,11 @@ test.describe('1.4 — multi-select', () => {
 
     // Asserted rather than skipped-if-absent: a conditional click would let
     // this test pass vacuously the day the band stops catching a rectangle.
-    const front = page.getByRole('button', { name: 'Front' });
+    const front = page.getByRole('button', { name: 'Front', exact: true });
     await expect(front).toBeVisible();
     await front.click();
     await page.waitForTimeout(200);
-    await page.getByRole('button', { name: 'Back' }).click();
+    await page.getByRole('button', { name: 'Back', exact: true }).click();
     await page.waitForTimeout(200);
 
     expect(errors).toEqual([]);

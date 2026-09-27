@@ -289,6 +289,8 @@ export interface UiState {
   showAlignmentGuides: boolean;
   // 2.7: find bar open, and the node ids it currently matches.
   searchOpen: boolean;
+  // 2.11: the persistent icon palette.
+  iconPaletteOpen: boolean;
   // 2.8: undefined = shown when EDITABLE only.
   showMiniMap: boolean | undefined;
   searchMatches: string[];
@@ -353,6 +355,7 @@ export interface UiStateActions {
   setShowTitleBar: (show: boolean | undefined) => void;
   setShowAlignmentGuides: (show: boolean) => void;
   setSearchOpen: (open: boolean) => void;
+  setIconPaletteOpen: (open: boolean) => void;
   setShowMiniMap: (show: boolean | undefined) => void;
   setSearchMatches: (ids: string[]) => void;
   setOnSave: (onSave: SaveHandler | undefined) => void;

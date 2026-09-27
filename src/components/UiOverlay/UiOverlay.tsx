@@ -27,6 +27,7 @@ import { DebugPanel } from './DebugPanel';
 import { HoverTooltip } from './HoverTooltip';
 import { SearchBar } from 'src/components/SearchBar/SearchBar';
 import { MiniMap } from 'src/components/MiniMap/MiniMap';
+import { IconPalette } from 'src/components/IconPalette/IconPalette';
 import { DialogLayer } from './DialogLayer';
 
 export const UiOverlay = () => {
@@ -124,6 +125,7 @@ export const UiOverlay = () => {
       >
         <SearchBar />
         <MiniMap />
+        <IconPalette />
       </Box>
       <DialogLayer
         mode={mode}

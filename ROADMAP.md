@@ -626,7 +626,11 @@ first; guides are follow-on polish.
 
 ---
 
-### 2.11 Drag-and-drop from icon palette **[NEW]**
+### ~~2.11 Drag-and-drop from icon palette~~
+
+_Shipped 2026-09-28. Smaller than sketched: the add-item picker already supported press,
+drag and drop through PLACE_ICON and the DragAndDrop ghost, so the palette is that picker in
+a persistent panel (`armFromAnyMode`) with a toolbar toggle, not a new interaction mode._
 
 **What it does.** A persistent (or toggled) icon sidebar from which icons can
 be dragged directly onto the canvas tile they land on. Ghost preview shows the

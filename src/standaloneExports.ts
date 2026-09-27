@@ -16,6 +16,8 @@ export {
   CUSTOM_ICON_COLLECTION,
   MAX_ICON_UPLOAD_BYTES
 } from 'src/utils/iconUpload';
+export { TEMPLATES, templateToInitialData } from 'src/templates';
+export type { DiagramTemplate } from 'src/templates';
 
 // FEA-05: the const option-maps behind the string-union props, as
 // runtime values, so a host can write `EditorModeEnum.EDITABLE` rather

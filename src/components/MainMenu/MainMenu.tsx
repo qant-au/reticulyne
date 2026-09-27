@@ -17,6 +17,7 @@ import CropSquareIcon from '@mui/icons-material/CropSquareOutlined';
 import TitleIcon from '@mui/icons-material/Title';
 import RenameIcon from '@mui/icons-material/DriveFileRenameOutline';
 import LibraryIcon from '@mui/icons-material/CategoryOutlined';
+import NewFromTemplateIcon from '@mui/icons-material/DashboardCustomizeOutlined';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -51,6 +52,9 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
   });
   const mainMenuOptions = useUiStateStore((state) => {
     return state.mainMenuOptions;
+  });
+  const templates = useUiStateStore((state) => {
+    return state.templates;
   });
   const onSave = useUiStateStore((state) => {
     return state.onSave;
@@ -112,6 +116,11 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
   const onRename = useCallback(() => {
     uiStateActions.setIsMainMenuOpen(false);
     uiStateActions.setDialog('RENAME_DIAGRAM');
+  }, [uiStateActions]);
+
+  const onNewFromTemplate = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    uiStateActions.setDialog('NEW_FROM_TEMPLATE');
   }, [uiStateActions]);
 
   const onExportAsSvg = useCallback(() => {
@@ -273,6 +282,15 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
                 Open
               </MenuItem>
             )}
+            {mainMenuOptions.includes('ACTION.NEW_FROM_TEMPLATE') &&
+              templates.length > 0 && (
+                <MenuItem
+                  onClick={onNewFromTemplate}
+                  Icon={<NewFromTemplateIcon />}
+                >
+                  New from template
+                </MenuItem>
+              )}
 
             {mainMenuOptions.includes('ACTION.SAVE') && onSave && (
               <MenuItem onClick={onSaveModel} Icon={<SaveIcon />}>

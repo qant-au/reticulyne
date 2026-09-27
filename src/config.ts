@@ -140,6 +140,7 @@ export const INITIAL_SCENE_STATE = {
 // deliberately carries no upstream-project branding.
 export const MAIN_MENU_OPTIONS: MainMenuOptions = [
   'ACTION.OPEN',
+  'ACTION.NEW_FROM_TEMPLATE',
   'ACTION.RENAME',
   'EXPORT.JSON',
   'EXPORT.PNG',

@@ -22,6 +22,10 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Starter templates** (ROADMAP 2.14). **New from template** in the main
+  menu (`ACTION.NEW_FROM_TEMPLATE`, on by default) opens a picker with
+  previews; `templates` replaces the bundled five.
+
 - **Upload icons** (ROADMAP 2.13). `onIconUpload` adds an Upload
   button to the icon picker; uploads join a **My icons** collection saved in
   the diagram. `readIconAsDataUrl` embeds the file with no server, and the
@@ -126,6 +130,11 @@ potentially breaking and read the release notes before upgrading.
   `Cross-Origin-Resource-Policy: same-origin` (SEC-08, SEC-09).
 
 ### Fixed
+
+- **Connectors to nodes inside a rectangle were invisible.** Rectangles were
+  routing obstacles, so a node inside one had no route out. A rectangle that
+  holds either end is no longer an obstacle, and an unroutable connector now
+  takes the direct route instead of drawing nothing.
 
 - The first click on an item after using the main menu (for example after
   Export as JSON) could do nothing: the closing menu still covered the page.

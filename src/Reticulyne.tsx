@@ -47,6 +47,7 @@ import {
 } from 'src/hooks/usePatchApplier';
 import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
+import { TEMPLATES } from 'src/templates';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
 
 const App = ({
@@ -70,6 +71,7 @@ const App = ({
   onSelectionChange,
   onViewportChange,
   onIconUpload,
+  templates = TEMPLATES,
   iconCollections,
   onSave,
   autoSaveDebounce = false,
@@ -148,6 +150,10 @@ const App = ({
   useEffect(() => {
     uiStateActions.setOnIconUpload(onIconUpload);
   }, [onIconUpload, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setTemplates(templates);
+  }, [templates, uiStateActions]);
 
   // 1.5: patches held back by a drag or a draw land when it ends.
   usePatchQueueFlush();

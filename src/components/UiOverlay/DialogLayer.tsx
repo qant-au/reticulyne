@@ -13,6 +13,7 @@ import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { DragAndDrop } from 'src/components/DragAndDrop/DragAndDrop';
 import { ContextMenuManager } from 'src/components/ContextMenu/ContextMenuManager';
 import { RenameDiagramDialog } from 'src/components/RenameDiagramDialog/RenameDiagramDialog';
+import { TemplateDialog } from 'src/components/TemplateDialog/TemplateDialog';
 import type { DialogTypeEnum, Mode, Coords } from 'src/types';
 
 // PRF-11: keep the three export dialogs and their MUI subtrees out of
@@ -72,6 +73,9 @@ export const DialogLayer = ({
         {dialog === 'EXPORT_SVG' && <ExportSvgDialog onClose={onCloseDialog} />}
         {dialog === 'RENAME_DIAGRAM' && (
           <RenameDiagramDialog onClose={onCloseDialog} />
+        )}
+        {dialog === 'NEW_FROM_TEMPLATE' && (
+          <TemplateDialog onClose={onCloseDialog} />
         )}
         {dialog === 'KEYBOARD_SHORTCUTS' && (
           <KeyboardShortcutsDialog onClose={onCloseDialog} />

@@ -29,6 +29,7 @@ Every prop is optional.
 | `showAlignmentGuides` | `boolean` | `true` | While dragging, draw a guide to the nearest other item on the same tile X or Y line. Items already sit on whole tiles, so there is no separate snap setting. |
 | `showMiniMap` | `boolean` | `undefined` (shown in `EDITABLE`) | The overview map, bottom-right: the whole diagram with the visible area outlined; click or drag in it to move the view. `true` / `false` force it on or off in any mode. |
 | `onIconUpload` | `(file: File) => Promise<{ url: string; name?: string }>` | `undefined` | Adds **Upload icon** to the icon picker (editable diagrams only). Receives the chosen SVG, PNG, JPEG, GIF or WebP file (at most 200 KB), stores it, and resolves with its URL; the icon joins a **My icons** collection saved in the diagram and is armed for placing. Reject with an `Error` to show its message in the picker. The same URL uploaded twice is one icon. Pass the exported `readIconAsDataUrl` to embed the file in the diagram JSON with no server (files up to about 48 KB). Sanitising SVG is the host's job (see SECURITY.md). An `iconCollections` allow-list keeps My icons; only a `deny` entry drops it. |
+| `templates` | `DiagramTemplate[]` | the bundled `TEMPLATES` | What **New from template** offers: blank, three-tier web app, AWS web application, Kubernetes service and office network by default. A template holds items and views only; it opens with the editor's own icons and colours, and a node whose icon the editor lacks opens without one. Pass your own list to replace them (`TEMPLATES` and `templateToInitialData` are exported), or `[]` to hide the entry. |
 | `onNodeClick` | `(id: string) => void` | `undefined` | A node was clicked (press and release without dragging). Fires in `EDITABLE` and `EXPLORABLE_READONLY`, whether or not the click also changed the selection. |
 | `onConnectorClick` | `(id: string) => void` | `undefined` | As `onNodeClick`, for a connector. |
 | `onSelectionChange` | `(selection: SelectedRef[]) => void` | `undefined` | The selection changed, from any source (click, marquee, keyboard, `select()`). Receives `{ type, id }` copies; not called on mount. |
@@ -79,6 +80,7 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 | Identifier | Default? | What it does |
 |---|---|---|
 | `'ACTION.OPEN'` | on | Load a previously-exported JSON file. |
+| `'ACTION.NEW_FROM_TEMPLATE'` | on | Replace the diagram with a starter from `templates`. Hidden when `templates` is empty. |
 | `'ACTION.SAVE'` | off | Render a **Save** menu entry that fires the `onSave` prop with the current model. Only appears when both `'ACTION.SAVE'` is listed AND the `onSave` prop is supplied. Off-by-default because there's no useful behaviour without a host callback. Added in v4.1.0. |
 | `'ACTION.RENAME'` | on | Open a dialog to rename the diagram; the title shows in the title bar and names the JSON export. (Menu label: "Rename diagram".) |
 | `'EXPORT.JSON'` | on | Download the current model as JSON, named after the diagram title (`Site-network.json`), or `reticulyne-export-<timestamp>.json` while it is `'Untitled'`. |

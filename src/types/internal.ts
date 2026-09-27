@@ -23,6 +23,7 @@ import type {
 } from './model';
 import type { ItemReference, ConnectorPath } from './scene';
 import type { QueuedPatch } from './imperative';
+import type { DiagramTemplate } from 'src/templates';
 import { DialogTypeEnum, type AnchorPosition } from './ui';
 import type {
   ConnectorIndicatorComponent,
@@ -312,6 +313,8 @@ export interface UiState {
   onSave: SaveHandler | undefined;
   // 2.13: host icon upload; the picker's Upload button shows when set.
   onIconUpload: IconUploadHandler | undefined;
+  // 2.14: what "New from template" offers.
+  templates: DiagramTemplate[];
   // 2.3: where saving stands. See src/utils/save.ts.
   saveStatus: SaveStatus;
   // SEC-02: host-supplied validation-error callback, mirrored onto the
@@ -376,6 +379,7 @@ export interface UiStateActions {
   takePatches: () => QueuedPatch[];
   setOnSave: (onSave: SaveHandler | undefined) => void;
   setOnIconUpload: (handler: IconUploadHandler | undefined) => void;
+  setTemplates: (templates: DiagramTemplate[]) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;
   /** Read at call time, for async code that must not use a stale render. */
   getSaveStatus: () => SaveStatus;

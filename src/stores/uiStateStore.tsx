@@ -7,6 +7,7 @@ import {
 } from 'src/utils';
 import { UiStateStore } from 'src/types';
 import { INITIAL_UI_STATE } from 'src/config';
+import { TEMPLATES } from 'src/templates';
 import { createContextualStore } from './createContextualStore';
 
 const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
@@ -45,6 +46,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       patchQueue: [],
       onSave: undefined,
       onIconUpload: undefined,
+      templates: TEMPLATES,
       saveStatus: {
         state: 'idle',
         isDirty: false,
@@ -209,6 +211,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setShowTitleBar: (showTitleBar) => {
           set({ showTitleBar });
+        },
+        setTemplates: (templates) => {
+          set({ templates });
         },
         setOnIconUpload: (onIconUpload) => {
           set({ onIconUpload });

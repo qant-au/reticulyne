@@ -422,7 +422,9 @@ Document the debounce in `docs/embedding.md`.
 
 ---
 
-### 2.10 Replace Quill rich-text editor (DEP-04 follow-up)
+### ~~2.10 Replace Quill rich-text editor (DEP-04 follow-up)~~
+
+_Shipped in v0.2.0 (2026-07-06, `7c19c7d`). The editor runs on TipTap v3; `quill` is out of the tree._
 
 **What it does.** Swaps `react-quill-new` → an actively maintained alternative
 (TipTap recommended) for the node-description rich-text editor at

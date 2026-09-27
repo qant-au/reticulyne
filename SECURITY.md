@@ -36,6 +36,10 @@ The following `npm audit` advisories are knowingly carried in the published pack
 - **Severity (audit):** none reported, but pre-1.0 and no upstream release since 2022 — any future advisory has no patch path.
 - **Status:** **closed by `SEC-04`.** Replaced by an in-tree A* implementation at `src/vendor/pathfinder/` with the minimal subset Reticulyne exercised (Grid + Manhattan A* with 8-directional movement). Provenance and closure criterion are recorded in [`src/vendor/pathfinder/VENDOR.md`](src/vendor/pathfinder/VENDOR.md). The `@types/pathfinding` typing dep and the dedicated `pathfindingMock.js` Jest shim — only there to paper over the package's CommonJS interop — were removed at the same time.
 
+### Source maps in the published package (SEC-05)
+
+The tarball ships `dist/*.js.map` deliberately. The repository is public and MIT-licensed, so the maps disclose nothing that the source does not, and they give embedders readable stack traces. `scripts/check-pack-contents.mjs` (run by CI and before every publish) allows only bundles, their maps, type declarations and webpack's licence banners inside `dist/`, so nothing else can ride along unnoticed.
+
 ## Standalone Docker image — accepted CSP trade-offs
 
 The standalone Docker image (built from this repository, served by nginx — see [`docker/nginx.conf`](docker/nginx.conf)) ships with a Content-Security-Policy header. Two clauses are knowingly relaxed; the others are tight. This section exists so the trade-off survives future edits to the nginx config.

@@ -425,7 +425,8 @@ _Won't do 2026-09-27 - superseded. `quill` was removed in v0.2.0 (TipTap migrati
 - **Where:** transitive via `react-quill-new`
 - **Refs:** Review #68 (Section 2c). Already in `SECURITY.md` residual ledger.
 
-### 68. Source maps shipped in published tarball — `SEC-05`
+### ~~68. Source maps shipped in published tarball — `SEC-05`~~
+_Done 2026-09-27 - kept, as intended (public MIT repo; readable consumer stack traces), and recorded in SECURITY.md. Took the belt-and-braces option: `scripts/check-pack-contents.mjs` now also allowlists file types inside `dist/`, shared by ci.yml and release.yml; proven to fail on a stray `dist/stray.json`._
 - **What:** Intentional; if you want belt-and-braces, tighten the CI pack-contents check to assert specific allowed file extensions inside `dist/`.
 - **Where:** `dist/*.js.map`; `.github/workflows/ci.yml:35-49`
 - **Refs:** Review #69 (Section 2c)

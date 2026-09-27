@@ -38,6 +38,14 @@ const load = async (page: Page) => {
   return { x: vp.width / 2, y: vp.height / 2 };
 };
 
+const exportedModel = async (page: Page) => {
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('menuitem', { name: /Export as JSON/i }).click();
+  const download = await downloadPromise;
+  return JSON.parse(await readFile(await download.path(), 'utf8'));
+};
+
 const exportedItems = async (page: Page) => {
   await page.getByRole('button', { name: 'Main menu' }).click();
   const downloadPromise = page.waitForEvent('download');
@@ -50,7 +58,7 @@ const exportedItems = async (page: Page) => {
   }[];
 };
 
-test('2.1: connector mode shows four ports on the hovered node only', async ({
+test('2.1: ports show on the hovered node only, in connector and cursor modes', async ({
   page
 }) => {
   const centre = await load(page);
@@ -65,8 +73,11 @@ test('2.1: connector mode shows four ports on the hovered node only', async ({
   await expect(ports).toHaveCount(1);
   await expect(ports.locator('circle')).toHaveCount(4);
 
-  // Back to the cursor tool: gone.
+  // Cursor tool (2.5): hovering a node still shows its ports; empty
+  // canvas shows none.
   await page.keyboard.press('v');
+  await expect(page.getByTestId('connector-hotspots')).toHaveCount(1);
+  await page.mouse.move(centre.x + 400, centre.y + 200);
   await expect(page.getByTestId('connector-hotspots')).toHaveCount(0);
 });
 
@@ -100,4 +111,103 @@ test('2.2: double-click an existing node opens its inspector', async ({
   await page.mouse.dblclick(centre.x, centre.y);
   await expect(page.getByRole('button', { name: 'Delete' })).toBeVisible();
   expect(await exportedItems(page)).toHaveLength(1);
+});
+
+// 2.5. Port offsets at 100% zoom: a projected tile is 141.5 x 81.9 px, so
+// each port sits a quarter of that from the node's centre.
+const PORT = { x: 141.5 / 4, y: 81.9 / 4 };
+// Node B on tile (3, 0): its centre is 1.5 tile-widths right and 1.5
+// tile-heights up from node A's.
+const B_OFFSET = { x: 141.5 * 1.5, y: -81.9 * 1.5 };
+
+const loadTwoNodes = async (page: Page) => {
+  await page.addInitScript((url) => {
+    (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
+      {
+        editorMode: 'EDITABLE',
+        initialData: {
+          title: 'e2e drag connect',
+          items: [
+            { id: 'node-a', name: 'A', icon: 'icon-tiny' },
+            { id: 'node-b', name: 'B', icon: 'icon-tiny' }
+          ],
+          icons: [
+            { id: 'icon-tiny', name: 'Tiny test icon', url, collection: 'test' }
+          ],
+          colors: [{ id: 'color1', value: '#999999' }],
+          views: [
+            {
+              id: 'view-main',
+              name: 'Main',
+              items: [
+                { id: 'node-a', tile: { x: 0, y: 0 } },
+                { id: 'node-b', tile: { x: 3, y: 0 } }
+              ]
+            }
+          ]
+        }
+      };
+  }, tinyIconSvg);
+  await page.goto('/');
+  await expect(page).toHaveTitle(/Reticulyne/);
+  const vp = page.viewportSize()!;
+  return { x: vp.width / 2, y: vp.height / 2 };
+};
+
+const drag = async (
+  page: Page,
+  from: { x: number; y: number },
+  to: { x: number; y: number }
+) => {
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  for (let i = 1; i <= 10; i += 1) {
+    await page.mouse.move(
+      from.x + ((to.x - from.x) * i) / 10,
+      from.y + ((to.y - from.y) * i) / 10
+    );
+  }
+  await page.mouse.up();
+};
+
+test('2.5: drag from a port to another node connects them', async ({
+  page
+}) => {
+  const a = await loadTwoNodes(page);
+  const b = { x: a.x + B_OFFSET.x, y: a.y + B_OFFSET.y };
+  // From A's top-right port to B's bottom-left port (not B's centre), so
+  // the release is resolved through B's port.
+  await drag(
+    page,
+    { x: a.x + PORT.x, y: a.y - PORT.y },
+    { x: b.x - PORT.x, y: b.y + PORT.y }
+  );
+
+  const model = await exportedModel(page);
+  const connectors = model.views[0].connectors ?? [];
+  expect(connectors).toHaveLength(1);
+  const ends = connectors[0].anchors.map((x: { ref: { item?: string } }) => {
+    return x.ref.item;
+  });
+  expect(ends[0]).toBe('node-a');
+  expect(ends[ends.length - 1]).toBe('node-b');
+});
+
+test('2.5: dragging from a node centre still moves it; a port drag into empty space cancels', async ({
+  page
+}) => {
+  const a = await loadTwoNodes(page);
+  await drag(page, a, { x: a.x - 200, y: a.y + 150 });
+  await drag(
+    page,
+    { x: a.x + PORT.x, y: a.y - PORT.y },
+    { x: a.x + 300, y: a.y + 250 }
+  );
+
+  const model = await exportedModel(page);
+  expect(model.views[0].connectors ?? []).toHaveLength(0);
+  const nodeA = model.views[0].items.find((i: { id: string }) => {
+    return i.id === 'node-a';
+  });
+  expect(nodeA.tile).not.toEqual({ x: 0, y: 0 });
 });

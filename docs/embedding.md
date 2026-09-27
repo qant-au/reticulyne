@@ -180,6 +180,7 @@ The tool layer mirrors **Excalidraw's**, letter and number alike, so an operator
 | Click | Select one item |
 | Double-click an empty tile | Open the icon picker for that tile; picking an icon places it there (`EDITABLE` only) |
 | Double-click an item | Select it and open its inspector (`EDITABLE` only) |
+| Drag from a node's port to another node | Draw a connector without switching tools. Hovering a node shows a port on each edge; press one and release on the target node or its port. Releasing anywhere else cancels. `Shift` + press on a port extends the selection instead (`EDITABLE` only) |
 | `Shift` + click | Add the item to the selection, or remove it if already in |
 | Drag on empty canvas | Marquee select everything the band touches |
 | `Shift` + drag | Add the marquee's contents to the existing selection |

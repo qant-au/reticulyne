@@ -3,7 +3,8 @@ import {
   TextBox,
   Rectangle,
   ItemReference,
-  LayerOrderingAction
+  LayerOrderingAction,
+  Coords
 } from 'src/types';
 import * as reducers from 'src/stores/reducers';
 import type { SceneCore } from './types';
@@ -127,7 +128,63 @@ export const useSceneShapes = ({
     [getState, setState, currentViewId]
   );
 
+  // ROADMAP 3.2: apply an arrangement's moves (see src/utils/arrange.ts)
+  // in one undo step. A rectangle moves both corners, keeping its size;
+  // connectors follow their nodes when the view syncs.
+  const applyMoves = useCallback(
+    (moves: { ref: ItemReference; delta: Coords }[]) => {
+      let state = getState();
+      const view = state.model.views.find((v) => {
+        return v.id === currentViewId;
+      });
+      if (!view || moves.length === 0) return;
+      const shift = (c: Coords, d: Coords) => {
+        return { x: c.x + d.x, y: c.y + d.y };
+      };
+      for (const { ref, delta } of moves) {
+        if (ref.type === 'ITEM') {
+          const item = (view.items ?? []).find((i) => {
+            return i.id === ref.id;
+          });
+          if (!item) continue;
+          state = reducers.view({
+            action: 'UPDATE_VIEWITEM',
+            payload: { id: ref.id, tile: shift(item.tile, delta) },
+            ctx: { viewId: currentViewId, state }
+          });
+        } else if (ref.type === 'TEXTBOX') {
+          const textBox = (view.textBoxes ?? []).find((t) => {
+            return t.id === ref.id;
+          });
+          if (!textBox) continue;
+          state = reducers.view({
+            action: 'UPDATE_TEXTBOX',
+            payload: { id: ref.id, tile: shift(textBox.tile, delta) },
+            ctx: { viewId: currentViewId, state }
+          });
+        } else if (ref.type === 'RECTANGLE') {
+          const rect = (view.rectangles ?? []).find((r) => {
+            return r.id === ref.id;
+          });
+          if (!rect) continue;
+          state = reducers.view({
+            action: 'UPDATE_RECTANGLE',
+            payload: {
+              id: ref.id,
+              from: shift(rect.from, delta),
+              to: shift(rect.to, delta)
+            },
+            ctx: { viewId: currentViewId, state }
+          });
+        }
+      }
+      setState(state);
+    },
+    [getState, setState, currentViewId]
+  );
+
   return {
+    applyMoves,
     setColour,
     createTextBox,
     updateTextBox,

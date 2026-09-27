@@ -17,3 +17,4 @@ export * from './model';
 export * from './editorModeMapping';
 export * from './save';
 export * from './ports';
+export * from './arrange';

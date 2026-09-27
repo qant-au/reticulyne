@@ -15,6 +15,12 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Align and distribute** (ROADMAP 3.2). Align X / Y and Distribute X / Y
+  for a multi-selection, along the tile axes, one undo step; a move that
+  would stack two nodes is disabled.
+- **Hover tooltip** (ROADMAP 3.1). A node's name and description snippet
+  after a short rest, in any editor mode.
+
 - **Excalidraw parity** (UXA-02, -03, -05, -08). Hold `Space` and drag to pan
   from any tool; `Alt`+drag drags a copy; `Alt+Shift+D` flips light / dark
   for the session; the `?` dialog lists the pointer gestures and says what

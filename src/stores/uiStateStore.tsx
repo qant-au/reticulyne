@@ -37,6 +37,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       showTitleBar: undefined,
       showAlignmentGuides: true,
       searchOpen: false,
+      iconPaletteOpen: false,
       showMiniMap: undefined,
       searchMatches: [],
       onSave: undefined,
@@ -181,6 +182,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setSearchOpen: (searchOpen) => {
           set({ searchOpen });
+        },
+        setIconPaletteOpen: (iconPaletteOpen) => {
+          set({ iconPaletteOpen });
         },
         setShowMiniMap: (showMiniMap) => {
           set({ showMiniMap });

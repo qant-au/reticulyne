@@ -15,6 +15,9 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Icon library panel** (ROADMAP 2.11). A toolbar toggle opens the icon
+  picker as a persistent right-hand panel; drag icons straight onto tiles.
+
 - **Find** (ROADMAP 2.7). `Ctrl/Cmd+F` opens a find bar; matches (by name,
   then description, then icon name) are outlined on the canvas, and
   `Enter` / `Shift+Enter` select each one and bring it to the centre.

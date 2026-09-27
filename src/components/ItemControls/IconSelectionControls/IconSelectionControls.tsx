@@ -14,7 +14,20 @@ import { useIconCategories } from 'src/hooks/useIconCategories';
 import { Icons } from './Icons';
 import { IconGrid } from './IconGrid';
 
-export const IconSelectionControls = () => {
+interface Props {
+  /** Header text. */
+  title?: string;
+  /**
+   * 2.11: the persistent icon palette arms an icon from whatever tool is
+   * active; the add-item picker only works inside its own PLACE_ICON mode.
+   */
+  armFromAnyMode?: boolean;
+}
+
+export const IconSelectionControls = ({
+  title = 'Add object',
+  armFromAnyMode = false
+}: Props = {}) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
@@ -33,9 +46,9 @@ export const IconSelectionControls = () => {
 
   const onMouseDown = useCallback(
     (icon: Icon) => {
-      if (mode.type !== 'PLACE_ICON') return;
+      if (mode.type !== 'PLACE_ICON' && !armFromAnyMode) return;
 
-      if (targetTile) {
+      if (targetTile && !armFromAnyMode) {
         // Place it now (same shape PlaceIcon.mouseup commits), select it,
         // and return to the cursor tool.
         const id = generateId();
@@ -56,14 +69,21 @@ export const IconSelectionControls = () => {
         id: icon.id
       });
     },
-    [mode, uiStateActions, targetTile, createModelItem, createViewItem]
+    [
+      mode,
+      uiStateActions,
+      targetTile,
+      createModelItem,
+      createViewItem,
+      armFromAnyMode
+    ]
   );
 
   return (
     <ControlsContainer
       header={
         <>
-          <Header title="Add object" />
+          <Header title={title} />
           <Section sx={{ pt: 0, pb: 3 }}>
             <Stack spacing={2}>
               <Searchbox value={filter} onChange={setFilter} />

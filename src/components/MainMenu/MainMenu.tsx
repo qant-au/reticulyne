@@ -16,6 +16,7 @@ import ConnectorIcon from '@mui/icons-material/EastOutlined';
 import CropSquareIcon from '@mui/icons-material/CropSquareOutlined';
 import TitleIcon from '@mui/icons-material/Title';
 import RenameIcon from '@mui/icons-material/DriveFileRenameOutline';
+import LibraryIcon from '@mui/icons-material/CategoryOutlined';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -44,6 +45,9 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMainMenuOpen = useUiStateStore((state) => {
     return state.isMainMenuOpen;
+  });
+  const iconPaletteOpen = useUiStateStore((state) => {
+    return state.iconPaletteOpen;
   });
   const mainMenuOptions = useUiStateStore((state) => {
     return state.mainMenuOptions;
@@ -225,6 +229,14 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               Icon={<TitleIcon />}
               onClick={createTextBoxProxy}
               isActive={mode.type === 'TEXTBOX'}
+            />
+            <IconButton
+              name="Icon library"
+              Icon={<LibraryIcon />}
+              onClick={() => {
+                uiStateActions.setIconPaletteOpen(!iconPaletteOpen);
+              }}
+              isActive={iconPaletteOpen}
             />
           </>
         )}

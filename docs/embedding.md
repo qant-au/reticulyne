@@ -183,6 +183,7 @@ The tool layer mirrors **Excalidraw's**, letter and number alike, so an operator
 | Click | Select one item |
 | Double-click an empty tile | Open the icon picker for that tile; picking an icon places it there (`EDITABLE` only) |
 | Double-click an item | Select it and open its inspector (`EDITABLE` only) |
+| Toolbar **Icon library** | Opens a persistent icon panel on the right; drag an icon onto a tile, or click it then click the canvas. It stays open for the next one (`EDITABLE` only) |
 | Hold `Space` and drag | Pan, from any tool; release `Space` to return to it |
 | `Alt` + drag an item | Drag a copy, leaving the original in place; with a multi-selection the whole group is copied (connectors are not). `EDITABLE` only |
 | Pinch (touch) | Zoom about the fingers; moving both fingers pans |

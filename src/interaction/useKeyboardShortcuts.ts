@@ -97,6 +97,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     updateTextBox,
     updateRectangle,
     duplicateItem,
+    changeLayerOrder,
     createTextBox,
     copySelection,
     paste,
@@ -399,6 +400,40 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         return;
       }
 
+      // === Layer order (UXA-06, ROADMAP 1.3) ===
+      // Excalidraw's bindings: Ctrl/Cmd+] forward, Ctrl/Cmd+[ backward,
+      // with Shift for to-front / to-back, plus the Mac Cmd+Opt+] / [
+      // variants. Matched on `e.code` because Shift+] arrives as `}` in
+      // `e.key` on a US layout. Acts on the whole selection as one block;
+      // nodes are depth-sorted and are left out.
+      if (
+        hasModifier &&
+        (e.code === 'BracketRight' || e.code === 'BracketLeft')
+      ) {
+        const orderable = selection.filter((item) => {
+          return (
+            item.type === 'RECTANGLE' ||
+            item.type === 'CONNECTOR' ||
+            item.type === 'TEXTBOX'
+          );
+        });
+        if (orderable.length === 0) return;
+        const forward = e.code === 'BracketRight';
+        const toEnd = e.shiftKey || (e.metaKey && e.altKey);
+        changeLayerOrder(
+          forward
+            ? toEnd
+              ? 'BRING_TO_FRONT'
+              : 'BRING_FORWARD'
+            : toEnd
+              ? 'SEND_TO_BACK'
+              : 'SEND_BACKWARD',
+          orderable
+        );
+        e.preventDefault();
+        return;
+      }
+
       // === Copy / cut / paste (Ctrl/Cmd+C / X / V) (FEA5-04, UXA-04) ===
       // Copy silently no-ops if nothing is selected; paste no-ops if
       // the clipboard is empty. preventDefault is essential — the
@@ -517,6 +552,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     updateTextBox,
     updateRectangle,
     duplicateItem,
+    changeLayerOrder,
     createTextBox,
     copySelection,
     paste,

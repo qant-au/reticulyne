@@ -159,7 +159,13 @@ stable surface being locked down in 1.5.
 
 ---
 
-### 1.3 Layer ordering UI
+### ~~1.3 Layer ordering UI~~
+
+_Shipped 2026-09-27. Rectangles, connectors and text boxes; inspector buttons, the
+multi-select panel, the context menu and the UXA-06 hotkeys. One departure from the
+sketch below: view items (nodes) are **not** reorderable. Each node's z-index is its
+isometric depth (`-x - y`), so array order never changes how nodes paint; the reducer
+ignores ITEM references rather than pretending to move them._
 
 **What it does.** Inspector buttons and keyboard shortcuts for **Bring to
 Front / Send to Back / Forward One / Backward One**
@@ -1158,7 +1164,9 @@ expect rather than hunting for shortcuts that don't exist.
 
 ---
 
-#### UXA-06 Bring/send-order hotkeys (depends on 1.3)
+#### ~~UXA-06 Bring/send-order hotkeys (depends on 1.3)~~
+
+_Shipped 2026-09-27 with 1.3, matched on `e.code` so Shift+] works on any layout._
 
 **What it does.** Once 1.3 (layer ordering UI) lands, add keyboard bindings
 matching Excalidraw exactly: `Ctrl/Cmd+]` / `Ctrl/Cmd+[` for forward /

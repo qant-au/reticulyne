@@ -15,6 +15,7 @@ import { ControlsContainer } from '../components/ControlsContainer';
 import { Header } from '../components/Header';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
+import { LayerOrderSection } from '../components/LayerOrderSection';
 
 interface Props {
   id: string;
@@ -73,6 +74,7 @@ export const TextBoxControls = ({ id }: Props) => {
           </ToggleButton>
         </ToggleButtonGroup>
       </Section>
+      <LayerOrderSection targets={[{ type: 'TEXTBOX', id }]} />
       <Section>
         <Box>
           <DeleteButton

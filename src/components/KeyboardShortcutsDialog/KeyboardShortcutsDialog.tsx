@@ -58,7 +58,11 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
       { keys: ['⌘/Ctrl', 'X'], description: 'Cut active item' },
       { keys: ['⌘/Ctrl', 'V'], description: 'Paste' },
       { keys: ['⌘/Ctrl', 'D'], description: 'Duplicate active item' },
-      { keys: ['Del', '⌫'], description: 'Delete selection' }
+      { keys: ['Del', '⌫'], description: 'Delete selection' },
+      { keys: ['⌘/Ctrl', ']'], description: 'Bring forward' },
+      { keys: ['⌘/Ctrl', '['], description: 'Send backward' },
+      { keys: ['⌘/Ctrl', '⇧', ']'], description: 'Bring to front' },
+      { keys: ['⌘/Ctrl', '⇧', '['], description: 'Send to back' }
     ]
   },
   {

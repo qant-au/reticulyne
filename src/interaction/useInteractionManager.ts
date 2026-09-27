@@ -149,7 +149,15 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         scene: liveScene
       });
 
-      if (itemAtTile?.type === 'RECTANGLE') {
+      // 1.3: every kind with a layer order gets the menu. Nodes do not:
+      // they are depth-sorted, so its layer actions could not move them.
+      // Every entry in the menu edits the diagram, so read-only modes get none.
+      if (
+        liveUiState.editorMode === 'EDITABLE' &&
+        (itemAtTile?.type === 'RECTANGLE' ||
+          itemAtTile?.type === 'TEXTBOX' ||
+          itemAtTile?.type === 'CONNECTOR')
+      ) {
         uiStateActions.setContextMenu({
           item: itemAtTile,
           tile: liveUiState.mouse.position.tile

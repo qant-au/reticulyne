@@ -13,6 +13,8 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-27
+
 ### Added — real multi-select (ROADMAP 1.4)
 
 Selection is no longer one item at a time.
@@ -83,6 +85,46 @@ without it. No test covered it because none dispatched real pointer events at
 
 ### Security
 
+- **TipTap 3.31.3 (DEP-10).** Clears GHSA-cp6q-959q-f8rh (`mergeAttributes()`
+  turns an own `__proto__` key into executable DOM attributes) and
+  GHSA-j95f-988m-3j2f (Markdown attribute ReDoS). Every `@tiptap/*` range is
+  now `^3.31.3`; the family pins `@tiptap/core` exactly, so it moves as one.
+- **dompurify `^3.4.16` (DEP-09).** Clears GHSA-55q2-fjhq-7xh7 on the copy
+  `jspdf` pulls in for PNG/PDF export.
+- **Dev toolchain (DEP-11).** 17 transitive dev-only advisories cleared;
+  `npm audit` reports 0 with and without `--omit=dev`. See SECURITY.md.
+
+## [0.2.0] - 2026-07-06
+
+### Changed — rich-text editor moved from Quill to TipTap
+
+The node-description editor now runs on TipTap v3 instead of
+`react-quill-new` / `quill` (DEP-04 follow-up). `quill` leaves the dependency
+tree, closing the GHSA-v3m3-f69x-jf25 XSS advisory, and the ProseMirror schema
+sanitises descriptions on both parse-in and serialize-out. The public props
+API and the stored HTML format are unchanged.
+
+### Fixed
+
+- A production-only crash when mounting the editable description editor
+  (DEP-05-09), with an e2e regression guard.
+- MUI v9 `.mjs` modules failed webpack's `fullySpecified` resolution, which
+  broke the dev and Docker bundling builds (BLD-09).
+
+### Security
+
+- `dompurify` overridden to `^3.4.11` and `http-proxy-middleware` to
+  `^2.0.10` (DEP-06).
+
+## [0.1.2] - 2026-06-17
+
+Re-cut of 0.1.1 with fixed publish authentication. No code changes.
+
+## [0.1.1] - 2026-06-17
+
+### Security
+
+- `js-yaml` security fix (GHSA-h67p-54hq-rp68).
 - **Icon URL scheme allowlist (SEC-01).** `iconSchema.url` now rejects schemes
   other than `http(s):`, `blob:`, relative paths, and image-only `data:` URIs
   (`png`/`jpeg`/`gif`/`webp`/`svg+xml`). Models carrying `javascript:`, `file:`,

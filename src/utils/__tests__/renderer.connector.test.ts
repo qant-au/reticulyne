@@ -424,3 +424,62 @@ describe('connector coordinate system', () => {
     });
   });
 });
+
+// 2.14 found this: FEA7-02 made every rectangle an obstacle, so a
+// connector to a node inside a zone had no route and drew nothing.
+describe('zones and connector routing', () => {
+  const link = (a: string, b: string): ConnectorAnchor[] => {
+    return [
+      { id: 'a', ref: { item: a } },
+      { id: 'b', ref: { item: b } }
+    ];
+  };
+  const zoned = (): View => {
+    return {
+      ...makeView([
+        { id: 'out', x: -4, y: 0 },
+        { id: 'in1', x: 0, y: 0 },
+        { id: 'in2', x: 3, y: 2 }
+      ]),
+      rectangles: [{ id: 'zone', from: { x: -1, y: -3 }, to: { x: 5, y: 3 } }]
+    };
+  };
+
+  test('both ends inside a zone: routed', () => {
+    const { tiles } = getConnectorPath({
+      anchors: link('in1', 'in2'),
+      view: zoned()
+    });
+    expect(tiles.length).toBeGreaterThan(1);
+  });
+
+  test('from outside into a zone: routed', () => {
+    const { tiles } = getConnectorPath({
+      anchors: link('out', 'in1'),
+      view: zoned()
+    });
+    expect(tiles.length).toBeGreaterThan(1);
+  });
+
+  test('a zone neither end is in is still routed around', () => {
+    const view: View = {
+      ...makeView([
+        { id: 'a', x: 0, y: 0 },
+        { id: 'b', x: 6, y: 0 }
+      ]),
+      rectangles: [{ id: 'zone', from: { x: 2, y: 0 }, to: { x: 4, y: 1 } }]
+    };
+    const { tiles, rectangle } = getConnectorPath({
+      anchors: link('a', 'b'),
+      view
+    });
+    const world = tiles.map((t) => {
+      return { x: t.x + rectangle.from.x, y: t.y + rectangle.from.y };
+    });
+    expect(
+      world.some((t) => {
+        return t.x >= 2 && t.x <= 4 && t.y >= 0 && t.y <= 1;
+      })
+    ).toBe(false);
+  });
+});

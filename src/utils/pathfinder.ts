@@ -28,7 +28,18 @@ export const findPath = ({
     grid.setWalkableAt(obstacle.x, obstacle.y, false);
   }
 
-  const path = astarFindPath(from.x, from.y, to.x, to.y, grid);
+  let path = astarFindPath(from.x, from.y, to.x, to.y, grid);
+  // Walled in: take the direct route over the obstacles rather than
+  // returning nothing, which renders as a connector that has vanished.
+  if (path.length === 0 && obstacles.length > 0) {
+    path = astarFindPath(
+      from.x,
+      from.y,
+      to.x,
+      to.y,
+      new Grid(gridSize.width, gridSize.height)
+    );
+  }
 
   return path.map(([x, y]) => {
     return { x, y };

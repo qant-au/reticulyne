@@ -87,10 +87,12 @@ export const useSceneShapes = ({
   );
 
   const changeLayerOrder = useCallback(
-    (action: LayerOrderingAction, item: ItemReference) => {
+    // One target, or several moved as one block in a single undo step.
+    (action: LayerOrderingAction, target: ItemReference | ItemReference[]) => {
+      const items = Array.isArray(target) ? target : [target];
       const newState = reducers.view({
         action: 'CHANGE_LAYER_ORDER',
-        payload: { action, item },
+        payload: { action, items },
         ctx: { viewId: currentViewId, state: getState() }
       });
       setState(newState);

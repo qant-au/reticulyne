@@ -349,27 +349,32 @@ _Won't do 2026-09-27 - superseded. Quill left the tree in the v0.2.0 TipTap migr
 
 ## 🟡 Medium — Build & deployment
 
-### 56. Add tag-matches-version assertion in `release.yml` — `BLD-05`
+### ~~56. Add tag-matches-version assertion in `release.yml` — `BLD-05`~~
+_Done 2026-09-27 (`417b6c4`) - `release.yml` metadata job fails unless the tag equals `v` + package.json version. Proven with a throwaway `v0.3.0-gatecheck` tag: metadata failed, publish was skipped, tag deleted._
 - **What:** Pre-publish step that fails if `'v' + package.json.version !== process.env.GITHUB_REF_NAME`.
 - **Where:** `.github/workflows/release.yml`
 - **Refs:** Review #57 (Section 8)
 
-### 57. Add CHANGELOG-mentions-version gate to `release.yml` — `BLD-06`
+### ~~57. Add CHANGELOG-mentions-version gate to `release.yml` — `BLD-06`~~
+_Done 2026-09-27 (`417b6c4`) - the same metadata job requires a `## [x.y.z] - ` section in CHANGELOG.md before publish._
 - **What:** Grep `CHANGELOG.md` for the current version header before publish.
 - **Where:** `.github/workflows/release.yml`
 - **Refs:** Review #58 (Section 8)
 
-### 58. Decide Docker-image publish path: GHCR or documented-local-only — `BLD-07`
+### ~~58. Decide Docker-image publish path: GHCR or documented-local-only — `BLD-07`~~
+_Done 2026-09-27 (`417b6c4`) - chose documented-local-only: nothing pulls a published image today. `docs/docker.md` "Where the images come from" says so and names GHCR as the path if that changes._
 - **What:** Either add a `docker-publish.yml` workflow on tag pushing `ghcr.io/qant-au/reticulyne` and `ghcr.io/qant-au/reticulyne-examples`, OR explicitly document in `docs/docker.md` that local build is the only supported path.
 - **Where:** `.github/workflows/`; `docs/docker.md`
 - **Refs:** Review #59 (Section 8)
 
-### 59. Document GitHub Packages rollback procedure — `DOC-14`
+### ~~59. Document GitHub Packages rollback procedure — `DOC-14`~~
+_Done 2026-09-27 (`417b6c4`) - `docs/contributing.md` Rollback subsection: roll forward with a patch, never delete, `npm deprecate` unsupported on GitHub Packages (`be36b38`)._
 - **What:** Add a "Rollback" subsection to `docs/contributing.md`: ship a fixed `0.1.N+1` patch, do not attempt deletion of published versions, link to the deprecate-limitation note from recent commit `be36b38`.
 - **Where:** `docs/contributing.md`
 - **Refs:** Review #60 (Section 8)
 
-### 60. Make e2e mandatory on release tags or auto-trigger via paths filter — `BLD-08`
+### ~~60. Make e2e mandatory on release tags or auto-trigger via paths filter — `BLD-08`~~
+_Done 2026-09-27 (`417b6c4`) - `ci.yml` is callable (`workflow_call`, `run-e2e`), and `release.yml` calls it with e2e forced on; publish needs it. The e2e job now also starts the :2223 examples container, without which examples-picker and multi-select could never pass in CI. Green on `main` and in the gatecheck release run._
 - **What:** Either add an e2e job to `release.yml` (mirroring `ci.yml:73-136`), or auto-enable `[run e2e]` when the diff touches `src/components/**` or `e2e/**` via paths filter.
 - **Where:** `.github/workflows/ci.yml:73-79`; `.github/workflows/release.yml`
 - **Refs:** Review #61 (Section 8)
@@ -395,7 +400,8 @@ _Carried forward 2026-09-27 - tracked as ROADMAP 2.12 (multi-touch pinch-to-zoom
 - **Where:** `src/interaction/useInteractionManager.ts`
 - **Refs:** Review #64 (Section 9 — touch). See also ROADMAP 2.12.
 
-### 64. Add `dependency-review-action` workflow on PRs — `BLD-09`
+### ~~64. Add `dependency-review-action` workflow on PRs — `BLD-09`~~
+_Done 2026-09-27 (`417b6c4`) - `.github/workflows/dependency-review.yml`, `dependency-review-action` v5.0.0 at moderate+. CodeQL (the optional half) not added._
 - **What:** Add a workflow using `actions/dependency-review-action` to flag new advisories in PRs before merge. Optional: CodeQL on a weekly schedule.
 - **Where:** new `.github/workflows/dependency-review.yml`
 - **Refs:** Review #65 (Section 9 — ci)
@@ -434,7 +440,8 @@ _Done 2026-09-27 - `dompurify` is overridden to `^3.4.16` (DEP-09, `0e8e8e9`); `
 - **Where:** `src/utils/exportOptions.ts:2, 37`; `src/components/MainMenu/useExportJson.ts:3`
 - **Refs:** Review #71 (Section 2c)
 
-### 71. Add `prepublishOnly` script — `BLD-01`
+### ~~71. Add `prepublishOnly` script — `BLD-01`~~
+_Done 2026-09-27 (`417b6c4`) - `prepublishOnly: npm run lint && npm test && npm run build`._
 - **What:** `"prepublishOnly": "npm run lint && npm test && npm run build"` in package.json. Catches local-publish footguns.
 - **Where:** `package.json:44-56`
 - **Refs:** Review #72 (Section 2e)

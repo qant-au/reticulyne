@@ -641,7 +641,12 @@ extended.
 
 ---
 
-### 2.12 Multi-touch pinch-to-zoom **[NEW]**
+### ~~2.12 Multi-touch pinch-to-zoom~~
+
+_Shipped 2026-09-28 with worklist 20 (`src/interaction/touchInput.ts`). Two touch pointers
+are a pinch handled before the mode handlers; the finger left down afterwards is ignored
+until it lifts. Single-finger drag is unchanged (it acts like a mouse); the sketch's
+one-finger pan in read-only mode is what the read-only default Pan mode already does._
 
 **What it does.** On touch-screen devices (tablets, touch-screen laptops), a
 two-finger pinch gesture zooms the canvas; a single-finger drag pans in non-
@@ -1101,7 +1106,10 @@ inherit the same guard.
 
 ---
 
-#### UXA-02 Wire Space+drag to pan
+#### ~~UXA-02 Wire Space+drag to pan~~
+
+_Shipped 2026-09-28 (`useSpacePan`). From any resting tool; not while a button is held.
+The previous tool is restored on key-up, or on window blur if the key-up is lost._
 
 **What it does.** Holding Space turns any current mode into a transient pan
 mode. Release Space to return to the prior mode. Matches Excalidraw exactly.
@@ -1128,7 +1136,12 @@ plumbing in `src/stores/uiStateStore.tsx` (transient overlay vs replace).
 
 ---
 
-#### UXA-03 Alt+drag to duplicate
+#### ~~UXA-03 Alt+drag to duplicate~~
+
+_Shipped 2026-09-28, the Excalidraw way rather than as sketched: the copy is made in
+place when the drag starts and the copy is what moves, so no ghost is needed. Works on a
+multi-selection (connectors are not copied). Esc mid-drag does not cancel: the drag mode
+has no cancel today, for any drag._
 
 **What it does.** In Cursor mode, holding Alt while dragging a selected item
 starts a drag that places a duplicate at release, leaving the original in
@@ -1176,7 +1189,10 @@ that calls the existing copy reducer then the existing delete reducer.
 
 ---
 
-#### UXA-05 Help-dialog audit and divergence note
+#### ~~UXA-05 Help-dialog audit and divergence note~~
+
+_Shipped 2026-09-28. Added the missing Ctrl+Y, a Mouse & touch section, Alt+Shift+D, and
+the Differences from Excalidraw footer._
 
 **What it does.** Update the keyboard-shortcuts dialog to (a) reflect all
 UXA-01 to UXA-04 bindings, and (b) add a "Differences from Excalidraw" footer
@@ -1231,7 +1247,11 @@ rather than the full-diagram bounds).
 
 ---
 
-#### UXA-08 `Alt+Shift+D` in-app theme toggle
+#### ~~UXA-08 `Alt+Shift+D` in-app theme toggle~~
+
+_Shipped 2026-09-28 as sketched, except the override is React state in the outer
+<Reticulyne> (via ThemeToggleContext), not the UI store: the theme is resolved above the
+store providers._
 
 **What it does.** Dark mode itself shipped in FEA7-04 / FEA9-01 — `themeMode`
 is a prop today, host-driven, default `'auto'`. Excalidraw exposes an in-app

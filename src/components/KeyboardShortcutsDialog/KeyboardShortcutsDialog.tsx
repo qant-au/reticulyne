@@ -54,6 +54,7 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
     shortcuts: [
       { keys: ['⌘/Ctrl', 'Z'], description: 'Undo' },
       { keys: ['⌘/Ctrl', '⇧', 'Z'], description: 'Redo' },
+      { keys: ['Ctrl', 'Y'], description: 'Redo (alternative)' },
       { keys: ['⌘/Ctrl', 'C'], description: 'Copy selection' },
       { keys: ['⌘/Ctrl', 'X'], description: 'Cut selection' },
       { keys: ['⌘/Ctrl', 'V'], description: 'Paste' },
@@ -79,10 +80,21 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
     ]
   },
   {
+    // UXA-05: the pointer gestures, which a keyboard list otherwise hides.
+    title: 'Mouse & touch',
+    shortcuts: [
+      { keys: ['Double-click'], description: 'Add an item on an empty tile' },
+      { keys: ['Drag from port'], description: 'Connect two items' },
+      { keys: ['Alt', 'drag'], description: 'Drag a copy' },
+      { keys: ['Pinch'], description: 'Zoom (touch)' }
+    ]
+  },
+  {
     title: 'General',
     shortcuts: [
       { keys: ['?'], description: 'Toggle this dialog' },
-      { keys: ['Alt', 'I'], description: 'Toggle item highlighting' }
+      { keys: ['Alt', 'I'], description: 'Toggle item highlighting' },
+      { keys: ['Alt', '⇧', 'D'], description: 'Toggle light / dark' }
     ]
   }
 ];
@@ -174,6 +186,29 @@ export const KeyboardShortcutsDialog = ({ onClose }: Props) => {
               </Box>
             );
           })}
+          <Divider />
+          {/* UXA-05: say what is absent on purpose, so nobody hunts for it. */}
+          <Box data-testid="excalidraw-differences">
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.disabled',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                fontWeight: 700,
+                display: 'block',
+                mb: 0.5
+              }}
+            >
+              Differences from Excalidraw
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              No diamond, ellipse, line, freedraw, eraser, frame, laser or
+              eye-dropper: this editor places icons on an isometric grid rather
+              than drawing free shapes. No element lock or flip. A plain mouse
+              wheel pans; hold Ctrl/⌘ to zoom.
+            </Typography>
+          </Box>
         </Stack>
       </DialogContent>
     </Dialog>

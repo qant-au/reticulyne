@@ -339,7 +339,8 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `package.json:64, 86, 74, 75`
 - **Refs:** Review #55 (Section 7)
 
-### 55. Verify and document transitive Quill version under `react-quill-new` — `DEP-06`
+### ~~55. Verify and document transitive Quill version under `react-quill-new` — `DEP-06`~~
+_Won't do 2026-09-27 - superseded. Quill left the tree in the v0.2.0 TipTap migration; `grep -c quill package-lock.json` returns 0, and SECURITY.md records the migration._
 - **What:** Run `npm ls quill`. Document the result in `SECURITY.md`. ROADMAP 2.10 tracks the eventual swap to TipTap.
 - **Where:** `package.json:112`; `SECURITY.md`
 - **Refs:** Review #56 (Section 7)
@@ -377,7 +378,8 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟡 Medium — Other
 
-### 61. No focus management baseline (informational)
+### ~~61. No focus management baseline (informational)~~
+_Done 2026-09-27 - informational. QUA-10 landed (`966ab3e`, aria-label and aria-pressed on IconButton), which is the only condition this item named._
 - **What:** Once QUA-10 (`aria-label`) lands, the toolbar becomes Tab-reachable. No further focus-management work urgent.
 - **Where:** Repo-wide
 - **Refs:** Review #62 (Section 9 — a11y)
@@ -387,7 +389,8 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `ROADMAP.md` section 2.12
 - **Refs:** Review #63 (Section 9 — touch)
 
-### 63. Touchscreen users have no zoom path (already tracked as ROADMAP 2.12)
+### ~~63. Touchscreen users have no zoom path (already tracked as ROADMAP 2.12)~~
+_Carried forward 2026-09-27 - tracked as ROADMAP 2.12 (multi-touch pinch-to-zoom); no separate action here._
 - **What:** No fix in this review cycle; flagged for awareness.
 - **Where:** `src/interaction/useInteractionManager.ts`
 - **Refs:** Review #64 (Section 9 — touch). See also ROADMAP 2.12.
@@ -411,7 +414,8 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟢 Low (do when convenient)
 
-### 67. `quill@2.0.3` XSS — known and accepted (no action)
+### ~~67. `quill@2.0.3` XSS — known and accepted (no action)~~
+_Won't do 2026-09-27 - superseded. `quill` was removed in v0.2.0 (TipTap migration), so there is no advisory left to accept._
 - **Where:** transitive via `react-quill-new`
 - **Refs:** Review #68 (Section 2c). Already in `SECURITY.md` residual ledger.
 
@@ -420,7 +424,8 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `dist/*.js.map`; `.github/workflows/ci.yml:35-49`
 - **Refs:** Review #69 (Section 2c)
 
-### 69. `dompurify@3.4.3` transitive via jspdf behind 3.4 line (no immediate action)
+### ~~69. `dompurify@3.4.3` transitive via jspdf behind 3.4 line (no immediate action)~~
+_Done 2026-09-27 - `dompurify` is overridden to `^3.4.16` (DEP-09, `0e8e8e9`); `npm ls dompurify` shows 3.4.16 under jspdf, and `npm audit` reports 0._
 - **What:** Monitor for jspdf bump.
 - **Refs:** Review #70 (Section 2c)
 
@@ -464,7 +469,8 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/assets/grid-tile-bg.svg`
 - **Refs:** Review #78 (Section 3c). _Confidence: Low — verify imports first._
 
-### 78. Dev port hardcoding (no action)
+### ~~78. Dev port hardcoding (no action)~~
+_Won't do 2026-09-27 - the item itself says no action; no second consumer of the port has appeared._
 - **Refs:** Review #79 (Section 4e). Leave as-is unless second consumer of the port emerges.
 
 ### 79. Fix grammar nit in `docs/embedding.md:540` — `DOC-13`
@@ -482,10 +488,12 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `README.md` Requirements section
 - **Refs:** Review #83 (Section 9 — browser)
 
-### 82. i18n inventory (no action — deferred per ROADMAP)
+### ~~82. i18n inventory (no action — deferred per ROADMAP)~~
+_Won't do 2026-09-27 - no action by the item's own terms; i18n stays deferred per ROADMAP Tier 4._
 - **Refs:** Review #82 (Section 9 — i18n)
 
-### 83. No `upstream` git remote (no action — upstream unmaintained)
+### ~~83. No `upstream` git remote (no action — upstream unmaintained)~~
+_Won't do 2026-09-27 - still true: the fork parent markmanx/isoflow was last pushed 2025-09-17._
 - **Refs:** Review #84 (Section 9 — fork)
 
 ---

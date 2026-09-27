@@ -406,8 +406,7 @@ describe('useInitialDataManager', () => {
 
     const ref: { current: Slot | null } = { current: null };
     let rerender:
-      | ((spec: { allow?: string[]; deny?: string[] }) => void)
-      | null = null;
+      ((spec: { allow?: string[]; deny?: string[] }) => void) | null = null;
 
     act(() => {
       const { rerender: rr } = render(

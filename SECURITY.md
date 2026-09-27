@@ -81,6 +81,8 @@ Current counts (post-DEP-08):
 
 **Bumped to `^3.4.12` in `DEP-07`.** [`GHSA-c2j3-45gr-mqc4`](https://github.com/advisories/GHSA-c2j3-45gr-mqc4) (low) was disclosed against `<=3.4.11`, moving the floor one patch. Because this is the one *runtime*-scope package in the residual set, the override was raised rather than accepted. `npm ls dompurify` now returns a single `dompurify@3.4.12` under `jspdf@4.2.1`.
 
+**Bumped to `^3.4.16` in `DEP-09`.** [`GHSA-55q2-fjhq-7xh7`](https://github.com/advisories/GHSA-55q2-fjhq-7xh7) (moderate, `IN_PLACE` hook removal leaves a detached subtree executable) was disclosed against `<=3.4.12`, so the previous floor became the vulnerable release and the CI `npm audit --omit=dev` gate went red on `main` from 2026-08-09. `npm ls dompurify` now returns a single `dompurify@3.4.16` under `jspdf@4.2.1`.
+
 ### `DEP-06` — overrode transitive `http-proxy-middleware` to clear `GHSA-64mm-vxmg-q3vj`
 
 `webpack-dev-server@5.2.5 → http-proxy-middleware@2.0.9` pinned a version in the vulnerable range (`>=0.16.0 <2.0.10`) of [`GHSA-64mm-vxmg-q3vj`](https://github.com/advisories/GHSA-64mm-vxmg-q3vj) (a `router` host+path substring match allowing Host-header-driven backend routing bypass). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`), and reticulyne's dev server declares no `proxy`/`router` config, so the vulnerable path isn't exercised in practice — but it surfaced in the full `npm audit`. Added `"http-proxy-middleware": "^2.0.10"` to the `overrides` block; `2.0.10` satisfies webpack-dev-server's declared `^2.0.9` range, so it's a clean patch dedupe. `npm ls http-proxy-middleware` now returns a single `2.0.10` and `npm audit` no longer reports the advisory.

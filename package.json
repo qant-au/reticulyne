@@ -52,6 +52,7 @@
     "test:e2e:install": "playwright install chromium",
     "lint": "tsc --noEmit && eslint ./src",
     "lint:fix": "eslint --fix ./src",
+    "prepare": "husky",
     "docker:build": "rm -rf dist-docker && webpack --config ./webpack/docker.config.js",
     "docker:examples:build": "rm -rf dist-docker-examples && webpack --config ./webpack/docker-examples.config.js"
   },
@@ -77,8 +78,10 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.6.0",
     "html-webpack-plugin": "^5.6.7",
+    "husky": "^9.1.7",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
+    "lint-staged": "^17.6.0",
     "nodemon": "^3.1.14",
     "prettier": "^3.8.3",
     "react": "^19.0.0",
@@ -148,5 +151,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": "eslint --fix --max-warnings=0"
   }
 }

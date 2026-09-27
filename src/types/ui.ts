@@ -17,7 +17,8 @@ export type AnchorPosition = keyof typeof AnchorPositionOptions;
 export const DialogTypeEnum = {
   EXPORT_IMAGE: 'EXPORT_IMAGE',
   EXPORT_SVG: 'EXPORT_SVG',
-  KEYBOARD_SHORTCUTS: 'KEYBOARD_SHORTCUTS'
+  KEYBOARD_SHORTCUTS: 'KEYBOARD_SHORTCUTS',
+  RENAME_DIAGRAM: 'RENAME_DIAGRAM'
 } as const;
 
 export const LayerOrderingActionOptions = {

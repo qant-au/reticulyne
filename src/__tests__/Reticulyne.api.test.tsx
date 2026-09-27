@@ -205,3 +205,55 @@ describe('loading a model from the host (DOC-03)', () => {
     expect(api().getModel().title).toBe('Replacement');
   });
 });
+
+describe('diagram title (1.2)', () => {
+  test('getTitle reads it; setTitle renames an editable diagram', () => {
+    const api = mount({ editorMode: 'EDITABLE' });
+    expect(api().getTitle()).toBe(twoViewModel.title);
+
+    act(() => {
+      api().setTitle('  Network plan  ');
+    });
+
+    expect(api().getTitle()).toBe('Network plan');
+    expect(api().getModel().title).toBe('Network plan');
+  });
+
+  test('a blank title becomes Untitled', () => {
+    const api = mount({ editorMode: 'EDITABLE' });
+    act(() => {
+      api().setTitle('   ');
+    });
+    expect(api().getTitle()).toBe('Untitled');
+  });
+
+  test('refused in a read-only editor', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const api = mount({ editorMode: 'EXPLORABLE_READONLY' });
+    act(() => {
+      api().setTitle('Nope');
+    });
+    expect(api().getTitle()).toBe(twoViewModel.title);
+    warn.mockRestore();
+  });
+
+  test('over 100 characters is refused through onValidationError', () => {
+    const onValidationError = jest.fn();
+    const api = mount({ editorMode: 'EDITABLE', onValidationError });
+    act(() => {
+      api().setTitle('x'.repeat(101));
+    });
+    expect(api().getTitle()).toBe(twoViewModel.title);
+    expect(onValidationError).toHaveBeenCalled();
+  });
+
+  test('loadModel without a title gives Untitled', () => {
+    const api = mount({ editorMode: 'EDITABLE' });
+    const untitled: InitialData = { ...twoViewModel };
+    delete untitled.title;
+    act(() => {
+      api().loadModel(untitled);
+    });
+    expect(api().getTitle()).toBe('Untitled');
+  });
+});

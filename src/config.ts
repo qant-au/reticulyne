@@ -111,7 +111,7 @@ export const MIN_ZOOM = 0.2;
 export const MAX_ZOOM = 1;
 export const TRANSFORM_ANCHOR_SIZE = 30;
 export const TRANSFORM_CONTROLS_COLOR = '#0392ff';
-export const INITIAL_DATA: InitialData = {
+export const INITIAL_DATA: InitialData & { title: string } = {
   title: 'Untitled',
   version: '',
   icons: [],
@@ -140,6 +140,7 @@ export const INITIAL_SCENE_STATE = {
 // deliberately carries no upstream-project branding.
 export const MAIN_MENU_OPTIONS: MainMenuOptions = [
   'ACTION.OPEN',
+  'ACTION.RENAME',
   'EXPORT.JSON',
   'EXPORT.PNG',
   'EXPORT.PDF',

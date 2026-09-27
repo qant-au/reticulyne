@@ -15,6 +15,12 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Diagram title** (ROADMAP 1.2). A "Rename diagram" main-menu action
+  (`'ACTION.RENAME'`, on by default), `useReticulyne().getTitle()` /
+  `setTitle()`, and a JSON export named after the title. `title` is now
+  optional in `initialData` and `loadModel()`; a model without one is
+  `'Untitled'`.
+
 - **Layer ordering for connectors and text boxes, not just rectangles**
   (ROADMAP 1.3). Front / Forward / Backward / Back buttons in each inspector
   and in the multi-select panel, the right-click menu on connectors and text

@@ -15,6 +15,7 @@ import AddIcon from '@mui/icons-material/AddOutlined';
 import ConnectorIcon from '@mui/icons-material/EastOutlined';
 import CropSquareIcon from '@mui/icons-material/CropSquareOutlined';
 import TitleIcon from '@mui/icons-material/Title';
+import RenameIcon from '@mui/icons-material/DriveFileRenameOutline';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -102,6 +103,11 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
   const onExportAsImage = useCallback(() => {
     uiStateActions.setIsMainMenuOpen(false);
     uiStateActions.setDialog('EXPORT_IMAGE');
+  }, [uiStateActions]);
+
+  const onRename = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    uiStateActions.setDialog('RENAME_DIAGRAM');
   }, [uiStateActions]);
 
   const onExportAsSvg = useCallback(() => {
@@ -253,6 +259,12 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
             {mainMenuOptions.includes('ACTION.SAVE') && onSave && (
               <MenuItem onClick={onSaveModel} Icon={<SaveIcon />}>
                 Save
+              </MenuItem>
+            )}
+
+            {mainMenuOptions.includes('ACTION.RENAME') && (
+              <MenuItem onClick={onRename} Icon={<RenameIcon />}>
+                Rename diagram
               </MenuItem>
             )}
 

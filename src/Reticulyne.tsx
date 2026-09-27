@@ -374,6 +374,21 @@ const useReticulyne = () => {
     [ModelActions, changeView, uiStateActions]
   );
 
+  // 1.2: the diagram title. setTitle goes through the gated Model.set, so
+  // it is EDITABLE-only and schema-validated like every other model write
+  // (over 100 characters is refused through onValidationError). A blank
+  // title becomes 'Untitled'. No undo entry, by design: renaming is not
+  // part of the drawing's history.
+  const getTitle = useCallback((): string => {
+    return ModelActions.get().title;
+  }, [ModelActions]);
+  const setTitle = useCallback(
+    (title: string): void => {
+      Model.set({ title: title.trim() || 'Untitled' });
+    },
+    [Model]
+  );
+
   const setEditorMode = uiStateActions.setEditorMode;
   const setZoom = uiStateActions.setZoom;
   const incrementZoom = uiStateActions.incrementZoom;
@@ -544,6 +559,13 @@ const useReticulyne = () => {
      * `editorMode="EDITABLE"` before calling to allow programmatic loads.
      */
     loadModel,
+    /** The diagram title. */
+    getTitle,
+    /**
+     * Rename the diagram. EDITABLE only; validated (max 100 characters);
+     * a blank title becomes 'Untitled'. Not recorded in undo history.
+     */
+    setTitle,
     /**
      * Switch the editor mode (`EDITABLE` | `EXPLORABLE` |
      * `NON_INTERACTIVE`). Gates the write-path methods above.

@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import FileSaver from 'file-saver';
 import { exportAsJSON } from 'src/utils/exportOptions';
 import { handleImportedJsonText } from 'src/components/MainMenu/useImportFile';
 import { initialDataSchema } from 'src/schemas/model';
@@ -23,12 +22,14 @@ jest.mock('jspdf', () => {
   return { jsPDF: jest.fn() };
 });
 // Capture the Blob handed to the download trigger instead of touching the
-// browser download path.
-jest.mock('file-saver', () => {
-  return { __esModule: true, default: { saveAs: jest.fn() } };
+// browser download path. downloadFile() turns it into a blob: URL first,
+// and jsdom implements neither createObjectURL nor revokeObjectURL.
+const createObjectURL = jest.fn((blob: Blob) => {
+  return `blob:test/${blob.size}`;
 });
-
-const saveAs = (FileSaver as unknown as { saveAs: jest.Mock }).saveAs;
+URL.createObjectURL = createObjectURL;
+URL.revokeObjectURL = jest.fn();
+jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
 
 // jsdom's Blob doesn't implement .text() in this version; read via FileReader.
 const readBlobText = (blob: Blob): Promise<string> => {
@@ -45,15 +46,15 @@ const readBlobText = (blob: Blob): Promise<string> => {
 };
 
 beforeEach(() => {
-  saveAs.mockClear();
+  createObjectURL.mockClear();
 });
 
 describe('JSON export → import round-trip (QUA-09)', () => {
   test('a model survives export then import unchanged', async () => {
     exportAsJSON(fixtureModel);
 
-    expect(saveAs).toHaveBeenCalledTimes(1);
-    const blob = saveAs.mock.calls[0][0] as Blob;
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    const blob = createObjectURL.mock.calls[0][0];
     expect(blob.type).toContain('application/json');
     const json = await readBlobText(blob);
 

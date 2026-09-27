@@ -1,6 +1,6 @@
 // "Export as JSON" handler for the main menu. Reads the latest model
 // snapshot from the store, serialises it to a Blob, and triggers a
-// download via file-saver. Closes the menu afterwards.
+// download via downloadFile(). Closes the menu afterwards.
 //
 // Extracted from MainMenu.tsx under QUA4-09. useShallow keeps the
 // model selector from triggering a re-render on every reducer tick;

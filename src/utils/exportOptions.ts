@@ -1,5 +1,4 @@
 import { toPng, toSvg } from 'html-to-image';
-import FileSaver from 'file-saver';
 import { jsPDF } from 'jspdf';
 import { Model, Size } from '../types';
 import { sanitizeSvgDataUri } from './sanitizeSvgDataUri';
@@ -35,8 +34,24 @@ export const base64ToBlob = (
   return blob;
 };
 
+// Replaces file-saver (DEP-01): every browser this package supports
+// honours <a download> on a blob: URL. The URL is revoked on a delay, not
+// synchronously, because revoking before the browser has started reading
+// it can cancel the download (Safari); 40s is file-saver's own figure.
+export const DOWNLOAD_REVOKE_DELAY_MS = 40_000;
+
 export const downloadFile = (data: Blob, filename: string) => {
-  FileSaver.saveAs(data, filename);
+  const url = URL.createObjectURL(data);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.rel = 'noopener';
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, DOWNLOAD_REVOKE_DELAY_MS);
 };
 
 export const exportAsJSON = (model: Model) => {
@@ -80,7 +95,7 @@ export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
  * client-side. Used by the MainMenu's "Export as PDF" entry.
  *
  * Client-side only: this never makes a network call. The PDF is built
- * in-browser by jsPDF and saved via FileSaver. The page orientation
+ * in-browser by jsPDF and saved via downloadFile(). The page orientation
  * (portrait vs landscape) follows the rendered image's aspect ratio
  * so the diagram fills the page in whichever orientation matches it
  * better. Page size is fixed to A4; the image is scaled to fit the

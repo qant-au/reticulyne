@@ -558,7 +558,11 @@ start a connector.
 
 ---
 
-### 2.7 Search / find (Ctrl+F)
+### ~~2.7 Search / find (Ctrl+F)~~
+
+_Shipped 2026-09-28 as sketched. Nodes only; ranking exact > prefix > substring on the
+name, then description text, then icon name. No debounce: matching a few hundred names
+is below a frame._
 
 **What it does.** `Ctrl+F` opens a search input; type to filter items by name
 or description; `Enter` jumps to the next match with a pan/zoom; `Shift+Enter`
@@ -576,7 +580,11 @@ Critical for diagrams whose IDs are system-generated (EC2 instance IDs, etc.).
 
 ---
 
-### 2.8 Mini-map
+### ~~2.8 Mini-map~~
+
+_Shipped 2026-09-28. Nodes as dots, rectangles as their tile polygons, the visible area
+clamped to the map so it never disappears. SVG, re-rendered only when the view or diagram
+changes, so no frame throttle was needed._
 
 **What it does.** A ~200×150 px viewport bottom-right of the canvas showing the
 whole diagram with a rectangle outlining the visible area. Click or drag to pan.
@@ -593,7 +601,12 @@ pan. Throttle to 30 fps. Hide when diagram is empty. Off by default in
 
 ---
 
-### 2.9 Snap-to-grid + smart guides
+### ~~2.9 Snap-to-grid + smart guides~~
+
+_Shipped 2026-09-28. Snap needed nothing: positions are whole tiles in the schema and a
+drag already moves tile by tile, so there is no free position for `Alt` to keep. Smart
+guides are tile-axis lines to the nearest aligned item; toggled by the
+`showAlignmentGuides` prop rather than a main-menu entry._
 
 **What it does.** During drag, items snap to the isometric tile grid (`Alt`
 disables). Smart guides: magenta lines appear when a dragged item aligns its

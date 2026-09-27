@@ -17,6 +17,8 @@ import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { TransformControlsManager } from 'src/components/TransformControlsManager/TransformControlsManager';
 import { MarqueeBand } from 'src/components/MarqueeBand/MarqueeBand';
 import { ConnectorHotspots } from 'src/components/ConnectorHotspots/ConnectorHotspots';
+import { SmartGuides } from 'src/components/SmartGuides/SmartGuides';
+import { SearchHighlights } from 'src/components/SearchBar/SearchHighlights';
 import { RendererProps } from 'src/types/rendererProps';
 
 export const Renderer = ({
@@ -135,6 +137,12 @@ export const Renderer = ({
       {/* 2.1: above the nodes, or their icons hide the ports. */}
       <SceneLayer>
         <ConnectorHotspots />
+      </SceneLayer>
+      <SceneLayer>
+        <SmartGuides />
+      </SceneLayer>
+      <SceneLayer>
+        <SearchHighlights />
       </SceneLayer>
       <SceneLayer>
         <TransformControlsManager />

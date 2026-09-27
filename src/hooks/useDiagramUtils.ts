@@ -4,8 +4,10 @@ import { Size, Coords, View, ItemReference } from 'src/types';
 import {
   getUnprojectedBounds as getUnprojectedBoundsUtil,
   getFitToViewParams as getFitToViewParamsUtil,
+  getTilePosition,
   CoordsUtils
 } from 'src/utils';
+import { MIN_ZOOM, MAX_ZOOM } from 'src/config';
 import { useScene } from 'src/hooks/useScene';
 import { useResizeObserver } from './useResizeObserver';
 
@@ -95,7 +97,34 @@ export const useDiagramUtils = () => {
     [uiStateActions, scene.currentView, rendererSize]
   );
 
+  // 2.7 / 1.6: bring a tile to the centre of the view, optionally at a new
+  // zoom (clamped to the editor range). A scene point sits at
+  // screen = size / 2 + scroll + point * zoom, so centring means
+  // scroll = -point * zoom.
+  const zoom = useUiStateStore((state) => {
+    return state.zoom;
+  });
+  const scrollOffset = useUiStateStore((state) => {
+    return state.scroll.offset;
+  });
+  const centerOnTile = useCallback(
+    (tile: Coords, atZoom?: number) => {
+      const z =
+        atZoom === undefined
+          ? zoom
+          : Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, atZoom));
+      if (z !== zoom) uiStateActions.setZoom(z);
+      const p = getTilePosition({ tile });
+      uiStateActions.setScroll({
+        position: { x: -p.x * z, y: -p.y * z },
+        offset: scrollOffset
+      });
+    },
+    [zoom, scrollOffset, uiStateActions]
+  );
+
   return {
+    centerOnTile,
     getUnprojectedBounds,
     fitToView,
     fitToSelection,

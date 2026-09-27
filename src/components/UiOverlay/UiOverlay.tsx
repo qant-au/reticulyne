@@ -25,6 +25,8 @@ import { ToolbarSlots } from './ToolbarSlots';
 import { TitleBar } from './TitleBar';
 import { DebugPanel } from './DebugPanel';
 import { HoverTooltip } from './HoverTooltip';
+import { SearchBar } from 'src/components/SearchBar/SearchBar';
+import { MiniMap } from 'src/components/MiniMap/MiniMap';
 import { DialogLayer } from './DialogLayer';
 
 export const UiOverlay = () => {
@@ -111,6 +113,17 @@ export const UiOverlay = () => {
           rendererSize={rendererSize}
         />
         <HoverTooltip />
+      </Box>
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          '& > *': { pointerEvents: 'auto' }
+        }}
+      >
+        <SearchBar />
+        <MiniMap />
       </Box>
       <DialogLayer
         mode={mode}

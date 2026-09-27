@@ -15,6 +15,7 @@ import { SizeIndicator } from 'src/components/DebugUtils/SizeIndicator';
 import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { TransformControlsManager } from 'src/components/TransformControlsManager/TransformControlsManager';
 import { MarqueeBand } from 'src/components/MarqueeBand/MarqueeBand';
+import { ConnectorHotspots } from 'src/components/ConnectorHotspots/ConnectorHotspots';
 import { RendererProps } from 'src/types/rendererProps';
 
 export const Renderer = ({
@@ -125,6 +126,10 @@ export const Renderer = ({
       />
       <SceneLayer>
         <Nodes />
+      </SceneLayer>
+      {/* 2.1: above the nodes, or their icons hide the ports. */}
+      <SceneLayer>
+        <ConnectorHotspots />
       </SceneLayer>
       <SceneLayer>
         <TransformControlsManager />

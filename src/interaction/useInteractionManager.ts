@@ -138,6 +138,34 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     [uiStateActions, rendererSize]
   );
 
+  // ROADMAP 2.2: double-click an empty tile to add an item there, or an
+  // item to open its inspector. EDITABLE only, and only from the plain
+  // cursor tool, so it never fights a drawing or placing mode.
+  const onDoubleClick = useCallback(
+    (e: Event) => {
+      const liveUiState = uiStateRef.current;
+      if (liveUiState.editorMode !== 'EDITABLE') return;
+      if (liveUiState.mode.type !== 'CURSOR') return;
+
+      const tile = liveUiState.mouse.position.tile;
+      const itemAtTile = getItemAtTile({ tile, scene: sceneRef.current });
+      e.preventDefault();
+
+      if (itemAtTile) {
+        uiStateActions.setSelection([itemAtTile]);
+        return;
+      }
+
+      uiStateActions.setItemControls({ type: 'ADD_ITEM', tile });
+      uiStateActions.setMode({
+        type: 'PLACE_ICON',
+        showCursor: true,
+        id: null
+      });
+    },
+    [uiStateActions]
+  );
+
   const onContextMenu = useCallback(
     (e: Event) => {
       e.preventDefault();
@@ -225,6 +253,9 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     // Chrome treats wheel listeners as passive by default and ignores
     // preventDefault on passive listeners.
     rendererEl?.addEventListener('wheel', onScroll, { passive: false });
+    // On the renderer element in both drag-handler modes: a double-click
+    // in a UI panel must never add an item.
+    rendererEl?.addEventListener('dblclick', onDoubleClick);
 
     if (enableGlobalDragHandlers) {
       window.addEventListener('pointermove', onMouseEvent);
@@ -240,6 +271,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
 
     return () => {
       rendererEl?.removeEventListener('wheel', onScroll);
+      rendererEl?.removeEventListener('dblclick', onDoubleClick);
       if (enableGlobalDragHandlers) {
         window.removeEventListener('pointermove', onMouseEvent);
         window.removeEventListener('pointerdown', onPointerDown);
@@ -257,6 +289,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     onMouseEvent,
     modeType,
     onContextMenu,
+    onDoubleClick,
     uiStateActions,
     rendererEl,
     enableGlobalDragHandlers

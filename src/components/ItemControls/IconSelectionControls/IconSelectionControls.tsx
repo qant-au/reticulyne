@@ -4,6 +4,9 @@ import { ControlsContainer } from 'src/components/ItemControls/components/Contro
 import { Header } from 'src/components/ItemControls/components/Header';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { Icon } from 'src/types';
+import { useScene } from 'src/hooks/useScene';
+import { generateId } from 'src/utils';
+import { VIEW_ITEM_DEFAULTS } from 'src/config';
 import { Section } from 'src/components/ItemControls/components/Section';
 import { Searchbox } from 'src/components/ItemControls/IconSelectionControls/Searchbox';
 import { useIconFiltering } from 'src/hooks/useIconFiltering';
@@ -18,6 +21,13 @@ export const IconSelectionControls = () => {
   const mode = useUiStateStore((state) => {
     return state.mode;
   });
+  // 2.2: a picker opened by double-clicking a tile carries that tile.
+  const targetTile = useUiStateStore((state) => {
+    return state.itemControls?.type === 'ADD_ITEM'
+      ? state.itemControls.tile
+      : undefined;
+  });
+  const { createModelItem, createViewItem } = useScene();
   const { setFilter, filteredIcons, filter } = useIconFiltering();
   const { iconCategories } = useIconCategories();
 
@@ -25,13 +35,28 @@ export const IconSelectionControls = () => {
     (icon: Icon) => {
       if (mode.type !== 'PLACE_ICON') return;
 
+      if (targetTile) {
+        // Place it now (same shape PlaceIcon.mouseup commits), select it,
+        // and return to the cursor tool.
+        const id = generateId();
+        createModelItem({ id, name: 'Untitled', icon: icon.id });
+        createViewItem({ ...VIEW_ITEM_DEFAULTS, id, tile: targetTile });
+        uiStateActions.setMode({
+          type: 'CURSOR',
+          showCursor: true,
+          mousedownItem: null
+        });
+        uiStateActions.setSelection([{ type: 'ITEM', id }]);
+        return;
+      }
+
       uiStateActions.setMode({
         type: 'PLACE_ICON',
         showCursor: true,
         id: icon.id
       });
     },
-    [mode, uiStateActions]
+    [mode, uiStateActions, targetTile, createModelItem, createViewItem]
   );
 
   return (

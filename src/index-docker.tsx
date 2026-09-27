@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom/client';
 import { Box } from '@mui/material';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Reticulyne, { INITIAL_DATA } from 'src/Reticulyne';
-import type { InitialData } from 'src/types';
+import type { InitialData, Model } from 'src/types';
+import { MAIN_MENU_OPTIONS } from 'src/config';
 import type { EditorModeEnum } from 'src/types/common';
 import { icons, colors } from './examples/initialData';
 
@@ -37,7 +38,18 @@ declare global {
        * AND opt into animation in one shot.
        */
       enableAnimation?: boolean;
+      /**
+       * 2.3: give the editor a host onSave for the save-status spec.
+       * Saves are recorded on window.__RETICULYNE_E2E_SAVES__; delayMs
+       * holds each save pending, fail makes it reject.
+       */
+      save?: {
+        autoSaveDebounce?: number | false;
+        delayMs?: number;
+        fail?: boolean;
+      };
     };
+    __RETICULYNE_E2E_SAVES__?: unknown[];
   }
 }
 
@@ -49,6 +61,26 @@ const initialData = e2eConfig?.initialData ?? {
 };
 const editorMode = e2eConfig?.editorMode;
 const scrollParent = e2eConfig?.scrollParent ?? false;
+
+const saveConfig = e2eConfig?.save;
+const saveProps = saveConfig
+  ? {
+      mainMenuOptions: [...MAIN_MENU_OPTIONS, 'ACTION.SAVE' as const],
+      autoSaveDebounce: saveConfig.autoSaveDebounce ?? false,
+      onSave: (model: Model) => {
+        window.__RETICULYNE_E2E_SAVES__ = [
+          ...(window.__RETICULYNE_E2E_SAVES__ ?? []),
+          model
+        ];
+        return new Promise<void>((resolve, reject) => {
+          setTimeout(() => {
+            if (saveConfig.fail) reject(new Error('e2e save failure'));
+            else resolve();
+          }, saveConfig.delayMs ?? 0);
+        });
+      }
+    }
+  : {};
 
 // FEA5-06: optional opt-in for the connector animation feature, kept
 // off by default so a production docker deployment matches the
@@ -80,6 +112,7 @@ const Shell = scrollParent ? (
           initialData={initialData}
           editorMode={editorMode}
           enableAnimation={enableAnimation}
+          {...saveProps}
         />
       </Box>
     </Box>
@@ -90,6 +123,7 @@ const Shell = scrollParent ? (
       initialData={initialData}
       editorMode={editorMode}
       enableAnimation={enableAnimation}
+      {...saveProps}
     />
   </Box>
 );

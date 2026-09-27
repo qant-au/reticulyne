@@ -440,7 +440,12 @@ re-uses the `PlaceIcon` mode entry point.
 
 ---
 
-### 2.3 Auto-save indicator + dirty state
+### ~~2.3 Auto-save indicator + dirty state~~
+
+_Shipped 2026-09-28. One departure: `autoSaveDebounce` defaults to `false` (opt-in)
+rather than ~2 s, because a default would start calling every existing host's `onSave`
+on each edit. Dirty state compares a fingerprint of the model; a failed auto-save waits
+for Retry instead of retrying on its own._
 
 **What it does.** A small "Saved 3 s ago" / "Saving…" / "Unsaved changes" pill
 in the title bar. Browser confirm on tab close with unsaved changes; red pill

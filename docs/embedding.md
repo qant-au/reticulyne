@@ -329,6 +329,27 @@ Listing `'ACTION.SAVE'` without supplying `onSave` logs a one-shot `console.warn
 
 Callback identity does not need to be memoised. The component stores the latest `onSave` in the UI-state store and reads it at click time, so passing a fresh inline closure on every render is fine.
 
+**Save status and auto-save.** When `onSave` is supplied, the title bar shows where saving stands:
+
+| Pill | When |
+|---|---|
+| *(nothing)* | The diagram is as loaded, or as last saved, and nothing has been saved this session |
+| Unsaved changes | The model differs from what was loaded or last saved |
+| Saving… | `onSave` returned a Promise that is still pending |
+| Saved *n* s ago | The last save succeeded and nothing has changed since |
+| Save failed · Retry | `onSave` threw or its Promise rejected; the error message is the pill's tooltip |
+
+An edit made while a save is in flight leaves the diagram dirty afterwards. With unsaved changes the browser asks before the tab closes. For auto-save pass `autoSaveDebounce` (milliseconds after the last edit), e.g. `autoSaveDebounce={2000}`; it is off by default, and after a failure it waits for Retry rather than retrying on its own.
+
+```tsx
+<Reticulyne
+  initialData={diagram}
+  mainMenuOptions={['ACTION.SAVE', 'EXPORT.JSON']}
+  onSave={(model) => fetch('/api/diagram', { method: 'PUT', body: JSON.stringify(model) })}
+  autoSaveDebounce={2000}
+/>
+```
+
 ### Combined example
 
 A typical embedded deployment that shows only what the host needs:

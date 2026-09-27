@@ -89,6 +89,21 @@ export type SceneStore = Scene & {
 };
 
 // === UI-state runtime shapes ===
+
+// 2.3: a host save callback may return a Promise; the editor awaits it
+// to show Saving / Saved / failed.
+export type SaveHandler = (model: Model) => void | Promise<unknown>;
+
+export interface SaveStatus {
+  state: 'idle' | 'saving' | 'saved' | 'error';
+  /** The model differs from what was last saved (or loaded). */
+  isDirty: boolean;
+  lastSavedAt: number | null;
+  /** Fingerprint of the model as last saved or loaded. */
+  savedFingerprint: string | null;
+  error: string | null;
+}
+
 interface AddItemControls {
   type: 'ADD_ITEM';
   /**
@@ -277,7 +292,9 @@ export interface UiState {
   // via this function. Stored on the store rather than in component
   // state so the MainMenu (a child of the App) can read it through
   // the existing zustand subscription path.
-  onSave: ((model: Model) => void) | undefined;
+  onSave: SaveHandler | undefined;
+  // 2.3: where saving stands. See src/utils/save.ts.
+  saveStatus: SaveStatus;
   // SEC-02: host-supplied validation-error callback, mirrored onto the
   // store (like onSave) so useReticulyne().Model.set can route
   // merge-then-validate failures through the same channel the
@@ -326,7 +343,10 @@ export interface UiStateActions {
   setEnableAnimation: (enabled: boolean) => void;
   setExportTheme: (mode: 'light' | 'dark') => void;
   setShowTitleBar: (show: boolean | undefined) => void;
-  setOnSave: (onSave: ((model: Model) => void) | undefined) => void;
+  setOnSave: (onSave: SaveHandler | undefined) => void;
+  setSaveStatus: (patch: Partial<SaveStatus>) => void;
+  /** Read at call time, for async code that must not use a stale render. */
+  getSaveStatus: () => SaveStatus;
   setOnValidationError: (
     onValidationError: ((issues: ZodIssue[]) => void) | undefined
   ) => void;

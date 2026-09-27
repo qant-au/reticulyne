@@ -36,6 +36,13 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       exportTheme: 'light' as const,
       showTitleBar: undefined,
       onSave: undefined,
+      saveStatus: {
+        state: 'idle',
+        isDirty: false,
+        lastSavedAt: null,
+        savedFingerprint: null,
+        error: null
+      },
       onValidationError: undefined,
       nodeIndicatorComponent: undefined,
       connectorIndicatorComponent: undefined,
@@ -170,6 +177,12 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setOnSave: (onSave) => {
           set({ onSave });
+        },
+        setSaveStatus: (patch) => {
+          set({ saveStatus: { ...get().saveStatus, ...patch } });
+        },
+        getSaveStatus: () => {
+          return get().saveStatus;
         },
         setOnValidationError: (onValidationError) => {
           set({ onValidationError });

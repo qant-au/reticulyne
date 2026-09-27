@@ -714,19 +714,32 @@ agnostic; let embedders override via prop.
 
 ## Tier 3 — Nice-to-have
 
-### 3.1 Hover highlight + tooltip
+### ~~3.1 Hover highlight + tooltip~~
+
+_Shipped 2026-09-28. The outline half already existed (the cursor tile highlight);
+the tooltip is new: name plus a plain-text description snippet after 600 ms, for
+nodes and described connectors, with the cursor or hand tool and no button held._
 
 Hover an item → faint outline; after ~600 ms hover, tooltip shows name +
 description snippet. Pure render-layer. Reuse hit-detection on `mousemove`
 (throttled). ~0.5 days.
 
-### 3.2 Alignment / distribute toolbar
+### ~~3.2 Alignment / distribute toolbar~~
+
+_Shipped 2026-09-28, along the tile axes rather than screen left / right / top /
+bottom, which have no meaning on an isometric grid: Align X / Y to the active item,
+Distribute X / Y between the two ends. Planned in `src/utils/arrange.ts`; a plan that
+would stack two nodes is refused and its button disabled._
 
 Align left/right/top/bottom/centre + distribute horizontally/vertically.
 Depends on 1.4 (multi-select) — don't build before the selection model is
 ready. ~0.5 days post-1.4.
 
 ### 3.3 Connector auto-routing improvements
+
+_Not started (reviewed 2026-09-28). 3+ days, and this item's own warning stands: a
+router worse than today's is a regression. Measured then: a route costs about 0.3 ms
+on a 1,600-item view, so speed is not the reason to touch it._
 
 Connectors already auto-route via A* (`src/utils/pathfinder.ts`). Tier 3 adds
 aesthetic constraints: minimise turns, prefer parallel runs, preserve manual
@@ -735,6 +748,8 @@ routing is genuinely hard — ship something worse than manual routing and you'l
 regret it. ~3+ days.
 
 ### 3.4 Presentation / focus mode
+
+_Not started (reviewed 2026-09-28): needs `focusNode` from 1.6, which is not built._
 
 For read-only embeds: a "tour" mode that walks through nodes in a defined order,
 with the canvas auto-zooming and optional markdown narration. Arrow keys advance.
@@ -749,6 +764,9 @@ and persistence are in scope. **Defer until collab lands** — they share
 infrastructure.
 
 ### 3.6 React 19 idiom adoption — `FEA-01`
+
+_Not started (reviewed 2026-09-28): no user-visible change, and its main surface is
+`loadModel`'s public signature, which belongs with the 1.5 / 1.6 API work._
 
 **What it does.** Moves the codebase from React-19-*compatible* to
 React-19-*idiomatic*. Today there are zero uses of `useActionState`,

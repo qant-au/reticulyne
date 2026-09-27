@@ -224,6 +224,16 @@ the **active item** (the one most recently added to the selection).
 | `Ctrl/Cmd + X` | Cut the selection (connectors stay) |
 | `Ctrl/Cmd + V` | Paste with a one-tile offset (works repeatedly) |
 
+**Arrange.** With two or more items selected, the panel's Arrange row lines
+them up along the tile axes: **Align X / Y** puts every item on the active
+item's X (or Y) line, and **Distribute X / Y** keeps the two end items and
+spaces the rest evenly between them on whole tiles (three or more items). A
+move that would put two nodes on one tile is disabled. One undo step each.
+
+**Hover.** Resting the pointer on a node (or a connector that has a
+description) shows its name and the start of its description as plain text,
+in every editor mode, which is the only way a read-only viewer sees them.
+
 **Colour.** With several items selected, the multi-edit panel's Colour row
 recolours every connector and rectangle in the selection in one step (a
 rectangle's hex override is cleared so the palette colour shows). Nodes and

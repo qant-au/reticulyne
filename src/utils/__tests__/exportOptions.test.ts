@@ -8,13 +8,17 @@
 //   * html-to-image's `toPng` → PNG data-URL of the current canvas.
 //   * jsPDF document construction at the right page orientation +
 //     scaled image dimensions.
-//   * FileSaver download trigger.
+//   * downloadFile() trigger (blob: URL + <a download>).
 //
 // We mock html-to-image and jsPDF so the test doesn't hit the real
 // canvas / DOM rasteriser; the assertion surface is "exportAsPdf calls
 // the right pieces with the right arguments".
 
-import { exportAsPdf } from '../exportOptions';
+import {
+  DOWNLOAD_REVOKE_DELAY_MS,
+  downloadFile,
+  exportAsPdf
+} from '../exportOptions';
 
 // Stub html-to-image so exportAsImage resolves to a known PNG data URL
 // without hitting jsdom's missing canvas APIs.
@@ -26,14 +30,26 @@ jest.mock('html-to-image', () => {
   };
 });
 
-// Stub file-saver so the call to saveAs doesn't actually try to invoke
-// the browser download path inside the test environment.
-jest.mock('file-saver', () => {
-  return {
-    __esModule: true,
-    default: { saveAs: jest.fn() }
-  };
+// downloadFile() needs blob: URLs, which jsdom does not implement, and
+// jsdom logs "not implemented: navigation" for an anchor click. Stub all
+// three so the download path is observable and silent.
+const createObjectURL = jest.fn(() => {
+  return 'blob:test/1';
 });
+const revokeObjectURL = jest.fn();
+URL.createObjectURL = createObjectURL;
+URL.revokeObjectURL = revokeObjectURL;
+const clicked: { href: string; download: string; attached: boolean }[] = [];
+const anchorClick = jest
+  .spyOn(HTMLAnchorElement.prototype, 'click')
+  .mockImplementation(function (this: HTMLAnchorElement) {
+    // Record what was clicked while it is still attached.
+    clicked.push({
+      href: this.href,
+      download: this.download,
+      attached: document.body.contains(this)
+    });
+  });
 
 // Spy on jsPDF: capture orientation + recorded addImage calls so the
 // test can assert on the document shape. The mocked instance exposes
@@ -150,8 +166,42 @@ describe('exportAsPdf (FEA4-04)', () => {
     await exportAsPdf(el);
 
     expect(output).toHaveBeenCalledWith('blob');
-    // The downloadFile call goes through file-saver, which we mocked
-    // above; we don't need to assert the filename directly here since
-    // generateGenericFilename is well-covered by its callers.
+    expect(clicked.at(-1)?.download).toMatch(/^reticulyne-export-.*\.pdf$/);
+  });
+});
+
+describe('downloadFile (DEP-01)', () => {
+  beforeEach(() => {
+    clicked.length = 0;
+    createObjectURL.mockClear();
+    revokeObjectURL.mockClear();
+    anchorClick.mockClear();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  test('clicks an attached <a download> for a blob: URL, then detaches it', () => {
+    const blob = new Blob(['x'], { type: 'text/plain' });
+
+    downloadFile(blob, 'diagram.json');
+
+    expect(createObjectURL).toHaveBeenCalledWith(blob);
+    expect(clicked).toEqual([
+      { href: 'blob:test/1', download: 'diagram.json', attached: true }
+    ]);
+    expect(document.querySelectorAll('a[download]')).toHaveLength(0);
+  });
+
+  test('revokes the URL only after the delay, never synchronously', () => {
+    downloadFile(new Blob(['x']), 'a.txt');
+
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(DOWNLOAD_REVOKE_DELAY_MS - 1);
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(1);
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:test/1');
   });
 });

@@ -227,6 +227,15 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
 
       const hasModifier = e.ctrlKey || e.metaKey;
 
+      // 2.7: Ctrl/Cmd+F opens the find bar, in any editor mode. Taken from
+      // the browser deliberately, as Excalidraw does: page find cannot see
+      // text drawn on the canvas.
+      if (hasModifier && !e.shiftKey && (e.key === 'f' || e.key === 'F')) {
+        uiStateActions.setSearchOpen(true);
+        e.preventDefault();
+        return;
+      }
+
       // UXA-08: Alt+Shift+D flips light <-> dark, in any editor mode (it
       // changes how the diagram looks, not the diagram). Matched on e.code:
       // on a Mac, Alt+Shift+D types a symbol into e.key.

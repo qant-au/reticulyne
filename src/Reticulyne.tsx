@@ -45,6 +45,8 @@ const App = ({
   editorMode = 'EDITABLE',
   renderer,
   showTitleBar,
+  showAlignmentGuides = true,
+  showMiniMap,
   iconCollections,
   onSave,
   autoSaveDebounce = false,
@@ -104,6 +106,14 @@ const App = ({
   useEffect(() => {
     uiStateActions.setShowTitleBar(showTitleBar);
   }, [showTitleBar, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setShowAlignmentGuides(showAlignmentGuides);
+  }, [showAlignmentGuides, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setShowMiniMap(showMiniMap);
+  }, [showMiniMap, uiStateActions]);
 
   // Stash the host's onSave callback on the UI-state store so the
   // MainMenu's "Save" entry (FEA5-03) can read it without prop-

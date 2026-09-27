@@ -285,6 +285,13 @@ export interface UiState {
   enableAnimation: boolean;
   exportTheme: 'light' | 'dark';
   showTitleBar: boolean | undefined;
+  // 2.9: alignment guides while dragging.
+  showAlignmentGuides: boolean;
+  // 2.7: find bar open, and the node ids it currently matches.
+  searchOpen: boolean;
+  // 2.8: undefined = shown when EDITABLE only.
+  showMiniMap: boolean | undefined;
+  searchMatches: string[];
   // Worklist 19: a list, so a multi-selection copies as one.
   clipboard: ClipboardEntry[];
   // Host-supplied save callback (FEA5-03). The MainMenu's
@@ -344,6 +351,10 @@ export interface UiStateActions {
   setEnableAnimation: (enabled: boolean) => void;
   setExportTheme: (mode: 'light' | 'dark') => void;
   setShowTitleBar: (show: boolean | undefined) => void;
+  setShowAlignmentGuides: (show: boolean) => void;
+  setSearchOpen: (open: boolean) => void;
+  setShowMiniMap: (show: boolean | undefined) => void;
+  setSearchMatches: (ids: string[]) => void;
   setOnSave: (onSave: SaveHandler | undefined) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;
   /** Read at call time, for async code that must not use a stale render. */

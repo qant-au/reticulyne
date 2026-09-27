@@ -15,6 +15,15 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Find** (ROADMAP 2.7). `Ctrl/Cmd+F` opens a find bar; matches (by name,
+  then description, then icon name) are outlined on the canvas, and
+  `Enter` / `Shift+Enter` select each one and bring it to the centre.
+- **Mini-map** (ROADMAP 2.8). An overview bottom-right with the visible area
+  outlined; click or drag to move the view. `showMiniMap` prop; shown by
+  default only when editable.
+- **Alignment guides** (ROADMAP 2.9). While dragging, a line to the nearest
+  item on the same tile line. `showAlignmentGuides` prop, default on.
+
 - **Align and distribute** (ROADMAP 3.2). Align X / Y and Distribute X / Y
   for a multi-selection, along the tile axes, one undo step; a move that
   would stack two nodes is disabled.

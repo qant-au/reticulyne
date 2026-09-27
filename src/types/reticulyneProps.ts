@@ -56,6 +56,16 @@ export interface ReticulyneProps {
    */
   showTitleBar?: boolean;
   /**
+   * 2.9: while dragging, draw a guide line to the nearest other item on
+   * the same tile X or Y. Default `true`.
+   */
+  showAlignmentGuides?: boolean;
+  /**
+   * 2.8: the overview map, bottom-right. Default: shown in `EDITABLE`,
+   * hidden otherwise; pass `true` or `false` to force it.
+   */
+  showMiniMap?: boolean;
+  /**
    * Optional callback fired when `initialData` (or a fresh
    * `loadModel()` payload from `useReticulyne`) fails schema validation.
    * Receives the array of Zod issues from the failed parse.

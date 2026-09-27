@@ -74,6 +74,7 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
       { keys: ['Drag'], description: 'Marquee select' },
       { keys: ['⇧', 'Drag'], description: 'Add marquee to selection' },
       { keys: ['⌘/Ctrl', 'A'], description: 'Select all' },
+      { keys: ['⌘/Ctrl', 'F'], description: 'Find items' },
       { keys: ['↑', '↓', '←', '→'], description: 'Nudge' },
       { keys: ['⇧', '↑↓←→'], description: 'Nudge ×5' },
       { keys: ['Esc'], description: 'Deselect' }

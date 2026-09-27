@@ -35,6 +35,10 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       enableAnimation: false,
       exportTheme: 'light' as const,
       showTitleBar: undefined,
+      showAlignmentGuides: true,
+      searchOpen: false,
+      showMiniMap: undefined,
+      searchMatches: [],
       onSave: undefined,
       saveStatus: {
         state: 'idle',
@@ -171,6 +175,18 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setExportTheme: (mode) => {
           set({ exportTheme: mode });
+        },
+        setShowAlignmentGuides: (showAlignmentGuides) => {
+          set({ showAlignmentGuides });
+        },
+        setSearchOpen: (searchOpen) => {
+          set({ searchOpen });
+        },
+        setShowMiniMap: (showMiniMap) => {
+          set({ showMiniMap });
+        },
+        setSearchMatches: (searchMatches) => {
+          set({ searchMatches });
         },
         setShowTitleBar: (showTitleBar) => {
           set({ showTitleBar });

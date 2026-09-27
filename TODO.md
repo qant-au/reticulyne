@@ -16,4 +16,8 @@ prefix: iso
   shipped in bb012d9 + 17a76d9 (FEA14-01): reducer, inspector, multi-select, context menu, UXA-06 hotkeys; nodes deliberately excluded (depth-sorted). 495 unit, 39/39 e2e
 - [x] ROADMAP 1.2 diagram title in the UI and the API @due(2026-09-27) @id(iso-005)
   shipped in FEA14-02: rename dialog, getTitle/setTitle, optional title, JSON export named after it. 508 unit, 41/41 e2e
+- [x] ROADMAP 2.1 connector hotspots + 2.2 double-click to add @due(2026-09-28) @id(iso-006)
+  shipped in c9010ac (2.1 hotspots, visual only: edge snapping needs an anchor-side schema field) + b8d2ab8 (2.2 dblclick add)
+- [x] ROADMAP 2.3 save status, dirty state and opt-in auto-save @due(2026-09-28) @id(iso-007)
+  shipped in FEA14-05; autoSaveDebounce opt-in (default false). 516 unit, 48/48 e2e
 

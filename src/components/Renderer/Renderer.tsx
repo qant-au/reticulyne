@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInteractionManager } from 'src/interaction/useInteractionManager';
 import { useKeyboardShortcuts } from 'src/interaction/useKeyboardShortcuts';
+import { useSpacePan } from 'src/interaction/useSpacePan';
 import { Grid } from 'src/components/Grid/Grid';
 import { Cursor } from 'src/components/Cursor/Cursor';
 import { Nodes } from 'src/components/SceneLayers/Nodes/Nodes';
@@ -42,6 +43,7 @@ export const Renderer = ({
     enableGlobalDragHandlers
   );
   useKeyboardShortcuts(enableGlobalKeyboardShortcuts);
+  useSpacePan(enableGlobalKeyboardShortcuts);
 
   useEffect(() => {
     if (!containerRef.current || !interactionsRef.current) return;
@@ -72,6 +74,9 @@ export const Renderer = ({
         width: '100%',
         height: '100%',
         zIndex: 0,
+        // 2.12: the editor handles touch itself (pinch, drag); without this
+        // the browser takes two-finger gestures for page zoom and scroll.
+        touchAction: 'none',
         bgcolor: (theme) => {
           return backgroundColor ?? theme.customVars.customPalette.diagramBg;
         }

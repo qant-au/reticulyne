@@ -171,6 +171,7 @@ export const makeState = (overrides: {
     modifiers: {
       shift: false,
       ctrlOrMeta: false,
+      alt: false,
       ...overrides.modifiers
     }
   };

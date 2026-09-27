@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ClipboardEntry, ItemReference } from 'src/types';
+import { ClipboardEntry, Coords, ItemReference } from 'src/types';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import * as reducers from 'src/stores/reducers';
 import { generateId, getItemByIdOrThrow } from 'src/utils';
@@ -133,11 +133,11 @@ export const useSceneClipboard = ({
   // Worklist 19: the clipboard holds a LIST of entries, so copy, cut and
   // paste act on the whole selection. A paste is one setState, so one
   // undo step, and keeps the copied items' spacing (every entry moves by
-  // the same one-tile offset).
-  const copySelection = useCallback(
-    (target: ItemReference | ItemReference[]) => {
+  // the same offset). UXA-03's Alt+drag reuses the same two steps with a
+  // zero offset, so a copy made by dragging is built exactly like a paste.
+  const entriesFor = useCallback(
+    (targets: ItemReference[]): ClipboardEntry[] => {
       const state = getState();
-      const targets = Array.isArray(target) ? target : [target];
       const entries: ClipboardEntry[] = [];
       for (const t of targets) {
         switch (t.type) {
@@ -167,85 +167,108 @@ export const useSceneClipboard = ({
             break;
         }
       }
+      return entries;
+    },
+    [getState, currentView]
+  );
+
+  const createFrom = useCallback(
+    (entries: ClipboardEntry[], offset: Coords) => {
+      let state = getState();
+      const refs: ItemReference[] = [];
+      const shift = (c: Coords) => {
+        return { x: c.x + offset.x, y: c.y + offset.y };
+      };
+      for (const entry of entries) {
+        const newId = generateId();
+        switch (entry.kind) {
+          case 'ITEM': {
+            const afterModel = reducers.createModelItem(
+              {
+                ...entry.modelItem,
+                id: newId,
+                name: `${entry.modelItem.name} (copy)`
+              },
+              state
+            );
+            state = reducers.view({
+              action: 'CREATE_VIEWITEM',
+              payload: {
+                ...entry.viewItem,
+                id: newId,
+                tile: shift(entry.viewItem.tile)
+              },
+              ctx: { viewId: currentViewId, state: afterModel }
+            });
+            refs.push({ type: 'ITEM', id: newId });
+            break;
+          }
+          case 'TEXTBOX':
+            state = reducers.view({
+              action: 'CREATE_TEXTBOX',
+              payload: {
+                ...entry.textBox,
+                id: newId,
+                tile: shift(entry.textBox.tile)
+              },
+              ctx: { viewId: currentViewId, state }
+            });
+            refs.push({ type: 'TEXTBOX', id: newId });
+            break;
+          case 'RECTANGLE':
+            state = reducers.view({
+              action: 'CREATE_RECTANGLE',
+              payload: {
+                ...entry.rectangle,
+                id: newId,
+                from: shift(entry.rectangle.from),
+                to: shift(entry.rectangle.to)
+              },
+              ctx: { viewId: currentViewId, state }
+            });
+            refs.push({ type: 'RECTANGLE', id: newId });
+            break;
+          default:
+            break;
+        }
+      }
+      return { state, refs };
+    },
+    [getState, currentViewId]
+  );
+
+  const copySelection = useCallback(
+    (target: ItemReference | ItemReference[]) => {
+      const entries = entriesFor(Array.isArray(target) ? target : [target]);
       // Copying only connectors leaves the clipboard as it was.
       if (entries.length > 0) setClipboard(entries);
       return entries.length;
     },
-    [getState, currentView, setClipboard]
+    [entriesFor, setClipboard]
   );
 
   const paste = useCallback((): ItemReference[] | null => {
     if (clipboard.length === 0) return null;
-    let state = getState();
-    const pasted: ItemReference[] = [];
-    for (const entry of clipboard) {
-      const newId = generateId();
-      switch (entry.kind) {
-        case 'ITEM': {
-          const afterModel = reducers.createModelItem(
-            {
-              ...entry.modelItem,
-              id: newId,
-              name: `${entry.modelItem.name} (copy)`
-            },
-            state
-          );
-          state = reducers.view({
-            action: 'CREATE_VIEWITEM',
-            payload: {
-              ...entry.viewItem,
-              id: newId,
-              tile: {
-                x: entry.viewItem.tile.x + DUPLICATE_TILE_OFFSET.x,
-                y: entry.viewItem.tile.y + DUPLICATE_TILE_OFFSET.y
-              }
-            },
-            ctx: { viewId: currentViewId, state: afterModel }
-          });
-          pasted.push({ type: 'ITEM', id: newId });
-          break;
-        }
-        case 'TEXTBOX':
-          state = reducers.view({
-            action: 'CREATE_TEXTBOX',
-            payload: {
-              ...entry.textBox,
-              id: newId,
-              tile: {
-                x: entry.textBox.tile.x + DUPLICATE_TILE_OFFSET.x,
-                y: entry.textBox.tile.y + DUPLICATE_TILE_OFFSET.y
-              }
-            },
-            ctx: { viewId: currentViewId, state }
-          });
-          pasted.push({ type: 'TEXTBOX', id: newId });
-          break;
-        case 'RECTANGLE':
-          state = reducers.view({
-            action: 'CREATE_RECTANGLE',
-            payload: {
-              ...entry.rectangle,
-              id: newId,
-              from: {
-                x: entry.rectangle.from.x + DUPLICATE_TILE_OFFSET.x,
-                y: entry.rectangle.from.y + DUPLICATE_TILE_OFFSET.y
-              },
-              to: {
-                x: entry.rectangle.to.x + DUPLICATE_TILE_OFFSET.x,
-                y: entry.rectangle.to.y + DUPLICATE_TILE_OFFSET.y
-              }
-            },
-            ctx: { viewId: currentViewId, state }
-          });
-          pasted.push({ type: 'RECTANGLE', id: newId });
-          break;
-        default:
-          break;
-      }
-    }
+    const { state, refs } = createFrom(clipboard, DUPLICATE_TILE_OFFSET);
     setState(state);
-    return pasted;
-  }, [clipboard, getState, setState, currentViewId]);
+    return refs;
+  }, [clipboard, createFrom, setState]);
 
-  return { duplicateItem, copySelection, paste };
+  /**
+   * UXA-03: copy these items in place (connectors skipped) in one undo
+   * step and return the copies, for Alt+drag to move instead of the
+   * originals. Does not touch the clipboard.
+   */
+  const duplicateInPlace = useCallback(
+    (targets: ItemReference[]): ItemReference[] => {
+      const entries = entriesFor(targets);
+      if (entries.length === 0) return [];
+      const { state, refs } = createFrom(entries, { x: 0, y: 0 });
+      setState(state);
+      return refs;
+    },
+    [entriesFor, createFrom, setState]
+  );
+
+  return { duplicateItem, copySelection, paste, duplicateInPlace };
 };

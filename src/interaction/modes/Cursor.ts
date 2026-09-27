@@ -219,6 +219,28 @@ export const Cursor: ModeActions = {
         ? uiState.selection
         : [item];
 
+    // UXA-03: Alt+drag leaves the originals where they are and drags a
+    // copy, as in Excalidraw. The copies are made in place at the start of
+    // the drag (one undo step; connectors are not copied) and become the
+    // selection. Anchors are sub-parts and are never copied.
+    if (
+      modifiers.alt &&
+      item.type !== 'CONNECTOR_ANCHOR' &&
+      uiState.editorMode === 'EDITABLE'
+    ) {
+      const copies = scene.duplicateInPlace(dragging);
+      if (copies.length > 0) {
+        uiState.actions.setSelection(copies);
+        uiState.actions.setMode({
+          type: 'DRAG_ITEMS',
+          showCursor: true,
+          items: copies,
+          isInitialMovement: true
+        });
+        return;
+      }
+    }
+
     uiState.actions.setMode({
       type: 'DRAG_ITEMS',
       showCursor: true,

@@ -60,7 +60,13 @@ export const LayerOrderSection = ({ targets, note }: Props) => {
           return (
             // describeChild: the shortcut becomes the description, so the
             // accessible name stays the visible label ("Back"), not "Ctrl+[".
-            <Tooltip key={action} title={shortcut} describeChild>
+            // placement top: below, it covered the wrapped second row.
+            <Tooltip
+              key={action}
+              title={shortcut}
+              describeChild
+              placement="top"
+            >
               <Button
                 size="small"
                 variant="outlined"

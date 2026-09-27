@@ -30,7 +30,7 @@ const COMMIT_DEBOUNCE_MS = 250;
 // reasonable upper bound.
 const HISTORY_DEPTH = 100;
 
-interface HistoryStore {
+export interface HistoryStore {
   past: State[];
   future: State[];
   // The state captured at the START of the current burst, waiting

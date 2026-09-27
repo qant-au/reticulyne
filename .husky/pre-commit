@@ -1,0 +1,3 @@
+# QUA-12: ESLint (with Prettier) on the staged TypeScript files only, so
+# the hook stays around a second. Typecheck runs in CI and prepublishOnly.
+npx lint-staged

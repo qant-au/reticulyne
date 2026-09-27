@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { ModeActions, State, SlimMouseEvent } from 'src/types';
+import { ModeActions, State, SlimMouseEvent, Coords } from 'src/types';
 import { getMouse, getItemAtTile } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
@@ -15,6 +15,7 @@ import { Pan } from './modes/Pan';
 import { PlaceIcon } from './modes/PlaceIcon';
 import { TextBox } from './modes/TextBox';
 import { interpretWheelEvent } from './wheelInput';
+import { PinchStart, startPinch, updatePinch } from './touchInput';
 
 const modes: { [k in string]: ModeActions } = {
   CURSOR: Cursor,
@@ -82,9 +83,85 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
   }, [scene]);
   const { size: rendererSize } = useResizeObserver(rendererEl);
 
+  // ROADMAP 2.12: two touch pointers are a pinch, handled here and never
+  // passed to the mode handlers. The finger left down when a pinch ends is
+  // ignored until it lifts, so it cannot turn into a stray drag.
+  const touchRef = useRef<{
+    pointers: Map<number, Coords>;
+    pinch: PinchStart | null;
+    ignored: Set<number>;
+  }>({ pointers: new Map(), pinch: null, ignored: new Set() });
+
+  const interceptTouch = useCallback(
+    (e: PointerEvent): boolean => {
+      if (e.pointerType !== 'touch' || !rendererRef.current) return false;
+      const t = touchRef.current;
+      const rect = rendererRef.current.getBoundingClientRect();
+      const at = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      const live = uiStateRef.current;
+
+      if (e.type === 'pointerdown') {
+        t.pointers.set(e.pointerId, at);
+        if (t.pointers.size !== 2) return false;
+        const [a, b] = [...t.pointers.values()];
+        t.pinch = startPinch(
+          a,
+          b,
+          live.zoom,
+          live.scroll.position,
+          rendererSize
+        );
+        // The first finger may already have started a drag, a marquee or a
+        // tool action: abandon it and hand the gesture to the pinch.
+        uiStateActions.setMouse({ ...live.mouse, mousedown: null });
+        if (live.mode.type !== 'CURSOR' && live.mode.type !== 'PAN') {
+          uiStateActions.setMode({
+            type: 'CURSOR',
+            showCursor: true,
+            mousedownItem: null
+          });
+        } else if (live.mode.type === 'CURSOR') {
+          uiStateActions.setMode({ ...live.mode, mousedownItem: null });
+        }
+        return true;
+      }
+
+      if (e.type === 'pointermove') {
+        if (t.ignored.has(e.pointerId)) return true;
+        if (!t.pointers.has(e.pointerId)) return false;
+        t.pointers.set(e.pointerId, at);
+        if (!t.pinch) return false;
+        const [a, b] = [...t.pointers.values()];
+        const next = updatePinch(t.pinch, a, b, rendererSize);
+        uiStateActions.setZoom(next.zoom);
+        uiStateActions.setScroll({
+          position: next.scroll,
+          offset: live.scroll.offset
+        });
+        return true;
+      }
+
+      // pointerup / pointercancel
+      t.pointers.delete(e.pointerId);
+      if (t.ignored.delete(e.pointerId)) return true;
+      if (t.pinch) {
+        t.pinch = null;
+        t.pointers.forEach((_, id) => {
+          t.ignored.add(id);
+        });
+        return true;
+      }
+      return false;
+    },
+    [uiStateActions, rendererSize]
+  );
+
   const onMouseEvent = useCallback(
     (e: MouseEvent) => {
       if (!rendererRef.current) return;
+      // A property check, not instanceof: PointerEvent is not a global in
+      // every environment (jsdom).
+      if ('pointerType' in e && interceptTouch(e as PointerEvent)) return;
 
       const liveUiState = uiStateRef.current;
       const mode = modes[liveUiState.mode.type];
@@ -114,7 +191,8 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         // handlers only ever see `State`, never the event itself.
         modifiers: {
           shift: e.shiftKey,
-          ctrlOrMeta: e.ctrlKey || e.metaKey
+          ctrlOrMeta: e.ctrlKey || e.metaKey,
+          alt: e.altKey
         }
       };
 
@@ -135,7 +213,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       modeFunction(baseState);
       reducerTypeRef.current = liveUiState.mode.type;
     },
-    [uiStateActions, rendererSize]
+    [uiStateActions, rendererSize, interceptTouch]
   );
 
   // ROADMAP 2.2: double-click an empty tile to add an item there, or an

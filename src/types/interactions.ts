@@ -7,6 +7,8 @@ import { useScene } from 'src/hooks/useScene';
 export interface Modifiers {
   shift: boolean;
   ctrlOrMeta: boolean;
+  /** UXA-03: Alt+drag duplicates. */
+  alt: boolean;
 }
 
 export interface State {

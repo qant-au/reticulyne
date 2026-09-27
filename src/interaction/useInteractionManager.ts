@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { ModeActions, State, SlimMouseEvent, Coords } from 'src/types';
+import { ModeActions, State, SlimMouseEvent, Coords, Mouse } from 'src/types';
 import { getMouse, getItemAtTile } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
@@ -83,6 +83,14 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
   }, [scene]);
   const { size: rendererSize } = useResizeObserver(rendererEl);
 
+  // Worklist 29: the pointer as of the last event, kept in a ref that is
+  // written on every event. uiStateRef only refreshes after a render, so
+  // reading the pointer from it made every handler one event behind: a
+  // press straight after a jump was tested against where the pointer had
+  // been (the first click after an export missed its item), and pan lagged
+  // by one move. Deltas are computed from this ref for the same reason.
+  const lastMouseRef = useRef<Mouse | null>(null);
+
   // ROADMAP 2.12: two touch pointers are a pinch, handled here and never
   // passed to the mode handlers. The finger left down when a pinch ends is
   // ignored until it lifts, so it cannot turn into a stray drag.
@@ -113,7 +121,12 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         );
         // The first finger may already have started a drag, a marquee or a
         // tool action: abandon it and hand the gesture to the pinch.
-        uiStateActions.setMouse({ ...live.mouse, mousedown: null });
+        const released = {
+          ...(lastMouseRef.current ?? live.mouse),
+          mousedown: null
+        };
+        lastMouseRef.current = released;
+        uiStateActions.setMouse(released);
         if (live.mode.type !== 'CURSOR' && live.mode.type !== 'PAN') {
           uiStateActions.setMode({
             type: 'CURSOR',
@@ -173,17 +186,19 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         interactiveElement: rendererRef.current,
         zoom: liveUiState.zoom,
         scroll: liveUiState.scroll,
-        lastMouse: liveUiState.mouse,
+        lastMouse: lastMouseRef.current ?? liveUiState.mouse,
         mouseEvent: e,
         rendererSize
       });
 
+      lastMouseRef.current = nextMouse;
       uiStateActions.setMouse(nextMouse);
 
       const baseState: State = {
         model: modelRef.current,
         scene: sceneRef.current,
-        uiState: liveUiState,
+        // The pointer as of THIS event (see lastMouseRef).
+        uiState: { ...liveUiState, mouse: nextMouse },
         rendererRef: rendererRef.current,
         rendererSize,
         isRendererInteraction: rendererRef.current === e.target,

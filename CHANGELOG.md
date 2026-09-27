@@ -88,6 +88,10 @@ potentially breaking and read the release notes before upgrading.
 
 ### Fixed
 
+- The first click on an item after using the main menu (for example after
+  Export as JSON) could do nothing: the closing menu still covered the page.
+  And every pointer handler ran one event behind, so pan lagged the pointer
+  and a click straight after a jump was tested against the old position.
 - `docs/embedding.md` no longer recommends calling `setEditorMode('EDITABLE')`
   and `loadModel()` in the same tick; `loadModel` refuses that (DOC-03).
 

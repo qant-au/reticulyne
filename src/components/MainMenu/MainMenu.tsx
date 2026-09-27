@@ -237,8 +237,14 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
             uiStateActions.setIsMainMenuOpen(false);
           }}
           elevation={0}
+          // Worklist 29: while the menu plays its close transition its
+          // full-page modal root stays mounted and swallowed the next click
+          // (after an export the transition could stall until that click
+          // arrived, so the first click on an item did nothing). A closing
+          // menu now lets clicks through to the canvas.
           sx={{
-            mt: 2
+            mt: 2,
+            pointerEvents: isMainMenuOpen ? 'auto' : 'none'
           }}
           slotProps={{
             list: {

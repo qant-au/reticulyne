@@ -1,5 +1,51 @@
 version: 2
 updates:
+  # npm version updates. Security updates need no config (they are switched on
+  # in the repo settings); version updates do. Until DEP-12 this file covered
+  # only github-actions, so no npm PR was ever opened and 17 advisories built up
+  # between DEP-08 and DEP-11 with nothing raising them.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Australia/Perth
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: build(deps)
+      prefix-development: build(deps-dev)
+    ignore:
+      # Toolchain majors are taken deliberately as their own task (DEP-04),
+      # not by a bot. Minors and patches still flow.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react-dom
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Every @tiptap/* package pins an EXACT peer on @tiptap/core, so the
+      # family can only move as one unit (see SECURITY.md DEP-10). Listed
+      # first so it wins over the catch-all group below.
+      tiptap:
+        patterns: ["@tiptap/*"]
+      react:
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+      mui:
+        patterns: ["@mui/*", "@emotion/*"]
+      npm-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
   # Keep the SHA-pinned GitHub Actions (BLD-03) fresh. Dependabot updates
   # the pinned commit SHA in place and rewrites the trailing `# vX.Y.Z`
   # comment, so the workflows stay pinned-by-SHA while still tracking

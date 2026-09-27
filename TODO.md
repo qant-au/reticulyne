@@ -28,4 +28,6 @@ prefix: iso
   shipped: UXA-08, UXA-02/03 + 2.12, UXA-05. 1.7 grouping and 2.11 palette left for their own items. 57/57 e2e
 - [x] Worklist 29 + 28: post-menu click / pointer lag fix; ROADMAP 3.1 tooltip and 3.2 align/distribute @due(2026-09-28) @id(iso-011)
   114d0d9 (29), FEA14-10 (3.1), FEA14-11 (3.2); 3.3-3.6 deliberately not started, reasons in ROADMAP
+- [x] Worklist 21-24: ROADMAP 1.5/1.6 imperative API, 2.7 find, 2.8 mini-map, 2.9 guides, 2.11 icon library @due(2026-09-28) @id(iso-012)
+  shipped in 9a3daee, c0071f5, 6651a5c
 

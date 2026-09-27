@@ -7,9 +7,7 @@ import { readFile } from 'node:fs/promises';
  * Three rectangles, of which only `rA` covers the centre tile. Each test
  * does one ordering action on a fresh page and reads the result back from
  * Export as JSON (index 0 = frontmost), because that export is the
- * persisted truth. One action per page keeps every click ahead of the
- * export: right after an export the first click on an item does not
- * select it, a separate existing bug that is out of scope here.
+ * persisted truth. One action per page keeps each test independent.
  */
 type Mode = 'EDITABLE' | 'EXPLORABLE_READONLY';
 

@@ -56,13 +56,9 @@ test('UXA-02: holding Space pans; releasing returns to the cursor tool', async (
   await page.waitForTimeout(500);
 
   const after = (await label(page).boundingBox())!;
-  // A 120 x 60 drag in 8 steps pans about 105 x 52: pan mode lags the
-  // pointer by one event, exactly as the Hand tool (H) does. Space+drag
-  // is that same mode, so the assertion is the direction and rough size.
-  expect(after.x - before.x).toBeGreaterThan(90);
-  expect(after.x - before.x).toBeLessThanOrEqual(121);
-  expect(after.y - before.y).toBeGreaterThan(45);
-  expect(after.y - before.y).toBeLessThanOrEqual(61);
+  // Exact since worklist 29: pan no longer lags the pointer by an event.
+  expect(after.x - before.x).toBeCloseTo(120, 0);
+  expect(after.y - before.y).toBeCloseTo(60, 0);
 
   // Back in the cursor tool: clicking the node selects it.
   await page.mouse.click(c.x + 120, c.y + 60);

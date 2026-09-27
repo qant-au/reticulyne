@@ -23,7 +23,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       dialog: null,
       rendererEl: null,
       contextMenu: null,
-      clipboard: null,
+      clipboard: [],
       mouse: {
         position: { screen: CoordsUtils.zero(), tile: CoordsUtils.zero() },
         mousedown: null,
@@ -103,8 +103,8 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         // because the clipboard is host-session state — copied
         // selections survive across model loads / undo / redo but
         // not across page refreshes, and they're never persisted.
-        setClipboard: (entry) => {
-          set({ clipboard: entry });
+        setClipboard: (entries) => {
+          set({ clipboard: entries });
         },
         panScroll: (delta) => {
           const { scroll } = get();

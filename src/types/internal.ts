@@ -285,7 +285,8 @@ export interface UiState {
   enableAnimation: boolean;
   exportTheme: 'light' | 'dark';
   showTitleBar: boolean | undefined;
-  clipboard: ClipboardEntry | null;
+  // Worklist 19: a list, so a multi-selection copies as one.
+  clipboard: ClipboardEntry[];
   // Host-supplied save callback (FEA5-03). The MainMenu's
   // 'ACTION.SAVE' entry renders only when this is defined, and the
   // click handler hands the current model snapshot back to the host
@@ -329,7 +330,7 @@ export interface UiStateActions {
   setZoom: (zoom: number) => void;
   setScroll: (scroll: Scroll) => void;
   panScroll: (delta: Coords) => void;
-  setClipboard: (entry: ClipboardEntry | null) => void;
+  setClipboard: (entries: ClipboardEntry[]) => void;
   setItemControls: (itemControls: ItemControls | null) => void;
   // 1.4 selection actions. All three keep `itemControls` in step.
   setSelection: (selection: Selection) => void;

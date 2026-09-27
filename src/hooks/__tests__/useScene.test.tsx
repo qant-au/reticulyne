@@ -671,7 +671,7 @@ describe('useScene', () => {
       });
       let pastedRef: { type: string; id: string } | null = null;
       act(() => {
-        pastedRef = slot.current.scene.paste();
+        pastedRef = slot.current.scene.paste()?.[0] ?? null;
       });
 
       expect(pastedRef).not.toBeNull();
@@ -698,10 +698,10 @@ describe('useScene', () => {
       let firstRef: { type: string; id: string } | null = null;
       let secondRef: { type: string; id: string } | null = null;
       act(() => {
-        firstRef = slot.current.scene.paste();
+        firstRef = slot.current.scene.paste()?.[0] ?? null;
       });
       act(() => {
-        secondRef = slot.current.scene.paste();
+        secondRef = slot.current.scene.paste()?.[0] ?? null;
       });
 
       expect(firstRef!.id).not.toBe(secondRef!.id);
@@ -709,12 +709,78 @@ describe('useScene', () => {
       expect(secondRef!.id).not.toBe(sourceId);
     });
 
+    test('worklist 19: a multi-item copy pastes as one group, one undo step', () => {
+      const slot = setup();
+      const [a, b] = slot.current.scene.items;
+      const initialCount = slot.current.scene.items.length;
+
+      act(() => {
+        slot.current.scene.copySelection([
+          { type: 'ITEM', id: a.id },
+          { type: 'ITEM', id: b.id },
+          // Connectors are not copyable and are skipped, not an error.
+          { type: 'CONNECTOR', id: 'connector1' }
+        ]);
+      });
+      let refs: { type: string; id: string }[] | null = null;
+      act(() => {
+        refs = slot.current.scene.paste();
+      });
+
+      expect(refs).toHaveLength(2);
+      expect(slot.current.scene.items).toHaveLength(initialCount + 2);
+      const [pa, pb] = refs!.map((r) => {
+        return slot.current.scene.items.find((i) => {
+          return i.id === r.id;
+        })!;
+      });
+      // Same internal spacing as the originals.
+      expect(pb.tile.x - pa.tile.x).toBe(b.tile.x - a.tile.x);
+      expect(pb.tile.y - pa.tile.y).toBe(b.tile.y - a.tile.y);
+
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect(slot.current.scene.items).toHaveLength(initialCount);
+    });
+
+    test('worklist 19: setColour recolours connectors and rectangles in one undo step', () => {
+      const slot = setup();
+      const connector = slot.current.scene.connectors[0];
+      const rectangle = slot.current.scene.rectangles[0];
+      const target = slot.current.scene.colors.find((c) => {
+        return c.id !== connector.color;
+      })!;
+      const before = [connector.color, rectangle.color];
+
+      act(() => {
+        slot.current.scene.setColour(
+          [
+            { type: 'CONNECTOR', id: connector.id },
+            { type: 'RECTANGLE', id: rectangle.id },
+            { type: 'ITEM', id: slot.current.scene.items[0].id }
+          ],
+          target.id
+        );
+      });
+      expect(slot.current.scene.connectors[0].color).toBe(target.id);
+      expect(slot.current.scene.rectangles[0].color).toBe(target.id);
+
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect([
+        slot.current.scene.connectors[0].color,
+        slot.current.scene.rectangles[0].color
+      ]).toEqual(before);
+    });
+
     test('paste with empty clipboard returns null and mutates nothing', () => {
       const slot = setup();
       const initialCount = slot.current.scene.items.length;
       let ref: { type: string; id: string } | null = { type: '', id: '' };
       act(() => {
-        ref = slot.current.scene.paste();
+        ref = slot.current.scene.paste()?.[0] ?? null;
       });
       expect(ref).toBeNull();
       expect(slot.current.scene.items).toHaveLength(initialCount);
@@ -758,7 +824,7 @@ describe('useScene', () => {
       });
       let pastedRef: { type: string; id: string } | null = null;
       act(() => {
-        pastedRef = slot.current.scene.paste();
+        pastedRef = slot.current.scene.paste()?.[0] ?? null;
       });
 
       expect(pastedRef!.type).toBe('RECTANGLE');
@@ -790,7 +856,7 @@ describe('useScene', () => {
       // Subsequent paste should return null (nothing in clipboard).
       let ref: { type: string; id: string } | null = { type: '', id: '' };
       act(() => {
-        ref = slot.current.scene.paste();
+        ref = slot.current.scene.paste()?.[0] ?? null;
       });
       expect(ref).toBeNull();
     });

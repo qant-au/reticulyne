@@ -435,39 +435,37 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
       }
 
       // === Copy / cut / paste (Ctrl/Cmd+C / X / V) (FEA5-04, UXA-04) ===
-      // Copy silently no-ops if nothing is selected; paste no-ops if
-      // the clipboard is empty. preventDefault is essential — the
-      // browser's native Ctrl+C would otherwise copy the surrounding
-      // page text into the OS clipboard, which is not what the user
-      // wants while editing the canvas.
+      // Copy silently no-ops if nothing copyable is selected; paste no-ops
+      // if the clipboard is empty. preventDefault is essential - the
+      // browser's native Ctrl+C would otherwise copy the surrounding page
+      // text into the OS clipboard.
       //
-      // These three stay SINGLE-item even with a multi-selection: the
-      // clipboard slice holds one ClipboardEntry by construction
-      // (FEA5-04), so they act on the inspector target — the last item
-      // added to the selection. Widening the clipboard to a list is its
-      // own piece of work, tracked separately; silently copying only one
-      // of five selected items with no signal would be worse, so the `?`
-      // dialog labels these as acting on the active item.
+      // Worklist 19: all three act on the whole selection. Connectors are
+      // not copyable (their anchors point at other items), so a cut
+      // removes only what it copied and leaves selected connectors alone.
+      // A paste selects everything it created.
       if (hasModifier && (e.key === 'x' || e.key === 'X')) {
-        if (selected) {
-          copySelection(selected);
+        const copyable = selection.filter((item) => {
+          return item.type !== 'CONNECTOR' && item.type !== 'CONNECTOR_ANCHOR';
+        });
+        if (copyable.length > 0) {
+          copySelection(copyable);
           uiStateActions.clearSelection();
-          deleteSelected(selected);
+          copyable.forEach(deleteSelected);
           e.preventDefault();
         }
         return;
       }
       if (hasModifier && (e.key === 'c' || e.key === 'C')) {
-        if (selected) {
-          copySelection(selected);
+        if (selection.length > 0 && copySelection(selection) > 0) {
           e.preventDefault();
         }
         return;
       }
       if (hasModifier && (e.key === 'v' || e.key === 'V')) {
         const pasted = paste();
-        if (pasted) {
-          uiStateActions.setItemControls(pasted);
+        if (pasted && pasted.length > 0) {
+          uiStateActions.setSelection(pasted);
           e.preventDefault();
         }
         return;

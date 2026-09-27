@@ -9,3 +9,4 @@ export * from './ui';
 export * from './internal';
 export * from './interactions';
 export * from './reticulyneProps';
+export * from './imperative';

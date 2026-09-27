@@ -6,18 +6,30 @@ import { createReticulyneTheme } from 'src/styles/theme';
 import { useResolvedThemeMode } from 'src/hooks/useResolvedThemeMode';
 import { ThemeToggleContext } from 'src/hooks/useThemeToggle';
 import type {
+  ApplyPatchOptions,
   Connector as ConnectorType,
+  DiagramPatch,
   InitialData,
+  NodeInfo,
+  NodePatch,
   ReticulyneProps,
   Model,
-  ModelStore
+  ModelStore,
+  SelectedRef,
+  Viewport
 } from 'src/types';
-import { setWindowCursor, modelFromModelStore } from 'src/utils';
+import {
+  setWindowCursor,
+  modelFromModelStore,
+  getFitToViewParams,
+  getTilePosition,
+  CoordsUtils
+} from 'src/utils';
 import { useModelStore, ModelProvider } from 'src/stores/modelStore';
 import { SceneProvider, useSceneStore } from 'src/stores/sceneStore';
 import { useHistoryStore } from 'src/stores/historyStore';
 import * as reducers from 'src/stores/reducers';
-import { CONNECTOR_DEFAULTS } from 'src/config';
+import { CONNECTOR_DEFAULTS, MIN_ZOOM, MAX_ZOOM } from 'src/config';
 import { HistoryProvider } from 'src/stores/historyStore';
 import { GlobalStyles } from 'src/styles/GlobalStyles';
 import { Renderer } from 'src/components/Renderer/Renderer';
@@ -27,6 +39,12 @@ import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { useSaveController } from 'src/hooks/useSaveController';
 import { useView } from 'src/hooks/useView';
+import { useHostEvents } from 'src/hooks/useHostEvents';
+import {
+  isGestureActive,
+  usePatchApplier,
+  usePatchQueueFlush
+} from 'src/hooks/usePatchApplier';
 import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
@@ -47,6 +65,10 @@ const App = ({
   showTitleBar,
   showAlignmentGuides = true,
   showMiniMap,
+  onNodeClick,
+  onConnectorClick,
+  onSelectionChange,
+  onViewportChange,
   iconCollections,
   onSave,
   autoSaveDebounce = false,
@@ -114,6 +136,16 @@ const App = ({
   useEffect(() => {
     uiStateActions.setShowMiniMap(showMiniMap);
   }, [showMiniMap, uiStateActions]);
+
+  // 1.6: host events. The click handlers live on the store, where the
+  // interaction manager reads them at click time.
+  useEffect(() => {
+    uiStateActions.setClickHandlers({ onNodeClick, onConnectorClick });
+  }, [onNodeClick, onConnectorClick, uiStateActions]);
+  useHostEvents({ onSelectionChange, onViewportChange });
+
+  // 1.5: patches held back by a drag or a draw land when it ends.
+  usePatchQueueFlush();
 
   // Stash the host's onSave callback on the UI-state store so the
   // MainMenu's "Save" entry (FEA5-03) can read it without prop-
@@ -263,6 +295,10 @@ export const Reticulyne = (props: ReticulyneProps) => {
   );
 };
 
+const clampZoom = (zoom: number) => {
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
+};
+
 const useReticulyne = () => {
   const rendererEl = useUiStateStore((state) => {
     return state.rendererEl;
@@ -359,9 +395,9 @@ const useReticulyne = () => {
     };
   }, [ModelActions]);
 
-  // Documented imperative methods. Prefer these in consumer code; the
-  // `Model` and `uiState` escape hatches below stay available for the
-  // small number of cases that need direct zustand access.
+  // `Model` above is internal (setTitle writes through it). It was also
+  // returned as an escape hatch, with `uiState`, until 1.6 replaced both
+  // with the typed methods below.
   const getModel = useCallback((): Model => {
     return modelFromModelStore(ModelActions.get());
   }, [ModelActions]);
@@ -420,9 +456,169 @@ const useReticulyne = () => {
   );
 
   const setEditorMode = uiStateActions.setEditorMode;
-  const setZoom = uiStateActions.setZoom;
+  const setZoom = useCallback(
+    (zoom: number): void => {
+      uiStateActions.setZoom(clampZoom(zoom));
+    },
+    [uiStateActions]
+  );
   const incrementZoom = uiStateActions.incrementZoom;
   const decrementZoom = uiStateActions.decrementZoom;
+
+  // 1.5: live updates. Validated up front, so a bad patch is reported when
+  // the host sends it rather than whenever a queued gesture ends. Refused
+  // only in NON_INTERACTIVE, as Connector.update is: a read-only dashboard
+  // is exactly where live data belongs.
+  const applyPatchNow = usePatchApplier();
+  const applyPatch = useCallback(
+    (patch: DiagramPatch, options: ApplyPatchOptions = {}): void => {
+      if (editorModeRef.current === 'NON_INTERACTIVE') {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `[reticulyne] Refusing applyPatch in editorMode="${editorModeRef.current}".`
+          );
+        }
+        return;
+      }
+      const parsed = reducers.diagramPatchSchema.safeParse(patch);
+      if (!parsed.success) {
+        const cb = onValidationErrorRef.current;
+        if (cb) {
+          cb(parsed.error.issues);
+        } else {
+          console.error(
+            '[reticulyne] applyPatch rejected — patch failed schema validation:',
+            parsed.error.issues
+          );
+        }
+        return;
+      }
+      if (isGestureActive(uiStateActions.get())) {
+        uiStateActions.enqueuePatch({ patch: parsed.data, options });
+        return;
+      }
+      applyPatchNow(parsed.data, options);
+    },
+    [applyPatchNow, uiStateActions]
+  );
+  const updateNode = useCallback(
+    (id: string, patch: NodePatch, options?: ApplyPatchOptions): void => {
+      applyPatch({ items: { [id]: patch } }, options);
+    },
+    [applyPatch]
+  );
+  const setConnectorRate = useCallback(
+    (id: string, rate: number, options?: ApplyPatchOptions): void => {
+      applyPatch({ connectors: { [id]: { animationRate: rate } } }, options);
+    },
+    [applyPatch]
+  );
+
+  // 1.6: reads. Each returns a fresh object, never a store reference.
+  const currentView = useCallback(() => {
+    const viewId = uiStateActions.get().view;
+    return ModelActions.get().views.find((v) => {
+      return v.id === viewId;
+    });
+  }, [ModelActions, uiStateActions]);
+  const getNode = useCallback(
+    (id: string): NodeInfo | undefined => {
+      const item = ModelActions.get().items.find((i) => {
+        return i.id === id;
+      });
+      if (!item) return undefined;
+      const placed = currentView()?.items.find((i) => {
+        return i.id === id;
+      });
+      return {
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        icon: item.icon,
+        tile: placed ? { x: placed.tile.x, y: placed.tile.y } : null
+      };
+    },
+    [ModelActions, currentView]
+  );
+  const getViewport = useCallback((): Viewport => {
+    const { zoom, scroll, view } = uiStateActions.get();
+    return {
+      zoom,
+      scroll: { x: scroll.position.x, y: scroll.position.y },
+      viewId: view
+    };
+  }, [uiStateActions]);
+  const getSelection = useCallback((): SelectedRef[] => {
+    return uiStateActions.get().selection.map((ref) => {
+      return { type: ref.type as SelectedRef['type'], id: ref.id };
+    });
+  }, [uiStateActions]);
+
+  // 1.6: view. Navigation, so allowed in every editor mode, like setView.
+  const focusNode = useCallback(
+    (id: string, options: { zoom?: number } = {}): void => {
+      const placed = currentView()?.items.find((i) => {
+        return i.id === id;
+      });
+      if (!placed) {
+        console.warn(`[reticulyne] focusNode: "${id}" is not on this view.`);
+        return;
+      }
+      const live = uiStateActions.get();
+      const zoom =
+        options.zoom === undefined ? live.zoom : clampZoom(options.zoom);
+      const p = getTilePosition({ tile: placed.tile });
+      uiStateActions.setZoom(zoom);
+      uiStateActions.setScroll({
+        position: { x: -p.x * zoom, y: -p.y * zoom },
+        offset: live.scroll.offset
+      });
+    },
+    [currentView, uiStateActions]
+  );
+  const fitToView = useCallback((): void => {
+    const view = currentView();
+    const el = uiStateActions.get().rendererEl;
+    if (!view || !el) return;
+    const { width, height } = el.getBoundingClientRect();
+    const { zoom, scroll } = getFitToViewParams(view, { width, height });
+    uiStateActions.setScroll({ position: scroll, offset: CoordsUtils.zero() });
+    uiStateActions.setZoom(zoom);
+  }, [currentView, uiStateActions]);
+
+  // 1.6: selection. Only an editable diagram shows one, so select() is
+  // EDITABLE only; ids not on the current view are skipped.
+  const select = useCallback(
+    (ids: string | string[]): void => {
+      if (editorModeRef.current !== 'EDITABLE') {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `[reticulyne] Refusing select in editorMode="${editorModeRef.current}".`
+          );
+        }
+        return;
+      }
+      const view = currentView();
+      if (!view) return;
+      const kinds: [SelectedRef['type'], { id: string }[] | undefined][] = [
+        ['ITEM', view.items],
+        ['CONNECTOR', view.connectors],
+        ['RECTANGLE', view.rectangles],
+        ['TEXTBOX', view.textBoxes]
+      ];
+      const refs = (Array.isArray(ids) ? ids : [ids]).flatMap((id) => {
+        const kind = kinds.find(([, list]) => {
+          return (list ?? []).some((x) => {
+            return x.id === id;
+          });
+        });
+        return kind ? [{ type: kind[0], id }] : [];
+      });
+      uiStateActions.setSelection(refs);
+    },
+    [currentView, uiStateActions]
+  );
+  const clearSelection = uiStateActions.clearSelection;
 
   // FEA5-07: imperative Connector namespace — gives a live-data host
   // (poller, websocket, simulation) direct control over connector
@@ -619,16 +815,54 @@ const useReticulyne = () => {
      * live-data hosts. See each member for gating and history semantics.
      */
     Connector,
+
+    // --- 1.5 / 1.6: live updates ---
     /**
-     * @deprecated Escape hatch — direct zustand model store access.
-     * Prefer the typed accessors above; will be removed before v1.0.
+     * Apply a set of changes by id: node names, descriptions, icons and
+     * positions; connector, rectangle and text-box styling. Never touches
+     * the selection, zoom or pan. Ids that no longer exist are skipped.
+     * During a drag, a marquee or a connector or rectangle being drawn, the
+     * patch waits and lands when the gesture ends. Validated first: a bad
+     * patch goes to `onValidationError` and nothing changes. Not on the
+     * undo stack unless `{ pushToUndo: true }`. Refused (warns in dev) in
+     * `NON_INTERACTIVE`.
      */
-    Model,
+    applyPatch,
+    /** `applyPatch` for one node: `updateNode(id, { name: 'db-2' })`. */
+    updateNode,
     /**
-     * @deprecated Escape hatch — direct UI-state actions access.
-     * Prefer the typed accessors above; will be removed before v1.0.
+     * Set a connector's animation rate, 0 (stopped) to 1 (full speed).
+     * Shorthand for `applyPatch({ connectors: { [id]: { animationRate } } })`;
+     * animation shows only with the `enableAnimation` prop.
      */
-    uiState: uiStateActions
+    setConnectorRate,
+
+    // --- 1.6: reads (fresh copies, never live references) ---
+    /** A node, or `undefined`; `tile` is null when it is not on this view. */
+    getNode,
+    /** Zoom, pan offset and current view id. */
+    getViewport,
+    /** What is selected, oldest first. */
+    getSelection,
+
+    // --- 1.6: view (allowed in every editor mode) ---
+    /**
+     * Centre the view on a node, optionally at a new zoom (clamped).
+     * Warns and does nothing if the node is not on the current view.
+     */
+    focusNode,
+    /** Zoom and pan so the whole current view fits the editor. */
+    fitToView,
+
+    // --- 1.6: selection ---
+    /**
+     * Select these ids (nodes, connectors, rectangles or text boxes on the
+     * current view), replacing the selection. Unknown ids are skipped.
+     * EDITABLE only.
+     */
+    select,
+    /** Clear the selection. */
+    clearSelection
   };
 };
 

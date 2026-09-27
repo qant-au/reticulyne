@@ -3,6 +3,7 @@ import type { ZodIssue } from 'zod';
 import type { EditorModeEnum, MainMenuOptions } from './common';
 import type { Connector, Model, ModelItem, View, ViewItem } from './model';
 import type { RendererProps } from './rendererProps';
+import type { SelectedRef, Viewport } from './imperative';
 
 export type NodeIndicatorComponent = (props: {
   item: ModelItem;
@@ -65,6 +66,25 @@ export interface ReticulyneProps {
    * hidden otherwise; pass `true` or `false` to force it.
    */
   showMiniMap?: boolean;
+  /**
+   * 1.6: a node was clicked (pressed and released without dragging). Fires
+   * in `EDITABLE` and `EXPLORABLE_READONLY`, whether or not the click also
+   * changed the selection.
+   */
+  onNodeClick?: (id: string) => void;
+  /** 1.6: as `onNodeClick`, for a connector. */
+  onConnectorClick?: (id: string) => void;
+  /**
+   * 1.6: the selection changed, from any source (click, marquee, keyboard,
+   * `select()`). Receives a fresh copy; not called on mount.
+   */
+  onSelectionChange?: (selection: SelectedRef[]) => void;
+  /**
+   * 1.6: zoom, pan or the current view changed. Fires on every step of a
+   * pan or pinch, so throttle in the host if the handler is expensive.
+   * Not called on mount.
+   */
+  onViewportChange?: (viewport: Viewport) => void;
   /**
    * Optional callback fired when `initialData` (or a fresh
    * `loadModel()` payload from `useReticulyne`) fails schema validation.

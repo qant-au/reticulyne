@@ -256,7 +256,13 @@ even though there is only one user today.
 
 ---
 
-### 1.5 Diff-based external updates that preserve UI state
+### ~~1.5 Diff-based external updates that preserve UI state~~
+
+_Shipped 2026-09-28 as `useReticulyne().applyPatch`, with 1.6. One entry point instead
+of per-reducer `recordHistory` flags: the patch runs through the same reducers as the UI
+and bypasses history unless `pushToUndo`. It is refused only in NON_INTERACTIVE (as
+`Connector.update` is), so read-only dashboards take live data. The CSS colour
+transition was not done._
 
 **What it does.** Host data refreshes every 5 seconds. The diagram updates node
 colours, status badges, and connector flow rates without losing the user's
@@ -291,7 +297,13 @@ remote-user mutations.
 
 ---
 
-### 1.6 Stable, documented imperative API
+### ~~1.6 Stable, documented imperative API~~
+
+_Shipped 2026-09-28. Reads, view, selection and write methods as sketched, plus the four
+events; the Model / uiState escape hatches are removed (breaking, in the CHANGELOG).
+`onChange` is the existing `onModelUpdated`. No `setNodeStatus`: nodes have no status
+field, and status is drawn by the host through `nodeIndicatorComponent`, so a model field
+would duplicate it. No forwardRef mirror; nothing asked for one._
 
 **What it does (embedder view).** The host gets a typed surface for driving the
 diagram from outside:

@@ -48,8 +48,14 @@ declare global {
         delayMs?: number;
         fail?: boolean;
       };
+      /**
+       * 1.6: record the host click events on
+       * window.__RETICULYNE_E2E_EVENTS__ as [name, id] pairs.
+       */
+      recordEvents?: boolean;
     };
     __RETICULYNE_E2E_SAVES__?: unknown[];
+    __RETICULYNE_E2E_EVENTS__?: [string, string][];
   }
 }
 
@@ -79,6 +85,21 @@ const saveProps = saveConfig
           }, saveConfig.delayMs ?? 0);
         });
       }
+    }
+  : {};
+
+const record = (name: string) => {
+  return (id: string) => {
+    window.__RETICULYNE_E2E_EVENTS__ = [
+      ...(window.__RETICULYNE_E2E_EVENTS__ ?? []),
+      [name, id]
+    ];
+  };
+};
+const eventProps = e2eConfig?.recordEvents
+  ? {
+      onNodeClick: record('node'),
+      onConnectorClick: record('connector')
     }
   : {};
 
@@ -113,6 +134,7 @@ const Shell = scrollParent ? (
           editorMode={editorMode}
           enableAnimation={enableAnimation}
           {...saveProps}
+          {...eventProps}
         />
       </Box>
     </Box>
@@ -124,6 +146,7 @@ const Shell = scrollParent ? (
       editorMode={editorMode}
       enableAnimation={enableAnimation}
       {...saveProps}
+      {...eventProps}
     />
   </Box>
 );

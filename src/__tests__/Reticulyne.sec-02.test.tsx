@@ -12,17 +12,20 @@ import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { HistoryProvider } from 'src/stores/historyStore';
 import { useReticulyne } from '../Reticulyne';
 
-// SEC-02: useReticulyne().Model.set now merge-then-validates its payload
-// against initialDataSchema and routes failures to onValidationError,
-// rather than mutating the store unconditionally in EDITABLE mode.
+// SEC-02: host writes are validated before they reach the store, and
+// failures go to onValidationError rather than mutating it. The public
+// write paths since 1.6 are setTitle (merge-then-validate against
+// initialDataSchema) and applyPatch (validated against the patch schema).
 
 afterEach(() => {
   cleanup();
 });
 
+type Api = ReturnType<typeof useReticulyne>;
 type Captured = {
-  set: ReturnType<typeof useReticulyne>['Model']['set'];
-  get: ReturnType<typeof useReticulyne>['Model']['get'];
+  setTitle: Api['setTitle'];
+  applyPatch: Api['applyPatch'];
+  get: Api['getModel'];
 };
 
 const HookProbe = ({
@@ -35,7 +38,7 @@ const HookProbe = ({
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const { Model } = useReticulyne();
+  const { setTitle, applyPatch, getModel } = useReticulyne();
 
   useEffect(() => {
     uiStateActions.setEditorMode('EDITABLE');
@@ -43,8 +46,8 @@ const HookProbe = ({
   }, [uiStateActions, onValidationError]);
 
   useEffect(() => {
-    onReady({ set: Model.set, get: Model.get });
-  }, [Model, onReady]);
+    onReady({ setTitle, applyPatch, get: getModel });
+  }, [setTitle, applyPatch, getModel, onReady]);
 
   return null;
 };
@@ -76,66 +79,61 @@ const renderHarness = (onValidationError: (issues: ZodIssue[]) => void) => {
   };
 };
 
-describe('SEC-02 Model.set merge-then-validate', () => {
-  test('applies a valid partial', () => {
+describe('SEC-02 host writes are validated', () => {
+  test('applies a valid title', () => {
     const onValidationError = jest.fn();
     const get = renderHarness(onValidationError);
 
     act(() => {
-      get().set({ title: 'edited' });
+      get().setTitle('edited');
     });
 
     expect(get().get().title).toBe('edited');
     expect(onValidationError).not.toHaveBeenCalled();
   });
 
-  test('rejects a partial carrying a disallowed icon url (SEC-01 gate)', () => {
+  test('rejects a title over the schema limit', () => {
+    const onValidationError = jest.fn();
+    const get = renderHarness(onValidationError);
+    const before = get().get().title;
+
+    act(() => {
+      get().setTitle('x'.repeat(101));
+    });
+
+    expect(onValidationError).toHaveBeenCalledTimes(1);
+    expect(get().get().title).toBe(before);
+  });
+
+  test('rejects a patch with an out-of-enum connector direction', () => {
     const onValidationError = jest.fn();
     const get = renderHarness(onValidationError);
     const before = get().get();
 
     act(() => {
-      get().set({
-        icons: [{ id: 'i1', name: 'Bad', url: 'javascript:alert(1)' }]
+      get().applyPatch({
+        // not in connectorDirectionOptions
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        connectors: { c1: { direction: 'SIDEWAYS' as any } }
       });
     });
 
     expect(onValidationError).toHaveBeenCalledTimes(1);
-    expect(get().get().icons).toEqual(before.icons);
+    expect(get().get()).toEqual(before);
   });
 
-  test('rejects a partial with an out-of-enum connector direction', () => {
+  test('rejects a patch that tries to re-anchor a connector', () => {
     const onValidationError = jest.fn();
     const get = renderHarness(onValidationError);
-    const before = get().get();
 
     act(() => {
-      get().set({
-        items: [],
-        views: [
-          {
-            id: 'v1',
-            name: 'V',
-            items: [],
-            connectors: [
-              {
-                id: 'c1',
-                // not in connectorDirectionOptions
-                direction: 'SIDEWAYS',
-                anchors: [
-                  { id: 'a1', ref: { tile: { x: 0, y: 0 } } },
-                  { id: 'a2', ref: { tile: { x: 1, y: 0 } } }
-                ]
-              }
-            ]
-          }
-        ]
+      get().applyPatch({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any);
+        connectors: { c1: { anchors: [] } as any }
+      });
     });
 
     expect(onValidationError).toHaveBeenCalledTimes(1);
-    expect(get().get().views).toEqual(before.views);
   });
 
   test('falls back to console.error when no onValidationError is supplied', () => {
@@ -146,9 +144,7 @@ describe('SEC-02 Model.set merge-then-validate', () => {
     const get = renderHarness(undefined as unknown as () => void);
 
     act(() => {
-      get().set({
-        icons: [{ id: 'i1', name: 'Bad', url: 'javascript:alert(1)' }]
-      });
+      get().setTitle('x'.repeat(101));
     });
 
     expect(errorSpy).toHaveBeenCalledWith(

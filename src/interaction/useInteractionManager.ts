@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { ModeActions, State, SlimMouseEvent, Coords, Mouse } from 'src/types';
+import {
+  ModeActions,
+  State,
+  SlimMouseEvent,
+  Coords,
+  Mouse,
+  ItemReference
+} from 'src/types';
 import { getMouse, getItemAtTile } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
@@ -29,6 +36,10 @@ const modes: { [k in string]: ModeActions } = {
   PLACE_ICON: PlaceIcon,
   TEXTBOX: TextBox
 };
+
+// 1.6: how far the pointer may travel between press and release and still
+// count as a click rather than the end of a drag or a pan.
+const CLICK_SLOP_PX = 5;
 
 const getModeFunction = (mode: ModeActions, e: SlimMouseEvent) => {
   switch (e.type) {
@@ -90,6 +101,9 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
   // been (the first click after an export missed its item), and pan lagged
   // by one move. Deltas are computed from this ref for the same reason.
   const lastMouseRef = useRef<Mouse | null>(null);
+  const clickRef = useRef<{ at: Coords; item: ItemReference | null } | null>(
+    null
+  );
 
   // ROADMAP 2.12: two touch pointers are a pinch, handled here and never
   // passed to the mode handlers. The finger left down when a pinch ends is
@@ -227,6 +241,35 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
 
       modeFunction(baseState);
       reducerTypeRef.current = liveUiState.mode.type;
+
+      // 1.6: onNodeClick / onConnectorClick. A click is a press and release
+      // on the same spot with the select or pan tool, so the end of a drag
+      // or a pan is not one. Fired after the mode handler, so a host that
+      // reads the selection in its callback sees the click's result.
+      if (e.type === 'pointerdown') {
+        const tool = liveUiState.mode.type;
+        clickRef.current =
+          (tool === 'CURSOR' || tool === 'PAN') &&
+          baseState.isRendererInteraction &&
+          e.button === 0
+            ? {
+                at: nextMouse.position.screen,
+                item: getItemAtTile({
+                  tile: nextMouse.position.tile,
+                  scene: sceneRef.current
+                })
+              }
+            : null;
+      } else if (e.type === 'pointerup' && clickRef.current) {
+        const { at, item } = clickRef.current;
+        clickRef.current = null;
+        const end = nextMouse.position.screen;
+        if (item && Math.hypot(end.x - at.x, end.y - at.y) < CLICK_SLOP_PX) {
+          const live = uiStateRef.current;
+          if (item.type === 'ITEM') live.onNodeClick?.(item.id);
+          if (item.type === 'CONNECTOR') live.onConnectorClick?.(item.id);
+        }
+      }
     },
     [uiStateActions, rendererSize, interceptTouch]
   );

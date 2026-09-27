@@ -6,6 +6,7 @@ export { INITIAL_DATA, INITIAL_SCENE_STATE } from 'src/config';
 export * from 'src/schemas';
 export type { ReticulyneProps, InitialData } from 'src/types';
 export type * from 'src/types/model';
+export type * from 'src/types/imperative';
 
 // FEA-05: the const option-maps behind the string-union props, as
 // runtime values, so a host can write `EditorModeEnum.EDITABLE` rather

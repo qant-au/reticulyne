@@ -24,6 +24,7 @@ import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { ToolbarSlots } from './ToolbarSlots';
 import { TitleBar } from './TitleBar';
 import { DebugPanel } from './DebugPanel';
+import { HoverTooltip } from './HoverTooltip';
 import { DialogLayer } from './DialogLayer';
 
 export const UiOverlay = () => {
@@ -109,6 +110,7 @@ export const UiOverlay = () => {
           spacing={spacing}
           rendererSize={rendererSize}
         />
+        <HoverTooltip />
       </Box>
       <DialogLayer
         mode={mode}

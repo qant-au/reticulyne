@@ -26,4 +26,6 @@ prefix: iso
   shipped in FEA14-07 (clipboard) + FEA14-08 (bulk colour); duplicate stays single-item. 518 unit, 52/52 e2e
 - [x] Excalidraw parity remainder (UXA-02, -03, -05, -08) and ROADMAP 2.12 pinch to zoom @due(2026-09-28) @id(iso-010)
   shipped: UXA-08, UXA-02/03 + 2.12, UXA-05. 1.7 grouping and 2.11 palette left for their own items. 57/57 e2e
+- [x] Worklist 29 + 28: post-menu click / pointer lag fix; ROADMAP 3.1 tooltip and 3.2 align/distribute @due(2026-09-28) @id(iso-011)
+  114d0d9 (29), FEA14-10 (3.1), FEA14-11 (3.2); 3.3-3.6 deliberately not started, reasons in ROADMAP
 

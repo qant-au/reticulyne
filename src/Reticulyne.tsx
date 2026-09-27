@@ -24,6 +24,7 @@ import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
+import { useView } from 'src/hooks/useView';
 import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
@@ -351,6 +352,28 @@ const useReticulyne = () => {
     [initialDataManager]
   );
 
+  // FEA-06: switch the visible view. The editor has no view-switcher UI,
+  // so before this the only way to show a non-default view was to seed
+  // `initialData.view`. Navigation, not a mutation, so it is NOT gated on
+  // editorMode. The selection belongs to the old view's items, so it is
+  // cleared; an unknown id warns and does nothing rather than throwing.
+  const { changeView } = useView();
+  const setView = useCallback(
+    (viewId: string): void => {
+      const model = modelFromModelStore(ModelActions.get());
+      const exists = model.views.some((view) => {
+        return view.id === viewId;
+      });
+      if (!exists) {
+        console.warn(`[reticulyne] setView: no view with id "${viewId}".`);
+        return;
+      }
+      uiStateActions.clearSelection();
+      changeView(viewId, model);
+    },
+    [ModelActions, changeView, uiStateActions]
+  );
+
   const setEditorMode = uiStateActions.setEditorMode;
   const setZoom = uiStateActions.setZoom;
   const incrementZoom = uiStateActions.incrementZoom;
@@ -526,6 +549,11 @@ const useReticulyne = () => {
      * `NON_INTERACTIVE`). Gates the write-path methods above.
      */
     setEditorMode,
+    /**
+     * Show another view (floor) of the model by id. Allowed in every
+     * editor mode; clears the selection; warns and no-ops on an unknown id.
+     */
+    setView,
     /** Set the zoom level directly (clamped to the editor's min/max). */
     setZoom,
     /** Step the zoom level up by one increment. */

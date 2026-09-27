@@ -359,6 +359,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `getModel()` | `() => Model` | Serialised current model. |
 | `loadModel(data)` | `(data: InitialData) => void` | Validate + hydrate fresh data. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
+| `setView(viewId)` | `(viewId: string) => void` | Show another view (floor) of the model. Allowed in every editor mode; clears the selection; warns and does nothing for an unknown id. The editor has no view-switcher UI of its own, so this is how a host offers one. |
 | `setZoom(z)` | `(z: number) => void` | Set absolute zoom. |
 | `incrementZoom()` / `decrementZoom()` | `() => void` | Step zoom by `ZOOM_INCREMENT` (0.2). |
 | `rendererEl` | `HTMLDivElement \| null` | The renderer's outer DOM node — useful for export-to-image or programmatic focus. |
@@ -368,39 +369,68 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `Model` *(escape hatch)* | `{ get, set }` | Raw zustand actions. `set` is gated by editorMode. Prefer the named methods above. |
 | `uiState` *(escape hatch)* | `UiStateActions` | Full UI store action bag. Prefer the named methods above. |
 
-Worked example (read-only viewer + round-trip):
+Worked examples. `loadModel` is gated on the editor mode **as of the last
+render**, so it cannot be unlocked and called in the same tick: calling
+`setEditorMode('EDITABLE')` then `loadModel(data)` synchronously is refused with
+a console warning. (Earlier versions of this page showed exactly that sequence;
+`src/__tests__/Reticulyne.api.test.tsx` now pins that it does not work.) Pick
+the pattern that matches the editor you are showing.
+
+**Read-only viewer: pass the data as a prop.** A new `initialData` reference
+re-hydrates the editor in any mode, so a viewer never needs `loadModel`.
 
 ```tsx
-import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
+import Reticulyne from '@qant-au/reticulyne';
+import type { InitialData } from '@qant-au/reticulyne';
 import { useEffect, useState } from 'react';
 
 function DiagramViewer({ diagramId }: { diagramId: string }) {
-  const [model, setModel] = useState(null);
+  const [data, setData] = useState<InitialData | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    fetchDiagram(diagramId).then((d) => {
+      if (!cancelled) setData(d);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [diagramId]);
+
+  if (!data) return <p>Loading...</p>;
   return (
     <div style={{ width: '100%', height: 600 }}>
-      <Reticulyne
-        editorMode="EXPLORABLE_READONLY"
-        initialData={model ?? undefined}
-        onModelUpdated={setModel}
-      >
-        <RemoteLoader diagramId={diagramId} />
-      </Reticulyne>
+      <Reticulyne editorMode="EXPLORABLE_READONLY" initialData={data} />
     </div>
   );
 }
+```
 
-function RemoteLoader({ diagramId }: { diagramId: string }) {
-  const { loadModel, setEditorMode } = useReticulyne();
-  useEffect(() => {
-    fetchDiagram(diagramId).then((data) => {
-      setEditorMode('EDITABLE');   // temporarily unlock for the hydrate
-      loadModel(data);
-      setEditorMode('EXPLORABLE_READONLY');
-    });
-  }, [diagramId, loadModel, setEditorMode]);
-  return null;
+**Editable editor: `loadModel` from a child.** Mount in `EDITABLE` and call
+`loadModel` whenever the host wants to replace the contents, for example on
+"Revert to saved". `setView` then picks the floor to show.
+
+```tsx
+import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
+
+function RevertButton({ diagramId }: { diagramId: string }) {
+  const { loadModel, setView } = useReticulyne();
+  return (
+    <button
+      onClick={async () => {
+        const saved = await fetchDiagram(diagramId);
+        loadModel(saved);
+        setView(saved.views[0].id);
+      }}
+    >
+      Revert to saved
+    </button>
+  );
 }
+
+<Reticulyne editorMode="EDITABLE" initialData={draft}>
+  <RevertButton diagramId={id} />
+</Reticulyne>;
 ```
 
 ## Rectangle custom styling

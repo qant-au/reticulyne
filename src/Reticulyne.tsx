@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { createReticulyneTheme } from 'src/styles/theme';
 import { useResolvedThemeMode } from 'src/hooks/useResolvedThemeMode';
+import { ThemeToggleContext } from 'src/hooks/useThemeToggle';
 import type {
   Connector as ConnectorType,
   InitialData,
@@ -204,7 +205,15 @@ export const Reticulyne = (props: ReticulyneProps) => {
   // FEA7-04: resolve 'auto' against prefers-color-scheme, then
   // memoise the createTheme() result so MUI's deep-merge runs once
   // per mode change instead of every parent render.
-  const resolvedMode = useResolvedThemeMode(themeMode);
+  const hostMode = useResolvedThemeMode(themeMode);
+  // UXA-08: Alt+Shift+D flips light <-> dark for this session, over the
+  // host's themeMode (binary, as in Excalidraw; not persisted - a reload
+  // returns to the host's setting). Until pressed, the host decides.
+  const [override, setOverride] = useState<'light' | 'dark' | null>(null);
+  const resolvedMode = override ?? hostMode;
+  const toggleTheme = useCallback(() => {
+    setOverride(resolvedMode === 'dark' ? 'light' : 'dark');
+  }, [resolvedMode]);
   const theme = useMemo(() => {
     return createReticulyneTheme(resolvedMode);
   }, [resolvedMode]);
@@ -223,21 +232,23 @@ export const Reticulyne = (props: ReticulyneProps) => {
   }, [appProps.initialData]);
   return (
     <ReticulyneErrorBoundary onError={onError} fallback={errorFallback}>
-      <ThemeProvider theme={theme}>
-        <ModelProvider>
-          <SceneProvider>
-            <UiStateProvider>
-              <HistoryProvider>
-                <App
-                  {...appProps}
-                  initialData={modeAwareInitialData}
-                  exportTheme={exportTheme}
-                />
-              </HistoryProvider>
-            </UiStateProvider>
-          </SceneProvider>
-        </ModelProvider>
-      </ThemeProvider>
+      <ThemeToggleContext.Provider value={toggleTheme}>
+        <ThemeProvider theme={theme}>
+          <ModelProvider>
+            <SceneProvider>
+              <UiStateProvider>
+                <HistoryProvider>
+                  <App
+                    {...appProps}
+                    initialData={modeAwareInitialData}
+                    exportTheme={exportTheme}
+                  />
+                </HistoryProvider>
+              </UiStateProvider>
+            </SceneProvider>
+          </ModelProvider>
+        </ThemeProvider>
+      </ThemeToggleContext.Provider>
     </ReticulyneErrorBoundary>
   );
 };

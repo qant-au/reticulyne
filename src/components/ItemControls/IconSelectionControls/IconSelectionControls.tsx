@@ -13,6 +13,7 @@ import { useIconFiltering } from 'src/hooks/useIconFiltering';
 import { useIconCategories } from 'src/hooks/useIconCategories';
 import { Icons } from './Icons';
 import { IconGrid } from './IconGrid';
+import { UploadIconButton } from './UploadIconButton';
 
 interface Props {
   /** Header text. */
@@ -90,6 +91,7 @@ export const IconSelectionControls = ({
               <Alert severity="info">
                 You can drag and drop any item below onto the canvas.
               </Alert>
+              <UploadIconButton />
             </Stack>
           </Section>
         </>

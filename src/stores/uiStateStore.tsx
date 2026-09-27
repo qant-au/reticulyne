@@ -44,6 +44,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       onConnectorClick: undefined,
       patchQueue: [],
       onSave: undefined,
+      onIconUpload: undefined,
       saveStatus: {
         state: 'idle',
         isDirty: false,
@@ -208,6 +209,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setShowTitleBar: (showTitleBar) => {
           set({ showTitleBar });
+        },
+        setOnIconUpload: (onIconUpload) => {
+          set({ onIconUpload });
         },
         setOnSave: (onSave) => {
           set({ onSave });

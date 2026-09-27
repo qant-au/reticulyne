@@ -26,6 +26,7 @@ import type { QueuedPatch } from './imperative';
 import { DialogTypeEnum, type AnchorPosition } from './ui';
 import type {
   ConnectorIndicatorComponent,
+  IconUploadHandler,
   NodeIndicatorComponent
 } from './reticulyneProps';
 
@@ -309,6 +310,8 @@ export interface UiState {
   // state so the MainMenu (a child of the App) can read it through
   // the existing zustand subscription path.
   onSave: SaveHandler | undefined;
+  // 2.13: host icon upload; the picker's Upload button shows when set.
+  onIconUpload: IconUploadHandler | undefined;
   // 2.3: where saving stands. See src/utils/save.ts.
   saveStatus: SaveStatus;
   // SEC-02: host-supplied validation-error callback, mirrored onto the
@@ -372,6 +375,7 @@ export interface UiStateActions {
   /** Empties the queue and returns what was in it. */
   takePatches: () => QueuedPatch[];
   setOnSave: (onSave: SaveHandler | undefined) => void;
+  setOnIconUpload: (handler: IconUploadHandler | undefined) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;
   /** Read at call time, for async code that must not use a stale render. */
   getSaveStatus: () => SaveStatus;

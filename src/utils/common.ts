@@ -1,6 +1,7 @@
 import chroma from 'chroma-js';
 import { Icon, EditorModeEnum, Mode } from 'src/types';
 import { v4 as uuid } from 'uuid';
+import { CUSTOM_ICON_COLLECTION } from './iconUpload';
 
 export const generateId = () => {
   return uuid();
@@ -77,8 +78,11 @@ export const filterIconsByCollection = (
     const allowLower = allow.map((s) => {
       return s.toLowerCase();
     });
+    // 2.13: uploaded icons belong to the diagram, not to an icon pack, so
+    // an allow-list of packs keeps them; only an explicit deny drops them.
     result = result.filter((icon) => {
-      return icon.collection !== undefined
+      return icon.collection !== undefined &&
+        icon.collection !== CUSTOM_ICON_COLLECTION
         ? allowLower.includes(icon.collection.toLowerCase())
         : true;
     });

@@ -15,6 +15,13 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Double-click to add** (ROADMAP 2.2). Double-clicking an empty tile opens
+  the icon picker for that tile, and picking an icon places it there at once.
+  Double-clicking an item opens its inspector. `EDITABLE` only.
+- **Connector hotspots** (ROADMAP 2.1). In connector mode, the node under the
+  pointer shows a port on each tile edge, so it is clear where a connector will
+  attach.
+
 - **Diagram title** (ROADMAP 1.2). A "Rename diagram" main-menu action
   (`'ACTION.RENAME'`, on by default), `useReticulyne().getTitle()` /
   `setTitle()`, and a JSON export named after the title. `title` is now

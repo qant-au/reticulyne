@@ -374,7 +374,14 @@ Collapse/expand is a follow-up.
 
 Ordered by the same criteria as the README-tracked feature set: dependencies first, then schema / API changes cheapest to do early, then bang-for-buck as tiebreaker. The quick wins (2.1–2.3) lead; Replace Quill (2.10) is promoted ahead of the interaction features to clear the Quill API surface before it accretes further. Items marked **[NEW]** were not in the previous catalogue.
 
-### 2.1 Anchor hotspot visualisation **[NEW]**
+### ~~2.1 Anchor hotspot visualisation~~
+
+_Shipped 2026-09-28 (visual part). The ports render on the hovered node in connector
+mode, before and during drawing. **Not done: snapping to a specific edge.** A connector
+anchor references a node, a tile or another anchor, never a side of a node, so every port
+leads to the same anchor. Edge snapping needs an anchor-side field in the schema plus
+pathfinder support for the exit side. That is a schema change, which this item's own
+"no schema change" premise ruled out; pick it up with 2.5 if wanted._
 
 **What it does.** When the user is in **Connector mode** (toolbar selected) or
 is hovering a node while about to initiate a left-click-drag connector (item
@@ -405,7 +412,10 @@ state; new overlay SVG elements for hotspot circles. Positions derived from
 
 ---
 
-### 2.2 Double-click empty cell → add item **[NEW]**
+### ~~2.2 Double-click empty cell → add item~~
+
+_Shipped 2026-09-28 as sketched. The picker carries the target tile
+(`itemControls: { type: 'ADD_ITEM', tile }`), so picking places at once; Esc closes it._
 
 **What it does.** Double-clicking an empty canvas tile opens the icon picker
 with the target tile pre-set. On icon selection, the item is placed immediately

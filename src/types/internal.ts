@@ -91,6 +91,12 @@ export type SceneStore = Scene & {
 // === UI-state runtime shapes ===
 interface AddItemControls {
   type: 'ADD_ITEM';
+  /**
+   * 2.2: set when the picker was opened by double-clicking an empty tile.
+   * Picking an icon then places it here at once, instead of arming it
+   * for a click.
+   */
+  tile?: Coords;
 }
 
 export type ItemControls = ItemReference | AddItemControls;

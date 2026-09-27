@@ -178,6 +178,8 @@ The tool layer mirrors **Excalidraw's**, letter and number alike, so an operator
 | Gesture / Key | Action |
 |---|---|
 | Click | Select one item |
+| Double-click an empty tile | Open the icon picker for that tile; picking an icon places it there (`EDITABLE` only) |
+| Double-click an item | Select it and open its inspector (`EDITABLE` only) |
 | `Shift` + click | Add the item to the selection, or remove it if already in |
 | Drag on empty canvas | Marquee select everything the band touches |
 | `Shift` + drag | Add the marquee's contents to the existing selection |

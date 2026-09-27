@@ -46,6 +46,7 @@
     "dev": "nodemon --watch ./src/ -e ts,tsx --exec npm run build",
     "clean": "rm -rf dist dist-docker dist-docker-examples",
     "build": "npm run clean && webpack --config ./webpack/prod.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "prepublishOnly": "npm run lint && npm test && npm run build",
     "test": "jest",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium",

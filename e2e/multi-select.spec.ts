@@ -15,12 +15,19 @@ import { expect, test, Page } from '@playwright/test';
  * Deliberately does NOT use the FEA5-02 spec's `beforeEach`, which waits
  * for a 100% zoom chip. The dev example auto-fits on load (22% at this
  * viewport), so that precondition cannot pass here.
+ *
+ * Targets the examples-picker container (:2223), not the :2222 editor:
+ * marquee needs items on the canvas, and only the examples bundle loads
+ * the Airport diagram. Same convention as examples-picker.spec.ts.
  */
+
+const BASE =
+  process.env.RETICULYNE_EXAMPLES_BASE_URL ?? 'http://localhost:2223';
 
 const CANVAS = { left: 300, top: 120, right: 1240, bottom: 620 };
 
 const openEditor = async (page: Page) => {
-  await page.goto('/');
+  await page.goto(`${BASE}/`);
   await expect(page).toHaveTitle(/Reticulyne/);
   // Wait for the diagram to have rendered something selectable.
   await expect(page.locator('svg').first()).toBeVisible();

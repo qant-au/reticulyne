@@ -8,6 +8,13 @@ on:
   pull_request:
     branches:
       - main
+  # release.yml calls this workflow with run-e2e: true, so a tag cannot
+  # publish unless the full gate, e2e included, is green (BLD-08).
+  workflow_call:
+    inputs:
+      run-e2e:
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -62,18 +69,21 @@ jobs:
             console.log('pack contents OK — ' + files.length + ' files, all under allowed roots');
           "
 
-  # End-to-end (Playwright) — label-gated.
+  # End-to-end (Playwright) — label-gated, mandatory on release.
   #
-  # Runs only when the triggering commit message (push) or PR title
-  # (pull_request) contains the literal string `[run e2e]`. The intent
-  # is opt-in: most PRs don't touch the editor's interactive surface,
-  # so paying ~3 minutes per run is reserved for the changes that do.
-  # The job builds the reticulyne Docker image, starts it on the runner,
-  # and points Playwright at it.
+  # Runs when the triggering commit message (push) or PR title
+  # (pull_request) contains the literal string `[run e2e]`, and always
+  # when release.yml calls this workflow (inputs.run-e2e). The intent
+  # is opt-in day to day: most PRs don't touch the editor's interactive
+  # surface, so paying ~3 minutes per run is reserved for the changes
+  # that do. The job builds both Docker images (editor on :2222,
+  # examples picker on :2223), starts them on the runner, and points
+  # Playwright at them.
   e2e:
     runs-on: ubuntu-latest
     needs: build
     if: >-
+      inputs.run-e2e ||
       (github.event_name == 'push' && contains(github.event.head_commit.message, '[run e2e]')) ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[run e2e]'))
     permissions:
@@ -99,31 +109,45 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Build reticulyne Docker image
-        run: docker build -t reticulyne .
+      - name: Build reticulyne Docker images
+        run: |
+          docker build -t reticulyne .
+          docker build -t reticulyne-examples \
+            --build-arg WEBPACK_SCRIPT=docker:examples:build \
+            --build-arg DIST_DIR=dist-docker-examples .
 
-      - name: Start reticulyne container
+      - name: Start reticulyne containers
+        # examples-picker and multi-select specs need the examples bundle
+        # on :2223 (it is the one that loads a diagram); the rest use :2222.
         run: |
           docker run -d --rm --name reticulyne -p 2222:8080 reticulyne
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:2222/ > /dev/null; then
-              echo "reticulyne container responding on :2222"
-              exit 0
+          docker run -d --rm --name reticulyne-examples -p 2223:8080 reticulyne-examples
+          for port in 2222 2223; do
+            ok=0
+            for i in $(seq 1 30); do
+              if curl -sf "http://localhost:$port/" > /dev/null; then
+                echo "container responding on :$port"
+                ok=1
+                break
+              fi
+              sleep 1
+            done
+            if [ "$ok" != 1 ]; then
+              echo "container on :$port did not respond within 30s" >&2
+              docker logs reticulyne >&2 || true
+              docker logs reticulyne-examples >&2 || true
+              exit 1
             fi
-            sleep 1
           done
-          echo "reticulyne container did not respond within 30s" >&2
-          docker logs reticulyne >&2 || true
-          exit 1
 
       - name: Run Playwright tests
         run: npm run test:e2e
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:2222
 
-      - name: Stop reticulyne container
+      - name: Stop reticulyne containers
         if: always()
-        run: docker rm -f reticulyne || true
+        run: docker rm -f reticulyne reticulyne-examples || true
 
       - name: Upload Playwright report on failure
         if: failure()

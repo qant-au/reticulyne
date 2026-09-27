@@ -6,7 +6,44 @@ on:
       - "v*.*.*"
 
 jobs:
+  # Fails fast, before any build, when the tag and the package disagree.
+  metadata:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Tag matches package.json version (BLD-05)
+        run: |
+          expected="v$(node -p "require('./package.json').version")"
+          if [ "$expected" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json ($expected)." >&2
+            echo "Run npm version <x.y.z> --no-git-tag-version, commit, then tag." >&2
+            exit 1
+          fi
+          echo "tag $GITHUB_REF_NAME matches package.json"
+
+      - name: CHANGELOG has a section for this version (BLD-06)
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if ! grep -qF "## [$version] - " CHANGELOG.md; then
+            echo "CHANGELOG.md has no '## [$version] - <date>' section." >&2
+            echo "Move the [Unreleased] entries under a dated heading for $version." >&2
+            exit 1
+          fi
+          echo "CHANGELOG.md has a section for $version"
+
+  # The same gate as a push to main, with e2e forced on (BLD-08).
+  ci:
+    uses: ./.github/workflows/ci.yml
+    with:
+      run-e2e: true
+    permissions:
+      contents: read
+
   publish:
+    needs: [metadata, ci]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,10 +68,9 @@ jobs:
         # advisory doesn't block publish.
         run: npm audit --omit=dev --audit-level=moderate
 
-      - run: npm run lint
-
-      - run: npm test
-
+      # Lint and unit tests already ran in the `ci` job, and run again in
+      # `npm publish` via prepublishOnly (BLD-01). Build here only because
+      # the pack-contents check below needs dist/.
       - run: npm run build
 
       - name: Verify pack contents

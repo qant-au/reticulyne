@@ -13,6 +13,32 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Added
+
+- **`useReticulyne().setView(viewId)`** shows another view (floor) of the
+  model. The editor has no view switcher of its own, so this is how a host
+  offers one. Allowed in every editor mode; clears the selection; warns and
+  does nothing for an unknown id (FEA-06).
+- **Option maps as runtime values.** `EditorModeEnum`, `MainMenuOptionsEnum`,
+  `ProjectionOrientationEnum`, `AnchorPositionOptions`, `DialogTypeEnum`,
+  `LayerOrderingActionOptions`, `tileOriginOptions` and
+  `ItemReferenceTypeOptions` are exported from the main entry and the
+  `/standalone` subpath (FEA-05).
+
+### Changed
+
+- `file-saver` is gone from the runtime dependencies. Downloads go through
+  an inline blob-URL helper; the file names and contents are unchanged
+  (DEP-01).
+- The standalone Docker image sends `Referrer-Policy:
+  strict-origin-when-cross-origin` and `Cross-Origin-Opener-Policy` /
+  `Cross-Origin-Resource-Policy: same-origin` (SEC-08, SEC-09).
+
+### Fixed
+
+- `docs/embedding.md` no longer recommends calling `setEditorMode('EDITABLE')`
+  and `loadModel()` in the same tick; `loadModel` refuses that (DOC-03).
+
 ## [0.3.0] - 2026-09-27
 
 ### Added — real multi-select (ROADMAP 1.4)

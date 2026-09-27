@@ -94,7 +94,7 @@
     "webpack": "^5.106.2",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.6",
-    "webpack-merge": "^5.8.0",
+    "webpack-merge": "^6.0.1",
     "zustand": "^5.0.13"
   },
   "dependencies": {

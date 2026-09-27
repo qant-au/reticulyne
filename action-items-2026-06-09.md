@@ -276,17 +276,20 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟡 Medium — API & embedding contract
 
-### 44. Re-export enum const objects from standalone subpath — `FEA-05`
+### ~~44. Re-export enum const objects from standalone subpath — `FEA-05`~~
+_Done 2026-09-27 (`38c31f3`) - all eight exported as runtime values from `standaloneExports.ts` (so from the main entry too), their union types type-only; api.md says which is which. Loads from `dist/standaloneExports.js` in plain Node; `standaloneExports.test.ts` runs under the node environment._
 - **What:** Add `EditorModeEnum`, `MainMenuOptionsEnum`, `ProjectionOrientationEnum`, `DialogTypeEnum`, `LayerOrderingActionOptions`, `tileOriginOptions`, `ItemReferenceTypeOptions`, `AnchorPositionOptions` to `standaloneExports.ts`. Document which are runtime vs types-only.
 - **Where:** `src/standaloneExports.ts`
 - **Refs:** Review #45 (Section 5)
 
-### 45. Rewrite the `useReticulyne()` worked example in `docs/embedding.md` — `DOC-03`
+### ~~45. Rewrite the `useReticulyne()` worked example in `docs/embedding.md` — `DOC-03`~~
+_Done 2026-09-27 (`38c31f3`) - confirmed the bug first: the old sequence is refused (`Refusing loadModel`). Replaced with a read-only viewer that passes `initialData` and an editable `loadModel` + `setView` example; `Reticulyne.api.test.tsx` pins both and pins the refusal._
 - **What:** Current example calls `setEditorMode → loadModel → setEditorMode` synchronously inside a `.then(...)`. Under React 19 batching, `loadModel` reads `editorModeRef` still pointing at the prior mode. Either restructure with `useEffect` chains across renders, or mount with `editorMode="EDITABLE"` from the start and transition. Verify with a real test before re-publishing.
 - **Where:** `docs/embedding.md:340-371`
 - **Refs:** Review #46 (Section 5)
 
-### 46. Surface `setView(viewId)` on the documented API — `FEA-06`
+### ~~46. Surface `setView(viewId)` on the documented API — `FEA-06`~~
+_Done 2026-09-27 (`38c31f3`) - `setView(viewId)` added to `useReticulyne()`, not gated on editorMode, clears selection, warns on an unknown id; documented in embedding.md and api.md; tested._
 - **What:** Either add `setView` to `useReticulyne()` return alongside `setEditorMode`/`setZoom`, OR document explicitly that view switching is escape-hatch only until v1.
 - **Where:** `src/Reticulyne.tsx`; `docs/embedding.md:323-336`
 - **Refs:** Review #47 (Section 5)
@@ -295,27 +298,32 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟡 Medium — Documentation drift
 
-### 47. Update SECURITY.md snapshot tag from `v4.5.0` to `v0.1.0` — `DOC-07`
+### ~~47. Update SECURITY.md snapshot tag from `v4.5.0` to `v0.1.0` — `DOC-07`~~
+_Done 2026-09-27 (`864297a`) - no `v4.5.0` remained (the snapshot was already refreshed post-DEP-11); Dependabot count re-measured at 0._
 - **What:** Re-run `npm audit --omit=dev` and refresh the "Current counts" snapshot.
 - **Where:** `SECURITY.md:60`
 - **Refs:** Review #48 (Section 6)
 
-### 48. Fix `docs/api.md:71` renamer typo — `DOC-08`
+### ~~48. Fix `docs/api.md:71` renamer typo — `DOC-08`~~
+_Done 2026-09-27 (`864297a`) - the stale name had moved to `docs/api.md:83`; now `markmanx/isoflow`._
 - **What:** `markmanx/reticulyne` → `markmanx/isoflow`. The repo at `markmanx/reticulyne` does not exist.
 - **Where:** `docs/api.md:71`
 - **Refs:** Review #49 (Section 6)
 
-### 49. Reconcile `Model.version` field across schema / quickstart / api.md — `DOC-09`
+### ~~49. Reconcile `Model.version` field across schema / quickstart / api.md — `DOC-09`~~
+_Done 2026-09-27 (`864297a`) - documented as optional (matches the schema) in api.md, with `description?` which was also missing; dropped `version: ''` from quickstart._
 - **What:** Schema has `version: z.string().max(10).optional()`. api.md lists `version: string` required. Quickstart passes `version: ''`. Pick one: drop it from `Model` doc and quickstart, or document as required-with-default.
 - **Where:** `src/schemas/model.ts:11-19`; `docs/quickstart.md:41-49`; `docs/api.md:89-98`
 - **Refs:** Review #50 (Section 6)
 
-### 50. Fix `docs/isopacks.md` bundled-pack name — `DOC-10`
+### ~~50. Fix `docs/isopacks.md` bundled-pack name — `DOC-10`~~
+_Done 2026-09-27 (`864297a`) - `isoflow` with the back-compat footnote; confirmed the bundled pack's id is `isoflow`._
 - **What:** L62 says "**reticulyne** — general infrastructure icons". Actual pack-id is `isoflow` (preserved per CHANGELOG L48-51). Embedders typing `iconCollections: { allow: ['reticulyne'] }` would match nothing. Update to `**isoflow**` with a footnote explaining back-compat naming.
 - **Where:** `docs/isopacks.md:62`
 - **Refs:** Review #51 (Section 6)
 
-### 51. Reconcile `TODO.md` with source comments that reference it — `DOC-11`
+### ~~51. Reconcile `TODO.md` with source comments that reference it — `DOC-11`~~
+_Already done 2026-09-27 - no source comment references TODO.md any more (`command grep -rn TODO.md src` is empty)._
 - **What:** TODO.md is empty; source comments cite "tracked in TODO.md" (e.g. `src/types/model.ts:45`). Either add the referenced follow-ups (with `iso-NN` IDs per the project's prefix registry), or remove the "tracked" claims.
 - **Where:** `TODO.md`; `src/types/model.ts:45`
 - **Refs:** Review #52 (Section 6)
@@ -392,7 +400,8 @@ _Done 2026-09-27 - informational. QUA-10 landed (`966ab3e`, aria-label and aria-
 - **Where:** Repo-wide
 - **Refs:** Review #62 (Section 9 — a11y)
 
-### 62. Update ROADMAP 2.12 implementation note (touch pinch via Pointer Events) — `DOC-16`
+### ~~62. Update ROADMAP 2.12 implementation note (touch pinch via Pointer Events) — `DOC-16`~~
+_Done 2026-09-27 (`864297a`) - 2.12 rewritten for Pointer Events: two tracked `pointerId`s, `touch-action: none`._
 - **What:** ROADMAP describes wiring legacy TouchEvents; post-FEA10-01 the path is via tracking two `pointerId`s. Update wording.
 - **Where:** `ROADMAP.md` section 2.12
 - **Refs:** Review #63 (Section 9 — touch)
@@ -488,17 +497,20 @@ _Done 2026-09-27 - COOP and CORP `same-origin` in all three header blocks, with 
 _Won't do 2026-09-27 - the item itself says no action; no second consumer of the port has appeared._
 - **Refs:** Review #79 (Section 4e). Leave as-is unless second consumer of the port emerges.
 
-### 79. Fix grammar nit in `docs/embedding.md:540` — `DOC-13`
+### ~~79. Fix grammar nit in `docs/embedding.md:540` — `DOC-13`~~
+_Done 2026-09-27 (`864297a`)._
 - **What:** "an Reticulyne dependency" → "a Reticulyne dependency".
 - **Where:** `docs/embedding.md:540`
 - **Refs:** Review #80 (Section 6)
 
-### 80. Inline ROADMAP's "ten corrections" reference — `DOC-12`
+### ~~80. Inline ROADMAP's "ten corrections" reference — `DOC-12`~~
+_Done 2026-09-27 (`864297a`) - the ten corrections inlined from the pre-`0799012` ROADMAP, with notes where the code has since moved._
 - **What:** "See full enumeration in prior ROADMAP versions" is unhelpful for readers without `git log` at hand. Inline or remove.
 - **Where:** `ROADMAP.md:51-52`
 - **Refs:** Review #81 (Section 6)
 
-### 81. Document minimum browser versions in README — `DOC-15`
+### ~~81. Document minimum browser versions in README — `DOC-15`~~
+_Done 2026-09-27 (`864297a`) - Chrome 117+, Edge 121+, Firefox 121+, Safari 17+, from MUI v9.4's published floor (the binding constraint). Also noted that the `browserslist` field is not read by the build._
 - **What:** One-line translation of the browserslist target (e.g. "Chrome 90+, Firefox 90+, Safari 14+, Edge 90+").
 - **Where:** `README.md` Requirements section
 - **Refs:** Review #83 (Section 9 — browser)

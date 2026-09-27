@@ -208,7 +208,8 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 
 ## 🟡 Medium — Performance
 
-### 32. Memoize pathfinder obstacles + skip findPath when anchor tile unchanged — `PRF-05`
+### ~~32. Memoize pathfinder obstacles + skip findPath when anchor tile unchanged — `PRF-05`~~
+_Won't do 2026-09-27 - measured, and there is nothing to win. The tile-unchanged skip already exists (`hasMovedTile` in `Connector.ts`). On a synthetic 1,600-item + 40-rectangle view, `getConnectorPath` costs 0.33 ms for a short connector and 0.28 ms for a 100-tile one (A* alone: 0.02 / 0.14 ms), against a 16 ms frame. Obstacles are also search-area-local, so a model+view-keyed memo would not apply as written. Revisit only with a profile showing connector drag jank._
 - **What:** Memoize obstacle tiles keyed on model+view reference. Skip `findPath` when the dragged anchor's *tile* coordinate is unchanged (per-pixel deltas already filtered, but verify). Throttle CONNECTOR-mode pointermove to rAF.
 - **Where:** `src/interaction/modes/Connector.ts:18-51`; `src/stores/reducers/connector.ts:22-52`; `src/utils/pathfinder.ts`
 - **Refs:** Review #33 (Section 3a). _Confidence: Low — needs profile to confirm scale of bottleneck._
@@ -218,12 +219,14 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/interaction/modes/DragItems.ts:89-114`; `src/hooks/useScene.ts:101-118`
 - **Refs:** Review #34 (Section 3a)
 
-### 34. Narrow `useScene.setState` history-store subscription — `PRF-07`
+### ~~34. Narrow `useScene.setState` history-store subscription — `PRF-07`~~
+_Done 2026-09-27 (`3ebb7bd`) - two selectors (`isApplying`, stable `actions`) instead of the whole store; the whole-store selector re-rendered every useScene consumer on each undo-stack push._
 - **What:** Use two separate `useHistoryStore` selectors — `s => s.isApplying` and `s => s.actions` (latter is stable). Drops `setState` callback recreation per history-store mutation.
 - **Where:** `src/hooks/useScene.ts:91-93, 101-118`
 - **Refs:** Review #35 (Section 3a)
 
-### 35. Hoist one transformed parent for all SceneLayers — `PRF-08`
+### ~~35. Hoist one transformed parent for all SceneLayers — `PRF-08`~~
+_Won't do 2026-09-27 - measured in Chromium with 4x CPU throttling on the Airport example: 0 frames over 33 ms while wheel-panning (p95 9.2 ms, same as idle). A render-tree restructure with no measurable problem to fix is not worth its risk. Revisit with a profile of a large diagram if pan jank is reported._
 - **What:** Replace per-layer GSAP tween with a single transform on a parent that all SceneLayers nest inside. Animate once per pan/zoom.
 - **Where:** `src/components/SceneLayer/SceneLayer.tsx:29-40`
 - **Refs:** Review #36 (Section 3a). _Confidence: Low — would benefit from a profile capture during pan._
@@ -233,7 +236,8 @@ Priority key: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
 - **Where:** `src/components/SceneLayers/Nodes/Node/IconTypes/IsometricIcon.tsx`; `NonIsometricIcon.tsx`
 - **Refs:** Review #37 (Section 3c)
 
-### 37. Replace `connectorOverlays` copy-spread with `Map` and `useSyncExternalStore` — `PRF-14`
+### ~~37. Replace `connectorOverlays` copy-spread with `Map` and `useSyncExternalStore` — `PRF-14`~~
+_Won't do 2026-09-27 - same measurement: the Connector pulse and Live dashboard examples ran with 0 frames over 33 ms at 4x throttle (p95 9.2 ms). The item itself notes it only matters for dense streams; no such workload exists to profile yet._
 - **What:** Drops O(n) rebuild per pulse for dense live-dashboard streams.
 - **Where:** `src/Reticulyne.tsx:381-399`; `src/hooks/useScene.ts:278-303`
 - **Refs:** Review #38 (Section 3d). _Confidence: Low — fine for sparse pulses._
@@ -418,12 +422,14 @@ _Done 2026-09-27 (`417b6c4`) - `.github/workflows/dependency-review.yml`, `depen
 - **Where:** new `.github/workflows/dependency-review.yml`
 - **Refs:** Review #65 (Section 9 — ci)
 
-### 65. Add a pre-commit lint hook — `QUA-12`
+### ~~65. Add a pre-commit lint hook — `QUA-12`~~
+_Done 2026-09-27 (`a7c025a`) - husky + lint-staged, `eslint --fix --max-warnings=0` on staged `src/**/*.{ts,tsx}` (about a second; full lint is 8.5 s, so tsc stays in CI and prepublishOnly). Proven: a formatting slip was auto-fixed, an explicit `any` blocked. The Docker `npm ci` tolerates `prepare: husky` without a `.git`._
 - **What:** Wire `husky` or `lefthook` to run `npm run lint` before commit. Catches prettier-error-level misses before CI.
 - **Where:** new `.husky/pre-commit`
 - **Refs:** Review #66 (Section 9 — lint)
 
-### 66. Split `src/hooks/useScene.ts` into per-domain hooks — `QUA-13`
+### ~~66. Split `src/hooks/useScene.ts` into per-domain hooks — `QUA-13`~~
+_Done 2026-09-27 (`574bcca`) - `useScene.ts` 642 -> 177 lines; operations moved verbatim into `src/hooks/scene/` (items, connectors, shapes, clipboard). The core keeps every subscription and the setState/undo/redo chokepoint, so render behaviour and the return shape are unchanged. 489 unit, 35/35 e2e._
 - **What:** 641 lines is the largest non-test file. Split candidates: `useSceneItems`, `useSceneConnectors`, `useSceneRectangles`, `useSceneTextBoxes`, `useSceneClipboard`, `useSceneHistory`. The reducer split is the right boundary; the hook routes to them.
 - **Where:** `src/hooks/useScene.ts`
 - **Refs:** Review #67 (Section 9 — tech debt)
@@ -478,17 +484,20 @@ _Done 2026-09-27 - COOP and CORP `same-origin` in all three header blocks, with 
 - **Where:** `docker/nginx.conf`
 - **Refs:** Review #75 (Section 2f)
 
-### 75. Memoize Cursor chroma alpha computation — `PRF-09`
+### ~~75. Memoize Cursor chroma alpha computation — `PRF-09`~~
+_Done 2026-09-27 (`45478f8`) - `useMemo` keyed on the theme's primary colour._
 - **What:** `chroma(theme.palette.primary.main).alpha(0.5).css()` is stable; memoize per theme.
 - **Where:** `src/components/Cursor/Cursor.tsx:8-13`
 - **Refs:** Review #76 (Section 3a)
 
-### 76. Use `asset/resource` for SVGs > 4 KB — `PRF-12`
+### ~~76. Use `asset/resource` for SVGs > 4 KB — `PRF-12`~~
+_Done 2026-09-27 (`20bfc5a`) - `type: 'asset'` with a 4 KB inline limit. No SVG is imported today, so all three build outputs are unchanged._
 - **What:** Current `asset/inline` rule is fine today (only one tiny SVG) but will bloat the JS if larger SVG assets are added.
 - **Where:** `webpack/base.config.js:37-41`
 - **Refs:** Review #77 (Section 3b)
 
-### 77. Remove `src/assets/grid-tile-bg.svg` if no longer imported — `QUA-01`
+### ~~77. Remove `src/assets/grid-tile-bg.svg` if no longer imported — `QUA-01`~~
+_Done 2026-09-27 - deleted; it landed in `3ebb7bd` (staged when that PRF-07 commit was made, noted in `51f85bb`). Nothing imported it._
 - **What:** `Grid` generates the SVG inline at runtime. grep for `grid-tile-bg`; if no imports remain, delete.
 - **Where:** `src/assets/grid-tile-bg.svg`
 - **Refs:** Review #78 (Section 3c). _Confidence: Low — verify imports first._

@@ -24,4 +24,6 @@ prefix: iso
   shipped in FEA14-06: port drag to connect; ends resolved by port and at release. 50/50 e2e
 - [x] Multi-select follow-ups: bulk colour and multi-item clipboard @due(2026-09-28) @id(iso-009)
   shipped in FEA14-07 (clipboard) + FEA14-08 (bulk colour); duplicate stays single-item. 518 unit, 52/52 e2e
+- [x] Excalidraw parity remainder (UXA-02, -03, -05, -08) and ROADMAP 2.12 pinch to zoom @due(2026-09-28) @id(iso-010)
+  shipped: UXA-08, UXA-02/03 + 2.12, UXA-05. 1.7 grouping and 2.11 palette left for their own items. 57/57 e2e
 

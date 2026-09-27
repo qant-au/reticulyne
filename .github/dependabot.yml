@@ -28,6 +28,10 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: react-dom
         update-types: ["version-update:semver-major"]
+    # An override that pins a package which is ALSO a direct dependency
+    # must use npm's reference form ("uuid": "$uuid"), never a literal
+    # range: a literal makes every bump of that package fail with
+    # "Override ... conflicts with direct dependency" (DEP-15).
     groups:
       # Every @tiptap/* package pins an EXACT peer on @tiptap/core, so the
       # family can only move as one unit (see SECURITY.md DEP-10). Listed

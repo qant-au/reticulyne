@@ -4,6 +4,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { getItemByIdOrThrow, generateId } from 'src/utils';
 import { TEXTBOX_DEFAULTS } from 'src/config';
+import { useThemeToggle } from 'src/hooks/useThemeToggle';
 import type { ItemReference } from 'src/types';
 
 const NUDGE_STEP = 1;
@@ -106,6 +107,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     currentView
   } = useScene();
   const { fitToView, fitToSelection } = useDiagramUtils();
+  const toggleTheme = useThemeToggle();
 
   useEffect(() => {
     const isEditable = editorMode === 'EDITABLE';
@@ -224,6 +226,15 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
       }
 
       const hasModifier = e.ctrlKey || e.metaKey;
+
+      // UXA-08: Alt+Shift+D flips light <-> dark, in any editor mode (it
+      // changes how the diagram looks, not the diagram). Matched on e.code:
+      // on a Mac, Alt+Shift+D types a symbol into e.key.
+      if (e.altKey && e.shiftKey && !hasModifier && e.code === 'KeyD') {
+        toggleTheme();
+        e.preventDefault();
+        return;
+      }
 
       // === Zoom + fit-to-view (work in EDITABLE and EXPLORABLE_READONLY) ===
       // UXA-01: both the bare keys (kept, they were here first and cost
@@ -558,6 +569,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     redo,
     fitToView,
     fitToSelection,
-    currentView
+    currentView,
+    toggleTheme
   ]);
 };

@@ -26,6 +26,10 @@ The Dockerfile defaults match the main editor variant. The examples variant is s
 
 Skip the examples container with `NO_EXAMPLES=1 bash restart.sh` if you only want the main editor up.
 
+## Where the images come from
+
+**Build locally; no image is published.** There is no `ghcr.io/qant-au/reticulyne` image and no registry push in CI. Build from a checkout with `bash restart.sh` or the `docker build` commands below. The published artefact is the npm package `@qant-au/reticulyne`; the image is a convenience wrapper around that same build (BLD-07). If a team ever needs to pull a prebuilt image, add a tag-triggered GHCR workflow at that point.
+
 ## Build and run
 
 The repo includes `restart.sh` at its root for the common rebuild-and-serve loop:

@@ -78,12 +78,36 @@ For maintainers landing changes (and contributors when the project reopens):
 
 Releases are cut manually by the maintainer:
 
-1. `npm version patch` (or `minor` / `major` as appropriate).
-2. `git push && git push --tags`.
+1. Move the `## [Unreleased]` entries in `CHANGELOG.md` under a new
+   `## [x.y.z] - YYYY-MM-DD` heading.
+2. `npm version x.y.z --no-git-tag-version`, commit, then `git tag -a vx.y.z`.
+3. `git push && git push origin vx.y.z`.
 
-GitHub Actions picks up the tag and publishes the package to GitHub Packages. The CI
-workflow asserts the tarball contents (only `dist/`, `README.md`, `LICENSE`,
-`package.json` ship) before publishing.
+Pushing the tag runs `release.yml`, which publishes to GitHub Packages only if all of
+these pass:
+
+- the tag equals `v` + `package.json` version (BLD-05);
+- `CHANGELOG.md` has a `## [x.y.z] - ` section for that version (BLD-06);
+- the full CI workflow, **with the Playwright e2e suite forced on** (BLD-08);
+- the production `npm audit` gate and the tarball-contents check (only `dist/`,
+  `README.md`, `LICENSE`, `package.json` ship).
+
+`npm publish` also runs lint, unit tests and a build through `prepublishOnly`, so a
+publish from a laptop gets the same checks (BLD-01).
+
+### Rollback
+
+A published version cannot be taken back, so roll **forward**:
+
+1. Fix on `main` (or revert the offending commit) and cut the next patch, e.g.
+   `0.3.1` for a bad `0.3.0`. Consumers on `"*"` pick it up on their next install.
+2. Do not delete the bad version from GitHub Packages. Deletion breaks every
+   lockfile that already resolved it, and `npm ci` then fails for those consumers.
+3. Do not rely on `npm deprecate` either: GitHub Packages rejects the deprecate call
+   (`400 Bad Request: version.ID cannot be empty`), see commit `be36b38`. Say which
+   version is bad in the new version's `CHANGELOG.md` entry instead.
+
+The Docker images are not published anywhere; see [docker.md](./docker.md#where-the-images-come-from).
 
 ## Knowledge graph (Graphify)
 

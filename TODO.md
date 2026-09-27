@@ -22,4 +22,6 @@ prefix: iso
   shipped in FEA14-05; autoSaveDebounce opt-in (default false). 516 unit, 48/48 e2e
 - [x] ROADMAP 2.5 drag from a port to draw a connector @due(2026-09-28) @id(iso-008)
   shipped in FEA14-06: port drag to connect; ends resolved by port and at release. 50/50 e2e
+- [x] Multi-select follow-ups: bulk colour and multi-item clipboard @due(2026-09-28) @id(iso-009)
+  shipped in FEA14-07 (clipboard) + FEA14-08 (bulk colour); duplicate stays single-item. 518 unit, 52/52 e2e
 

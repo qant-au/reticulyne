@@ -8,6 +8,25 @@ export const generateGenericFilename = (extension: string) => {
   return `reticulyne-export-${new Date().toISOString()}.${extension}`;
 };
 
+// 1.2: name an export after the diagram. Only characters that are illegal
+// in file names (or control characters) are replaced, so a title in any
+// script survives. 'Untitled', or a title with nothing usable left, falls
+// back to the generic timestamped name.
+export const filenameForTitle = (
+  title: string | undefined,
+  extension: string
+) => {
+  const safe = (title ?? '')
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/^[.-]+|[.-]+$/g, '')
+    .slice(0, 100);
+  if (!safe || title === 'Untitled') return generateGenericFilename(extension);
+  return `${safe}.${extension}`;
+};
+
 export const base64ToBlob = (
   base64: string,
   contentType: string,
@@ -59,7 +78,7 @@ export const exportAsJSON = (model: Model) => {
     type: 'application/json;charset=utf-8'
   });
 
-  downloadFile(data, generateGenericFilename('json'));
+  downloadFile(data, filenameForTitle(model.title, 'json'));
 };
 
 export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {

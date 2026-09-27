@@ -120,6 +120,10 @@ export const useInitialDataManager = ({
 
       const initialData = {
         ..._initialData,
+        // The raw input is stored, not the parsed output, so apply the
+        // schema's title default here or loadModel({...no title}) would
+        // leave the store without one (1.2).
+        title: validationResult.data.title,
         icons: filterIconsByCollection(
           _initialData.icons,
           iconCollectionsRef.current

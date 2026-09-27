@@ -17,7 +17,8 @@
 import {
   DOWNLOAD_REVOKE_DELAY_MS,
   downloadFile,
-  exportAsPdf
+  exportAsPdf,
+  filenameForTitle
 } from '../exportOptions';
 
 // Stub html-to-image so exportAsImage resolves to a known PNG data URL
@@ -204,4 +205,24 @@ describe('downloadFile (DEP-01)', () => {
     jest.advanceTimersByTime(1);
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:test/1');
   });
+});
+
+describe('filenameForTitle (1.2)', () => {
+  test.each([
+    ['Network plan', 'Network-plan.json'],
+    ['a/b\\c: "d"?', 'a-b-c-d.json'],
+    ['東京 データセンター', '東京-データセンター.json'],
+    ['..hidden..', 'hidden.json']
+  ])('%s -> %s', (title, expected) => {
+    expect(filenameForTitle(title, 'json')).toBe(expected);
+  });
+
+  test.each([['Untitled'], [''], ['///'], [undefined]])(
+    '%s falls back to the generic name',
+    (title) => {
+      expect(filenameForTitle(title, 'json')).toMatch(
+        /^reticulyne-export-.*\.json$/
+      );
+    }
+  );
 });

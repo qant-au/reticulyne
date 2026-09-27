@@ -19,7 +19,10 @@ export type ConnectorIndicatorComponent = (props: {
   view: View;
 }) => ReactNode;
 
-export type InitialData = Model & {
+// `title` is optional on input (1.2): the schema supplies 'Untitled', so a
+// loaded Model always has one.
+export type InitialData = Omit<Model, 'title'> & {
+  title?: string;
   fitToView?: boolean;
   view?: string;
 };

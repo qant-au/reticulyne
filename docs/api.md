@@ -72,7 +72,8 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 |---|---|---|
 | `'ACTION.OPEN'` | on | Load a previously-exported JSON file. |
 | `'ACTION.SAVE'` | off | Render a **Save** menu entry that fires the `onSave` prop with the current model. Only appears when both `'ACTION.SAVE'` is listed AND the `onSave` prop is supplied. Off-by-default because there's no useful behaviour without a host callback. Added in v4.1.0. |
-| `'EXPORT.JSON'` | on | Download the current model as JSON. |
+| `'ACTION.RENAME'` | on | Open a dialog to rename the diagram; the title shows in the title bar and names the JSON export. (Menu label: "Rename diagram".) |
+| `'EXPORT.JSON'` | on | Download the current model as JSON, named after the diagram title (`Site-network.json`), or `reticulyne-export-<timestamp>.json` while it is `'Untitled'`. |
 | `'EXPORT.PNG'` | on | Render the current view to PNG and download. (Menu label: "Export as Image".) |
 | `'EXPORT.PDF'` | on | Render the current view to PNG and embed it in a single-page A4 PDF, then download. All client-side via jsPDF — no network call. Added in v4.0.0. |
 | `'ACTION.CLEAR_CANVAS'` | on | Wipe items + views back to an empty scene. (Menu label: "Clear".) |
@@ -87,10 +88,12 @@ identifier.
 
 ## `InitialData`
 
-Equal to the `Model` shape plus two optional view hints:
+Equal to the `Model` shape, with `title` optional (it defaults to `'Untitled'`), plus two
+optional view hints:
 
 ```ts
-type InitialData = Model & {
+type InitialData = Omit<Model, 'title'> & {
+  title?: string;      // defaults to 'Untitled'
   fitToView?: boolean; // recompute zoom on mount to fit the diagram
   view?: string;       // id of the view to activate
 };
@@ -121,6 +124,8 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | Member | Signature | Notes |
 |---|---|---|
 | `getModel()` | `() => Model` | Serialised current model. |
+| `getTitle()` | `() => string` | The diagram title. |
+| `setTitle(title)` | `(title: string) => void` | Rename the diagram. Gated on `editorMode === 'EDITABLE'`; schema-validated (over 100 characters goes to `onValidationError`); a blank title becomes `'Untitled'`. Not recorded in undo history. |
 | `loadModel(data)` | `(data: InitialData) => void` | Validate + hydrate fresh data. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor). Allowed in every editor mode; clears the selection; warns and no-ops on an unknown id. |

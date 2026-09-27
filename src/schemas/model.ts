@@ -10,7 +10,8 @@ import { colorsSchema } from './colors';
 const modelObjectSchema = z
   .object({
     version: z.string().max(10).optional(),
-    title: constrainedStrings.name,
+    // 1.2: optional for embedders; a model without one is 'Untitled'.
+    title: constrainedStrings.name.default('Untitled'),
     description: constrainedStrings.description.optional(),
     items: modelItemsSchema,
     views: viewsSchema,

@@ -121,7 +121,11 @@ post-v1 desirability.
 These items change the state model or the public API. Adding them later means
 either a breaking change for embedders or running a parallel system alongside.
 
-### 1.2 Diagram title UI and API exposure **[NEW]**
+### ~~1.2 Diagram title UI and API exposure~~
+
+_Shipped 2026-09-27. As sketched, with two notes: rename is a main-menu dialog rather
+than an inline field, and the export name keeps any script (only characters that are
+illegal in file names are replaced), so a non-Latin title is not reduced to nothing._
 
 **What it does.** The model schema already carries `title: string` (max 100,
 required, defaults to `'Untitled'`). This item exposes that field to users and

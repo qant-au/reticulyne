@@ -20,6 +20,12 @@ export type ConnectorIndicatorComponent = (props: {
   view: View;
 }) => ReactNode;
 
+// 2.13: store an uploaded icon file and return where it can be loaded from.
+// `readIconAsDataUrl` is a ready-made handler that embeds it in the diagram.
+export type IconUploadHandler = (
+  file: File
+) => Promise<{ url: string; name?: string }>;
+
 // `title` is optional on input (1.2): the schema supplies 'Untitled', so a
 // loaded Model always has one.
 export type InitialData = Omit<Model, 'title'> & {
@@ -72,6 +78,16 @@ export interface ReticulyneProps {
    * changed the selection.
    */
   onNodeClick?: (id: string) => void;
+  /**
+   * 2.13: adds an "Upload icon" button to the icon picker (editable
+   * diagrams only). Receives the chosen file (SVG, PNG, JPEG, GIF or WebP,
+   * at most 200 KB), stores it, and resolves with its URL; the icon joins a
+   * "My icons" collection saved in the diagram. Reject with an Error to show
+   * its message in the picker. Pass `readIconAsDataUrl` to embed the file
+   * in the diagram JSON with no server. Sanitising SVG is the host's job
+   * (see SECURITY.md).
+   */
+  onIconUpload?: IconUploadHandler;
   /** 1.6: as `onNodeClick`, for a connector. */
   onConnectorClick?: (id: string) => void;
   /**

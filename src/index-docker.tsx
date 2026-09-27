@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Box } from '@mui/material';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import Reticulyne, { INITIAL_DATA } from 'src/Reticulyne';
+import Reticulyne, { INITIAL_DATA, readIconAsDataUrl } from 'src/Reticulyne';
 import type { InitialData, Model } from 'src/types';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import type { EditorModeEnum } from 'src/types/common';
@@ -134,6 +134,7 @@ const Shell = scrollParent ? (
           editorMode={editorMode}
           enableAnimation={enableAnimation}
           {...saveProps}
+          onIconUpload={readIconAsDataUrl}
           {...eventProps}
         />
       </Box>
@@ -146,6 +147,7 @@ const Shell = scrollParent ? (
       editorMode={editorMode}
       enableAnimation={enableAnimation}
       {...saveProps}
+      onIconUpload={readIconAsDataUrl}
       {...eventProps}
     />
   </Box>

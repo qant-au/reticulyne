@@ -707,7 +707,9 @@ and the `pointermove` / `pointerup` listeners); new `src/interaction/touchInput.
 
 ---
 
-### 2.13 Custom icons / image upload
+### ~~2.13 Custom icons / image upload~~
+
+_Shipped 2026-09-28 as sketched (`onIconUpload`, a **My icons** collection, 200 KB cap). Dedupe is by returned URL, which for the bundled `readIconAsDataUrl` handler is by content; a host that returns a fresh URL per upload gets one icon per upload. The Docker editor embeds uploads as data: URLs, capped near 48 KB by the schema's icon URL limit._
 
 **What it does.** "Upload custom icon" button in the icon picker. Drop an SVG /
 PNG; it appears in a "My Icons" collection that travels with the diagram JSON.

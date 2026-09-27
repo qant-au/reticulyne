@@ -69,6 +69,7 @@ const App = ({
   onConnectorClick,
   onSelectionChange,
   onViewportChange,
+  onIconUpload,
   iconCollections,
   onSave,
   autoSaveDebounce = false,
@@ -143,6 +144,10 @@ const App = ({
     uiStateActions.setClickHandlers({ onNodeClick, onConnectorClick });
   }, [onNodeClick, onConnectorClick, uiStateActions]);
   useHostEvents({ onSelectionChange, onViewportChange });
+
+  useEffect(() => {
+    uiStateActions.setOnIconUpload(onIconUpload);
+  }, [onIconUpload, uiStateActions]);
 
   // 1.5: patches held back by a drag or a draw land when it ends.
   usePatchQueueFlush();

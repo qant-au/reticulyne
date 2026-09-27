@@ -22,6 +22,10 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Upload icons** (ROADMAP 2.13). `onIconUpload` adds an Upload
+  button to the icon picker; uploads join a **My icons** collection saved in
+  the diagram. `readIconAsDataUrl` embeds the file with no server, and the
+  Docker editor uses it.
 - **Live updates that keep UI state** (ROADMAP 1.5). `useReticulyne().applyPatch`
   changes nodes, connectors, rectangles and text boxes by id without touching
   the selection, zoom or pan; waits out a drag or draw in progress; skips ids

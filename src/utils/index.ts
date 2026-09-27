@@ -19,3 +19,4 @@ export * from './save';
 export * from './ports';
 export * from './arrange';
 export * from './search';
+export * from './iconUpload';

@@ -8,6 +8,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import ChevronRight from '@mui/icons-material/ChevronRight';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import type { Size } from 'src/types/common';
+import { SaveStatusPill } from './SaveStatusPill';
 
 interface AppPadding {
   x: number;
@@ -73,6 +74,7 @@ export const TitleBar = ({
           >
             {currentViewName}
           </Typography>
+          <SaveStatusPill />
         </Stack>
       </UiElement>
     </Box>

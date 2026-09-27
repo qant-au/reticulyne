@@ -15,3 +15,4 @@ export * from './fitToView';
 export * from './exportOptions';
 export * from './model';
 export * from './editorModeMapping';
+export * from './save';

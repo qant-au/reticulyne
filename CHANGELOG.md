@@ -15,6 +15,11 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Save status and dirty state** (ROADMAP 2.3). With `onSave` supplied, the
+  title bar shows Unsaved changes / Saving… / Saved / Save failed with Retry,
+  and the browser asks before closing a tab with unsaved changes. `onSave` may
+  now return a Promise. New `autoSaveDebounce` prop, off by default.
+
 - **Double-click to add** (ROADMAP 2.2). Double-clicking an empty tile opens
   the icon picker for that tile, and picking an icon places it there at once.
   Double-clicking an item opens its inspector. `EDITABLE` only.

@@ -82,8 +82,19 @@ export interface ReticulyneProps {
    *
    * Callback identity does not need to be memoised — the component
    * stores it in the UI-state store and reads it at click time.
+   *
+   * 2.3: return a Promise to get an accurate status pill: "Saving…" while
+   * it is pending, "Saved" when it resolves, and "Save failed" with a
+   * Retry button when it rejects. A plain `void` return counts as saved.
    */
-  onSave?: (model: Model) => void;
+  onSave?: (model: Model) => void | Promise<unknown>;
+  /**
+   * 2.3: save automatically this many milliseconds after the last edit,
+   * through `onSave`. Off (`false`) by default, so a host that wired
+   * `onSave` for an explicit Save button is not suddenly saved on every
+   * edit. Has no effect without `onSave`.
+   */
+  autoSaveDebounce?: number | false;
   /**
    * Opt-in flag for the connector animation feature (FEA5-06).
    * When `true`, connectors with `animated: true` render a moving

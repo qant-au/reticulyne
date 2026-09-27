@@ -12,7 +12,7 @@ import { useCallback } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
-import { modelFromModelStore } from 'src/utils';
+import { modelFromModelStore, performSave } from 'src/utils';
 
 export const useSaveModel = () => {
   const model = useModelStore(
@@ -39,6 +39,10 @@ export const useSaveModel = () => {
       );
       return;
     }
-    onSave(model);
+    // 2.3: through the shared path, so the title-bar pill reports it.
+    void performSave(onSave, model, {
+      getStatus: uiStateActions.getSaveStatus,
+      setStatus: uiStateActions.setSaveStatus
+    });
   }, [model, onSave, uiStateActions]);
 };

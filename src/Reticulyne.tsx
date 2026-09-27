@@ -24,6 +24,7 @@ import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
+import { useSaveController } from 'src/hooks/useSaveController';
 import { useView } from 'src/hooks/useView';
 import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
@@ -45,6 +46,7 @@ const App = ({
   showTitleBar,
   iconCollections,
   onSave,
+  autoSaveDebounce = false,
   nodeIndicatorComponent,
   connectorIndicatorComponent,
   highlightedItemId,
@@ -65,6 +67,13 @@ const App = ({
   );
 
   const { load, iconCollectionsKey } = initialDataManager;
+
+  // 2.3: dirty state, opt-in auto-save and the leave-page warning.
+  useSaveController({
+    model,
+    isReady: initialDataManager.isReady,
+    autoSaveDebounce
+  });
 
   // Memoise the merged `{ ...INITIAL_DATA, ...initialData }` so its
   // reference is stable whenever the consumer's `initialData` ref is

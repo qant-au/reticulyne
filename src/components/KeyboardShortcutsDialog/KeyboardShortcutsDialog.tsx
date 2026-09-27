@@ -54,8 +54,8 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
     shortcuts: [
       { keys: ['⌘/Ctrl', 'Z'], description: 'Undo' },
       { keys: ['⌘/Ctrl', '⇧', 'Z'], description: 'Redo' },
-      { keys: ['⌘/Ctrl', 'C'], description: 'Copy active item' },
-      { keys: ['⌘/Ctrl', 'X'], description: 'Cut active item' },
+      { keys: ['⌘/Ctrl', 'C'], description: 'Copy selection' },
+      { keys: ['⌘/Ctrl', 'X'], description: 'Cut selection' },
       { keys: ['⌘/Ctrl', 'V'], description: 'Paste' },
       { keys: ['⌘/Ctrl', 'D'], description: 'Duplicate active item' },
       { keys: ['Del', '⌫'], description: 'Delete selection' },

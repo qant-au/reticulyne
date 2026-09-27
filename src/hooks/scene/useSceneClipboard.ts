@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ItemReference } from 'src/types';
+import { ClipboardEntry, ItemReference } from 'src/types';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import * as reducers from 'src/stores/reducers';
 import { generateId, getItemByIdOrThrow } from 'src/utils';
@@ -130,114 +130,121 @@ export const useSceneClipboard = ({
     return state.clipboard;
   });
 
+  // Worklist 19: the clipboard holds a LIST of entries, so copy, cut and
+  // paste act on the whole selection. A paste is one setState, so one
+  // undo step, and keeps the copied items' spacing (every entry moves by
+  // the same one-tile offset).
   const copySelection = useCallback(
-    (target: ItemReference) => {
+    (target: ItemReference | ItemReference[]) => {
       const state = getState();
-      switch (target.type) {
-        case 'ITEM': {
-          const modelItem = getItemByIdOrThrow(
-            state.model.items,
-            target.id
-          ).value;
-          const viewItem = getItemByIdOrThrow(
-            currentView.items ?? [],
-            target.id
-          ).value;
-          setClipboard({ kind: 'ITEM', modelItem, viewItem });
-          return;
+      const targets = Array.isArray(target) ? target : [target];
+      const entries: ClipboardEntry[] = [];
+      for (const t of targets) {
+        switch (t.type) {
+          case 'ITEM':
+            entries.push({
+              kind: 'ITEM',
+              modelItem: getItemByIdOrThrow(state.model.items, t.id).value,
+              viewItem: getItemByIdOrThrow(currentView.items ?? [], t.id).value
+            });
+            break;
+          case 'TEXTBOX':
+            entries.push({
+              kind: 'TEXTBOX',
+              textBox: getItemByIdOrThrow(currentView.textBoxes ?? [], t.id)
+                .value
+            });
+            break;
+          case 'RECTANGLE':
+            entries.push({
+              kind: 'RECTANGLE',
+              rectangle: getItemByIdOrThrow(currentView.rectangles ?? [], t.id)
+                .value
+            });
+            break;
+          default:
+            // CONNECTOR is intentionally not copyable.
+            break;
         }
-        case 'TEXTBOX': {
-          const textBox = getItemByIdOrThrow(
-            currentView.textBoxes ?? [],
-            target.id
-          ).value;
-          setClipboard({ kind: 'TEXTBOX', textBox });
-          return;
-        }
-        case 'RECTANGLE': {
-          const rectangle = getItemByIdOrThrow(
-            currentView.rectangles ?? [],
-            target.id
-          ).value;
-          setClipboard({ kind: 'RECTANGLE', rectangle });
-          return;
-        }
-        default:
-          // CONNECTOR is intentionally not copyable.
-          break;
       }
+      // Copying only connectors leaves the clipboard as it was.
+      if (entries.length > 0) setClipboard(entries);
+      return entries.length;
     },
     [getState, currentView, setClipboard]
   );
 
-  const paste = useCallback(() => {
-    if (clipboard === null) return null;
-    const state = getState();
-    const newId = generateId();
-    switch (clipboard.kind) {
-      case 'ITEM': {
-        const afterModel = reducers.createModelItem(
-          {
-            ...clipboard.modelItem,
-            id: newId,
-            name: `${clipboard.modelItem.name} (copy)`
-          },
-          state
-        );
-        const afterView = reducers.view({
-          action: 'CREATE_VIEWITEM',
-          payload: {
-            ...clipboard.viewItem,
-            id: newId,
-            tile: {
-              x: clipboard.viewItem.tile.x + DUPLICATE_TILE_OFFSET.x,
-              y: clipboard.viewItem.tile.y + DUPLICATE_TILE_OFFSET.y
-            }
-          },
-          ctx: { viewId: currentViewId, state: afterModel }
-        });
-        setState(afterView);
-        return { type: 'ITEM' as const, id: newId };
-      }
-      case 'TEXTBOX': {
-        const newState = reducers.view({
-          action: 'CREATE_TEXTBOX',
-          payload: {
-            ...clipboard.textBox,
-            id: newId,
-            tile: {
-              x: clipboard.textBox.tile.x + DUPLICATE_TILE_OFFSET.x,
-              y: clipboard.textBox.tile.y + DUPLICATE_TILE_OFFSET.y
-            }
-          },
-          ctx: { viewId: currentViewId, state }
-        });
-        setState(newState);
-        return { type: 'TEXTBOX' as const, id: newId };
-      }
-      case 'RECTANGLE': {
-        const newState = reducers.view({
-          action: 'CREATE_RECTANGLE',
-          payload: {
-            ...clipboard.rectangle,
-            id: newId,
-            from: {
-              x: clipboard.rectangle.from.x + DUPLICATE_TILE_OFFSET.x,
-              y: clipboard.rectangle.from.y + DUPLICATE_TILE_OFFSET.y
+  const paste = useCallback((): ItemReference[] | null => {
+    if (clipboard.length === 0) return null;
+    let state = getState();
+    const pasted: ItemReference[] = [];
+    for (const entry of clipboard) {
+      const newId = generateId();
+      switch (entry.kind) {
+        case 'ITEM': {
+          const afterModel = reducers.createModelItem(
+            {
+              ...entry.modelItem,
+              id: newId,
+              name: `${entry.modelItem.name} (copy)`
             },
-            to: {
-              x: clipboard.rectangle.to.x + DUPLICATE_TILE_OFFSET.x,
-              y: clipboard.rectangle.to.y + DUPLICATE_TILE_OFFSET.y
-            }
-          },
-          ctx: { viewId: currentViewId, state }
-        });
-        setState(newState);
-        return { type: 'RECTANGLE' as const, id: newId };
+            state
+          );
+          state = reducers.view({
+            action: 'CREATE_VIEWITEM',
+            payload: {
+              ...entry.viewItem,
+              id: newId,
+              tile: {
+                x: entry.viewItem.tile.x + DUPLICATE_TILE_OFFSET.x,
+                y: entry.viewItem.tile.y + DUPLICATE_TILE_OFFSET.y
+              }
+            },
+            ctx: { viewId: currentViewId, state: afterModel }
+          });
+          pasted.push({ type: 'ITEM', id: newId });
+          break;
+        }
+        case 'TEXTBOX':
+          state = reducers.view({
+            action: 'CREATE_TEXTBOX',
+            payload: {
+              ...entry.textBox,
+              id: newId,
+              tile: {
+                x: entry.textBox.tile.x + DUPLICATE_TILE_OFFSET.x,
+                y: entry.textBox.tile.y + DUPLICATE_TILE_OFFSET.y
+              }
+            },
+            ctx: { viewId: currentViewId, state }
+          });
+          pasted.push({ type: 'TEXTBOX', id: newId });
+          break;
+        case 'RECTANGLE':
+          state = reducers.view({
+            action: 'CREATE_RECTANGLE',
+            payload: {
+              ...entry.rectangle,
+              id: newId,
+              from: {
+                x: entry.rectangle.from.x + DUPLICATE_TILE_OFFSET.x,
+                y: entry.rectangle.from.y + DUPLICATE_TILE_OFFSET.y
+              },
+              to: {
+                x: entry.rectangle.to.x + DUPLICATE_TILE_OFFSET.x,
+                y: entry.rectangle.to.y + DUPLICATE_TILE_OFFSET.y
+              }
+            },
+            ctx: { viewId: currentViewId, state }
+          });
+          pasted.push({ type: 'RECTANGLE', id: newId });
+          break;
+        default:
+          break;
       }
-      default:
-        return null;
     }
+    setState(state);
+    return pasted;
   }, [clipboard, getState, setState, currentViewId]);
 
   return { duplicateItem, copySelection, paste };

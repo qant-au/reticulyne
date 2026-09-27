@@ -213,7 +213,8 @@ the store, rather than widening `itemControls` into a discriminated union —
 that left all eleven existing consumers untouched. And the multi-edit panel
 offers delete + layer order only, not colour: colour is per-type and would
 silently no-op on the members of a mixed selection that lack the field.
-Bulk colour is left open. The band renders as a tile-space parallelogram
+Bulk colour is left open (shipped 2026-09-28: connectors and rectangles, one
+undo step). The band renders as a tile-space parallelogram
 rather than a screen-space rectangle, because the selection it performs IS a
 tile-space box; a screen rect would draw a region different from the one it
 selects._
@@ -1162,6 +1163,9 @@ selection: the clipboard slice holds a single `ClipboardEntry` by
 construction (FEA5-04), so copy / cut / duplicate all stay single-item until
 that is widened. The `?` dialog now says "active item" on those three rows
 rather than implying they cover a multi-selection._
+
+_Widened 2026-09-28: the clipboard holds a list, so copy / cut / paste act on the
+whole selection. Duplicate is still the active item._
 
 **What it does.** Copy + delete in one shot. Same key as Excalidraw.
 

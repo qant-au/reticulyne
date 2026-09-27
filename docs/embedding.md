@@ -86,8 +86,8 @@ All props are optional. The component renders a fully-functional editor with sen
 | `⇧ 2` | Fit to selection |
 | `⌘/Ctrl Z` | Undo |
 | `⌘/Ctrl ⇧ Z` | Redo |
-| `⌘/Ctrl C` | Copy active item |
-| `⌘/Ctrl X` | Cut active item |
+| `⌘/Ctrl C` | Copy selection |
+| `⌘/Ctrl X` | Cut selection |
 | `⌘/Ctrl V` | Paste |
 | `⌘/Ctrl D` | Duplicate active item |
 | `⌘/Ctrl A` | Select all |
@@ -208,16 +208,23 @@ right-click menu of a rectangle, connector or text box, and on the keyboard:
 | `Ctrl/Cmd + Shift + ]` (Mac also `Cmd + Opt + ]`) | Bring to front |
 | `Ctrl/Cmd + Shift + [` (Mac also `Cmd + Opt + [`) | Send to back |
 
-**Clipboard — `EDITABLE` mode only.** These act on the **active item** (the
-one most recently added to the selection), not the whole selection: the
-clipboard holds a single entry by construction.
+**Clipboard — `EDITABLE` mode only.** Copy, cut and paste act on the **whole
+selection**. Connectors are not copied (their ends point at other items), so a
+cut leaves selected connectors in place. A paste keeps the copied items'
+spacing, is one undo step, and selects what it created. Duplicate still acts on
+the **active item** (the one most recently added to the selection).
 
 | Key | Action |
 |---|---|
 | `Ctrl/Cmd + D` | Duplicate the active item (skips connectors) |
-| `Ctrl/Cmd + C` | Copy the active item to the editor's clipboard |
-| `Ctrl/Cmd + X` | Cut the active item |
+| `Ctrl/Cmd + C` | Copy the selection to the editor's clipboard |
+| `Ctrl/Cmd + X` | Cut the selection (connectors stay) |
 | `Ctrl/Cmd + V` | Paste with a one-tile offset (works repeatedly) |
+
+**Colour.** With several items selected, the multi-edit panel's Colour row
+recolours every connector and rectangle in the selection in one step (a
+rectangle's hex override is cleared so the palette colour shows). Nodes and
+text boxes have no colour and are left as they are.
 
 **Undo / redo — `EDITABLE` mode only.**
 

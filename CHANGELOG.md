@@ -15,6 +15,13 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Multi-item clipboard.** `Ctrl/Cmd+C`, `X` and `V` act on the whole
+  selection; a paste keeps the items' spacing, is one undo step, and selects
+  the pasted group. Connectors are still not copied. Duplicate stays
+  single-item.
+- **Bulk colour.** The multi-select panel gains a Colour row that recolours
+  every connector and rectangle in the selection in one undo step.
+
 - **Drag from a port to connect** (ROADMAP 2.5). With the ordinary cursor, a
   node shows its ports on hover; dragging from one to another node draws a
   connector, and releasing elsewhere cancels. Dragging from a node's centre
@@ -60,6 +67,9 @@ potentially breaking and read the release notes before upgrading.
 
 ### Changed
 
+- Colour swatches have accessible names ("Colour #dd3333") and
+  `aria-pressed`, and the active swatch is shown enlarged; its styling was
+  never applied before.
 - The right-click menu no longer opens in read-only editor modes; every
   entry in it edits the diagram.
 - `file-saver` is gone from the runtime dependencies. Downloads go through

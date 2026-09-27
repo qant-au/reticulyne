@@ -100,7 +100,35 @@ export const useSceneShapes = ({
     [getState, setState, currentViewId]
   );
 
+  // Worklist 19: give every coloured member of a selection one palette
+  // colour, in one undo step. Only connectors and rectangles have a
+  // colour; a rectangle's hex override is cleared, or it would win over
+  // the palette colour just chosen. Other kinds are ignored.
+  const setColour = useCallback(
+    (targets: ItemReference[], color: string) => {
+      let state = getState();
+      for (const t of targets) {
+        if (t.type === 'CONNECTOR') {
+          state = reducers.view({
+            action: 'UPDATE_CONNECTOR',
+            payload: { id: t.id, color },
+            ctx: { viewId: currentViewId, state }
+          });
+        } else if (t.type === 'RECTANGLE') {
+          state = reducers.view({
+            action: 'UPDATE_RECTANGLE',
+            payload: { id: t.id, color, colorValue: undefined },
+            ctx: { viewId: currentViewId, state }
+          });
+        }
+      }
+      setState(state);
+    },
+    [getState, setState, currentViewId]
+  );
+
   return {
+    setColour,
     createTextBox,
     updateTextBox,
     deleteTextBox,

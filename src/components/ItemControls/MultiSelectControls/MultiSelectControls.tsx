@@ -8,6 +8,7 @@ import { Header } from '../components/Header';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
+import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 
 const TYPE_LABELS: Record<ItemReference['type'], [string, string]> = {
   ITEM: ['node', 'nodes'],
@@ -46,8 +47,13 @@ export const MultiSelectControls = () => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const { deleteViewItem, deleteTextBox, deleteRectangle, deleteConnector } =
-    useScene();
+  const {
+    deleteViewItem,
+    deleteTextBox,
+    deleteRectangle,
+    deleteConnector,
+    setColour
+  } = useScene();
 
   const summary = useMemo(() => {
     return summarise(selection);
@@ -63,6 +69,13 @@ export const MultiSelectControls = () => {
         item.type === 'CONNECTOR' ||
         item.type === 'TEXTBOX'
       );
+    });
+  }, [selection]);
+
+  // Worklist 19: only connectors and rectangles carry a colour.
+  const colourable = useMemo(() => {
+    return selection.filter((item) => {
+      return item.type === 'CONNECTOR' || item.type === 'RECTANGLE';
     });
   }, [selection]);
 
@@ -105,6 +118,24 @@ export const MultiSelectControls = () => {
           {summary}
         </Typography>
       </Section>
+      {colourable.length > 0 && (
+        <Section title="Colour">
+          <ColorSelector
+            onChange={(color) => {
+              setColour(colourable, color);
+            }}
+          />
+          {colourable.length < selection.length && (
+            <Typography
+              variant="caption"
+              sx={{ color: 'text.disabled', display: 'block', pt: 1 }}
+            >
+              Applies to connectors and rectangles; nodes and text boxes have no
+              colour.
+            </Typography>
+          )}
+        </Section>
+      )}
       <LayerOrderSection
         targets={orderable}
         note={

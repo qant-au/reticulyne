@@ -46,6 +46,8 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       patchQueue: [],
       onSave: undefined,
       onIconUpload: undefined,
+      onDiagramReplaced: undefined,
+      loadGeneration: 0,
       templates: TEMPLATES,
       editingGroupId: null,
       saveStatus: {
@@ -223,6 +225,12 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setOnIconUpload: (onIconUpload) => {
           set({ onIconUpload });
+        },
+        setOnDiagramReplaced: (onDiagramReplaced) => {
+          set({ onDiagramReplaced });
+        },
+        markLoaded: () => {
+          set({ loadGeneration: get().loadGeneration + 1 });
         },
         setOnSave: (onSave) => {
           set({ onSave });

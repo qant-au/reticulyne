@@ -152,3 +152,31 @@ for (const [label, body] of [
     await expect(page.getByRole('button', { name: 'Main menu' })).toBeVisible();
   });
 }
+
+test('a template does not overwrite the saved diagram that was open', async ({
+  page
+}) => {
+  await page.goto('/');
+  await rename(page, 'Alpha');
+  await save(page);
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'New from template' }).click();
+  await page.getByRole('button', { name: 'Kubernetes service' }).click();
+  await expect(page.getByText('Volume claim', { exact: true })).toBeVisible();
+  // Past the shell's 5 s auto-save debounce.
+  await page.waitForTimeout(6000);
+  await diagrams(page).click();
+  await expect(page.getByRole('menuitem', { name: /Alpha/ })).toBeVisible();
+});
+
+test('a newly opened diagram starts clean, not with the last one's status', async ({
+  page
+}) => {
+  await page.goto('/');
+  await rename(page, 'Beta');
+  await save(page);
+  await diagrams(page).click();
+  await page.getByRole('menuitem', { name: 'New diagram' }).click();
+  await expect(page.getByText('Unsaved changes')).toHaveCount(0);
+  await expect(page.getByText(/^Saved/)).toHaveCount(0);
+});

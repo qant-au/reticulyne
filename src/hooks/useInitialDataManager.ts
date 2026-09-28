@@ -160,6 +160,7 @@ export const useInitialDataManager = ({
       // back past it restored a model whose view no longer existed and
       // crashed the editor (after a template, a Clear, an import).
       historyActions.clear();
+      uiStateActions.markLoaded();
 
       const view = getItemByIdOrThrow(
         initialData.views,

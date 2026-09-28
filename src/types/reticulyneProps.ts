@@ -90,6 +90,13 @@ export interface ReticulyneProps {
    */
   onIconUpload?: IconUploadHandler;
   /**
+   * Called after the user replaces the whole diagram from inside the
+   * editor (New from template, or Clear). A host that stores diagrams by
+   * id should treat what follows as a new diagram, or its next save (or
+   * auto-save) overwrites the one that was open.
+   */
+  onDiagramReplaced?: () => void;
+  /**
    * 2.14: the starter diagrams "New from template" offers. Default: the
    * bundled `TEMPLATES` (blank, three-tier web, AWS, Kubernetes, office
    * network). Pass your own to replace them; an empty array hides the entry.

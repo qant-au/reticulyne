@@ -130,6 +130,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
 
   const onClearCanvas = useCallback(() => {
     clear();
+    uiStateActions.get().onDiagramReplaced?.();
     uiStateActions.setIsMainMenuOpen(false);
   }, [uiStateActions, clear]);
 

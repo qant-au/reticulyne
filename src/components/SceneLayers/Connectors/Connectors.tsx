@@ -14,7 +14,28 @@ export const Connectors = memo(() => {
     return state.mode;
   });
 
+  const selection = useUiStateStore((state) => {
+    return state.selection;
+  });
+
   const activeHighlightId = useActiveHighlightId();
+
+  // In a multi-selection every selected connector shows its anchors, as
+  // one does on its own; before, only the single-select case did, and a
+  // connector in a marquee looked unselected.
+  const selectedInMulti = useMemo(() => {
+    return new Set(
+      selection.length > 1
+        ? selection
+            .filter((s) => {
+              return s.type === 'CONNECTOR';
+            })
+            .map((s) => {
+              return s.id;
+            })
+        : []
+    );
+  }, [selection]);
 
   const selectedConnectorId = useMemo(() => {
     if (mode.type === 'CONNECTOR') {
@@ -38,7 +59,10 @@ export const Connectors = memo(() => {
           <Connector
             key={connector.id}
             connector={connector}
-            isSelected={selectedConnectorId === connector.id}
+            isSelected={
+              selectedConnectorId === connector.id ||
+              selectedInMulti.has(connector.id)
+            }
             isDimmed={
               activeHighlightId !== null && activeHighlightId !== connector.id
             }

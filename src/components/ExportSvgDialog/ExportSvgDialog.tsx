@@ -81,7 +81,11 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
     setIsExporting(true);
     setExportError(null);
     try {
-      await exportAsVectorSvg(containerRef.current, effectiveBgColor);
+      await exportAsVectorSvg(
+        containerRef.current,
+        effectiveBgColor,
+        model.title
+      );
     } catch (err) {
       setExportError(
         err instanceof Error ? err.message : 'Vector SVG export failed.'
@@ -89,14 +93,18 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
     } finally {
       setIsExporting(false);
     }
-  }, [effectiveBgColor]);
+  }, [effectiveBgColor, model.title]);
 
   const handleDownloadUniversal = useCallback(async () => {
     if (!containerRef.current) return;
     setIsExporting(true);
     setExportError(null);
     try {
-      await exportAsUniversalSvg(containerRef.current, effectiveBgColor);
+      await exportAsUniversalSvg(
+        containerRef.current,
+        effectiveBgColor,
+        model.title
+      );
     } catch (err) {
       setExportError(
         err instanceof Error ? err.message : 'Universal SVG export failed.'
@@ -104,7 +112,7 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
     } finally {
       setIsExporting(false);
     }
-  }, [effectiveBgColor]);
+  }, [effectiveBgColor, model.title]);
 
   return (
     <Dialog open onClose={onClose}>

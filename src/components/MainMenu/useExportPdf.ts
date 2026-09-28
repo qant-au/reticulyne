@@ -10,6 +10,7 @@
 import { useCallback } from 'react';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { exportAsPdf } from 'src/utils';
+import { useModelStore } from 'src/stores/modelStore';
 
 export const useExportPdf = () => {
   const rendererEl = useUiStateStore((state) => {
@@ -17,6 +18,9 @@ export const useExportPdf = () => {
   });
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
+  });
+  const title = useModelStore((state) => {
+    return state.title;
   });
 
   return useCallback(async () => {
@@ -33,9 +37,9 @@ export const useExportPdf = () => {
       });
     });
     try {
-      await exportAsPdf(rendererEl);
+      await exportAsPdf(rendererEl, undefined, title);
     } finally {
       uiStateActions.setMode(mode);
     }
-  }, [rendererEl, uiStateActions]);
+  }, [rendererEl, uiStateActions, title]);
 };

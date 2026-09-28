@@ -122,7 +122,13 @@ export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
  *
  * Added under FEA4-04 of the fourth-pass review.
  */
-export const exportAsPdf = async (el: HTMLDivElement, size?: Size) => {
+// Every export is named after the diagram, as the JSON one already was;
+// the image, PDF and SVG exports used a timestamp.
+export const exportAsPdf = async (
+  el: HTMLDivElement,
+  size?: Size,
+  title?: string
+) => {
   const imageDataUrl = await exportAsImage(el, size);
 
   // The img object lets us read the rendered PNG's natural pixel
@@ -166,7 +172,7 @@ export const exportAsPdf = async (el: HTMLDivElement, size?: Size) => {
   doc.addImage(imageDataUrl, 'PNG', offsetX, offsetY, drawWidth, drawHeight);
 
   const blob = doc.output('blob');
-  downloadFile(blob, generateGenericFilename('pdf'));
+  downloadFile(blob, filenameForTitle(title, 'pdf'));
 };
 
 /**
@@ -212,7 +218,8 @@ const fetchAsDataUri = async (src: string): Promise<string> => {
  */
 export const exportAsVectorSvg = async (
   el: HTMLElement,
-  bgColor: string
+  bgColor: string,
+  title?: string
 ): Promise<void> => {
   const ns = 'http://www.w3.org/2000/svg';
   const w = el.offsetWidth;
@@ -328,7 +335,7 @@ export const exportAsVectorSvg = async (
   const serializer = new XMLSerializer();
   const svgStr = serializer.serializeToString(root);
   const blob = new Blob([svgStr], { type: 'image/svg+xml' });
-  downloadFile(blob, generateGenericFilename('vector.svg'));
+  downloadFile(blob, filenameForTitle(title, 'vector.svg'));
 };
 
 /**
@@ -339,7 +346,8 @@ export const exportAsVectorSvg = async (
  */
 export const exportAsUniversalSvg = async (
   el: HTMLElement,
-  bgColor: string
+  bgColor: string,
+  title?: string
 ): Promise<void> => {
   const { style } = el;
   const prevBg = style.background;
@@ -353,7 +361,7 @@ export const exportAsUniversalSvg = async (
     const blob = new Blob([decodeURIComponent(dataUrl.slice(comma + 1))], {
       type: 'image/svg+xml'
     });
-    downloadFile(blob, generateGenericFilename('universal.svg'));
+    downloadFile(blob, filenameForTitle(title, 'universal.svg'));
   } finally {
     style.background = prevBg;
   }

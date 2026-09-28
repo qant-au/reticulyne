@@ -23,7 +23,7 @@ import {
   exportAsImage,
   downloadFile as downloadFileUtil,
   base64ToBlob,
-  generateGenericFilename,
+  filenameForTitle,
   modelFromModelStore
 } from 'src/utils';
 import { ModelStore } from 'src/types';
@@ -111,8 +111,8 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
       'image/png;charset=utf-8'
     );
 
-    downloadFileUtil(data, generateGenericFilename('png'));
-  }, [imageData]);
+    downloadFileUtil(data, filenameForTitle(model.title, 'png'));
+  }, [imageData, model.title]);
 
   const [showGrid, setShowGrid] = useState(false);
   const handleShowGridChange = (checked: boolean) => {

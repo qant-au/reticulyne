@@ -385,11 +385,30 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       const action = interpretWheelEvent(e, zoomBuffer);
       if (action.kind === 'zoom') {
         zoomBuffer = action.nextZoomBuffer;
+        const { zoom: before, scroll } = uiStateActions.get();
         for (let i = 0; i < action.steps; i += 1) {
           uiStateActions.incrementZoom();
         }
         for (let i = 0; i < -action.steps; i += 1) {
           uiStateActions.decrementZoom();
+        }
+        // Zoom about the pointer, as Excalidraw does, not the screen
+        // centre: keep the diagram point under the pointer where it is.
+        const after = uiStateActions.get().zoom;
+        const rect = rendererEl?.getBoundingClientRect();
+        if (rect && after !== before) {
+          const c = {
+            x: e.clientX - rect.left - rect.width / 2,
+            y: e.clientY - rect.top - rect.height / 2
+          };
+          const k = after / before;
+          uiStateActions.setScroll({
+            position: {
+              x: c.x - (c.x - scroll.position.x) * k,
+              y: c.y - (c.y - scroll.position.y) * k
+            },
+            offset: scroll.offset
+          });
         }
       } else {
         uiStateActions.panScroll({ x: action.panDx, y: action.panDy });

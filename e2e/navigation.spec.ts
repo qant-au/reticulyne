@@ -112,3 +112,27 @@ test('zoom buttons disable at their own limit, not the other one', async ({
   await zoomOut.click();
   await expect(zoomIn).toBeEnabled();
 });
+
+test('Ctrl+wheel zooms about the pointer, not the screen centre', async ({
+  page
+}) => {
+  await load(page);
+  // Node c (tile 0,4) sits up-left of centre.
+  const label = page.getByText('Web cache', { exact: true }).first();
+  const box = (await label.boundingBox())!;
+  const at = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  await page.mouse.move(at.x, at.y);
+  await page.keyboard.down('Control');
+  for (let i = 0; i < 2; i += 1) {
+    await page.mouse.wheel(0, 100);
+    await page.waitForTimeout(60);
+  }
+  await page.keyboard.up('Control');
+  await expect(page.getByText('60%')).toBeVisible();
+  await page.waitForTimeout(400);
+  const after = (await label.boundingBox())!;
+  // The label shrinks with the zoom, so compare its bottom-centre anchor
+  // loosely: it stays near the pointer instead of sliding to the centre.
+  expect(Math.abs(after.x + after.width / 2 - at.x)).toBeLessThan(40);
+  expect(Math.abs(after.y + after.height - (box.y + box.height))).toBeLessThan(40);
+});

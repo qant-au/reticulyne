@@ -102,10 +102,13 @@ export const useScene = () => {
   const setState = useCallback(
     (newState: State) => {
       if (!historyIsApplying) {
-        historyActions.recordPriorState({
-          model: model.actions.get(),
-          scene: scene.actions.get()
-        });
+        historyActions.recordPriorState(
+          {
+            model: model.actions.get(),
+            scene: scene.actions.get()
+          },
+          newState
+        );
       }
       model.actions.set(newState.model);
       scene.actions.set(newState.scene);

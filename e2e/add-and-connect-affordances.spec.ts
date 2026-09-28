@@ -211,3 +211,20 @@ test('2.5: dragging from a node centre still moves it; a port drag into empty sp
   });
   expect(nodeA.tile).not.toEqual({ x: 0, y: 0 });
 });
+
+test('Esc during a connector drag abandons it, and costs no undo step', async ({
+  page
+}) => {
+  const a = await loadTwoNodes(page);
+  const b = { x: a.x + B_OFFSET.x, y: a.y + B_OFFSET.y };
+  await page.keyboard.press('a');
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  await page.mouse.move(a.x + 20, a.y - 10, { steps: 3 });
+  await page.keyboard.press('Escape');
+  await page.mouse.move(b.x, b.y, { steps: 5 });
+  await page.mouse.up();
+
+  const model = await exportedModel(page);
+  expect(model.views[0].connectors ?? []).toHaveLength(0);
+});

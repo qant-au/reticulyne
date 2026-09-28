@@ -167,7 +167,7 @@ test('a text box left empty is removed when it is deselected', async ({
   await page.mouse.move(c.x + 200, c.y + 100);
   await page.keyboard.press('t');
   await page.mouse.click(c.x + 200, c.y + 100);
-  const field = page.getByLabel('Text');
+  const field = page.getByRole('textbox', { name: 'Text' });
   await expect(field).toBeFocused();
   await field.fill('');
   await page.mouse.click(c.x - 300, c.y + 200);

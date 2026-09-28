@@ -55,6 +55,35 @@ export const screenToIso = ({
   return tile;
 };
 
+// The tile a dragged rectangle corner should snap to. A corner handle is
+// drawn on the tile's outer vertex, which is exactly a tile boundary, so
+// flooring the pointer's position (screenToIso) moved the corner a whole
+// tile on a 2px nudge. This snaps to the tile whose outer vertex is
+// nearest the pointer instead. `highX`/`highY` say which side of the
+// rectangle the corner is on.
+export const cornerTileAtPointer = (
+  { mouse, zoom, scroll, rendererSize }: ScreenToIso,
+  highX: boolean,
+  highY: boolean
+): Coords => {
+  const projectedTileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
+  const px = -rendererSize.width * 0.5 + mouse.x - scroll.position.x;
+  const py = -rendererSize.height * 0.5 + mouse.y - scroll.position.y;
+  // screenToIso's two expressions before flooring: tile x spans [x, x+1)
+  // of fx, and tile y spans (y-1, y] of fy.
+  const fx =
+    (px + projectedTileSize.width / 2) / projectedTileSize.width -
+    py / projectedTileSize.height;
+  const fy = -(
+    (py + projectedTileSize.height / 2) / projectedTileSize.height +
+    px / projectedTileSize.width
+  );
+  return {
+    x: highX ? Math.round(fx) - 1 : Math.round(fx),
+    y: highY ? Math.round(fy) : Math.round(fy) + 1
+  };
+};
+
 interface GetTilePosition {
   tile: Coords;
   origin?: TileOrigin;

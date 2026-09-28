@@ -94,3 +94,24 @@ test('ExportImageDialog does not error when closed during the debounce window (B
 
   expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
 });
+
+test('the PNG export can have a transparent background', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle(/Reticulyne/);
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: /Export as Image/i }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Transparent background').check();
+  const preview = dialog.getByRole('img', { name: 'preview' });
+  await expect(preview).toBeVisible({ timeout: 15000 });
+  const alpha = await preview.evaluate(async (img: HTMLImageElement) => {
+    await img.decode();
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth;
+    c.height = img.naturalHeight;
+    const ctx = c.getContext('2d')!;
+    ctx.drawImage(img, 0, 0);
+    return ctx.getImageData(1, 1, 1, 1).data[3];
+  });
+  expect(alpha).toBe(0);
+});

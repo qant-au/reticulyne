@@ -126,13 +126,16 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   const handleBackgroundColorChange = (color: string) => {
     setBackgroundColor(color);
   };
+  // As the SVG export offers: a PNG with no background, for placing
+  // over a slide or a page.
+  const [transparent, setTransparent] = useState(false);
 
   useEffect(() => {
     // Invalidate the cached PNG when an input that affects it changes;
     // the user must re-run the async generate step to repopulate it.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setImageData(undefined);
-  }, [showGrid, backgroundColor]);
+  }, [showGrid, backgroundColor, transparent]);
 
   return (
     <Dialog open onClose={onClose}>
@@ -180,7 +183,9 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                     }}
                     renderer={{
                       showGrid,
-                      backgroundColor
+                      backgroundColor: transparent
+                        ? 'transparent'
+                        : backgroundColor
                     }}
                   />
                 </Box>
@@ -237,14 +242,28 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                   }
                 />
                 <FormControlLabel
-                  label="Background color"
+                  label="Transparent background"
                   control={
-                    <ColorPicker
-                      value={backgroundColor}
-                      onChange={handleBackgroundColorChange}
+                    <Checkbox
+                      size="small"
+                      checked={transparent}
+                      onChange={(event) => {
+                        setTransparent(event.target.checked);
+                      }}
                     />
                   }
                 />
+                {!transparent && (
+                  <FormControlLabel
+                    label="Background color"
+                    control={
+                      <ColorPicker
+                        value={backgroundColor}
+                        onChange={handleBackgroundColorChange}
+                      />
+                    }
+                  />
+                )}
               </Box>
             </Box>
             {imageData && (

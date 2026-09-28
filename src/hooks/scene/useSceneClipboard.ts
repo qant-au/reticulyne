@@ -10,6 +10,12 @@ const DUPLICATE_TILE_OFFSET = { x: 1, y: 1 };
 // Duplicate, copy and paste. The clipboard subscriptions moved here with
 // the code that reads them; useScene calls this hook unconditionally, so
 // its consumers subscribe to exactly what they did before the split.
+// 1.7: a copy is not in the original's group. Copying a group would
+// otherwise pour the copies into the original, merging the two.
+const ungrouped = <T extends { parentGroupId?: string }>(value: T): T => {
+  return { ...value, parentGroupId: undefined };
+};
+
 export const useSceneClipboard = ({
   getState,
   setState,
@@ -47,7 +53,7 @@ export const useSceneClipboard = ({
           const afterView = reducers.view({
             action: 'CREATE_VIEWITEM',
             payload: {
-              ...viewItem.value,
+              ...ungrouped(viewItem.value),
               id: newId,
               tile: {
                 x: viewItem.value.tile.x + DUPLICATE_TILE_OFFSET.x,
@@ -67,7 +73,7 @@ export const useSceneClipboard = ({
           const newState = reducers.view({
             action: 'CREATE_TEXTBOX',
             payload: {
-              ...textBox.value,
+              ...ungrouped(textBox.value),
               id: generateId(),
               tile: {
                 x: textBox.value.tile.x + DUPLICATE_TILE_OFFSET.x,
@@ -87,7 +93,7 @@ export const useSceneClipboard = ({
           const newState = reducers.view({
             action: 'CREATE_RECTANGLE',
             payload: {
-              ...rectangle.value,
+              ...ungrouped(rectangle.value),
               id: generateId(),
               from: {
                 x: rectangle.value.from.x + DUPLICATE_TILE_OFFSET.x,
@@ -145,21 +151,25 @@ export const useSceneClipboard = ({
             entries.push({
               kind: 'ITEM',
               modelItem: getItemByIdOrThrow(state.model.items, t.id).value,
-              viewItem: getItemByIdOrThrow(currentView.items ?? [], t.id).value
+              viewItem: ungrouped(
+                getItemByIdOrThrow(currentView.items ?? [], t.id).value
+              )
             });
             break;
           case 'TEXTBOX':
             entries.push({
               kind: 'TEXTBOX',
-              textBox: getItemByIdOrThrow(currentView.textBoxes ?? [], t.id)
-                .value
+              textBox: ungrouped(
+                getItemByIdOrThrow(currentView.textBoxes ?? [], t.id).value
+              )
             });
             break;
           case 'RECTANGLE':
             entries.push({
               kind: 'RECTANGLE',
-              rectangle: getItemByIdOrThrow(currentView.rectangles ?? [], t.id)
-                .value
+              rectangle: ungrouped(
+                getItemByIdOrThrow(currentView.rectangles ?? [], t.id).value
+              )
             });
             break;
           default:

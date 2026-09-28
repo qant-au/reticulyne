@@ -13,6 +13,7 @@ import {
   anchorSchema,
   textBoxSchema,
   rectangleSchema,
+  groupSchema,
   connectorStyleOptions,
   connectorDirectionOptions,
   connectorGlyphOptions,
@@ -42,6 +43,7 @@ export type ConnectorAnimationFlow =
 export type ConnectorAnchor = z.infer<typeof anchorSchema>;
 export type Connector = z.infer<typeof connectorSchema>;
 export type TextBox = z.infer<typeof textBoxSchema>;
+export type Group = z.infer<typeof groupSchema>;
 export type Rectangle = z.infer<typeof rectangleSchema>;
 
 // `ModelStore` (the zustand store shape) lives in `./internal` (QUA-03)

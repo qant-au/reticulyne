@@ -10,6 +10,7 @@ import * as connectorReducers from './connector';
 import * as textBoxReducers from './textBox';
 import * as rectangleReducers from './rectangle';
 import * as layerOrderingReducers from './layerOrdering';
+import * as groupReducers from './group';
 
 export const updateViewTimestamp = (ctx: ViewReducerContext): State => {
   const now = new Date().toISOString();
@@ -138,11 +139,29 @@ export const view = ({ action, payload, ctx }: ViewReducerParams) => {
     case 'DELETE_RECTANGLE':
       newState = rectangleReducers.deleteRectangle(payload, ctx);
       break;
+    case 'CREATE_GROUP':
+      newState = groupReducers.createGroup(payload, ctx);
+      break;
+    case 'UNGROUP':
+      newState = groupReducers.ungroup(payload, ctx);
+      break;
+    case 'UPDATE_GROUP':
+      newState = groupReducers.updateGroup(payload, ctx);
+      break;
     case 'CHANGE_LAYER_ORDER':
       newState = layerOrderingReducers.changeLayerOrder(payload, ctx);
       break;
     default:
       throw new Error('Invalid action.');
+  }
+
+  // 1.7: a delete can leave a group with nothing in it.
+  if (
+    action === 'DELETE_VIEWITEM' ||
+    action === 'DELETE_RECTANGLE' ||
+    action === 'DELETE_TEXTBOX'
+  ) {
+    newState = groupReducers.pruneEmptyGroups(newState, ctx.viewId);
   }
 
   switch (action) {

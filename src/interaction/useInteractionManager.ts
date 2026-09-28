@@ -9,7 +9,7 @@ import {
   Mouse,
   ItemReference
 } from 'src/types';
-import { getMouse, getItemAtTile } from 'src/utils';
+import { getMouse, getItemAtTile, clickTarget } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
 import { Cursor } from './modes/Cursor';
@@ -288,6 +288,17 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       e.preventDefault();
 
       if (itemAtTile) {
+        // 1.7: double-clicking a group member enters the group and selects
+        // the next level down; outside groups it selects the item.
+        const view = sceneRef.current.currentView;
+        const outer = clickTarget(view, itemAtTile, liveUiState.editingGroupId);
+        if (outer.groupId) {
+          uiStateActions.setEditingGroupId(outer.groupId);
+          uiStateActions.setSelection(
+            clickTarget(view, itemAtTile, outer.groupId).refs
+          );
+          return;
+        }
         uiStateActions.setSelection([itemAtTile]);
         return;
       }

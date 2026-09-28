@@ -313,6 +313,8 @@ export interface UiState {
   onSave: SaveHandler | undefined;
   // 2.13: host icon upload; the picker's Upload button shows when set.
   onIconUpload: IconUploadHandler | undefined;
+  // 1.7: the group entered by double-click; clicks select inside it.
+  editingGroupId: string | null;
   // 2.14: what "New from template" offers.
   templates: DiagramTemplate[];
   // 2.3: where saving stands. See src/utils/save.ts.
@@ -380,6 +382,7 @@ export interface UiStateActions {
   setOnSave: (onSave: SaveHandler | undefined) => void;
   setOnIconUpload: (handler: IconUploadHandler | undefined) => void;
   setTemplates: (templates: DiagramTemplate[]) => void;
+  setEditingGroupId: (id: string | null) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;
   /** Read at call time, for async code that must not use a stale render. */
   getSaveStatus: () => SaveStatus;

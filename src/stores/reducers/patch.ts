@@ -5,6 +5,7 @@ import { viewItemSchema } from 'src/schemas/views';
 import { connectorSchema } from 'src/schemas/connector';
 import { rectangleSchema } from 'src/schemas/rectangle';
 import { textBoxSchema } from 'src/schemas/textBox';
+import { groupSchema } from 'src/schemas/group';
 import { updateModelItem } from './modelItem';
 import { view as viewReducer } from './view';
 import type { State } from './types';
@@ -54,6 +55,9 @@ export const diagramPatchSchema = z
     ),
     textBoxes: byId(
       textBoxSchema.pick({ content: true, fontSize: true }).partial().strict()
+    ),
+    groups: byId(
+      groupSchema.pick({ name: true, color: true }).partial().strict()
     )
   })
   .strict();
@@ -111,6 +115,14 @@ export const applyDiagramPatch = (
     if (!inView(view.textBoxes, id)) continue;
     next = viewReducer({
       action: 'UPDATE_TEXTBOX',
+      payload: { id, ...fields },
+      ctx: { viewId, state: next }
+    });
+  }
+  for (const [id, fields] of Object.entries(patch.groups ?? {})) {
+    if (!inView(view.groups, id)) continue;
+    next = viewReducer({
+      action: 'UPDATE_GROUP',
       payload: { id, ...fields },
       ctx: { viewId, state: next }
     });

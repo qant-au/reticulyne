@@ -66,7 +66,8 @@ export const IconButton = ({
             },
             isActive
               ? {
-                  bgcolor: 'primary.light'
+                  // primary.main: white on primary.light was 2.6:1.
+                  bgcolor: 'primary.main'
                 }
               : {
                   bgcolor: null

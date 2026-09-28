@@ -33,9 +33,34 @@ export const HoverTooltip = () => {
     return state.items;
   });
   const scene = useScene();
+  const rendererEl = useUiStateStore((state) => {
+    return state.rendererEl;
+  });
+
+  // The mouse state starts at tile 0,0 and keeps updating over the
+  // toolbar and panels, so without this an item at the origin showed its
+  // tooltip on load, and one under a panel showed it through the panel.
+  const [overCanvas, setOverCanvas] = useState(false);
+  useEffect(() => {
+    if (!rendererEl) return undefined;
+    const enter = () => {
+      setOverCanvas(true);
+    };
+    const leave = () => {
+      setOverCanvas(false);
+    };
+    rendererEl.addEventListener('pointerover', enter);
+    rendererEl.addEventListener('pointerleave', leave);
+    return () => {
+      rendererEl.removeEventListener('pointerover', enter);
+      rendererEl.removeEventListener('pointerleave', leave);
+    };
+  }, [rendererEl]);
 
   const eligible =
-    (modeType === 'CURSOR' || modeType === 'PAN') && !mouse.mousedown;
+    overCanvas &&
+    (modeType === 'CURSOR' || modeType === 'PAN') &&
+    !mouse.mousedown;
 
   const hovered = useMemo(() => {
     if (!eligible) return null;

@@ -86,7 +86,10 @@ export const TextBoxControls = ({ id }: Props) => {
           max={0.9}
           value={textBox.fontSize}
           onChange={(_e, newSize) => {
-            updateTextBox(textBox.id, { fontSize: newSize as number });
+            // Keyboard steps accumulate float error (0.8999…).
+            updateTextBox(textBox.id, {
+              fontSize: Math.round((newSize as number) * 100) / 100
+            });
           }}
         />
       </Section>

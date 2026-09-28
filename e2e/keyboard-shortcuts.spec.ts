@@ -73,6 +73,18 @@ test.describe('FEA5-02 — keyboard shortcuts', () => {
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
 
+  test('shortcuts do not reach the canvas behind the open main menu', async ({
+    page
+  }) => {
+    await page.getByRole('button', { name: 'Main menu' }).click();
+    await expect(page.getByRole('menuitem').first()).toBeVisible();
+    await page.keyboard.press('-');
+    await page.waitForTimeout(80);
+    expect(await readZoomPercent(page)).toBe(100);
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('menuitem')).toHaveCount(0);
+  });
+
   test('"Ctrl+0" resets zoom to 100%', async ({ page }) => {
     await page.keyboard.press('-');
     await page.keyboard.press('-');

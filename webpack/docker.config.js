@@ -24,6 +24,7 @@ module.exports = merge(base, {
   },
   plugins: [
     new HtmlWebPackPlugin({
+      title: 'Reticulyne',
       template: path.resolve(__dirname, '../src/index.html')
     }),
     // APP-02: manifest, icons and service worker.

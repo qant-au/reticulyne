@@ -91,7 +91,7 @@ The custom nginx config (`docker/nginx.conf`) ships:
 - **`server_tokens off`** so the nginx version isn't disclosed.
 - **`autoindex off`** so directory contents aren't listed.
 
-The CSP allows the Google Fonts CDN (used by the bundled standalone `index.html` for Noto Sans). Images are restricted to `'self'`, `data:`, and `blob:` — the bundled icon packs are inlined as `data:` URIs, so no external image origins are allowed. If you fork the image and replace the font sources or add externally-hosted icons, update the CSP accordingly.
+The page loads no web fonts (the editor uses the system font stack); the CSP still allows the Google Fonts CDN for forks that add one. Images are restricted to `'self'`, `data:`, and `blob:` — the bundled icon packs are inlined as `data:` URIs, so no external image origins are allowed. If you fork the image and replace the font sources or add externally-hosted icons, update the CSP accordingly.
 
 ## Install and offline (PWA)
 

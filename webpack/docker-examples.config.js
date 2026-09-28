@@ -25,6 +25,7 @@ module.exports = merge(base, {
   },
   plugins: [
     new HtmlWebPackPlugin({
+      title: 'Examples | Reticulyne',
       template: path.resolve(__dirname, '../src/index.html')
     })
   ]

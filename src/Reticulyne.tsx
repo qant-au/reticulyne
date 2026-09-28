@@ -240,7 +240,14 @@ const App = ({
           // browser, and focusing a field in a panel that overhung the
           // edge scrolled the whole editor 161px sideways, for good.
           overflow: 'clip',
-          transform: 'translateZ(0)'
+          transform: 'translateZ(0)',
+          // A marquee drag selected the page text it crossed (the
+          // inspector, the title, the zoom readout). Only the fields
+          // meant for typing stay selectable.
+          userSelect: 'none',
+          '& input, & textarea, & [contenteditable="true"]': {
+            userSelect: 'text'
+          }
         }}
       >
         <Renderer

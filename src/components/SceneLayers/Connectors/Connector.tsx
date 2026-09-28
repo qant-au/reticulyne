@@ -161,6 +161,11 @@ export const Connector = ({
     }
   }, [_connector.style, connectorWidthPx]);
 
+  const motionPathD = useMemo(() => {
+    const points = pathString.trim().split(/\s+/).filter(Boolean);
+    return points.length > 1 ? `M ${points.join(' L ')}` : null;
+  }, [pathString]);
+
   if (!connector) return null;
 
   return (
@@ -182,8 +187,12 @@ export const Connector = ({
           strokeDasharray={strokeDashArray}
           fill="none"
         />
+        {/* animateMotion only follows a <path>: pointed at the polyline,
+            the moving glyphs sat at the SVG's origin, off the line. */}
+        {motionPathD && (
+          <path id={pathElementId} d={motionPathD} fill="none" stroke="none" />
+        )}
         <polyline
-          id={pathElementId}
           points={pathString}
           stroke={getColorVariant(color.value, 'dark', { grade: 1 })}
           strokeWidth={connectorWidthPx}

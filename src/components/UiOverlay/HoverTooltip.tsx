@@ -4,6 +4,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import { useScene } from 'src/hooks/useScene';
 import { getItemAtTile } from 'src/utils';
+import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
 
 // ROADMAP 3.1: rest the pointer on an item and, after a moment, its name
 // and the start of its description appear beside it. Useful in read-only
@@ -33,29 +34,7 @@ export const HoverTooltip = () => {
     return state.items;
   });
   const scene = useScene();
-  const rendererEl = useUiStateStore((state) => {
-    return state.rendererEl;
-  });
-
-  // The mouse state starts at tile 0,0 and keeps updating over the
-  // toolbar and panels, so without this an item at the origin showed its
-  // tooltip on load, and one under a panel showed it through the panel.
-  const [overCanvas, setOverCanvas] = useState(false);
-  useEffect(() => {
-    if (!rendererEl) return undefined;
-    const enter = () => {
-      setOverCanvas(true);
-    };
-    const leave = () => {
-      setOverCanvas(false);
-    };
-    rendererEl.addEventListener('pointerover', enter);
-    rendererEl.addEventListener('pointerleave', leave);
-    return () => {
-      rendererEl.removeEventListener('pointerover', enter);
-      rendererEl.removeEventListener('pointerleave', leave);
-    };
-  }, [rendererEl]);
+  const overCanvas = usePointerOverCanvas();
 
   const eligible =
     overCanvas &&

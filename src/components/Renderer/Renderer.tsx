@@ -20,6 +20,7 @@ import { MarqueeBand } from 'src/components/MarqueeBand/MarqueeBand';
 import { ConnectorHotspots } from 'src/components/ConnectorHotspots/ConnectorHotspots';
 import { SmartGuides } from 'src/components/SmartGuides/SmartGuides';
 import { SearchHighlights } from 'src/components/SearchBar/SearchHighlights';
+import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
 import { RendererProps } from 'src/types/rendererProps';
 
 export const Renderer = ({
@@ -32,6 +33,9 @@ export const Renderer = ({
   enableGlobalKeyboardShortcuts?: boolean;
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  // The hover tile follows the pointer only over the canvas: not on
+  // load, and not under the toolbar or the mini-map.
+  const overCanvas = usePointerOverCanvas();
   const interactionsRef = useRef<HTMLDivElement | null>(null);
   const enableDebugTools = useUiStateStore((state) => {
     return state.enableDebugTools;
@@ -102,7 +106,7 @@ export const Renderer = ({
       >
         {isShowGrid && <Grid />}
       </Box>
-      {mode.showCursor && (
+      {mode.showCursor && overCanvas && (
         <SceneLayer>
           <Cursor />
         </SceneLayer>

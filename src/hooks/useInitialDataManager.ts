@@ -14,6 +14,7 @@ import * as reducers from 'src/stores/reducers';
 import { useModelStore } from 'src/stores/modelStore';
 import { useView } from 'src/hooks/useView';
 import { useUiStateStore } from 'src/stores/uiStateStore';
+import { useHistoryStore } from 'src/stores/historyStore';
 import { initialDataSchema } from 'src/schemas/model';
 
 interface UseInitialDataManagerOptions {
@@ -51,6 +52,9 @@ export const useInitialDataManager = ({
     return state;
   });
   const uiStateActions = useUiStateStore((state) => {
+    return state.actions;
+  });
+  const historyActions = useHistoryStore((state) => {
     return state.actions;
   });
   const rendererEl = useUiStateStore((state) => {
@@ -150,6 +154,10 @@ export const useInitialDataManager = ({
       // never `===` to any future caller-supplied input.
       prevInitialData.current = _initialData;
       model.actions.set(initialData);
+      // A load replaces the diagram, views included. An undo reaching
+      // back past it restored a model whose view no longer existed and
+      // crashed the editor (after a template, a Clear, an import).
+      historyActions.clear();
 
       const view = getItemByIdOrThrow(
         initialData.views,
@@ -199,7 +207,7 @@ export const useInitialDataManager = ({
 
       setIsReady(true);
     },
-    [changeView, model.actions, rendererEl, uiStateActions]
+    [changeView, model.actions, rendererEl, uiStateActions, historyActions]
   );
 
   // BUG5-12: apply a deferred fit-to-view as soon as the Renderer

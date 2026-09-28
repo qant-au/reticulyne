@@ -30,3 +30,27 @@ test('start a diagram from the Kubernetes template', async ({ page }) => {
   ).toBe(true);
   expect(model.views[0].connectors).toHaveLength(7);
 });
+
+test('undo after picking a template does not crash the editor', async ({
+  page
+}) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle(/Reticulyne/);
+
+  // Some history on the diagram being replaced.
+  await page.keyboard.press('r');
+  await page.mouse.move(600, 400);
+  await page.mouse.down();
+  await page.mouse.move(700, 480, { steps: 5 });
+  await page.mouse.up();
+
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'New from template' }).click();
+  await page.getByRole('button', { name: 'Kubernetes service' }).click();
+  await expect(page.getByText('Volume claim', { exact: true })).toBeVisible();
+
+  await page.mouse.click(1100, 150);
+  await page.keyboard.press('Control+z');
+  await expect(page.getByText(/Editor failed to load/)).toHaveCount(0);
+  await expect(page.getByText('Volume claim', { exact: true })).toBeVisible();
+});

@@ -8,6 +8,7 @@
 // the menu without dismissing the OS file-picker.
 
 import { useCallback } from 'react';
+import type { ZodIssue } from 'zod';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import type { InitialData } from 'src/types';
@@ -21,11 +22,17 @@ import type { InitialData } from 'src/types';
 // through useInitialDataManager's onValidationError pipeline (load
 // itself runs zod safeParse on the payload).
 //
+// A malformed file also goes to the host's onValidationError when one is
+// set (upstream isoflow #22): without it an embedder had no way to tell
+// the user why Open did nothing. The issue is synthetic, since zod never
+// saw the payload.
+//
 // Exported so tests can exercise the parse path without standing up
 // the full picker + FileReader stack.
 export const handleImportedJsonText = (
   raw: string | null,
-  load: (data: InitialData) => void
+  load: (data: InitialData) => void,
+  onValidationError?: (issues: ZodIssue[]) => void
 ): void => {
   if (raw === null) {
     console.error('[reticulyne] imported file could not be read as text.');
@@ -35,7 +42,13 @@ export const handleImportedJsonText = (
   try {
     modelData = JSON.parse(raw);
   } catch (parseErr) {
-    console.error('[reticulyne] imported file is not valid JSON:', parseErr);
+    if (onValidationError) {
+      onValidationError([
+        { code: 'custom', message: 'Imported file is not valid JSON', path: [] }
+      ]);
+    } else {
+      console.error('[reticulyne] imported file is not valid JSON:', parseErr);
+    }
     return;
   }
   // The shape check happens in load() via zod safeParse. The cast
@@ -47,6 +60,9 @@ export const handleImportedJsonText = (
 export const useImportFile = () => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
+  });
+  const onValidationError = useUiStateStore((state) => {
+    return state.onValidationError;
   });
   const { load } = useInitialDataManager();
 
@@ -66,7 +82,11 @@ export const useImportFile = () => {
 
       fileReader.onload = (e) => {
         const raw = e.target?.result;
-        handleImportedJsonText(typeof raw === 'string' ? raw : null, load);
+        handleImportedJsonText(
+          typeof raw === 'string' ? raw : null,
+          load,
+          onValidationError
+        );
       };
 
       fileReader.onerror = () => {
@@ -83,5 +103,5 @@ export const useImportFile = () => {
 
     await fileInput.click();
     uiStateActions.setIsMainMenuOpen(false);
-  }, [uiStateActions, load]);
+  }, [uiStateActions, load, onValidationError]);
 };

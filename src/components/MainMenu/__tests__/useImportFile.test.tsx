@@ -34,6 +34,19 @@ describe('handleImportedJsonText (BUG5-05)', () => {
     );
   });
 
+  test('routes invalid JSON to onValidationError when the host set one (isoflow #22)', () => {
+    const onValidationError = jest.fn();
+    handleImportedJsonText('not-json{', load, onValidationError);
+    expect(load).not.toHaveBeenCalled();
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(onValidationError).toHaveBeenCalledWith([
+      expect.objectContaining({
+        code: 'custom',
+        message: 'Imported file is not valid JSON'
+      })
+    ]);
+  });
+
   test('logs an [reticulyne] error and skips load() when the input is null', () => {
     handleImportedJsonText(null, load);
     expect(load).not.toHaveBeenCalled();

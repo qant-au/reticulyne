@@ -55,7 +55,8 @@ const dashboardInitialData: InitialData = {
       id: VIEW_ID,
       name: 'Dashboard',
       items: [
-        { id: 'web', tile: { x: -4, y: 0 } },
+        // The office icon is tall: at the default height it hid the label.
+        { id: 'web', tile: { x: -4, y: 0 }, labelHeight: 120 },
         { id: 'api', tile: { x: 0, y: 0 } },
         { id: 'db', tile: { x: 4, y: 0 } }
       ],

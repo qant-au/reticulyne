@@ -194,6 +194,12 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
                 </Box>
               </Box>
 
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                Vector SVG keeps shapes and icons editable, but leaves out text:
+                labels and text boxes. Universal SVG includes everything, as one
+                picture.
+              </Typography>
+
               <Stack
                 direction="row"
                 spacing={2}

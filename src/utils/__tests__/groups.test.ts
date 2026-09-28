@@ -149,6 +149,14 @@ test('groupMatchingSelection finds the group a selection is', () => {
   const s = group(state(), 'g1', [ITEM('a'), ITEM('b')]);
   expect(groupMatchingSelection(viewOf(s), [ITEM('b'), ITEM('a')])).toBe('g1');
   expect(groupMatchingSelection(viewOf(s), [ITEM('a')])).toBeNull();
+  // A connector in the selection (Ctrl+A) is not a member and is ignored.
+  expect(
+    groupMatchingSelection(viewOf(s), [
+      ITEM('a'),
+      { type: 'CONNECTOR', id: 'k' },
+      ITEM('b')
+    ])
+  ).toBe('g1');
 });
 
 test('bounds cover the members, rectangles included', () => {

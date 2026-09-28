@@ -4,6 +4,20 @@
 import { TransformRectangle } from '../Rectangle/TransformRectangle';
 import { makeState, lastModeChange, type SceneShape } from './_helpers';
 import type { Rectangle } from 'src/types';
+import { PROJECTED_TILE_SIZE } from 'src/config';
+
+// The screen point of fractional tile coordinates (fx, fy) at zoom 1, no
+// scroll, in the helpers' 1000x1000 renderer: the inverse of the
+// expressions screenToIso floors. A corner handle sits on its tile's
+// outer vertex: fx = x + 1 on a high-x side, fy = y - 1 on a low-y side.
+const screenAt = (fx: number, fy: number) => {
+  const a = (fx - fy - 1) / 2;
+  const b = (-fy - fx) / 2;
+  return {
+    x: a * PROJECTED_TILE_SIZE.width + 500,
+    y: b * PROJECTED_TILE_SIZE.height + 500
+  };
+};
 
 const makeRectangleScene = (rect: Rectangle) => {
   const scene: Partial<SceneShape> = {
@@ -102,7 +116,9 @@ describe('TransformRectangle mode', () => {
         selectedAnchor: 'BOTTOM_RIGHT'
       },
       mouse: {
-        position: { screen: { x: 0, y: 0 }, tile: { x: 8, y: 8 } },
+        // BOTTOM_RIGHT is (highX, lowY): its handle for tile (8, 8) sits
+        // at the vertex (9, 7).
+        position: { screen: screenAt(9, 7), tile: { x: 8, y: 8 } },
         delta: { screen: { x: 1, y: 1 }, tile: { x: 1, y: 1 } }
       },
       scene: makeRectangleScene(rect)
@@ -122,27 +138,40 @@ describe('TransformRectangle mode', () => {
     expect(update.to).toEqual({ x: 8, y: 4 });
   });
 
-  test('mousemove without tile delta is a no-op', () => {
+  test('a few pixels off the handle does not move the corner', () => {
+    // The handle of BOTTOM_RIGHT (4, 0) is on the vertex (5, -1), a tile
+    // boundary: flooring the pointer there used to grow the rectangle.
     const rect: Rectangle = {
       id: 'rect-1',
       color: 'color1',
       from: { x: 0, y: 0 },
       to: { x: 4, y: 4 }
     };
-    const state = makeState({
-      mode: {
-        type: 'RECTANGLE.TRANSFORM',
-        showCursor: true,
-        id: 'rect-1',
-        selectedAnchor: 'BOTTOM_RIGHT'
-      },
-      mouse: {
-        delta: { screen: { x: 1, y: 0 }, tile: { x: 0, y: 0 } } // tile unchanged
-      },
-      scene: makeRectangleScene(rect)
-    });
+    for (const [dx, dy] of [
+      [2, 0],
+      [-2, 0],
+      [0, 2],
+      [0, -2]
+    ]) {
+      const at = screenAt(5, -1);
+      const state = makeState({
+        mode: {
+          type: 'RECTANGLE.TRANSFORM',
+          showCursor: true,
+          id: 'rect-1',
+          selectedAnchor: 'BOTTOM_RIGHT'
+        },
+        mouse: {
+          position: {
+            screen: { x: at.x + dx, y: at.y + dy },
+            tile: { x: 0, y: 0 }
+          }
+        },
+        scene: makeRectangleScene(rect)
+      });
 
-    TransformRectangle.mousemove?.(state);
-    expect(state.scene.updateRectangle).not.toHaveBeenCalled();
+      TransformRectangle.mousemove?.(state);
+      expect(state.scene.updateRectangle).not.toHaveBeenCalled();
+    }
   });
 });

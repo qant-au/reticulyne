@@ -2,63 +2,53 @@ import {
   getItemByIdOrThrow,
   getBoundingBox,
   convertBoundsToNamedAnchors,
-  hasMovedTile
+  cornerTileAtPointer,
+  CoordsUtils
 } from 'src/utils';
-import { ModeActions } from 'src/types';
+import { ModeActions, AnchorPosition } from 'src/types';
 
 export const TransformRectangle: ModeActions = {
   entry: () => {},
   exit: () => {},
-  mousemove: ({ uiState, scene }) => {
-    if (
-      uiState.mode.type !== 'RECTANGLE.TRANSFORM' ||
-      !hasMovedTile(uiState.mouse)
-    )
-      return;
+  mousemove: ({ uiState, scene, rendererSize }) => {
+    if (uiState.mode.type !== 'RECTANGLE.TRANSFORM') return;
 
-    if (uiState.mode.selectedAnchor) {
-      // User is dragging an anchor
-      const rectangle = getItemByIdOrThrow(
-        scene.rectangles,
-        uiState.mode.id
-      ).value;
-      const rectangleBounds = getBoundingBox([rectangle.to, rectangle.from]);
-      const namedBounds = convertBoundsToNamedAnchors(rectangleBounds);
+    const anchor = uiState.mode.selectedAnchor;
+    if (!anchor) return;
 
-      if (
-        uiState.mode.selectedAnchor === 'BOTTOM_LEFT' ||
-        uiState.mode.selectedAnchor === 'TOP_RIGHT'
-      ) {
-        const nextBounds = getBoundingBox([
-          uiState.mode.selectedAnchor === 'BOTTOM_LEFT'
-            ? namedBounds.TOP_RIGHT
-            : namedBounds.BOTTOM_LEFT,
-          uiState.mouse.position.tile
-        ]);
-        const nextNamedBounds = convertBoundsToNamedAnchors(nextBounds);
+    const rectangle = getItemByIdOrThrow(
+      scene.rectangles,
+      uiState.mode.id
+    ).value;
+    const namedBounds = convertBoundsToNamedAnchors(
+      getBoundingBox([rectangle.to, rectangle.from])
+    );
+    const opposite: Record<AnchorPosition, AnchorPosition> = {
+      BOTTOM_LEFT: 'TOP_RIGHT',
+      TOP_RIGHT: 'BOTTOM_LEFT',
+      BOTTOM_RIGHT: 'TOP_LEFT',
+      TOP_LEFT: 'BOTTOM_RIGHT'
+    };
+    // Which side of the rectangle the dragged corner is on decides how
+    // the pointer snaps (see cornerTileAtPointer).
+    const corner = cornerTileAtPointer(
+      {
+        mouse: uiState.mouse.position.screen,
+        zoom: uiState.zoom,
+        scroll: uiState.scroll,
+        rendererSize
+      },
+      anchor === 'BOTTOM_RIGHT' || anchor === 'TOP_RIGHT',
+      anchor === 'TOP_RIGHT' || anchor === 'TOP_LEFT'
+    );
+    if (CoordsUtils.isEqual(corner, namedBounds[anchor])) return;
 
-        scene.updateRectangle(uiState.mode.id, {
-          from: nextNamedBounds.TOP_RIGHT,
-          to: nextNamedBounds.BOTTOM_LEFT
-        });
-      } else if (
-        uiState.mode.selectedAnchor === 'BOTTOM_RIGHT' ||
-        uiState.mode.selectedAnchor === 'TOP_LEFT'
-      ) {
-        const nextBounds = getBoundingBox([
-          uiState.mode.selectedAnchor === 'BOTTOM_RIGHT'
-            ? namedBounds.TOP_LEFT
-            : namedBounds.BOTTOM_RIGHT,
-          uiState.mouse.position.tile
-        ]);
-        const nextNamedBounds = convertBoundsToNamedAnchors(nextBounds);
-
-        scene.updateRectangle(uiState.mode.id, {
-          from: nextNamedBounds.TOP_LEFT,
-          to: nextNamedBounds.BOTTOM_RIGHT
-        });
-      }
-    }
+    const next = getBoundingBox([namedBounds[opposite[anchor]], corner]);
+    const [from, to] =
+      anchor === 'BOTTOM_LEFT' || anchor === 'TOP_RIGHT'
+        ? [next[2], next[0]]
+        : [next[3], next[1]];
+    scene.updateRectangle(uiState.mode.id, { from, to });
   },
   mousedown: () => {
     // MOUSE_DOWN is triggered by the anchor iteself (see `TransformAnchor.tsx`)

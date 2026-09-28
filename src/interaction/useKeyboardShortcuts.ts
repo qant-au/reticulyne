@@ -15,6 +15,10 @@ const isEditableFocus = (target: EventTarget | null): boolean => {
   const tag = target.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
   if (target.isContentEditable) return true;
+  // An open menu (main, context, a host's) has the keyboard: its arrow
+  // keys and letters are for the menu, and H or - pressed there used to
+  // switch tool and zoom the canvas behind it.
+  if (target.closest('[role="menu"], [role="listbox"]')) return true;
   return false;
 };
 
@@ -224,6 +228,12 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
       // shortcuts dialog) gets through. Without this, H switched tool and
       // - zoomed behind the open shortcuts dialog.
       if (dialog !== null && e.key !== '?') return;
+      // Likewise the main menu, whether or not it holds focus; Esc
+      // closes it.
+      if (uiStateActions.get().isMainMenuOpen) {
+        if (e.key === 'Escape') uiStateActions.setIsMainMenuOpen(false);
+        return;
+      }
 
       // Escape: deselect. Allowed in every editor mode — read-only
       // diagrams may still surface a selection-driven detail panel.

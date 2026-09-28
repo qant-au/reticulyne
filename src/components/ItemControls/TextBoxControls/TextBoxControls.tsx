@@ -60,6 +60,11 @@ export const TextBoxControls = ({ id }: Props) => {
         <TextField
           label="Text"
           autoFocus={autoFocus}
+          onKeyDown={(e) => {
+            // Esc hands the keyboard back to the canvas; before, it did
+            // nothing and the next tool key was typed into the text.
+            if (e.key === 'Escape') (e.target as HTMLElement).blur();
+          }}
           onFocus={(e) => {
             if (!autoFocus) return;
             e.target.select();

@@ -24,8 +24,8 @@ const pulseInitialData: InitialData = {
       id: 'view-pulse',
       name: 'Pulse',
       items: [
-        { id: 'producer', tile: { x: -3, y: 0 } },
-        { id: 'consumer', tile: { x: 3, y: 0 } }
+        { id: 'producer', tile: { x: -3, y: 0 }, labelHeight: 120 },
+        { id: 'consumer', tile: { x: 3, y: 0 }, labelHeight: 120 }
       ],
       connectors: [
         {

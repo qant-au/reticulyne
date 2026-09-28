@@ -9,7 +9,8 @@ import {
   ICON_UPLOAD_TYPES,
   MAX_ICON_UPLOAD_BYTES,
   generateId,
-  iconNameFromFile
+  iconNameFromFile,
+  isDrawableImage
 } from 'src/utils';
 
 // ROADMAP 2.13: "Upload icon" in the picker. The host stores the file
@@ -46,6 +47,10 @@ export const UploadIconButton = () => {
     }
     setBusy(true);
     try {
+      if (!(await isDrawableImage(file))) {
+        setError('That file is not an image this browser can show.');
+        return;
+      }
       const result = await onIconUpload(file);
       const { icons } = modelActions.get();
       // The same image uploaded twice is one icon, not two.

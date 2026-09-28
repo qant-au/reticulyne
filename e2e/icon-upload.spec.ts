@@ -86,3 +86,15 @@ test('a file that is not an image is refused with a message', async ({
   });
   await expect(page.getByText(/Use an SVG, PNG/)).toBeVisible();
 });
+
+test('a file named .png that is not an image is refused', async ({ page }) => {
+  await load(page);
+  await page.getByRole('button', { name: 'Icon library' }).click();
+  await page.getByTestId('icon-upload-input').setInputFiles({
+    name: 'fake.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('not a png at all')
+  });
+  await expect(page.getByText(/not an image this browser can show/)).toBeVisible();
+  expect((await exported(page)).icons ?? []).toHaveLength(0);
+});

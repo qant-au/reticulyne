@@ -234,6 +234,17 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           uiStateActions.setMode({ ...mode, id: null });
           e.preventDefault();
         }
+        // A connector being dragged out is abandoned: releasing it on a
+        // node afterwards used to create it anyway.
+        if (mode.type === 'CONNECTOR' && mode.id) {
+          deleteConnector(mode.id);
+          uiStateActions.setMode({
+            type: 'CONNECTOR',
+            id: null,
+            showCursor: true
+          });
+          e.preventDefault();
+        }
         if (itemControls || selection.length > 0) {
           uiStateActions.clearSelection();
           e.preventDefault();

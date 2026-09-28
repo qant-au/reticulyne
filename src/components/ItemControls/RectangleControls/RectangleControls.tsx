@@ -1,15 +1,15 @@
-import { Box, TextField, Slider, Typography } from '@mui/material';
+import { Box, Slider, Typography } from '@mui/material';
 import { useRectangle } from 'src/hooks/useRectangle';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
+import { useColor } from 'src/hooks/useColor';
+import { HexField } from './HexField';
 import { ControlsContainer } from '../components/ControlsContainer';
 import { Header } from '../components/Header';
 import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
-
-const HEX_RE = /^#[0-9a-fA-F]{6}$/;
 
 const inlineSectionLabel = {
   color: 'text.secondary',
@@ -27,6 +27,7 @@ export const RectangleControls = ({ id }: Props) => {
   });
   const rectangle = useRectangle(id);
   const { updateRectangle, deleteRectangle } = useScene();
+  const swatch = useColor(rectangle?.color);
   if (!rectangle) return null;
 
   return (
@@ -34,42 +35,30 @@ export const RectangleControls = ({ id }: Props) => {
       <Section>
         <ColorSelector
           onChange={(color) => {
-            updateRectangle(rectangle.id, { color });
+            // Picking a swatch drops a hex override, which otherwise kept
+            // painting over it while the swatch showed as chosen.
+            updateRectangle(rectangle.id, { color, colorValue: undefined });
           }}
           activeColor={rectangle.color}
         />
       </Section>
       <Section title="Fill colour">
-        <TextField
-          fullWidth
-          label="Hex override"
-          placeholder="#rrggbb"
-          value={rectangle.colorValue ?? ''}
-          slotProps={{ inputLabel: { shrink: true } }}
-          onChange={(e) => {
-            const v = e.target.value.trim();
-            if (v === '') {
-              updateRectangle(rectangle.id, { colorValue: undefined });
-            } else if (HEX_RE.test(v)) {
-              updateRectangle(rectangle.id, { colorValue: v });
-            }
+        <HexField
+          label="Fill hex override"
+          value={rectangle.colorValue}
+          placeholder={swatch.value}
+          onChange={(colorValue) => {
+            updateRectangle(rectangle.id, { colorValue });
           }}
         />
       </Section>
       <Section title="Border colour">
-        <TextField
-          fullWidth
-          label="Hex override"
+        <HexField
+          label="Border hex override"
+          value={rectangle.outlineColor}
           placeholder="#rrggbb"
-          value={rectangle.outlineColor ?? ''}
-          slotProps={{ inputLabel: { shrink: true } }}
-          onChange={(e) => {
-            const v = e.target.value.trim();
-            if (v === '') {
-              updateRectangle(rectangle.id, { outlineColor: undefined });
-            } else if (HEX_RE.test(v)) {
-              updateRectangle(rectangle.id, { outlineColor: v });
-            }
+          onChange={(outlineColor) => {
+            updateRectangle(rectangle.id, { outlineColor });
           }}
         />
       </Section>

@@ -99,8 +99,6 @@ export const useInitialDataManager = ({
     (_initialData: InitialData) => {
       if (!_initialData || prevInitialData.current === _initialData) return;
 
-      setIsReady(false);
-
       const validationResult = initialDataSchema.safeParse(_initialData);
 
       if (!validationResult.success) {
@@ -121,6 +119,10 @@ export const useInitialDataManager = ({
         }
         return;
       }
+
+      // Only after validation: a rejected load leaves the current diagram
+      // on screen. Hiding the editor first left a blank page behind.
+      setIsReady(false);
 
       const initialData = {
         ..._initialData,

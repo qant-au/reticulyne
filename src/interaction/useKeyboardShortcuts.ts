@@ -220,6 +220,11 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
       // (Quill descriptions, MUI TextFields, etc).
       if (isEditableFocus(e.target)) return;
 
+      // With a dialog open the canvas is behind it: only ? (to toggle the
+      // shortcuts dialog) gets through. Without this, H switched tool and
+      // - zoomed behind the open shortcuts dialog.
+      if (dialog !== null && e.key !== '?') return;
+
       // Escape: deselect. Allowed in every editor mode — read-only
       // diagrams may still surface a selection-driven detail panel.
       if (e.key === 'Escape') {

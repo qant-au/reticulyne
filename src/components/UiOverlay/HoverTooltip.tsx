@@ -105,7 +105,10 @@ export const HoverTooltip = () => {
         zIndex: 10
       }}
     >
-      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+      <Typography
+        variant="body2"
+        sx={{ fontWeight: 600, color: 'text.primary' }}
+      >
         {hovered.title}
       </Typography>
       {snippet && (

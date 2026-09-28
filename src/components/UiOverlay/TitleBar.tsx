@@ -32,6 +32,11 @@ export const TitleBar = ({
 }: Props) => {
   if (!visible) return null;
 
+  // Between the zoom controls and the mini-map it needs about 500px of
+  // canvas to itself. Narrower (a phone), it covered the zoom row, so it
+  // moves up a row and spans the width, the title truncating.
+  const narrow = rendererSize.width < 800;
+
   return (
     <Box
       sx={{
@@ -43,8 +48,12 @@ export const TitleBar = ({
       }}
       style={{
         left: rendererSize.width / 2,
-        top: rendererSize.height - appPadding.y * 2,
-        width: rendererSize.width - 500,
+        top: narrow
+          ? rendererSize.height - appPadding.y * 3 - 8
+          : rendererSize.height - appPadding.y * 2,
+        width: narrow
+          ? rendererSize.width - appPadding.x * 2
+          : rendererSize.width - 500,
         height: appPadding.y
       }}
     >
@@ -53,11 +62,13 @@ export const TitleBar = ({
           display: 'inline-flex',
           px: 2,
           alignItems: 'center',
-          height: '100%'
+          height: '100%',
+          maxWidth: '100%'
         }}
       >
-        <Stack direction="row" sx={{ alignItems: 'center' }}>
+        <Stack direction="row" sx={{ alignItems: 'center', minWidth: 0 }}>
           <Typography
+            noWrap
             sx={{
               fontWeight: 600,
               color: 'text.secondary'

@@ -124,3 +124,31 @@ test('a file that is not JSON is refused with a message', async ({ page }) => {
   });
   await expect(page.getByText(/not valid JSON/)).toBeVisible();
 });
+
+for (const [label, body] of [
+  ['JSON that is not a diagram', '{"hello":"world","items":"nope"}'],
+  ['a JSON array', '[1,2,3]'],
+  [
+    'a diagram with a view item pointing at no item',
+    JSON.stringify({
+      title: 'Broken',
+      items: [],
+      icons: [],
+      colors: [],
+      views: [{ id: 'v', name: 'Main', items: [{ id: 'x', tile: { x: 0, y: 0 } }] }]
+    })
+  ]
+]) {
+  test(`${label} is refused and the current diagram stays open`, async ({
+    page
+  }) => {
+    await page.goto('/');
+    await page.getByTestId('diagram-import-input').setInputFiles({
+      name: 'odd.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(body)
+    });
+    await expect(page.getByText(/not a valid diagram/)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Main menu' })).toBeVisible();
+  });
+}

@@ -25,6 +25,7 @@ import Reticulyne, { INITIAL_DATA, readIconAsDataUrl } from 'src/Reticulyne';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { generateId } from 'src/utils';
+import { initialDataSchema } from 'src/schemas/model';
 import type {
   Colors,
   Icon,
@@ -345,22 +346,39 @@ export const DiagramShell = ({
       file
         .text()
         .then((text) => {
-          const data = JSON.parse(text) as InitialData;
-          const own = (data.icons ?? []).filter((icon) => {
-            return !bundledIcons.some((b) => {
-              return b.id === icon.id;
-            });
-          });
-          show({
-            id: generateId(),
-            data: { ...data, icons: [...bundledIcons, ...own] },
-            stored: false
-          });
+          let data: InitialData;
+          try {
+            data = JSON.parse(text) as InitialData;
+          } catch {
+            setError(
+              `“${file.name}” is not a diagram file (it is not valid JSON).`
+            );
+            return;
+          }
+          // Checked before switching, so a file that is JSON but not a
+          // diagram leaves the current one open with an error, instead of
+          // swapping to data the editor then refuses.
+          const own = (Array.isArray(data?.icons) ? data.icons : []).filter(
+            (icon) => {
+              return !bundledIcons.some((b) => {
+                return b.id === icon.id;
+              });
+            }
+          );
+          const next = { ...data, icons: [...bundledIcons, ...own] };
+          if (
+            typeof data !== 'object' ||
+            data === null ||
+            Array.isArray(data) ||
+            !initialDataSchema.safeParse(next).success
+          ) {
+            setError(`“${file.name}” is not a valid diagram.`);
+            return;
+          }
+          show({ id: generateId(), data: next, stored: false });
         })
         .catch(() => {
-          setError(
-            `“${file.name}” is not a diagram file (it is not valid JSON).`
-          );
+          setError(`“${file.name}” could not be read.`);
         });
     });
   };

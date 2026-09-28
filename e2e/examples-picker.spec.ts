@@ -199,3 +199,18 @@ test.describe('examples-picker @ :2223', () => {
     expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
   });
 });
+
+test('a fired pulse travels along its connector', async ({ page }) => {
+  await page.goto(BASE);
+  await page.getByText('Connector pulse').click();
+  await page.getByRole('button', { name: /Fire pulse/ }).click();
+  const glyph = page
+    .locator('animateMotion[repeatCount="1"]')
+    .first()
+    .locator('xpath=..');
+  await expect(glyph).toBeAttached();
+  const first = (await glyph.boundingBox())!;
+  await page.waitForTimeout(400);
+  const later = (await glyph.boundingBox())!;
+  expect(Math.abs(later.x - first.x) + Math.abs(later.y - first.y)).toBeGreaterThan(5);
+});

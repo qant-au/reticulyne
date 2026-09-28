@@ -74,7 +74,10 @@ export const ExamplesSidebar = ({
             minWidth: SIDEBAR_WIDTH
           }}
         >
-          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+          <Typography
+            variant="subtitle2"
+            sx={{ fontWeight: 600, color: 'text.primary' }}
+          >
             Examples
           </Typography>
           <IconButton
@@ -100,6 +103,9 @@ export const ExamplesSidebar = ({
                 data-testid={`sidebar-item-${i}`}
                 onClick={() => {
                   onSelect(i);
+                  // On a phone the open rail leaves the editor ~130px
+                  // wide, so picking an example closes it.
+                  if (window.innerWidth < 600) onExpandedChange(false);
                 }}
                 sx={{
                   justifyContent: 'flex-start',

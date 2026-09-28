@@ -14,7 +14,7 @@
 //
 // Pure presentation: every slot reads from props.
 
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { ItemControlsManager } from 'src/components/ItemControls/ItemControlsManager';
 import { MainMenu } from 'src/components/MainMenu/MainMenu';
@@ -75,20 +75,25 @@ export const ToolbarSlots = ({
         </UiElement>
       )}
 
-      {availableTools.includes('ZOOM_CONTROLS') && (
-        <Box
-          sx={{
-            position: 'absolute',
-            transformOrigin: 'bottom left'
-          }}
-          style={{
-            top: rendererSize.height - appPadding.y * 2,
-            left: appPadding.x
-          }}
-        >
-          <ZoomControls />
-        </Box>
-      )}
+      {/* The help button shares the bottom-left row with the zoom
+          controls. It used to be right-anchored inside the overlay's
+          0x0 container, which put it at a negative x, off-screen; the
+          bottom-right corner now belongs to the mini-map. */}
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          position: 'absolute',
+          transformOrigin: 'bottom left'
+        }}
+        style={{
+          top: rendererSize.height - appPadding.y * 2,
+          left: appPadding.x
+        }}
+      >
+        {availableTools.includes('ZOOM_CONTROLS') && <ZoomControls />}
+        <HelpButton />
+      </Stack>
 
       {showCombinedToolbar && (
         <Box
@@ -103,16 +108,6 @@ export const ToolbarSlots = ({
           <MainMenu showToolButtons={showToolButtons} />
         </Box>
       )}
-
-      <Box
-        sx={{ position: 'absolute', transformOrigin: 'bottom right' }}
-        style={{
-          top: rendererSize.height - appPadding.y * 2,
-          right: appPadding.x
-        }}
-      >
-        <HelpButton />
-      </Box>
     </>
   );
 };

@@ -223,6 +223,12 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
       // Escape: deselect. Allowed in every editor mode — read-only
       // diagrams may still surface a selection-driven detail panel.
       if (e.key === 'Escape') {
+        // An icon armed for placement is put down again.
+        const { mode } = uiStateActions.get();
+        if (mode.type === 'PLACE_ICON' && mode.id) {
+          uiStateActions.setMode({ ...mode, id: null });
+          e.preventDefault();
+        }
         if (itemControls || selection.length > 0) {
           uiStateActions.clearSelection();
           e.preventDefault();

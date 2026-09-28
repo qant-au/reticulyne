@@ -91,10 +91,8 @@ describe('PlaceIcon mode', () => {
 
     expect(state.scene.createModelItem).not.toHaveBeenCalled();
     expect(state.scene.createViewItem).not.toHaveBeenCalled();
-    // Placement mode still resets so the user can try again from a
-    // fresh state without leaving the icon "armed".
-    expect(lastModeChange(state)).toEqual(
-      expect.objectContaining({ type: 'PLACE_ICON', id: null })
-    );
+    // The icon stays armed: a click on a picker icon also releases
+    // outside the renderer, and must leave it ready for a canvas click.
+    expect(state.uiState.actions.setMode).not.toHaveBeenCalled();
   });
 });

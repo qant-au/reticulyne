@@ -26,6 +26,12 @@ export const PlaceIcon: ModeActions = {
   mouseup: ({ uiState, scene, isRendererInteraction }) => {
     if (uiState.mode.type !== 'PLACE_ICON') return;
 
+    // A release outside the canvas never drops an icon (BUG5-07), and it
+    // leaves the icon armed: a plain click on a picker icon ends with a
+    // release on the picker itself, so disarming here meant only a drag
+    // could ever place one. Click the canvas to place it, Esc to cancel.
+    if (uiState.mode.id !== null && !isRendererInteraction) return;
+
     if (uiState.mode.id !== null && isRendererInteraction) {
       // Only commit a placement when the release happens inside the
       // renderer surface. Without this gate, releasing the mouse on

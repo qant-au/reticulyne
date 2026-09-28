@@ -179,3 +179,27 @@ test('a text box left empty is removed when it is deselected', async ({
   );
   expect(model.views[0].textBoxes ?? []).toHaveLength(0);
 });
+
+test('a node pasted into another diagram brings its icon along', async ({
+  page
+}) => {
+  const c = await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }]);
+  await page.mouse.click(c.x, c.y);
+  await page.keyboard.press('Control+c');
+  await page.getByRole('button', { name: 'Diagrams' }).click();
+  await page.getByRole('menuitem', { name: 'New diagram' }).click();
+  await page.mouse.move(c.x, c.y);
+  await page.keyboard.press('Control+v');
+
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('menuitem', { name: /Export as JSON/i }).click();
+  const model = JSON.parse(
+    await readFile(await (await downloadPromise).path(), 'utf8')
+  );
+  expect(model.items).toHaveLength(1);
+  const iconIds = model.icons.map((i: { id: string }) => {
+    return i.id;
+  });
+  expect(iconIds).toContain(model.items[0].icon);
+});

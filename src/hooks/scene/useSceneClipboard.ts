@@ -7,6 +7,11 @@ import type { SceneCore } from './types';
 
 const DUPLICATE_TILE_OFFSET = { x: 1, y: 1 };
 
+// A copy of a copy is still "X (copy)", not "X (copy) (copy)".
+const copyName = (name: string) => {
+  return name.endsWith(' (copy)') ? name : `${name} (copy)`;
+};
+
 // Duplicate, copy and paste. The clipboard subscriptions moved here with
 // the code that reads them; useScene calls this hook unconditionally, so
 // its consumers subscribe to exactly what they did before the split.
@@ -46,7 +51,7 @@ export const useSceneClipboard = ({
             {
               ...modelItem.value,
               id: newId,
-              name: `${modelItem.value.name} (copy)`
+              name: copyName(modelItem.value.name)
             },
             state
           );
@@ -147,15 +152,20 @@ export const useSceneClipboard = ({
       const entries: ClipboardEntry[] = [];
       for (const t of targets) {
         switch (t.type) {
-          case 'ITEM':
+          case 'ITEM': {
+            const modelItem = getItemByIdOrThrow(state.model.items, t.id).value;
             entries.push({
               kind: 'ITEM',
-              modelItem: getItemByIdOrThrow(state.model.items, t.id).value,
+              modelItem,
               viewItem: ungrouped(
                 getItemByIdOrThrow(currentView.items ?? [], t.id).value
-              )
+              ),
+              icon: state.model.icons.find((i) => {
+                return i.id === modelItem.icon;
+              })
             });
             break;
+          }
           case 'TEXTBOX':
             entries.push({
               kind: 'TEXTBOX',
@@ -164,14 +174,19 @@ export const useSceneClipboard = ({
               )
             });
             break;
-          case 'RECTANGLE':
+          case 'RECTANGLE': {
+            const rectangle = ungrouped(
+              getItemByIdOrThrow(currentView.rectangles ?? [], t.id).value
+            );
             entries.push({
               kind: 'RECTANGLE',
-              rectangle: ungrouped(
-                getItemByIdOrThrow(currentView.rectangles ?? [], t.id).value
-              )
+              rectangle,
+              color: state.model.colors.find((c) => {
+                return c.id === rectangle.color;
+              })
             });
             break;
+          }
           default:
             // CONNECTOR is intentionally not copyable.
             break;
@@ -186,6 +201,36 @@ export const useSceneClipboard = ({
     (entries: ClipboardEntry[], offset: Coords) => {
       let state = getState();
       const refs: ItemReference[] = [];
+      // Bring along any icon or colour the target diagram lacks (a paste
+      // into another diagram).
+      const icons = [...state.model.icons];
+      const colors = [...state.model.colors];
+      for (const entry of entries) {
+        if (entry.kind === 'ITEM' && entry.icon) {
+          const { icon } = entry;
+          if (
+            !icons.some((i) => {
+              return i.id === icon.id;
+            })
+          )
+            icons.push(icon);
+        }
+        if (entry.kind === 'RECTANGLE' && entry.color) {
+          const { color } = entry;
+          if (
+            !colors.some((c) => {
+              return c.id === color.id;
+            })
+          )
+            colors.push(color);
+        }
+      }
+      if (
+        icons.length !== state.model.icons.length ||
+        colors.length !== state.model.colors.length
+      ) {
+        state = { ...state, model: { ...state.model, icons, colors } };
+      }
       const shift = (c: Coords) => {
         return { x: c.x + offset.x, y: c.y + offset.y };
       };
@@ -205,7 +250,7 @@ export const useSceneClipboard = ({
                 ...entry.modelItem,
                 id: newId,
                 name: originalExists
-                  ? `${entry.modelItem.name} (copy)`
+                  ? copyName(entry.modelItem.name)
                   : entry.modelItem.name
               },
               state

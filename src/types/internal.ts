@@ -19,7 +19,8 @@ import type {
   ModelItem,
   ViewItem,
   TextBox,
-  Rectangle
+  Rectangle,
+  Colors
 } from './model';
 import type { ItemReference, ConnectorPath } from './scene';
 import type { QueuedPatch } from './imperative';
@@ -259,13 +260,17 @@ export interface ContextMenu {
 // for the same anchor-semantics reason that useScene.duplicateItem
 // skips them (see useScene.ts:328).
 export type ClipboardEntry =
+  // The icon and colour an entry refers to travel with it, so a paste
+  // into another diagram can add them there instead of leaving a
+  // dangling reference the schema then rejects.
   | {
       kind: 'ITEM';
       modelItem: ModelItem;
       viewItem: ViewItem;
+      icon?: Icon;
     }
   | { kind: 'TEXTBOX'; textBox: TextBox }
-  | { kind: 'RECTANGLE'; rectangle: Rectangle };
+  | { kind: 'RECTANGLE'; rectangle: Rectangle; color?: Colors[number] };
 
 export interface UiState {
   view: string;

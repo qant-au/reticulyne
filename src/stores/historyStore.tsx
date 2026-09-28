@@ -18,7 +18,6 @@
 
 import { createStore } from 'zustand';
 import type { State } from 'src/stores/reducers/types';
-import { fingerprintModel } from 'src/utils/save';
 import { createContextualStore } from './createContextualStore';
 
 // 250ms balances "I just released the mouse, undo should step the
@@ -31,12 +30,24 @@ const COMMIT_DEBOUNCE_MS = 250;
 // reasonable upper bound.
 const HISTORY_DEPTH = 100;
 
+// Every view mutation stamps the view's lastUpdated, so that field is
+// left out: otherwise no burst could ever compare equal.
+const content = (model: State['model']) => {
+  return JSON.stringify(model, (key, value) => {
+    return key === 'lastUpdated' ? undefined : value;
+  });
+};
+
 const isNoOp = (prior: State, next: State | null) => {
-  return (
-    next !== null &&
-    (next.model === prior.model ||
-      fingerprintModel(next.model) === fingerprintModel(prior.model))
-  );
+  if (next === null) return false;
+  if (next.model === prior.model) return true;
+  // The icon set is large (every bundled icon, as data URIs) and almost
+  // never changes; when both sides share it, leave it out.
+  const sameIcons = next.model.icons === prior.model.icons;
+  const strip = (m: State['model']) => {
+    return sameIcons ? { ...m, icons: undefined } : m;
+  };
+  return content(strip(next.model)) === content(strip(prior.model));
 };
 
 export interface HistoryStore {

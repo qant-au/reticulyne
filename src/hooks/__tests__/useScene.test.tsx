@@ -588,6 +588,41 @@ describe('useScene', () => {
       ).toContain(targetId);
     });
 
+    test('a create-then-delete in one gesture is not an undo step', () => {
+      const slot = setup();
+      const item = slot.current.scene.items[0];
+      const from = item.tile;
+      act(() => {
+        slot.current.scene.updateViewItem(item.id, {
+          tile: { x: from.x + 3, y: from.y }
+        });
+      });
+      act(() => {
+        jest.advanceTimersByTime(300);
+      });
+      act(() => {
+        slot.current.scene.createConnector({
+          id: 'tmp',
+          anchors: [
+            { id: 't1', ref: { item: item.id } },
+            { id: 't2', ref: { tile: { x: 9, y: 9 } } }
+          ]
+        });
+        slot.current.scene.deleteConnector('tmp');
+      });
+      act(() => {
+        jest.advanceTimersByTime(300);
+      });
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect(
+        slot.current.scene.items.find((i) => {
+          return i.id === item.id;
+        })!.tile
+      ).toEqual(from);
+    });
+
     test('redo reverses an undo', () => {
       const slot = setup();
       const initialIds = slot.current.scene.items.map((i) => {

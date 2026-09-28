@@ -232,23 +232,22 @@ export const exportAsVectorSvg = async (
     root.appendChild(bg);
   }
 
-  // Locate the SceneLayer — the direct child of `el` that is the
-  // nearest positioned ancestor of the scene SVG elements.
-  // Its offsetLeft/offsetTop (which ignore CSS transform, unlike BCR)
-  // give the scene-space origin offset within the renderer container.
-  let sceneOffsetX = 0;
-  let sceneOffsetY = 0;
-  const firstSvg = el.querySelector<SVGSVGElement>('svg');
-  if (firstSvg) {
-    let cur: HTMLElement | null = firstSvg.parentElement;
+  // Each scene element sits in a SceneLayer: a direct child of `el`,
+  // placed at 50%/50% (offsetLeft/Top) and carrying the view's scroll
+  // and zoom as a CSS transform. Both must wrap the element's own
+  // placement, or the shapes land at the top-left corner at the wrong
+  // scale while the icons (placed by bounding box) land correctly.
+  const layerTransform = (node: Element) => {
+    let cur: HTMLElement | null = node.parentElement;
     while (cur && cur.parentElement !== el) {
-      cur = cur.parentElement as HTMLElement | null;
+      cur = cur.parentElement;
     }
-    if (cur) {
-      sceneOffsetX = cur.offsetLeft;
-      sceneOffsetY = cur.offsetTop;
-    }
-  }
+    if (!cur) return '';
+    const t = window.getComputedStyle(cur).transform;
+    return `translate(${cur.offsetLeft} ${cur.offsetTop})${
+      t && t !== 'none' ? ` ${t}` : ''
+    }`;
+  };
 
   // Pattern 1: <svg style="position:absolute; left:X; top:Y; transform:matrix(...)">
   el.querySelectorAll<SVGSVGElement>('svg').forEach((svgEl) => {
@@ -268,7 +267,7 @@ export const exportAsVectorSvg = async (
     const g = document.createElementNS(ns, 'g');
     g.setAttribute(
       'transform',
-      `translate(${x + sceneOffsetX} ${y + sceneOffsetY})${cssTransform ? ` ${cssTransform}` : ''}`
+      `${layerTransform(svgEl)} translate(${x} ${y})${cssTransform ? ` ${cssTransform}` : ''}`
     );
     g.appendChild(clone);
     root.appendChild(g);
@@ -291,7 +290,7 @@ export const exportAsVectorSvg = async (
     const g = document.createElementNS(ns, 'g');
     g.setAttribute(
       'transform',
-      `translate(${x + sceneOffsetX} ${y + sceneOffsetY})${cssTransform ? ` ${cssTransform}` : ''}`
+      `${layerTransform(divEl)} translate(${x} ${y})${cssTransform ? ` ${cssTransform}` : ''}`
     );
     g.appendChild(clone);
     root.appendChild(g);
@@ -344,8 +343,13 @@ export const exportAsUniversalSvg = async (
   style.background = bgColor;
   try {
     const dataUrl = await toSvg(el, { cacheBust: true });
-    const res = await fetch(dataUrl);
-    const blob = await res.blob();
+    // Decoded here rather than with fetch(dataUrl): a page whose CSP has
+    // connect-src 'self' (the Docker image's) refuses to fetch a data:
+    // URL, and the export always failed with "Failed to fetch".
+    const comma = dataUrl.indexOf(',');
+    const blob = new Blob([decodeURIComponent(dataUrl.slice(comma + 1))], {
+      type: 'image/svg+xml'
+    });
     downloadFile(blob, generateGenericFilename('universal.svg'));
   } finally {
     style.background = prevBg;

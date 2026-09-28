@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Stack, Alert } from '@mui/material';
+import { Stack, Alert, Typography } from '@mui/material';
 import { ControlsContainer } from 'src/components/ItemControls/components/ControlsContainer';
 import { Header } from 'src/components/ItemControls/components/Header';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -99,7 +99,13 @@ export const IconSelectionControls = ({
     >
       {filteredIcons && (
         <Section>
-          <IconGrid icons={filteredIcons} onMouseDown={onMouseDown} />
+          {filteredIcons.length === 0 ? (
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              No icons match “{filter}”.
+            </Typography>
+          ) : (
+            <IconGrid icons={filteredIcons} onMouseDown={onMouseDown} />
+          )}
         </Section>
       )}
       {!filteredIcons && (

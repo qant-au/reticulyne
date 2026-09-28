@@ -41,6 +41,8 @@ const upload = async (page: Page) => {
     mimeType: 'image/svg+xml',
     buffer: svg
   });
+  // The file is decoded before it is taken, so wait for it to land.
+  await expect(page.getByText('My icons').first()).toBeVisible();
 };
 
 test('upload an icon, place it, and it is saved in the diagram', async ({

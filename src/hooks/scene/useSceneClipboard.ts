@@ -304,5 +304,27 @@ export const useSceneClipboard = ({
     [entriesFor, createFrom, setState]
   );
 
-  return { duplicateItem, copySelection, paste, duplicateInPlace };
+  /**
+   * Ctrl/Cmd+D: copy these items one tile on (connectors skipped) in one
+   * undo step and return the copies, which the caller selects so that
+   * pressing it again steps on from them instead of stacking.
+   */
+  const duplicateSelection = useCallback(
+    (targets: ItemReference[]): ItemReference[] => {
+      const entries = entriesFor(targets);
+      if (entries.length === 0) return [];
+      const { state, refs } = createFrom(entries, DUPLICATE_TILE_OFFSET);
+      setState(state);
+      return refs;
+    },
+    [entriesFor, createFrom, setState]
+  );
+
+  return {
+    duplicateItem,
+    copySelection,
+    paste,
+    duplicateInPlace,
+    duplicateSelection
+  };
 };

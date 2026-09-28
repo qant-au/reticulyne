@@ -169,7 +169,7 @@ test('a template does not overwrite the saved diagram that was open', async ({
   await expect(page.getByRole('menuitem', { name: /Alpha/ })).toBeVisible();
 });
 
-test('a newly opened diagram starts clean, not with the last one's status', async ({
+test('a newly opened diagram starts clean, not with the previous status', async ({
   page
 }) => {
   await page.goto('/');

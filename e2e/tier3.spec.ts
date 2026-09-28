@@ -144,3 +144,17 @@ test('ArrowUp nudges a node up the screen, ArrowDown down', async ({ page }) => 
   }).toBeLessThan(before);
   expect((await exportedTiles(page)).a).toEqual({ x: 0, y: 1 });
 });
+
+test('Ctrl+D twice gives two copies on two tiles, not a stack', async ({
+  page
+}) => {
+  const c = await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }]);
+  await page.mouse.click(c.x, c.y);
+  await page.keyboard.press('Control+d');
+  await page.keyboard.press('Control+d');
+  const tiles = Object.values(await exportedTiles(page)).map((t) => {
+    return JSON.stringify(t);
+  });
+  expect(tiles).toHaveLength(3);
+  expect(new Set(tiles).size).toBe(3);
+});

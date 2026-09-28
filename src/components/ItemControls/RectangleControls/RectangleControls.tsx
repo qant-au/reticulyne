@@ -39,7 +39,8 @@ export const RectangleControls = ({ id }: Props) => {
             // painting over it while the swatch showed as chosen.
             updateRectangle(rectangle.id, { color, colorValue: undefined });
           }}
-          activeColor={rectangle.color}
+          // No swatch shows as chosen while a hex override paints over it.
+          activeColor={rectangle.colorValue ? undefined : rectangle.color}
         />
       </Section>
       <Section title="Fill colour">
@@ -74,7 +75,8 @@ export const RectangleControls = ({ id }: Props) => {
           valueLabelDisplay="auto"
           onChange={(_, value) => {
             updateRectangle(rectangle.id, {
-              transparency: value as number
+              // Keyboard steps accumulate float error (0.4999…).
+              transparency: Math.round((value as number) * 100) / 100
             });
           }}
         />

@@ -1,5 +1,6 @@
 import { Slider, Box, TextField } from '@mui/material';
 import { ModelItem, ViewItem } from 'src/types';
+import { NAME_MAX } from 'src/schemas/common';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { DeleteButton } from '../../components/DeleteButton';
@@ -31,6 +32,7 @@ export const NodeSettings = ({
       <Section title="Name">
         <TextField
           value={modelItem.name}
+          slotProps={{ htmlInput: { maxLength: NAME_MAX } }}
           onChange={(e) => {
             const text = e.target.value as string;
             if (modelItem.name !== text) onModelItemUpdated({ name: text });

@@ -180,3 +180,26 @@ test('a newly opened diagram starts clean, not with the previous status', async 
   await expect(page.getByText('Unsaved changes')).toHaveCount(0);
   await expect(page.getByText(/^Saved/)).toHaveCount(0);
 });
+
+test('a saved diagram the editor would refuse opens a new one, with a message', async ({
+  page
+}) => {
+  await page.addInitScript(() => {
+    const bad = {
+      title: 'Too long',
+      items: [{ id: 'a', name: 'x'.repeat(101), icon: 'none' }],
+      icons: [],
+      colors: [{ id: 'c', value: '#999999' }],
+      views: [{ id: 'v', name: 'Main', items: [{ id: 'a', tile: { x: 0, y: 0 } }] }]
+    };
+    window.localStorage.setItem('reticulyne.diagram.bad', JSON.stringify(bad));
+    window.localStorage.setItem(
+      'reticulyne.diagrams',
+      JSON.stringify([{ id: 'bad', name: 'Too long', updatedAt: 1 }])
+    );
+    window.localStorage.setItem('reticulyne.current', 'bad');
+  });
+  await page.goto('/');
+  await expect(page.getByText(/last diagram could not be opened/)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Main menu' })).toBeVisible();
+});

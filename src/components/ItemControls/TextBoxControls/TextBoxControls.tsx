@@ -12,6 +12,7 @@ import { useTextBox } from 'src/hooks/useTextBox';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { getIsoProjectionCss } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
+import { NAME_MAX } from 'src/schemas/common';
 import { ControlsContainer } from '../components/ControlsContainer';
 import { Header } from '../components/Header';
 import { Section } from '../components/Section';
@@ -59,6 +60,7 @@ export const TextBoxControls = ({ id }: Props) => {
       <Section>
         <TextField
           label="Text"
+          slotProps={{ htmlInput: { maxLength: NAME_MAX } }}
           autoFocus={autoFocus}
           onKeyDown={(e) => {
             // Esc hands the keyboard back to the canvas; before, it did

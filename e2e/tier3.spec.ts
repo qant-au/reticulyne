@@ -203,3 +203,14 @@ test('a node pasted into another diagram brings its icon along', async ({
   });
   expect(iconIds).toContain(model.items[0].icon);
 });
+
+test('a node name stops at the 100 characters a file can hold', async ({
+  page
+}) => {
+  const c = await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }]);
+  await page.mouse.click(c.x, c.y);
+  const name = page.getByRole('textbox').first();
+  await expect(name).toHaveValue('Node a');
+  await name.fill('y'.repeat(150));
+  expect((await name.inputValue()).length).toBe(100);
+});

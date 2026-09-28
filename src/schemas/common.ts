@@ -57,9 +57,14 @@ export const SCHEMA_LIMITS = {
 export const id = z.string();
 export const color = z.string();
 
+// Exported so the editor's fields stop at the same limits: a longer
+// name was accepted, saved, and then refused on every load.
+export const NAME_MAX = 100;
+export const DESCRIPTION_MAX = 1000;
+
 export const constrainedStrings = {
-  name: z.string().max(100),
-  description: z.string().max(1000)
+  name: z.string().max(NAME_MAX),
+  description: z.string().max(DESCRIPTION_MAX)
 };
 
 // SEC-01 icon-URL scheme allowlist. Icon urls feed both <img src> (where

@@ -20,9 +20,22 @@ export const useExportPdf = () => {
   });
 
   return useCallback(async () => {
-    if (rendererEl) {
-      await exportAsPdf(rendererEl);
-    }
     uiStateActions.setIsMainMenuOpen(false);
+    if (!rendererEl) return;
+    // The PDF is a picture of the live canvas, so the pointer's hover
+    // tile came out in it. Hide it for the capture, then put the tool
+    // back as it was.
+    const { mode } = uiStateActions.get();
+    uiStateActions.setMode({ ...mode, showCursor: false });
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => {
+        resolve();
+      });
+    });
+    try {
+      await exportAsPdf(rendererEl);
+    } finally {
+      uiStateActions.setMode(mode);
+    }
   }, [rendererEl, uiStateActions]);
 };

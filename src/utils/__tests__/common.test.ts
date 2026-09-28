@@ -1,4 +1,4 @@
-import { clamp } from '../common';
+import { clamp, connectorsFirst } from '../common';
 
 describe('Tests common utilities', () => {
   test('clamp() works correctly', () => {
@@ -13,5 +13,19 @@ describe('Tests common utilities', () => {
     expect(clampMax).toBe(3);
     expect(clampDraw1).toBe(5);
     expect(clampDraw2).toBe(5);
+  });
+
+  test('connectorsFirst() puts connectors ahead of everything else', () => {
+    const ordered = connectorsFirst([
+      { type: 'ITEM', id: 'n3' },
+      { type: 'CONNECTOR', id: 'k3' },
+      { type: 'ITEM', id: 'n5' }
+    ]);
+
+    expect(
+      ordered.map((i) => {
+        return i.id;
+      })
+    ).toEqual(['k3', 'n3', 'n5']);
   });
 });

@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { ItemReference } from 'src/types';
+import { connectorsFirst } from 'src/utils';
 import { ControlsContainer } from '../components/ControlsContainer';
 import { Header } from '../components/Header';
 import { Section } from '../components/Section';
@@ -91,7 +92,7 @@ export const MultiSelectControls = () => {
     // renderers look them up and throw.
     uiStateActions.clearSelection();
 
-    selection.forEach((item) => {
+    connectorsFirst(selection).forEach((item) => {
       switch (item.type) {
         case 'ITEM':
           deleteViewItem(item.id);

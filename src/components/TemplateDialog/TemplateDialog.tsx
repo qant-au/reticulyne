@@ -144,6 +144,7 @@ export const TemplateDialog = ({ onClose }: Props) => {
     // afterwards would put the zoom back to 100%.
     uiStateActions.resetUiState();
     load(templateToInitialData(template, icons, colors));
+    uiStateActions.get().onDiagramReplaced?.();
     onClose();
   };
 

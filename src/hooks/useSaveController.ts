@@ -28,13 +28,19 @@ export const useSaveController = ({
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
+  const loadGeneration = useUiStateStore((state) => {
+    return state.loadGeneration;
+  });
 
   const fingerprint = useMemo(() => {
     return fingerprintModel(model);
   }, [model]);
 
-  // Baseline: whatever just loaded counts as saved. Keyed on isReady
-  // only, so it runs once per load, not on every edit.
+  // Baseline: whatever just loaded counts as saved. Keyed on the load,
+  // not on edits. isReady alone missed every load after the first (its
+  // false and true land in one render), so a newly opened diagram kept
+  // the previous one's baseline: "Unsaved changes" straight after New,
+  // and "Saved 50 s ago" on a file just imported.
   useEffect(() => {
     if (!isReady) return;
     uiStateActions.setSaveStatus({
@@ -45,7 +51,7 @@ export const useSaveController = ({
       error: null
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isReady, uiStateActions]);
+  }, [isReady, loadGeneration, uiStateActions]);
 
   const isDirty =
     saveStatus.savedFingerprint !== null &&

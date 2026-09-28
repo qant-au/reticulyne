@@ -400,6 +400,14 @@ export const DiagramShell = ({
           setError('That file is not a valid diagram.');
         }}
         onIconUpload={readIconAsDataUrl}
+        onDiagramReplaced={() => {
+          // A template or Clear starts a new diagram: without a fresh id,
+          // the next auto-save wrote it over the saved one that was open.
+          baselinePending.current = true;
+          setCurrent((c) => {
+            return { ...c, id: generateId(), stored: false };
+          });
+        }}
         {...editorProps}
       >
         <DiagramBar

@@ -71,6 +71,7 @@ const App = ({
   onSelectionChange,
   onViewportChange,
   onIconUpload,
+  onDiagramReplaced,
   templates = TEMPLATES,
   iconCollections,
   onSave,
@@ -150,6 +151,10 @@ const App = ({
   useEffect(() => {
     uiStateActions.setOnIconUpload(onIconUpload);
   }, [onIconUpload, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setOnDiagramReplaced(onDiagramReplaced);
+  }, [onDiagramReplaced, uiStateActions]);
 
   useEffect(() => {
     uiStateActions.setTemplates(templates);

@@ -313,6 +313,11 @@ export interface UiState {
   onSave: SaveHandler | undefined;
   // 2.13: host icon upload; the picker's Upload button shows when set.
   onIconUpload: IconUploadHandler | undefined;
+  onDiagramReplaced: (() => void) | undefined;
+  // Bumped by every load, whichever useInitialDataManager ran it, so the
+  // save status can re-baseline (isReady alone does not change between
+  // two loads: both of its flips land in one render).
+  loadGeneration: number;
   // 1.7: the group entered by double-click; clicks select inside it.
   editingGroupId: string | null;
   // 2.14: what "New from template" offers.
@@ -381,6 +386,8 @@ export interface UiStateActions {
   takePatches: () => QueuedPatch[];
   setOnSave: (onSave: SaveHandler | undefined) => void;
   setOnIconUpload: (handler: IconUploadHandler | undefined) => void;
+  setOnDiagramReplaced: (handler: (() => void) | undefined) => void;
+  markLoaded: () => void;
   setTemplates: (templates: DiagramTemplate[]) => void;
   setEditingGroupId: (id: string | null) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;

@@ -18,6 +18,30 @@ export const ICON_UPLOAD_TYPES = [
   'image/webp'
 ];
 
+/**
+ * Whether the browser can actually draw this file. The type is only what
+ * the file claims: a text file named .png passed every check and was
+ * placed as a broken image, its alt text drawn on the canvas and in every
+ * export.
+ */
+export const isDrawableImage = (file: Blob): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    const done = (ok: boolean) => {
+      URL.revokeObjectURL(url);
+      resolve(ok);
+    };
+    img.onload = () => {
+      done(img.naturalWidth > 0 && img.naturalHeight > 0);
+    };
+    img.onerror = () => {
+      done(false);
+    };
+    img.src = url;
+  });
+};
+
 /** The file name without its extension, as a starting icon name. */
 export const iconNameFromFile = (file: File): string => {
   return (file.name.replace(/\.[^.]+$/, '') || 'Icon').slice(0, 100);

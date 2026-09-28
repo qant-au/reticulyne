@@ -114,11 +114,17 @@ export const groupMatchingSelection = (
   view: View,
   refs: ItemReference[]
 ): string | null => {
-  if (refs.length === 0) return null;
+  // Connectors are never group members, so one in the selection (Ctrl+A
+  // takes them) must not stop the group matching: the panel then kept
+  // offering Group instead of Ungroup straight after grouping.
+  const memberable = refs.filter((r) => {
+    return r.type === 'ITEM' || r.type === 'RECTANGLE' || r.type === 'TEXTBOX';
+  });
+  if (memberable.length === 0) return null;
   const key = (r: ItemReference) => {
     return `${r.type}:${r.id}`;
   };
-  const wanted = new Set(refs.map(key));
+  const wanted = new Set(memberable.map(key));
   // Innermost first, so a nested group wins over its parent when both
   // happen to have the same members.
   const ordered = [...(view.groups ?? [])].sort((a, b) => {

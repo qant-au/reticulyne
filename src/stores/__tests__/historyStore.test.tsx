@@ -32,7 +32,7 @@ type Captured = {
   commitTimer: ReturnType<typeof setTimeout> | null;
   isApplying: boolean;
   actions: {
-    recordPriorState: (prior: State) => void;
+    recordPriorState: (prior: State, next?: State) => void;
     flushPending: () => void;
     undo: (current: State) => State | null;
     redo: (current: State) => State | null;
@@ -89,6 +89,27 @@ describe('historyStore', () => {
         'A'
       );
       expect(s.current.pendingPrior).toBeNull();
+    });
+
+    test('a burst that ends where it began is not an undo step', () => {
+      jest.useFakeTimers();
+      const s = setup();
+      // A connector created on press and deleted on a failed release.
+      act(() => {
+        s.current.actions.recordPriorState(
+          makeState('before'),
+          makeState('with-connector')
+        );
+        s.current.actions.recordPriorState(
+          makeState('with-connector'),
+          makeState('before')
+        );
+      });
+      act(() => {
+        jest.advanceTimersByTime(300);
+      });
+      expect(s.current.past).toHaveLength(0);
+      expect(s.current.actions.canUndo()).toBe(false);
     });
 
     test('rapid bursts of mutations collapse into one history entry', () => {

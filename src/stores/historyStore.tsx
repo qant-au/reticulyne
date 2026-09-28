@@ -18,6 +18,7 @@
 
 import { createStore } from 'zustand';
 import type { State } from 'src/stores/reducers/types';
+import { fingerprintModel } from 'src/utils/save';
 import { createContextualStore } from './createContextualStore';
 
 // 250ms balances "I just released the mouse, undo should step the
@@ -30,12 +31,25 @@ const COMMIT_DEBOUNCE_MS = 250;
 // reasonable upper bound.
 const HISTORY_DEPTH = 100;
 
+const isNoOp = (prior: State, next: State | null) => {
+  return (
+    next !== null &&
+    (next.model === prior.model ||
+      fingerprintModel(next.model) === fingerprintModel(prior.model))
+  );
+};
+
 export interface HistoryStore {
   past: State[];
   future: State[];
   // The state captured at the START of the current burst, waiting
   // for the debounce timer to fire and commit it to `past`.
   pendingPrior: State | null;
+  // The latest state the burst produced, when the caller supplied it. A
+  // burst that ends where it began (a connector drawn and cancelled in
+  // one gesture) is not committed: it would be an undo step that undoes
+  // nothing, and the user's next Ctrl+Z would appear to do nothing.
+  pendingNext: State | null;
   // Active debounce timer id; null when no burst in flight.
   commitTimer: ReturnType<typeof setTimeout> | null;
   // Guards against recursive recording: while undo()/redo() are
@@ -48,7 +62,7 @@ export interface HistoryStore {
      * mutation. Captures the prior state on first call of a burst;
      * subsequent calls within COMMIT_DEBOUNCE_MS extend the burst.
      */
-    recordPriorState: (prior: State) => void;
+    recordPriorState: (prior: State, next?: State) => void;
     /** Forces any pending burst to flush immediately. */
     flushPending: () => void;
     /**
@@ -74,11 +88,13 @@ const { Provider, useStore } = createContextualStore<HistoryStore>(() => {
       past: [],
       future: [],
       pendingPrior: null,
+      pendingNext: null,
       commitTimer: null,
       isApplying: false,
       actions: {
-        recordPriorState: (prior) => {
+        recordPriorState: (prior, next) => {
           const { pendingPrior, commitTimer } = get();
+          set({ pendingNext: next ?? null });
           // First mutation of a burst — remember the pre-burst
           // state. Subsequent mutations within the debounce window
           // are no-ops for recording; the burst's history entry
@@ -92,6 +108,10 @@ const { Provider, useStore } = createContextualStore<HistoryStore>(() => {
           const newTimer = setTimeout(() => {
             const s = get();
             if (s.pendingPrior === null) return;
+            if (isNoOp(s.pendingPrior, s.pendingNext)) {
+              set({ pendingPrior: null, pendingNext: null, commitTimer: null });
+              return;
+            }
             const nextPast = [...s.past, s.pendingPrior];
             // Cap depth — drop oldest entries.
             const trimmed =
@@ -102,6 +122,7 @@ const { Provider, useStore } = createContextualStore<HistoryStore>(() => {
               past: trimmed,
               future: [], // a new committed action invalidates redo
               pendingPrior: null,
+              pendingNext: null,
               commitTimer: null
             });
           }, COMMIT_DEBOUNCE_MS);
@@ -116,6 +137,10 @@ const { Provider, useStore } = createContextualStore<HistoryStore>(() => {
             set({ commitTimer: null });
             return;
           }
+          if (isNoOp(pendingPrior, get().pendingNext)) {
+            set({ pendingPrior: null, pendingNext: null, commitTimer: null });
+            return;
+          }
           const nextPast = [...past, pendingPrior];
           const trimmed =
             nextPast.length > HISTORY_DEPTH
@@ -125,6 +150,7 @@ const { Provider, useStore } = createContextualStore<HistoryStore>(() => {
             past: trimmed,
             future: [],
             pendingPrior: null,
+            pendingNext: null,
             commitTimer: null
           });
         },
@@ -166,6 +192,7 @@ const { Provider, useStore } = createContextualStore<HistoryStore>(() => {
             past: [],
             future: [],
             pendingPrior: null,
+            pendingNext: null,
             commitTimer: null
           });
         },

@@ -73,7 +73,10 @@ export const Node = ({ node, order, isDimmed }: Props) => {
                 {modelItem.name && (
                   <Typography
                     sx={{
-                      fontWeight: 600
+                      fontWeight: 600,
+                      // Inherited, this was the page's black on the dark
+                      // theme's dark label background.
+                      color: 'text.primary'
                     }}
                   >
                     {modelItem.name}

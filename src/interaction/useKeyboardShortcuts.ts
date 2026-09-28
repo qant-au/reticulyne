@@ -243,6 +243,11 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         if (mode.type === 'PLACE_ICON' && mode.id) {
           uiStateActions.setMode({ ...mode, id: null });
           e.preventDefault();
+        } else if (mode.type === 'PLACE_ICON') {
+          // Nothing armed: Esc leaves the Add item tool (it closed the
+          // picker but left the tool pressed).
+          selectTool();
+          e.preventDefault();
         }
         // A connector being dragged out is abandoned: releasing it on a
         // node afterwards used to create it anyway.

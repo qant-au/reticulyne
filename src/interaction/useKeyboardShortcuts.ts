@@ -100,7 +100,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     updateViewItem,
     updateTextBox,
     updateRectangle,
-    duplicateItem,
+    duplicateSelection,
     changeLayerOrder,
     createTextBox,
     copySelection,
@@ -355,9 +355,6 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         return;
       }
 
-      const selected =
-        itemControls && itemControls.type !== 'ADD_ITEM' ? itemControls : null;
-
       // === Select all (Ctrl/Cmd+A) — UXA-07, unlocked by 1.4 ===
       // Connector anchors are excluded for the same reason the marquee
       // excludes them: they are sub-parts, not top-level items.
@@ -446,11 +443,14 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
 
       // === Duplicate (Ctrl/Cmd+D) ===
       // Ctrl+D in browsers opens the bookmark dialog — preventDefault
-      // is essential. Skips connectors (matches the existing
-      // duplicateItem semantics; see useScene.ts:280).
+      // is essential. As in Excalidraw it copies the whole selection
+      // (connectors skipped) and selects the copies, so a second press
+      // steps on from them; copying only the active item left every
+      // repeat stacked on one tile.
       if (hasModifier && (e.key === 'd' || e.key === 'D')) {
-        if (selected) {
-          duplicateItem(selected);
+        const copies = duplicateSelection(selection);
+        if (copies.length > 0) {
+          uiStateActions.setSelection(copies);
           e.preventDefault();
         }
         return;
@@ -608,7 +608,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     updateViewItem,
     updateTextBox,
     updateRectangle,
-    duplicateItem,
+    duplicateSelection,
     changeLayerOrder,
     createTextBox,
     copySelection,

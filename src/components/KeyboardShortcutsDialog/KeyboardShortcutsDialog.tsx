@@ -62,7 +62,7 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
       { keys: ['⌘/Ctrl', 'C'], description: 'Copy selection' },
       { keys: ['⌘/Ctrl', 'X'], description: 'Cut selection' },
       { keys: ['⌘/Ctrl', 'V'], description: 'Paste' },
-      { keys: ['⌘/Ctrl', 'D'], description: 'Duplicate active item' },
+      { keys: ['⌘/Ctrl', 'D'], description: 'Duplicate selection' },
       { keys: ['⌘/Ctrl', 'G'], description: 'Group the selection' },
       {
         keys: ['⌘/Ctrl', '⇧', 'G'],

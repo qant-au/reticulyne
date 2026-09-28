@@ -48,6 +48,7 @@ export const TextBox = ({ textBox, isDimmed }: Props) => {
       >
         <Typography
           sx={{
+            color: 'text.primary',
             ...fontProps
           }}
         >

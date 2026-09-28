@@ -5,8 +5,10 @@ import {
   Box,
   Stack,
   Typography,
-  Divider
+  Divider,
+  IconButton
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface Props {
   onClose: () => void;
@@ -196,7 +198,16 @@ const ShortcutRow = ({ keys, description }: Shortcut) => {
 export const KeyboardShortcutsDialog = ({ onClose }: Props) => {
   return (
     <Dialog open onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Keyboard Shortcuts</DialogTitle>
+      <DialogTitle sx={{ pr: 6 }}>Keyboard Shortcuts</DialogTitle>
+      {/* Esc and ? close it too, but on a phone the backdrop left to tap
+          is a thin strip. */}
+      <IconButton
+        aria-label="Close"
+        onClick={onClose}
+        sx={{ position: 'absolute', right: 8, top: 8 }}
+      >
+        <CloseIcon />
+      </IconButton>
       <DialogContent>
         <Stack spacing={2}>
           {SHORTCUT_SECTIONS.map((section, sectionIndex) => {

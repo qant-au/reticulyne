@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
-import { getItemByIdOrThrow, generateId } from 'src/utils';
+import { getItemByIdOrThrow, generateId, connectorsFirst } from 'src/utils';
 import { TEXTBOX_DEFAULTS } from 'src/config';
 import { useThemeToggle } from 'src/hooks/useThemeToggle';
 import type { ItemReference } from 'src/types';
@@ -378,7 +378,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         // Clear first — the outline renderers look selected ids up in the
         // scene, and would throw on a reference to a just-deleted item.
         uiStateActions.clearSelection();
-        selection.forEach(deleteSelected);
+        connectorsFirst(selection).forEach(deleteSelected);
         e.preventDefault();
         return;
       }

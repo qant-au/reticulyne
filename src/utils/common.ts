@@ -117,6 +117,17 @@ export const getStartingMode = (
   }
 };
 
+// Deleting a node also deletes the connectors attached to it, so a
+// selection holding both must drop its connectors first, or the later
+// delete of an already-removed connector throws and aborts the rest.
+export const connectorsFirst = <T extends { type: string }>(
+  items: T[]
+): T[] => {
+  return [...items].sort((a, b) => {
+    return Number(b.type === 'CONNECTOR') - Number(a.type === 'CONNECTOR');
+  });
+};
+
 export function getItemByIdOrThrow<T extends { id: string }>(
   values: T[],
   id: string

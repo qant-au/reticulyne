@@ -271,13 +271,22 @@ export const DiagramShell = ({
     }
     const last = store.getCurrent();
     const model = last ? store.load(last) : null;
-    return last && model ? { id: last, data: model, stored: true } : blank();
+    // One the editor would refuse (saved by an older build that let a
+    // field run past the schema) gave a blank page on every reload.
+    return last && model && initialDataSchema.safeParse(model).success
+      ? { id: last, data: model, stored: true }
+      : blank();
   });
   const [entries, setEntries] = useState(() => {
     return store.list();
   });
   const [title, setTitle] = useState(current.data.title ?? 'Untitled');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => {
+    const last = initialData ? null : store.getCurrent();
+    return last && current.id !== last
+      ? 'The last diagram could not be opened; a new one was started.'
+      : null;
+  });
   const [confirm, setConfirm] = useState<{
     message: string;
     action: string;
@@ -432,8 +441,9 @@ export const DiagramShell = ({
           onOpen={(id) => {
             leave('Open another diagram', () => {
               const model = store.load(id);
-              if (model) show({ id, data: model, stored: true });
-              else setError('That diagram could not be read.');
+              if (model && initialDataSchema.safeParse(model).success) {
+                show({ id, data: model, stored: true });
+              } else setError('That diagram could not be read.');
             });
           }}
           onDelete={(id) => {

@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Box, IconButton, Stack } from '@mui/material';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Box, IconButton, Stack, Typography } from '@mui/material';
+import { DESCRIPTION_MAX } from 'src/schemas/common';
 import {
   useEditor,
   useEditorState,
@@ -168,12 +169,22 @@ const EditableMarkdown = ({
   // we must never call editor.getHTML()/setContent() before the editor's
   // ProseMirror schema is ready — that throws in the production build.
   const lastEmittedRef = useRef(value ?? '');
+  const [tooLong, setTooLong] = useState(false);
 
   const editor = useEditor({
     extensions: EDITOR_EXTENSIONS,
     content: value ?? '',
     onUpdate: ({ editor: e }) => {
       const html = e.getHTML();
+      // The file format caps a description (stored as HTML) at
+      // DESCRIPTION_MAX; past it the diagram saved but could never be
+      // loaded again. Refuse the edit instead.
+      if (html.length > DESCRIPTION_MAX) {
+        e.commands.setContent(lastEmittedRef.current, { emitUpdate: false });
+        setTooLong(true);
+        return;
+      }
+      setTooLong(false);
       lastEmittedRef.current = html;
       onChange?.(html);
     }
@@ -217,6 +228,11 @@ const EditableMarkdown = ({
       >
         <EditorContent editor={editor} />
       </Box>
+      {tooLong && (
+        <Typography variant="caption" sx={{ color: 'error.main' }}>
+          That would make the description too long to save.
+        </Typography>
+      )}
     </Box>
   );
 };

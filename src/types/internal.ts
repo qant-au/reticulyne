@@ -318,6 +318,9 @@ export interface UiState {
   // save status can re-baseline (isReady alone does not change between
   // two loads: both of its flips land in one render).
   loadGeneration: number;
+  // A text box just placed: its inspector takes focus once, so typing
+  // goes into it instead of running as tool shortcuts.
+  focusTextBoxId: string | null;
   // 1.7: the group entered by double-click; clicks select inside it.
   editingGroupId: string | null;
   // 2.14: what "New from template" offers.
@@ -388,6 +391,7 @@ export interface UiStateActions {
   setOnIconUpload: (handler: IconUploadHandler | undefined) => void;
   setOnDiagramReplaced: (handler: (() => void) | undefined) => void;
   markLoaded: () => void;
+  setFocusTextBoxId: (id: string | null) => void;
   setTemplates: (templates: DiagramTemplate[]) => void;
   setEditingGroupId: (id: string | null) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;

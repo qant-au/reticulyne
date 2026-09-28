@@ -48,6 +48,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       onIconUpload: undefined,
       onDiagramReplaced: undefined,
       loadGeneration: 0,
+      focusTextBoxId: null,
       templates: TEMPLATES,
       editingGroupId: null,
       saveStatus: {
@@ -228,6 +229,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setOnDiagramReplaced: (onDiagramReplaced) => {
           set({ onDiagramReplaced });
+        },
+        setFocusTextBoxId: (focusTextBoxId) => {
+          set({ focusTextBoxId });
         },
         markLoaded: () => {
           set({ loadGeneration: get().loadGeneration + 1 });

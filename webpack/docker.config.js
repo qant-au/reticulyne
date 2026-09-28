@@ -10,17 +10,23 @@ const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const { merge } = require('webpack-merge');
 const base = require('./base.config.js');
+const { PwaPlugin } = require('./pwa-plugin.js');
 
 module.exports = merge(base, {
   mode: 'production',
   entry: './src/index-docker.tsx',
   output: {
     path: path.resolve(__dirname, '../dist-docker'),
-    filename: 'main.js'
+    // Content-hashed: nginx serves .js as immutable for a year, so a
+    // fixed name like main.js kept returning users on the old build.
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[contenthash].js'
   },
   plugins: [
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, '../src/index.html')
-    })
+    }),
+    // APP-02: manifest, icons and service worker.
+    new PwaPlugin()
   ]
 });

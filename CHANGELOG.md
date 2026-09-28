@@ -22,6 +22,9 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Docker editor: install and offline** (APP-02). A web app manifest,
+  icons and a service worker: the editor installs as an app and opens
+  offline after one visit.
 - **Docker editor: saved diagrams** (APP-01). A Diagrams menu creates,
   imports, switches and deletes diagrams kept in the browser's localStorage;
   Save and auto-save (every 5 s once named) use the editor's save support.
@@ -134,6 +137,9 @@ potentially breaking and read the release notes before upgrading.
 
 ### Fixed
 
+- **Docker images kept returning users on an old build.** Their bundles were
+  named `main.js` while nginx served `.js` as immutable for a year; bundle
+  names now carry a content hash.
 - **Connectors to nodes inside a rectangle were invisible.** Rectangles were
   routing obstacles, so a node inside one had no route out. A rectangle that
   holds either end is no longer an obstacle, and an unroutable connector now

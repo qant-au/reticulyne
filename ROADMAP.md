@@ -866,7 +866,14 @@ directory for management UI and storage utilities.
 
 ---
 
-### APP-02 PWA shell for Docker image **[NEW]**
+### ~~APP-02 PWA shell for Docker image~~
+
+_Shipped 2026-09-28. A small webpack plugin (`webpack/pwa-plugin.js`) instead of Workbox: it
+emits the manifest, 192 and 512 px icons and a ~60-line service worker precaching the build's
+own file list, which avoids a large dependency tree for one job. Chrome's installability check
+passes (asserted in `e2e/pwa.spec.ts`) and the editor reloads offline. Doing this found the
+Docker bundles were named `main.js` while nginx cached `.js` as immutable for a year; they are
+content-hashed now._
 
 **What it does.** Adds a Web App Manifest and service worker to the Docker
 image's static files so the editor installs as a PWA on macOS, Linux, and

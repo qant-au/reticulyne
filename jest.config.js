@@ -10,6 +10,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': '<rootDir>/src/__tests__/mocks/styleMock.js',
     '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/src/__tests__/mocks/fileMock.js',
-    '^chroma-js$': '<rootDir>/src/__tests__/mocks/chromaJsMock.js'
+    '^chroma-js$': '<rootDir>/src/__tests__/mocks/chromaJsMock.js',
+    '^uuid$': '<rootDir>/src/__tests__/mocks/uuidMock.js'
   }
 };

@@ -201,6 +201,11 @@ const EditableMarkdown = ({
           borderColor: 'grey.300',
           borderRadius: 1.5,
           color: 'text.secondary',
+          // A plain Box inherits the page font, which is the browser's
+          // serif default: the description read in Times beside the name.
+          fontFamily: (theme) => {
+            return theme.typography.fontFamily;
+          },
           height,
           overflowY: 'auto',
           px: 1.5,
@@ -235,7 +240,14 @@ const ReadOnlyMarkdown = ({
   return (
     <Box
       className="reticulyne-markdown-view"
-      sx={{ color: 'text.secondary', '& p': { m: 0 }, ...styles }}
+      sx={{
+        color: 'text.secondary',
+        fontFamily: (theme) => {
+          return theme.typography.fontFamily;
+        },
+        '& p': { m: 0 },
+        ...styles
+      }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

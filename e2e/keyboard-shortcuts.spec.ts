@@ -61,6 +61,18 @@ test.describe('FEA5-02 — keyboard shortcuts', () => {
   // UXA-01 moved reset-zoom off the bare digits and onto Ctrl/Cmd+0, so
   // that 0 and 1 are free for Excalidraw's tool row. These two tests
   // previously asserted the bare-digit behaviour.
+  test('shortcuts do not reach the canvas behind an open dialog', async ({
+    page
+  }) => {
+    await page.keyboard.press('?');
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.keyboard.press('-');
+    await page.waitForTimeout(80);
+    expect(await readZoomPercent(page)).toBe(100);
+    await page.keyboard.press('?');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  });
+
   test('"Ctrl+0" resets zoom to 100%', async ({ page }) => {
     await page.keyboard.press('-');
     await page.keyboard.press('-');

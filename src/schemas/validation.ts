@@ -71,6 +71,21 @@ type IssueType =
         connector: string;
         view: string;
       };
+    }
+  | {
+      type: 'INVALID_GROUP_REF';
+      params: {
+        member: string;
+        group: string;
+        view: string;
+      };
+    }
+  | {
+      type: 'GROUP_CYCLE';
+      params: {
+        group: string;
+        view: string;
+      };
     };
 
 type Issue = IssueType & {
@@ -250,6 +265,53 @@ export const validateView = (view: View, ctx: { model: Model }): Issue[] => {
       );
     });
   }
+
+  // 1.7: every parentGroupId names a group on this view, and following
+  // parents from any group ends (no group contains itself).
+  const groups = view.groups ?? [];
+  const groupIds = new Set(
+    groups.map((g) => {
+      return g.id;
+    })
+  );
+  [
+    ...view.items,
+    ...(view.rectangles ?? []),
+    ...(view.textBoxes ?? []),
+    ...groups
+  ].forEach((member) => {
+    if (member.parentGroupId && !groupIds.has(member.parentGroupId)) {
+      issues.push({
+        type: 'INVALID_GROUP_REF',
+        params: {
+          member: member.id,
+          group: member.parentGroupId,
+          view: view.id
+        },
+        message:
+          'Invalid group membership.  An item names a group that is not on its view.'
+      });
+    }
+  });
+  groups.forEach((group) => {
+    const seen = new Set<string>();
+    let at: string | undefined = group.id;
+    while (at && groupIds.has(at)) {
+      if (seen.has(at)) {
+        issues.push({
+          type: 'GROUP_CYCLE',
+          params: { group: group.id, view: view.id },
+          message: 'Invalid groups.  A group is nested inside itself.'
+        });
+        break;
+      }
+      seen.add(at);
+      const current: string = at;
+      at = groups.find((g) => {
+        return g.id === current;
+      })?.parentGroupId;
+    }
+  });
 
   view.items.forEach((viewItem) => {
     try {

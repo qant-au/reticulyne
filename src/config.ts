@@ -50,7 +50,7 @@ export const DEFAULT_COLOR: Colors[0] = {
 export const DEFAULT_FONT_FAMILY = 'Roboto, Arial, sans-serif';
 
 export const VIEW_DEFAULTS: Required<
-  Omit<View, 'id' | 'description' | 'lastUpdated'>
+  Omit<View, 'id' | 'description' | 'lastUpdated' | 'groups'>
 > = {
   name: 'Untitled view',
   items: [],
@@ -59,7 +59,9 @@ export const VIEW_DEFAULTS: Required<
   textBoxes: []
 };
 
-export const VIEW_ITEM_DEFAULTS: Required<Omit<ViewItem, 'id' | 'tile'>> = {
+export const VIEW_ITEM_DEFAULTS: Required<
+  Omit<ViewItem, 'id' | 'tile' | 'parentGroupId'>
+> = {
   labelHeight: 80
 };
 
@@ -83,7 +85,9 @@ export const CONNECTOR_DEFAULTS: Required<
 // is the grid that encompasses the two nodes + the offset below.
 export const CONNECTOR_SEARCH_OFFSET = { x: 1, y: 1 };
 
-export const TEXTBOX_DEFAULTS: Required<Omit<TextBox, 'id' | 'tile'>> = {
+export const TEXTBOX_DEFAULTS: Required<
+  Omit<TextBox, 'id' | 'tile' | 'parentGroupId'>
+> = {
   orientation: 'X',
   fontSize: 0.6,
   content: 'Text'
@@ -98,6 +102,7 @@ export const RECTANGLE_DEFAULTS: Required<
     | 'id'
     | 'from'
     | 'to'
+    | 'parentGroupId'
     | 'color'
     | 'colorValue'
     | 'outlineColor'

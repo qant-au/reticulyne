@@ -8,6 +8,7 @@ import { Grid } from 'src/components/Grid/Grid';
 import { Cursor } from 'src/components/Cursor/Cursor';
 import { Nodes } from 'src/components/SceneLayers/Nodes/Nodes';
 import { Rectangles } from 'src/components/SceneLayers/Rectangles/Rectangles';
+import { Groups } from 'src/components/SceneLayers/Groups/Groups';
 import { Connectors } from 'src/components/SceneLayers/Connectors/Connectors';
 import { ConnectorLabels } from 'src/components/SceneLayers/ConnectorLabels/ConnectorLabels';
 import { ConnectorIndicators } from 'src/components/SceneLayers/ConnectorIndicators/ConnectorIndicators';
@@ -84,6 +85,9 @@ export const Renderer = ({
         }
       }}
     >
+      <SceneLayer>
+        <Groups />
+      </SceneLayer>
       <SceneLayer>
         <Rectangles />
       </SceneLayer>

@@ -10,6 +10,7 @@ export const rectangleSchema = z
     transparency: z.number().min(0).max(1).optional(),
     zIndex: z.number().int().optional(),
     from: coords,
-    to: coords
+    to: coords,
+    parentGroupId: id.optional()
   })
   .strict();

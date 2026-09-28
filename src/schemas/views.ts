@@ -3,12 +3,14 @@ import { id, constrainedStrings, coords, SCHEMA_LIMITS } from './common';
 import { rectangleSchema } from './rectangle';
 import { connectorSchema } from './connector';
 import { textBoxSchema } from './textBox';
+import { groupSchema } from './group';
 
 export const viewItemSchema = z
   .object({
     id,
     tile: coords,
-    labelHeight: z.number().optional()
+    labelHeight: z.number().optional(),
+    parentGroupId: id.optional()
   })
   .strict();
 
@@ -27,7 +29,8 @@ export const viewSchema = z
       .array(connectorSchema)
       .max(SCHEMA_LIMITS.CONNECTORS)
       .optional(),
-    textBoxes: z.array(textBoxSchema).max(SCHEMA_LIMITS.TEXT_BOXES).optional()
+    textBoxes: z.array(textBoxSchema).max(SCHEMA_LIMITS.TEXT_BOXES).optional(),
+    groups: z.array(groupSchema).max(SCHEMA_LIMITS.GROUPS).optional()
   })
   .strict();
 

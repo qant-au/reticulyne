@@ -9,6 +9,7 @@ import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
 import { ArrangeSection } from '../components/ArrangeSection';
+import { GroupSection } from '../components/GroupSection';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 
 const TYPE_LABELS: Record<ItemReference['type'], [string, string]> = {
@@ -137,6 +138,7 @@ export const MultiSelectControls = () => {
           )}
         </Section>
       )}
+      <GroupSection selection={selection} />
       <ArrangeSection selection={selection} />
       <LayerOrderSection
         targets={orderable}

@@ -72,6 +72,9 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
   const selection = useUiStateStore((state) => {
     return state.selection;
   });
+  const editingGroupId = useUiStateStore((state) => {
+    return state.editingGroupId;
+  });
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
@@ -102,6 +105,8 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     createTextBox,
     copySelection,
     paste,
+    groupSelection,
+    ungroupSelection,
     undo,
     redo,
     currentView
@@ -220,6 +225,11 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
       if (e.key === 'Escape') {
         if (itemControls || selection.length > 0) {
           uiStateActions.clearSelection();
+          e.preventDefault();
+        }
+        // 1.7: and leave the group being edited.
+        if (editingGroupId) {
+          uiStateActions.setEditingGroupId(null);
           e.preventDefault();
         }
         return;
@@ -408,6 +418,19 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         return;
       }
 
+      // === Group / ungroup (ROADMAP 1.7) ===
+      // Ctrl/Cmd+G groups the selection; with Shift, ungroups it. Matched on
+      // e.code so a Shift+G reads the same on every layout.
+      if (hasModifier && e.code === 'KeyG') {
+        if (e.shiftKey) {
+          ungroupSelection(selection);
+        } else {
+          groupSelection(selection);
+        }
+        e.preventDefault();
+        return;
+      }
+
       // === Duplicate (Ctrl/Cmd+D) ===
       // Ctrl+D in browsers opens the bookmark dialog — preventDefault
       // is essential. Skips connectors (matches the existing
@@ -560,6 +583,9 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     editorMode,
     itemControls,
     selection,
+    editingGroupId,
+    groupSelection,
+    ungroupSelection,
     dialog,
     uiStateActions,
     deleteViewItem,

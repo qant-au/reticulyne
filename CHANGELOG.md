@@ -22,6 +22,12 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Groups** (ROADMAP 1.7). `Ctrl/Cmd+G` groups the selection and
+  `Ctrl/Cmd+Shift+G` ungroups it. A click selects the whole group, dragging
+  moves it as one, and double-click works inside it. Groups can be named,
+  coloured and nested. Schema: `groups` on a view, and `parentGroupId` on view
+  items, rectangles, text boxes and groups. Additive: existing diagrams load
+  unchanged.
 - **Docker editor: install and offline** (APP-02). A web app manifest,
   icons and a service worker: the editor installs as an app and opens
   offline after one visit.
@@ -137,6 +143,8 @@ potentially breaking and read the release notes before upgrading.
 
 ### Fixed
 
+- **Clicking the exact centre of a node could do nothing.** The dotted line
+  from a node up to its label took the press.
 - **Docker images kept returning users on an old build.** Their bundles were
   named `main.js` while nginx served `.js` as immutable for a year; bundle
   names now carry a content hash.

@@ -59,6 +59,11 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
       { keys: ['⌘/Ctrl', 'X'], description: 'Cut selection' },
       { keys: ['⌘/Ctrl', 'V'], description: 'Paste' },
       { keys: ['⌘/Ctrl', 'D'], description: 'Duplicate active item' },
+      { keys: ['⌘/Ctrl', 'G'], description: 'Group the selection' },
+      {
+        keys: ['⌘/Ctrl', 'Shift', 'G'],
+        description: 'Ungroup the selection'
+      },
       { keys: ['Del', '⌫'], description: 'Delete selection' },
       { keys: ['⌘/Ctrl', ']'], description: 'Bring forward' },
       { keys: ['⌘/Ctrl', '['], description: 'Send backward' },
@@ -85,6 +90,10 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
     title: 'Mouse & touch',
     shortcuts: [
       { keys: ['Double-click'], description: 'Add an item on an empty tile' },
+      {
+        keys: ['Double-click'],
+        description: 'Work inside a group (Esc to leave)'
+      },
       { keys: ['Drag from port'], description: 'Connect two items' },
       { keys: ['Alt', 'drag'], description: 'Drag a copy' },
       { keys: ['Pinch'], description: 'Zoom (touch)' }

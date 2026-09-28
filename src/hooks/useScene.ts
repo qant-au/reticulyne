@@ -9,6 +9,7 @@ import { useSceneItems } from './scene/useSceneItems';
 import { useSceneConnectors } from './scene/useSceneConnectors';
 import { useSceneShapes } from './scene/useSceneShapes';
 import { useSceneClipboard } from './scene/useSceneClipboard';
+import { useSceneGroups } from './scene/useSceneGroups';
 import {
   CONNECTOR_DEFAULTS,
   RECTANGLE_DEFAULTS,
@@ -153,6 +154,12 @@ export const useScene = () => {
     sceneActions: scene.actions
   });
   const shapeOps = useSceneShapes({ getState, setState, currentViewId });
+  const groupOps = useSceneGroups({
+    getState,
+    setState,
+    currentViewId,
+    currentView
+  });
   const clipboardOps = useSceneClipboard({
     getState,
     setState,
@@ -171,6 +178,7 @@ export const useScene = () => {
     ...connectorOps,
     ...shapeOps,
     ...clipboardOps,
+    ...groupOps,
     undo,
     redo
   };

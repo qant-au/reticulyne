@@ -350,7 +350,16 @@ eventually plug in.
 
 ---
 
-### 1.7 Grouping / nesting
+### ~~1.7 Grouping / nesting~~
+
+_Shipped 2026-09-28 as sketched: `groups` on the view, `parentGroupId` on view items,
+rectangles, text boxes and groups, nesting with a no-cycle check in validation, click selects
+the outermost group, double-click enters, Ctrl+G / Ctrl+Shift+G, a faint padded area with
+the name, undo of ungroup restoring the same id. Group selection is expressed as a selection
+of the members, so drag, delete, copy, colour and arrange needed no group-specific code.
+Groups are per view, since placement is. Copies come out ungrouped, and a delete that empties
+a group removes it. The host can rename or recolour a group through `applyPatch`. Not done:
+collapse/expand (the stated follow-up)._
 
 **What it does.** Select several items → Group (`Ctrl+G`). The group is a
 single draggable thing. Click into a group to edit contents; `Ctrl+Shift+G` to

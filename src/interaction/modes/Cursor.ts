@@ -10,6 +10,7 @@ import {
 } from 'src/types';
 import {
   getItemAtTile,
+  clickTarget,
   hasMovedTile,
   getAnchorAtTile,
   getItemByIdOrThrow,
@@ -133,11 +134,43 @@ const mousedown: ModeActionsAction = ({
       })
     );
 
+    // 1.7: a click on a grouped item selects its group (the next level
+    // down while a group is being edited). Leaving the edited group by
+    // clicking outside it happens here too.
+    const target =
+      itemAtTile.type === 'ITEM' ||
+      itemAtTile.type === 'RECTANGLE' ||
+      itemAtTile.type === 'TEXTBOX'
+        ? clickTarget(scene.currentView, itemAtTile, uiState.editingGroupId)
+        : null;
+    if (target && target.editingGroupId !== uiState.editingGroupId) {
+      uiState.actions.setEditingGroupId(target.editingGroupId);
+    }
+
     // 1.4: Shift+click extends. Toggling on mousedown (not mouseup) means
     // the item is in the selection before any drag can start, so
     // Shift+click-and-drag moves the item you just added along with the
     // rest of the group.
     if (modifiers.shift) {
+      if (target?.groupId) {
+        // A group toggles as a unit: add it all, or remove it all.
+        const all = target.refs.every((ref) => {
+          return isSelected(ref, uiState.selection);
+        });
+        uiState.actions.setSelection(
+          all
+            ? uiState.selection.filter((s) => {
+                return !isSelected(s, target.refs);
+              })
+            : [
+                ...uiState.selection,
+                ...target.refs.filter((ref) => {
+                  return !isSelected(ref, uiState.selection);
+                })
+              ]
+        );
+        return;
+      }
       uiState.actions.toggleSelected(itemAtTile);
       return;
     }
@@ -153,6 +186,11 @@ const mousedown: ModeActionsAction = ({
       return;
     }
 
+    if (target?.groupId) {
+      uiState.actions.setSelection(target.refs);
+      return;
+    }
+
     uiState.actions.setItemControls(itemAtTile);
   } else {
     uiState.actions.setMode(
@@ -165,6 +203,7 @@ const mousedown: ModeActionsAction = ({
     // most likely starting an additive marquee.
     if (!modifiers.shift) {
       uiState.actions.setItemControls(null);
+      if (uiState.editingGroupId) uiState.actions.setEditingGroupId(null);
     }
   }
 };

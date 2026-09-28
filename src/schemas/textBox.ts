@@ -13,6 +13,7 @@ export const textBoxSchema = z
         z.literal(ProjectionOrientationEnum.X),
         z.literal(ProjectionOrientationEnum.Y)
       ])
-      .optional()
+      .optional(),
+    parentGroupId: id.optional()
   })
   .strict();

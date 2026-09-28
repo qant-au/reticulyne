@@ -1,5 +1,5 @@
 import type { Coords } from './common';
-import type { Connector, Rectangle, TextBox } from './model';
+import type { Connector, Group, Rectangle, TextBox } from './model';
 
 // ROADMAP 1.5 / 1.6: the shapes the imperative API (useReticulyne) takes
 // and returns. Read methods hand back these narrow DTOs, never the store's
@@ -34,6 +34,9 @@ export type RectanglePatch = Partial<
 
 export type TextBoxPatch = Partial<Pick<TextBox, 'content' | 'fontSize'>>;
 
+/** 1.7: a group's label and backing colour. */
+export type GroupPatch = Partial<Pick<Group, 'name' | 'color'>>;
+
 /**
  * A set of changes keyed by id. Node fields apply wherever the node is;
  * `tile`, connectors, rectangles and text boxes apply to the current view.
@@ -44,6 +47,7 @@ export interface DiagramPatch {
   connectors?: Record<string, ConnectorPatch>;
   rectangles?: Record<string, RectanglePatch>;
   textBoxes?: Record<string, TextBoxPatch>;
+  groups?: Record<string, GroupPatch>;
 }
 
 export interface ApplyPatchOptions {

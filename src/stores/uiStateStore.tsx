@@ -47,6 +47,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       onSave: undefined,
       onIconUpload: undefined,
       templates: TEMPLATES,
+      editingGroupId: null,
       saveStatus: {
         state: 'idle',
         isDirty: false,
@@ -61,7 +62,8 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       highlightedItemId: undefined,
       actions: {
         setView: (view) => {
-          set({ view });
+          // Groups are per view, so the one being edited is left behind.
+          set({ view, editingGroupId: null });
         },
         setMainMenuOptions: (mainMenuOptions) => {
           set({ mainMenuOptions });
@@ -81,6 +83,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
             },
             itemControls: null,
             selection: [],
+            editingGroupId: null,
             zoom: 1
           });
         },
@@ -211,6 +214,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setShowTitleBar: (showTitleBar) => {
           set({ showTitleBar });
+        },
+        setEditingGroupId: (editingGroupId) => {
+          set({ editingGroupId });
         },
         setTemplates: (templates) => {
           set({ templates });

@@ -6,6 +6,7 @@ import { useSceneItemsList } from 'src/hooks/sceneLists';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { CoordsUtils, getNodeAtPort, nodesNearTile } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
+import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
 import type { Coords } from 'src/types';
 
 // ROADMAP 2.1 / 2.5: the node under the pointer shows a port on each of
@@ -72,10 +73,12 @@ export const ConnectorHotspots = () => {
   });
   const { size: rendererSize } = useResizeObserver(rendererEl);
   const items = useSceneItemsList();
+  const overCanvas = usePointerOverCanvas();
 
   const active =
-    modeType === 'CONNECTOR' ||
-    (modeType === 'CURSOR' && editorMode === 'EDITABLE' && !mouse.mousedown);
+    overCanvas &&
+    (modeType === 'CONNECTOR' ||
+      (modeType === 'CURSOR' && editorMode === 'EDITABLE' && !mouse.mousedown));
 
   const hovered = useMemo(() => {
     if (!active) return null;

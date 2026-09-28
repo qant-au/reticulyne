@@ -96,9 +96,10 @@ test('3.1: no tooltip on load for a node at the origin before the pointer moves'
   page
 }) => {
   // The mouse state starts at tile 0,0, which is where this node sits.
-  await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }], 'EXPLORABLE_READONLY');
+  await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }]);
   await page.waitForTimeout(1200);
   await expect(page.getByTestId('hover-tooltip')).toHaveCount(0);
+  await expect(page.getByTestId('connector-hotspots')).toHaveCount(0);
 });
 
 test('3.2: distribute Y spaces the middle node evenly', async ({ page }) => {

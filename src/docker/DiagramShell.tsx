@@ -101,6 +101,11 @@ const DiagramBar = ({
   const inspectorOpen = useUiStateStore((state) => {
     return state.itemControls !== null;
   });
+  // Below md it shares the top-right with the icon library, over whose
+  // search box it sat.
+  const libraryOpen = useUiStateStore((state) => {
+    return state.iconPaletteOpen;
+  });
   const close = () => {
     setAnchor(null);
   };
@@ -118,7 +123,11 @@ const DiagramBar = ({
         transform: { xs: 'none', md: 'translateX(-50%)' },
         flexDirection: 'column',
         alignItems: { xs: 'flex-end', md: 'center' },
-        display: inspectorOpen ? { xs: 'none', sm: 'flex' } : 'flex',
+        display: libraryOpen
+          ? { xs: 'none', md: 'flex' }
+          : inspectorOpen
+            ? { xs: 'none', sm: 'flex' }
+            : 'flex',
         gap: 1,
         maxWidth: 'calc(100% - 32px)',
         zIndex: 5

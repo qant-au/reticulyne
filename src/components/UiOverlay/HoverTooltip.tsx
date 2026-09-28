@@ -113,6 +113,9 @@ export const HoverTooltip = () => {
         position: 'absolute',
         left: mouse.position.screen.x + 14,
         top: mouse.position.screen.y + 18,
+        // The overlay container is 0x0, so without an explicit width the
+        // box shrinks to its longest word and wraps one word per line.
+        width: 'max-content',
         maxWidth: 280,
         px: 1.5,
         py: 1,

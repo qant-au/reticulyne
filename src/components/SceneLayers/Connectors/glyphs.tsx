@@ -9,7 +9,7 @@
 //   - true:  glyph rotates with the connector direction (arrowheads).
 //   - false: glyph stays upright regardless of line direction (text-
 //            like or rotation-symmetric shapes).
-import { Fragment } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import type { FC } from 'react';
 import type { ConnectorGlyph } from 'src/types';
 
@@ -306,6 +306,17 @@ export const GlyphRenderer = ({
 }: GlyphRendererProps) => {
   const entry = GLYPHS[glyph] ?? GLYPHS.triangle;
   const { Component, rotateWithLine } = entry;
+  // A one-shot (a pulse) must start when it mounts. Left to begin at the
+  // document's time 0, it had already ended by the time it was added,
+  // and the glyph sat still off the line until it was removed.
+  const motionRef = useRef<SVGAnimateMotionElement>(null);
+  const oneShot =
+    motion !== undefined &&
+    motion.repeatCount !== undefined &&
+    motion.repeatCount !== 'indefinite';
+  useEffect(() => {
+    if (oneShot) motionRef.current?.beginElement?.();
+  }, [oneShot]);
   const glyphEl = (
     <Component fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
   );
@@ -315,6 +326,9 @@ export const GlyphRenderer = ({
       <g>
         {glyphEl}
         <animateMotion
+          ref={motionRef}
+          begin={oneShot ? 'indefinite' : undefined}
+          fill={oneShot ? 'freeze' : undefined}
           dur={`${motion.durSeconds}s`}
           repeatCount={motion.repeatCount ?? 'indefinite'}
           keyPoints={motion.reverse ? '1;0' : '0;1'}

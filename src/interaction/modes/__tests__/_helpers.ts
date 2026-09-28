@@ -59,6 +59,7 @@ export const makeUiStateActions = () => {
     setZoom: jest.fn(),
     setScroll: jest.fn(),
     setItemControls: jest.fn(),
+    setFocusTextBoxId: jest.fn(),
     setSelection: jest.fn(),
     toggleSelected: jest.fn(),
     setEditingGroupId: jest.fn(),

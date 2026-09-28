@@ -26,6 +26,11 @@ export const TextBoxControls = ({ id }: Props) => {
     return state.actions;
   });
   const textBox = useTextBox(id);
+  // Only a text box just placed takes focus: selecting an existing one
+  // must leave Delete deleting the box, not its text.
+  const autoFocus = useUiStateStore((state) => {
+    return state.focusTextBoxId === id;
+  });
   const { updateTextBox, deleteTextBox } = useScene();
   if (!textBox) return null;
 
@@ -33,6 +38,13 @@ export const TextBoxControls = ({ id }: Props) => {
     <ControlsContainer header={<Header title="Edit text" />}>
       <Section>
         <TextField
+          label="Text"
+          autoFocus={autoFocus}
+          onFocus={(e) => {
+            if (!autoFocus) return;
+            e.target.select();
+            uiStateActions.setFocusTextBoxId(null);
+          }}
           value={textBox.content}
           onChange={(e) => {
             updateTextBox(textBox.id, { content: e.target.value as string });

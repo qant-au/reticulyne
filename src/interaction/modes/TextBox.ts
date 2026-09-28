@@ -25,6 +25,7 @@ export const TextBox: ModeActions = {
         type: 'TEXTBOX',
         id: uiState.mode.id
       });
+      uiState.actions.setFocusTextBoxId(uiState.mode.id);
     }
 
     uiState.actions.setMode({

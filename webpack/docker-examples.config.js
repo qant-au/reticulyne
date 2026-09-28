@@ -19,7 +19,9 @@ module.exports = merge(base, {
   entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, '../dist-docker-examples'),
-    filename: 'main.js'
+    // Content-hashed, as in docker.config.js: nginx caches .js as immutable.
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[contenthash].js'
   },
   plugins: [
     new HtmlWebPackPlugin({

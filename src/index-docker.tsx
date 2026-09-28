@@ -166,3 +166,14 @@ root.render(
     {Shell}
   </React.StrictMode>
 );
+
+// APP-02: offline support and install. Registered after load so it never
+// competes with the editor's first paint. Browsers only allow service
+// workers on https and localhost; elsewhere this is skipped.
+if ('serviceWorker' in navigator && window.isSecureContext) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((error) => {
+      console.warn('[reticulyne] service worker not registered:', error);
+    });
+  });
+}

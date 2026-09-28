@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   Box,
@@ -276,6 +276,12 @@ export const DiagramShell = ({
     action: string;
     run: () => void;
   } | null>(null);
+
+  // The window title is the diagram's name: it is what an installed app
+  // (APP-02) shows in its title bar and the OS window switcher.
+  useEffect(() => {
+    document.title = `${title} | Reticulyne`;
+  }, [title]);
 
   // What was last loaded or saved, to tell whether there is unsaved work.
   // The baseline is the first model the editor reports after a load: the

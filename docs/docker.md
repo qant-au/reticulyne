@@ -79,7 +79,7 @@ docker run -d --rm --name reticulyne-examples -p 2223:8080 reticulyne-examples
 The custom nginx config (`docker/nginx.conf`) ships:
 
 - **SPA fallback:** every client-side route that doesn't match a file returns `index.html`. Refreshing a deep link no longer 404s.
-- **Cache discipline:** hashed asset bundles (JS, CSS, fonts, images) get `Cache-Control: public, max-age=31536000, immutable`. `index.html` gets `Cache-Control: no-cache, no-store, must-revalidate` so a redeploy is picked up on the next request.
+- **Cache discipline:** asset bundles (JS, CSS, fonts, images) get `Cache-Control: public, max-age=31536000, immutable`, which is safe because every bundle name carries a content hash (`main.<hash>.js`; until APP-02 it was a plain `main.js`, so returning users could keep an old build for up to a year). `index.html` gets `Cache-Control: no-cache, no-store, must-revalidate` so a redeploy is picked up on the next request, and `sw.js` and `manifest.webmanifest` get `no-cache` for the same reason.
 - **gzip:** on for `application/javascript`, `text/css`, `application/json`, `image/svg+xml`, `font/woff*`, and the usual peers.
 - **Security headers** (applied to every response):
   - `X-Content-Type-Options: nosniff`
@@ -92,6 +92,15 @@ The custom nginx config (`docker/nginx.conf`) ships:
 - **`autoindex off`** so directory contents aren't listed.
 
 The CSP allows the Google Fonts CDN (used by the bundled standalone `index.html` for Noto Sans). Images are restricted to `'self'`, `data:`, and `blob:` — the bundled icon packs are inlined as `data:` URIs, so no external image origins are allowed. If you fork the image and replace the font sources or add externally-hosted icons, update the CSP accordingly.
+
+## Install and offline (PWA)
+
+The editor image is a Progressive Web App (APP-02). Chrome and Edge on macOS, Windows, Linux and ChromeOS offer **Install** in the address bar, and the installed app opens in its own window, titled with the open diagram's name.
+
+- **A service worker is active** (`sw.js`). At install it caches every file the build emitted, so after one visit the editor opens with no network. Pages are fetched network-first, so a redeploy is picked up on the next load; the bundles themselves are cache-first, which is safe because their names are content-hashed. Google Fonts are not cached, so offline the editor falls back to a system font.
+- **Service workers need HTTPS** (or `localhost`). Behind plain HTTP the worker is not registered and the editor behaves as before, online only.
+- **Diagrams are stored in the browser either way** (see Persistence), so an installed editor keeps working offline with its saved diagrams.
+- To remove it: uninstall the app, or clear site data for the editor's origin, which also deletes saved diagrams.
 
 ## Healthcheck
 

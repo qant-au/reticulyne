@@ -25,6 +25,7 @@ import Reticulyne, { INITIAL_DATA, readIconAsDataUrl } from 'src/Reticulyne';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { generateId } from 'src/utils';
+import { useUiStateStore } from 'src/stores/uiStateStore';
 import { initialDataSchema } from 'src/schemas/model';
 import type {
   Colors,
@@ -95,6 +96,11 @@ const DiagramBar = ({
 }: BarProps) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  // Below sm the inspector card spans the width under the toolbar, where
+  // this bar sits; it steps aside while the card is open.
+  const inspectorOpen = useUiStateStore((state) => {
+    return state.itemControls !== null;
+  });
   const close = () => {
     setAnchor(null);
   };
@@ -110,9 +116,9 @@ const DiagramBar = ({
         left: { xs: 'auto', md: '50%' },
         right: { xs: 16, md: 'auto' },
         transform: { xs: 'none', md: 'translateX(-50%)' },
-        display: 'flex',
         flexDirection: 'column',
         alignItems: { xs: 'flex-end', md: 'center' },
+        display: inspectorOpen ? { xs: 'none', sm: 'flex' } : 'flex',
         gap: 1,
         maxWidth: 'calc(100% - 32px)',
         zIndex: 5

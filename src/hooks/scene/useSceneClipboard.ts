@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { ClipboardEntry, Coords, ItemReference } from 'src/types';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import * as reducers from 'src/stores/reducers';
@@ -193,11 +193,20 @@ export const useSceneClipboard = ({
         const newId = generateId();
         switch (entry.kind) {
           case 'ITEM': {
+            // A cut removed the original from the view (its model item
+            // stays), so its paste keeps the name.
+            const originalExists = state.model.views.some((v) => {
+              return (v.items ?? []).some((i) => {
+                return i.id === entry.viewItem.id;
+              });
+            });
             const afterModel = reducers.createModelItem(
               {
                 ...entry.modelItem,
                 id: newId,
-                name: `${entry.modelItem.name} (copy)`
+                name: originalExists
+                  ? `${entry.modelItem.name} (copy)`
+                  : entry.modelItem.name
               },
               state
             );
@@ -257,9 +266,24 @@ export const useSceneClipboard = ({
     [entriesFor, setClipboard]
   );
 
+  // Each paste of the same clipboard lands one tile further on, so
+  // pasting three times gives three visible copies rather than a stack.
+  const pastes = useRef<{ clip: ClipboardEntry[]; count: number }>({
+    clip: [],
+    count: 0
+  });
+
   const paste = useCallback((): ItemReference[] | null => {
     if (clipboard.length === 0) return null;
-    const { state, refs } = createFrom(clipboard, DUPLICATE_TILE_OFFSET);
+    if (pastes.current.clip !== clipboard) {
+      pastes.current = { clip: clipboard, count: 0 };
+    }
+    pastes.current.count += 1;
+    const n = pastes.current.count;
+    const { state, refs } = createFrom(clipboard, {
+      x: DUPLICATE_TILE_OFFSET.x * n,
+      y: DUPLICATE_TILE_OFFSET.y * n
+    });
     setState(state);
     return refs;
   }, [clipboard, createFrom, setState]);

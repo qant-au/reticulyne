@@ -707,6 +707,46 @@ describe('useScene', () => {
       expect(firstRef!.id).not.toBe(secondRef!.id);
       expect(firstRef!.id).not.toBe(sourceId);
       expect(secondRef!.id).not.toBe(sourceId);
+
+      // Each repeat lands one tile further on instead of stacking.
+      const tileOf = (id: string) => {
+        return slot.current.scene.items.find((i) => {
+          return i.id === id;
+        })!.tile;
+      };
+      const source = tileOf(sourceId);
+      expect(tileOf(firstRef!.id)).toEqual({
+        x: source.x + 1,
+        y: source.y + 1
+      });
+      expect(tileOf(secondRef!.id)).toEqual({
+        x: source.x + 2,
+        y: source.y + 2
+      });
+    });
+
+    test('a paste after the original is deleted (a cut) keeps its name', () => {
+      const slot = setup();
+      const sourceId = slot.current.scene.items[0].id;
+      const nameOf = (id: string) => {
+        return slot.current.getModel().items.find((i) => {
+          return i.id === id;
+        })?.name;
+      };
+      const original = nameOf(sourceId);
+
+      act(() => {
+        slot.current.scene.copySelection({ type: 'ITEM', id: sourceId });
+      });
+      act(() => {
+        slot.current.scene.deleteViewItem(sourceId);
+      });
+      let ref: { type: string; id: string } | null = null;
+      act(() => {
+        ref = slot.current.scene.paste()?.[0] ?? null;
+      });
+
+      expect(nameOf(ref!.id)).toBe(original);
     });
 
     test('worklist 19: a multi-item copy pastes as one group, one undo step', () => {

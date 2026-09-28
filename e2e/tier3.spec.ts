@@ -132,3 +132,15 @@ test('3.2: an align that would stack two nodes is disabled', async ({
   // Align Y to c's Y (4) keeps them on different tiles: allowed.
   await expect(page.getByRole('button', { name: 'Align Y' })).toBeEnabled();
 });
+
+test('ArrowUp nudges a node up the screen, ArrowDown down', async ({ page }) => {
+  const c = await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }]);
+  const node = page.locator('img').first();
+  await page.mouse.click(c.x, c.y);
+  const before = (await node.boundingBox())!.y;
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(async () => {
+    return (await node.boundingBox())!.y;
+  }).toBeLessThan(before);
+  expect((await exportedTiles(page)).a).toEqual({ x: 0, y: 1 });
+});

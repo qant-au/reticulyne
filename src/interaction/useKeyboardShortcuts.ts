@@ -393,12 +393,14 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         const step = NUDGE_STEP * (e.shiftKey ? SHIFT_MULTIPLIER : 1);
         let dx = 0;
         let dy = 0;
+        // Tile +y draws up-left and +x up-right (getTilePosition), so Up
+        // is +y: with -y, ArrowUp moved a node down the screen.
         switch (e.key) {
           case 'ArrowUp':
-            dy = -step;
+            dy = step;
             break;
           case 'ArrowDown':
-            dy = step;
+            dy = -step;
             break;
           case 'ArrowLeft':
             dx = -step;

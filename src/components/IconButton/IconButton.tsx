@@ -43,6 +43,9 @@ export const IconButton = ({
       enterDelay={1000}
       enterNextDelay={1000}
       arrow
+      // The button carries its own aria-label; without this the tooltip
+      // also labelled the wrapper span, and each tool was named twice.
+      describeChild
       sx={{ bgcolor: 'primary.main' }}
     >
       {/* A disabled button fires no events, so the tooltip needs a

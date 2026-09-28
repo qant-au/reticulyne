@@ -22,9 +22,9 @@ const animationsInitialData: InitialData = {
       id: 'view-anim',
       name: 'Animations',
       items: [
-        { id: 'client', tile: { x: -4, y: 0 } },
+        { id: 'client', tile: { x: -4, y: 0 }, labelHeight: 120 },
         { id: 'service', tile: { x: 0, y: 0 } },
-        { id: 'store', tile: { x: 4, y: 0 } }
+        { id: 'store', tile: { x: 4, y: 0 }, labelHeight: 120 }
       ],
       connectors: [
         {

@@ -181,7 +181,7 @@ The tool layer mirrors **Excalidraw's**, letter and number alike, so an operator
 | `+` / `=` (or `Ctrl/Cmd +=`) | Zoom in |
 | `-` / `_` (or `Ctrl/Cmd +-`) | Zoom out |
 | `Ctrl/Cmd + 0` | Reset zoom to 100% |
-| `F` or `Shift + 1` | Fit to screen |
+| `F` or `Shift + 1` | Fit to view |
 | `Shift + 2` | Fit to selection (no-op when nothing is selected) |
 
 **Selection — `EDITABLE` mode only.**

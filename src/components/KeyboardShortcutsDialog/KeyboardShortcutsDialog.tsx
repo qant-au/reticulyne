@@ -22,6 +22,10 @@ interface ShortcutSection {
   shortcuts: Shortcut[];
 }
 
+// In a row's keys, adjacent keys are one chord (drawn joined by +) and OR
+// separates alternatives: ['F', OR, '⇧', '1'] is "F, or Shift+1".
+const OR = '|';
+
 // UXA-01: the tool row mirrors Excalidraw's, letter and number both, so
 // muscle memory carries between the two editors. Excalidraw's free-form
 // tools (diamond, ellipse, line, freedraw, eraser) have no isometric
@@ -30,21 +34,21 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
   {
     title: 'Tools',
     shortcuts: [
-      { keys: ['V', 'S', '1'], description: 'Select' },
-      { keys: ['H'], description: 'Hand' },
-      { keys: ['R', '2'], description: 'Rectangle' },
-      { keys: ['A', 'C', '5'], description: 'Connector' },
-      { keys: ['T', '8'], description: 'Text' },
-      { keys: ['I', '9'], description: 'Add item' }
+      { keys: ['V', OR, 'S', OR, '1'], description: 'Select' },
+      { keys: ['H'], description: 'Pan' },
+      { keys: ['R', OR, '2'], description: 'Rectangle' },
+      { keys: ['A', OR, 'C', OR, '5'], description: 'Connector' },
+      { keys: ['T', OR, '8'], description: 'Text' },
+      { keys: ['I', OR, '9'], description: 'Add item' }
     ]
   },
   {
     title: 'Zoom & Navigation',
     shortcuts: [
-      { keys: ['+', '⌘/Ctrl', '='], description: 'Zoom in' },
-      { keys: ['-', '⌘/Ctrl', '-'], description: 'Zoom out' },
+      { keys: ['+', OR, '⌘/Ctrl', '='], description: 'Zoom in' },
+      { keys: ['-', OR, '⌘/Ctrl', '-'], description: 'Zoom out' },
       { keys: ['⌘/Ctrl', '0'], description: 'Reset zoom' },
-      { keys: ['F', '⇧', '1'], description: 'Fit to view' },
+      { keys: ['F', OR, '⇧', '1'], description: 'Fit to view' },
       { keys: ['⇧', '2'], description: 'Fit to selection' },
       { keys: ['Space', 'drag'], description: 'Pan' }
     ]
@@ -61,10 +65,10 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
       { keys: ['⌘/Ctrl', 'D'], description: 'Duplicate active item' },
       { keys: ['⌘/Ctrl', 'G'], description: 'Group the selection' },
       {
-        keys: ['⌘/Ctrl', 'Shift', 'G'],
+        keys: ['⌘/Ctrl', '⇧', 'G'],
         description: 'Ungroup the selection'
       },
-      { keys: ['Del', '⌫'], description: 'Delete selection' },
+      { keys: ['Del', OR, '⌫'], description: 'Delete selection' },
       { keys: ['⌘/Ctrl', ']'], description: 'Bring forward' },
       { keys: ['⌘/Ctrl', '['], description: 'Send backward' },
       { keys: ['⌘/Ctrl', '⇧', ']'], description: 'Bring to front' },
@@ -80,7 +84,7 @@ const SHORTCUT_SECTIONS: ShortcutSection[] = [
       { keys: ['⇧', 'Drag'], description: 'Add marquee to selection' },
       { keys: ['⌘/Ctrl', 'A'], description: 'Select all' },
       { keys: ['⌘/Ctrl', 'F'], description: 'Find items' },
-      { keys: ['↑', '↓', '←', '→'], description: 'Nudge' },
+      { keys: ['↑↓←→'], description: 'Nudge' },
       { keys: ['⇧', '↑↓←→'], description: 'Nudge ×5' },
       { keys: ['Esc'], description: 'Deselect' }
     ]
@@ -150,9 +154,39 @@ const ShortcutRow = ({ keys, description }: Shortcut) => {
       <Typography variant="body2" sx={{ color: 'text.secondary', flex: 1 }}>
         {description}
       </Typography>
-      <Stack direction="row" spacing={0.5} sx={{ flexShrink: 0 }}>
+      <Stack
+        direction="row"
+        spacing={0.5}
+        sx={{ flexShrink: 0, alignItems: 'center' }}
+      >
         {keys.map((key, i) => {
-          return <KbdChip key={`${key}-${i}`} label={key} />;
+          if (key === OR) {
+            return (
+              <Typography
+                key={`or-${i}`}
+                variant="caption"
+                sx={{ color: 'text.secondary', px: 0.25 }}
+              >
+                or
+              </Typography>
+            );
+          }
+          const joined = i > 0 && keys[i - 1] !== OR;
+          return (
+            <Stack
+              key={`${key}-${i}`}
+              direction="row"
+              spacing={0.5}
+              sx={{ alignItems: 'center' }}
+            >
+              {joined && (
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  +
+                </Typography>
+              )}
+              <KbdChip label={key} />
+            </Stack>
+          );
         })}
       </Stack>
     </Stack>

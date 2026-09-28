@@ -57,7 +57,7 @@ export const ZoomControls = () => {
       </UiElement>
       <UiElement>
         <IconButton
-          name="Fit to screen (F)"
+          name="Fit to view (F)"
           Icon={<FitToScreenIcon />}
           onClick={fitToView}
         />

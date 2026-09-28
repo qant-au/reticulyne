@@ -132,7 +132,7 @@ test.describe('FEA5-02 — keyboard shortcuts', () => {
     // on hover. We assert the static path.
     const allAriaAndText = tooltipTitles.join(' ') + ' ' + allText;
     expect(allAriaAndText).toMatch(
-      /Select \(V\)|Pan \(H\)|Add item \(I\)|Fit to screen \(F\)/
+      /Select \(V\)|Pan \(H\)|Add item \(I\)|Fit to view \(F\)/
     );
   });
 });

@@ -97,18 +97,11 @@ const CircleOutline: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
   );
 };
 
+// Connector SVGs are drawn in isometric projection, so each shape is the
+// other one before it: an axis-aligned square comes out as a diamond on
+// screen, and a 45-degree diamond as a flat rectangle. They were drawn
+// the other way round, and each looked like the other's name.
 const Diamond: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
-  return (
-    <polygon
-      fill={fill}
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-      points="0,-16 16,0 0,16 -16,0"
-    />
-  );
-};
-
-const Square: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
   return (
     <rect
       x={-13}
@@ -118,6 +111,17 @@ const Square: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
       fill={fill}
       stroke={stroke}
       strokeWidth={strokeWidth}
+    />
+  );
+};
+
+const Square: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
+  return (
+    <polygon
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      points="0,-16 16,0 0,16 -16,0"
     />
   );
 };

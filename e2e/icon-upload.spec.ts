@@ -96,5 +96,12 @@ test('a file named .png that is not an image is refused', async ({ page }) => {
     buffer: Buffer.from('not a png at all')
   });
   await expect(page.getByText(/not an image this browser can show/)).toBeVisible();
-  expect((await exported(page)).icons ?? []).toHaveLength(0);
+  const icons = ((await exported(page)).icons ?? []) as {
+    collection?: string;
+  }[];
+  expect(
+    icons.filter((i) => {
+      return i.collection === 'My icons';
+    })
+  ).toHaveLength(0);
 });

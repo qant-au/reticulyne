@@ -56,8 +56,14 @@ module.exports = merge(base, {
     // these — they're declared as peer-deps in package.json — keeps
     // the bundle small and lets the consumer share a single copy with
     // their own app. See PRF3-01 + docs/embedding.md.
+    //
+    // React subpaths (`react/jsx-runtime`, `react-dom/client`) too: the
+    // object form above matches only the bare names, so React 19's JSX
+    // runtime was compiled into dist and emitted elements a React 18
+    // host (peer range >=18) rejects — upstream isoflow #61 inverted.
     ({ request }, callback) => {
       if (
+        /^react(-dom)?\//.test(request) ||
         /^@mui\//.test(request) ||
         /^@emotion\//.test(request) ||
         /^zustand(\/.*)?$/.test(request)

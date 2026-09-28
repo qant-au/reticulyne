@@ -83,6 +83,14 @@ test('animated connector emits <animateMotion>, toggle removes it', async ({
   await expect(animateMotion).toBeAttached({ timeout: 5000 });
   expect(await animateMotion.getAttribute('repeatCount')).toBe('indefinite');
 
+  // And the glyph really travels: animateMotion follows only a <path>,
+  // and pointed at the polyline it left the glyph parked off the line.
+  const glyph = animateMotion.locator('xpath=..');
+  const first = (await glyph.boundingBox())!;
+  await page.waitForTimeout(500);
+  const later = (await glyph.boundingBox())!;
+  expect(Math.abs(later.x - first.x) + Math.abs(later.y - first.y)).toBeGreaterThan(5);
+
   // Click the connector polyline to select it — that opens the
   // ConnectorControls panel where the Animate toggle lives.
   const polyline = page.locator('svg polyline').first();

@@ -103,13 +103,16 @@ const DiagramBar = ({
     <Box
       sx={{
         position: 'absolute',
-        // Level with the editor's toolbar.
-        top: 40,
-        left: '50%',
-        transform: 'translateX(-50%)',
+        // Level with the editor's toolbar, centred. Narrower than md, a
+        // centred bar sat on top of the toolbar's buttons, so it drops
+        // below the toolbar on the right (and loses its label below sm).
+        top: { xs: 96, md: 40 },
+        left: { xs: 'auto', md: '50%' },
+        right: { xs: 16, md: 'auto' },
+        transform: { xs: 'none', md: 'translateX(-50%)' },
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: { xs: 'flex-end', md: 'center' },
         gap: 1,
         maxWidth: 'calc(100% - 32px)',
         zIndex: 5
@@ -130,8 +133,11 @@ const DiagramBar = ({
             height: 40,
             px: 1.5
           }}
+          aria-label="Diagrams"
         >
-          Diagrams
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+            Diagrams
+          </Box>
         </Button>
       </UiElement>
       {error && (

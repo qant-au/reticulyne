@@ -30,4 +30,6 @@ prefix: iso
   114d0d9 (29), FEA14-10 (3.1), FEA14-11 (3.2); 3.3-3.6 deliberately not started, reasons in ROADMAP
 - [x] Worklist 21-24: ROADMAP 1.5/1.6 imperative API, 2.7 find, 2.8 mini-map, 2.9 guides, 2.11 icon library @due(2026-09-28) @id(iso-012)
   shipped in 9a3daee, c0071f5, 6651a5c
+- [x] Worklist 25-27: 2.13 icon upload, 2.14 templates, 1.7 grouping, APP-01 saved diagrams, APP-02 PWA @due(2026-09-28) @id(iso-013)
+  shipped in 78d56c5, 539e3e0, 8f03114, fc9f319, 6c4e5d8, 701d32c, 7bdfe30
 

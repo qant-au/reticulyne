@@ -236,7 +236,10 @@ const App = ({
           width,
           height,
           position: 'relative',
-          overflow: 'hidden',
+          // clip, not hidden: a hidden box can still be scrolled by the
+          // browser, and focusing a field in a panel that overhung the
+          // edge scrolled the whole editor 161px sideways, for good.
+          overflow: 'clip',
           transform: 'translateZ(0)'
         }}
       >

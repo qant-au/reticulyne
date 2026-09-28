@@ -832,7 +832,14 @@ These items are host-app work that sits *above* the library. They live in
 `src/index-docker.tsx` and companion files; the `<Reticulyne>` component itself is
 unchanged. Use `APP-01`, `APP-02` task IDs (not `FEA9-NN`).
 
-### APP-01 Multi-diagram management **[NEW]**
+### ~~APP-01 Multi-diagram management~~
+
+_Shipped 2026-09-28, in `src/docker/`. Built on the library's own save support (2.3):
+the shell passes `onSave` and `autoSaveDebounce`, so the Save entry, status pill and
+leave-page warning are the library's. Import/Export sit in a Diagrams menu at the top rather
+than a separate toolbar, because Export already lives in the main menu; the library's Open
+entry is dropped in the shell since it loads over the open diagram. Storage is one key per
+diagram plus an index, with the bundled icon packs stripped on write._
 
 **What it does.** The standalone Docker editor gains: create new diagram, name
 and save to `localStorage`, list and switch between named diagrams, delete,

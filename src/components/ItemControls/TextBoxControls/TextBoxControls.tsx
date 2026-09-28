@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { ProjectionOrientationEnum } from 'src/types';
 import {
   Box,
@@ -32,6 +33,25 @@ export const TextBoxControls = ({ id }: Props) => {
     return state.focusTextBoxId === id;
   });
   const { updateTextBox, deleteTextBox } = useScene();
+
+  // A text box left empty is invisible but stayed in the diagram, and in
+  // every export. As in Excalidraw, leaving it empty removes it.
+  const leave = useRef({ content: textBox?.content, remove: deleteTextBox });
+  useEffect(() => {
+    leave.current = { content: textBox?.content, remove: deleteTextBox };
+  }, [textBox?.content, deleteTextBox]);
+  useEffect(() => {
+    return () => {
+      const { content, remove } = leave.current;
+      if (content === undefined || content.trim() !== '') return;
+      try {
+        remove(id);
+      } catch {
+        // Already gone: the inspector closed because it was deleted.
+      }
+    };
+  }, [id]);
+
   if (!textBox) return null;
 
   return (

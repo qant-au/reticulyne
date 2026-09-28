@@ -158,3 +158,23 @@ test('Ctrl+D twice gives two copies on two tiles, not a stack', async ({
   expect(tiles).toHaveLength(3);
   expect(new Set(tiles).size).toBe(3);
 });
+
+test('a text box left empty is removed when it is deselected', async ({
+  page
+}) => {
+  const c = await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }]);
+  await page.mouse.move(c.x + 200, c.y + 100);
+  await page.keyboard.press('t');
+  await page.mouse.click(c.x + 200, c.y + 100);
+  const field = page.getByLabel('Text');
+  await expect(field).toBeFocused();
+  await field.fill('');
+  await page.mouse.click(c.x - 300, c.y + 200);
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('menuitem', { name: /Export as JSON/i }).click();
+  const model = JSON.parse(
+    await readFile(await (await downloadPromise).path(), 'utf8')
+  );
+  expect(model.views[0].textBoxes ?? []).toHaveLength(0);
+});

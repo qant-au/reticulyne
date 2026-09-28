@@ -342,6 +342,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
                 {mainMenuOptions.includes('LINK.GITHUB') && (
                   <MenuItem
                     onClick={() => {
+                      uiStateActions.setIsMainMenuOpen(false);
                       return gotoUrl(`${REPOSITORY_URL}`);
                     }}
                     Icon={<GitHubIcon />}

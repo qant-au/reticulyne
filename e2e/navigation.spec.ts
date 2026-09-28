@@ -98,3 +98,17 @@ test('2.9: dragging a node along a shared line draws a guide', async ({
   await page.mouse.up();
   await expect(page.getByTestId('smart-guide')).toHaveCount(0);
 });
+
+test('zoom buttons disable at their own limit, not the other one', async ({
+  page
+}) => {
+  await load(page);
+  const zoomIn = page.getByRole('button', { name: 'Zoom in (+)' });
+  const zoomOut = page.getByRole('button', { name: 'Zoom out (-)' });
+  // Loads at 100%, the maximum.
+  await expect(page.getByText('100%')).toBeVisible();
+  await expect(zoomIn).toBeDisabled();
+  await expect(zoomOut).toBeEnabled();
+  await zoomOut.click();
+  await expect(zoomIn).toBeEnabled();
+});

@@ -13,6 +13,7 @@ import type { Coords } from 'src/types';
 // size / 2 + scroll + p * zoom, and centring on p means scroll = -p * zoom.
 const W = 200;
 const H = 150;
+const MIN_CANVAS_WIDTH = 720;
 const PAD = 60;
 
 export const MiniMap = () => {
@@ -95,7 +96,9 @@ export const MiniMap = () => {
     return { nodes, rects, scale, offset };
   }, [items, rectangles, colors]);
 
-  if (!visible || !layout) return null;
+  // Too narrow to sit beside the zoom controls and the title bar: on a
+  // phone it covered both.
+  if (!visible || !layout || size.width < MIN_CANVAS_WIDTH) return null;
 
   const toMap = (p: Coords) => {
     return {

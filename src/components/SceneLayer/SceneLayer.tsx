@@ -42,6 +42,7 @@ export const SceneLayer = ({
   return (
     <Box
       ref={elementRef}
+      data-scene-layer=""
       sx={{
         position: 'absolute',
         zIndex: order,

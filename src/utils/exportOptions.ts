@@ -237,16 +237,19 @@ export const exportAsVectorSvg = async (
   // and zoom as a CSS transform. Both must wrap the element's own
   // placement, or the shapes land at the top-left corner at the wrong
   // scale while the icons (placed by bounding box) land correctly.
+  // Measured, not walked: the layer can sit several boxes below `el`
+  // (inside the export dialog it is under the editor's own root). A
+  // layer is 0x0 with its transform origin at 0,0, so its bounding box
+  // is its origin after the scroll translate; the scale comes from the
+  // computed matrix.
+  const elRect = el.getBoundingClientRect();
   const layerTransform = (node: Element) => {
-    let cur: HTMLElement | null = node.parentElement;
-    while (cur && cur.parentElement !== el) {
-      cur = cur.parentElement;
-    }
-    if (!cur) return '';
-    const t = window.getComputedStyle(cur).transform;
-    return `translate(${cur.offsetLeft} ${cur.offsetTop})${
-      t && t !== 'none' ? ` ${t}` : ''
-    }`;
+    const layer =
+      node.parentElement?.closest<HTMLElement>('[data-scene-layer]');
+    if (!layer || !el.contains(layer)) return '';
+    const r = layer.getBoundingClientRect();
+    const m = new DOMMatrixReadOnly(window.getComputedStyle(layer).transform);
+    return `translate(${r.left - elRect.left} ${r.top - elRect.top}) matrix(${m.a} ${m.b} ${m.c} ${m.d} 0 0)`;
   };
 
   // Pattern 1: <svg style="position:absolute; left:X; top:Y; transform:matrix(...)">

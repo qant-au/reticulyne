@@ -79,21 +79,26 @@ export const ToolbarSlots = ({
           controls. It used to be right-anchored inside the overlay's
           0x0 container, which put it at a negative x, off-screen; the
           bottom-right corner now belongs to the mini-map. */}
-      <Stack
-        direction="row"
-        spacing={1}
-        sx={{
-          position: 'absolute',
-          transformOrigin: 'bottom left'
-        }}
-        style={{
-          top: rendererSize.height - appPadding.y * 2,
-          left: appPadding.x
-        }}
-      >
-        {availableTools.includes('ZOOM_CONTROLS') && <ZoomControls />}
-        <HelpButton />
-      </Stack>
+      {/* Only with the zoom controls: a view-only render (the export
+          dialogs' copy of the diagram) has no chrome, and the button
+          came out in the universal SVG. */}
+      {availableTools.includes('ZOOM_CONTROLS') && (
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            position: 'absolute',
+            transformOrigin: 'bottom left'
+          }}
+          style={{
+            top: rendererSize.height - appPadding.y * 2,
+            left: appPadding.x
+          }}
+        >
+          <ZoomControls />
+          <HelpButton />
+        </Stack>
+      )}
 
       {showCombinedToolbar && (
         <Box

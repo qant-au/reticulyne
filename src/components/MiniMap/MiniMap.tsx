@@ -13,7 +13,9 @@ import type { Coords } from 'src/types';
 // size / 2 + scroll + p * zoom, and centring on p means scroll = -p * zoom.
 const W = 200;
 const H = 150;
-const MIN_CANVAS_WIDTH = 720;
+// The width below which the title bar moves up a row (TitleBar.tsx); at
+// 720 the map covered that raised title between 720 and 800.
+const MIN_CANVAS_WIDTH = 800;
 const PAD = 60;
 
 export const MiniMap = () => {

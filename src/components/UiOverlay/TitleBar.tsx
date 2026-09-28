@@ -53,7 +53,7 @@ export const TitleBar = ({
           : rendererSize.height - appPadding.y * 2,
         width: narrow
           ? rendererSize.width - appPadding.x * 2
-          : rendererSize.width - 500,
+          : rendererSize.width - 600,
         height: appPadding.y
       }}
     >

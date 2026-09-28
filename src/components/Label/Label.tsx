@@ -38,7 +38,11 @@ export const Label = ({
             width: CONNECTOR_DOT_SIZE,
             position: 'absolute',
             top: -labelHeight,
-            left: -CONNECTOR_DOT_SIZE / 2
+            left: -CONNECTOR_DOT_SIZE / 2,
+            // The leader line runs up from the node's centre, so it sat
+            // exactly where people click to select the node and swallowed
+            // the press.
+            pointerEvents: 'none'
           }}
         >
           <line

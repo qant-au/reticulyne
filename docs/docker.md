@@ -106,14 +106,15 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 ## Persistence
 
-The standalone editor is **stateless**: there is no backend, no database, no `localStorage` persistence. Refreshing the page loses unsaved work. The intended workflow is:
+The standalone editor keeps diagrams in the **browser's `localStorage`** (APP-01). There is still no backend: each browser has its own diagrams, and clearing site data deletes them.
 
-1. Open the editor in a browser tab.
-2. Build the diagram.
-3. Use the main-menu **Export** action to download the model as JSON or PNG.
-4. Re-import the JSON later via the main menu to continue editing.
+- **Diagrams** (the button at the top): **New diagram**, **Import from file…** (opens an exported JSON as a new, unsaved diagram), and the saved diagrams, newest first, to switch between or delete. Leaving a diagram with unsaved changes asks first; deleting asks first.
+- **Saving:** the main menu's **Save**, and **auto-save 5 seconds after an edit** once the diagram has a name (**Rename diagram**). An `Untitled` diagram is only saved when you choose Save. The status pill in the title bar shows Saved / Unsaved / Saving, and closing the tab with unsaved changes warns.
+- **What is stored:** the diagram itself, plus any icons you uploaded. The bundled icon packs (about 4 MB) are left out and restored on load, so a diagram typically takes a few KB of the browser's ~5 MB quota. If the quota is full, the save fails with a message saying to delete a diagram.
+- **The library's Open entry is replaced by Import** in this image: Open loads a file over the diagram that is open, and the next save would overwrite it.
+- **Export** (JSON, PNG, PDF, SVG) is unchanged and is the way to move a diagram to another browser or keep a copy outside it.
 
-If you need persistent storage across sessions, embed the editor inside your own application instead (see [`embedding.md`](./embedding.md)) and connect the `onModelUpdated` callback to your backend.
+For storage shared between people or devices, embed the editor in your own application instead (see [`embedding.md`](./embedding.md)) and connect `onSave` to your backend.
 
 ## Reverse-proxy notes
 

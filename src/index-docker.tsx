@@ -3,11 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Box } from '@mui/material';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import Reticulyne, { INITIAL_DATA, readIconAsDataUrl } from 'src/Reticulyne';
 import type { InitialData, Model } from 'src/types';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import type { EditorModeEnum } from 'src/types/common';
 import { icons, colors } from './examples/initialData';
+import { DiagramShell } from './docker/DiagramShell';
 
 // E2E test hook. The Playwright suite injects this global via
 // `page.addInitScript(...)` BEFORE navigation, so the docker editor
@@ -60,11 +60,7 @@ declare global {
 }
 
 const e2eConfig = window.__RETICULYNE_E2E__;
-const initialData = e2eConfig?.initialData ?? {
-  ...INITIAL_DATA,
-  icons,
-  colors
-};
+const initialData = e2eConfig?.initialData;
 const editorMode = e2eConfig?.editorMode;
 const scrollParent = e2eConfig?.scrollParent ?? false;
 
@@ -112,6 +108,15 @@ const enableAnimation =
   e2eConfig?.enableAnimation ??
   new URLSearchParams(window.location.search).get('animate') === '1';
 
+// APP-01: the editor runs inside the diagram shell (saved diagrams in
+// localStorage). The e2e hook's settings pass straight through to it.
+const editorProps = {
+  editorMode,
+  enableAnimation,
+  ...saveProps,
+  ...eventProps
+};
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -129,26 +134,22 @@ const Shell = scrollParent ? (
   >
     <Box sx={{ width: '100vw', height: '200vh' }}>
       <Box sx={{ width: '100vw', height: '100vh' }}>
-        <Reticulyne
+        <DiagramShell
+          bundledIcons={icons}
+          colors={colors}
           initialData={initialData}
-          editorMode={editorMode}
-          enableAnimation={enableAnimation}
-          {...saveProps}
-          onIconUpload={readIconAsDataUrl}
-          {...eventProps}
+          editorProps={editorProps}
         />
       </Box>
     </Box>
   </Box>
 ) : (
   <Box sx={{ width: '100vw', height: '100vh' }}>
-    <Reticulyne
+    <DiagramShell
+      bundledIcons={icons}
+      colors={colors}
       initialData={initialData}
-      editorMode={editorMode}
-      enableAnimation={enableAnimation}
-      {...saveProps}
-      onIconUpload={readIconAsDataUrl}
-      {...eventProps}
+      editorProps={editorProps}
     />
   </Box>
 );

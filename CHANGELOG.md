@@ -22,6 +22,9 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Docker editor: saved diagrams** (APP-01). A Diagrams menu creates,
+  imports, switches and deletes diagrams kept in the browser's localStorage;
+  Save and auto-save (every 5 s once named) use the editor's save support.
 - **Starter templates** (ROADMAP 2.14). **New from template** in the main
   menu (`ACTION.NEW_FROM_TEMPLATE`, on by default) opens a picker with
   previews; `templates` replaces the bundled five.

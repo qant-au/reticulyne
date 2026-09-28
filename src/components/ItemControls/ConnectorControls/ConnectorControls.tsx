@@ -286,7 +286,8 @@ export const ConnectorControls = ({ id }: Props) => {
                 valueLabelDisplay="auto"
                 onChange={(_, value) => {
                   updateConnector(connector.id, {
-                    animationRate: value as number
+                    // Keyboard steps accumulate float error (0.7999…).
+                    animationRate: Math.round((value as number) * 100) / 100
                   });
                 }}
               />

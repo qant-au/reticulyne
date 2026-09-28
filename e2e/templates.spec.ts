@@ -54,3 +54,22 @@ test('undo after picking a template does not crash the editor', async ({
   await expect(page.getByText(/Editor failed to load/)).toHaveCount(0);
   await expect(page.getByText('Volume claim', { exact: true })).toBeVisible();
 });
+
+test('Clear asks first; Cancel keeps the diagram', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'New from template' }).click();
+  await page.getByRole('button', { name: 'Kubernetes service' }).click();
+  await expect(page.getByText('Volume claim', { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Clear' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Clear the canvas?' });
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByText('Volume claim', { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Clear' }).click();
+  await dialog.getByRole('button', { name: 'Clear' }).click();
+  await expect(page.getByText('Volume claim', { exact: true })).toHaveCount(0);
+});

@@ -1,5 +1,17 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Menu, Typography, Divider, Card, Stack } from '@mui/material';
+import {
+  Menu,
+  Typography,
+  Divider,
+  Card,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ExportJsonIcon from '@mui/icons-material/DataObject';
@@ -128,10 +140,17 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
     uiStateActions.setDialog('EXPORT_SVG');
   }, [uiStateActions]);
 
+  // Clear empties the whole diagram and a load cannot be undone, so it
+  // asks first, as Excalidraw's "Reset the canvas" does.
+  const [confirmClear, setConfirmClear] = useState(false);
   const onClearCanvas = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    setConfirmClear(true);
+  }, [uiStateActions]);
+  const onConfirmClear = useCallback(() => {
+    setConfirmClear(false);
     clear();
     uiStateActions.get().onDiagramReplaced?.();
-    uiStateActions.setIsMainMenuOpen(false);
   }, [uiStateActions, clear]);
 
   const createTextBoxProxy = useCallback(() => {
@@ -374,6 +393,31 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
           </Card>
         </Menu>
       )}
+      <Dialog
+        open={confirmClear}
+        onClose={() => {
+          setConfirmClear(false);
+        }}
+      >
+        <DialogTitle>Clear the canvas?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Everything in this diagram is removed. This cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setConfirmClear(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button color="error" variant="contained" onClick={onConfirmClear}>
+            Clear
+          </Button>
+        </DialogActions>
+      </Dialog>
     </UiElement>
   );
 };

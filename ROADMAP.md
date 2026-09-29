@@ -1411,3 +1411,89 @@ as "intentionally absent" rather than leaving users to discover the gap.
   Excalidraw. Flipping the default to wheel-zoom would be a deeper UX shift
   than alignment work justifies — out of scope for UXA, can be raised as a
   separate product-level discussion.
+
+---
+
+## Feature backlog (moved from the README, 2026-09-29)
+
+These were the README's "Planned features" until the README was rewritten for an
+open-source audience on 2026-09-29. The design notes are kept here unchanged, with the
+status of each added at the top of its entry.
+
+
+The items below are ordered by two rules applied in combination: **dependencies first** (an item that unblocks or is required by another item precedes it, even when its own user-visible benefit is modest), and **schema / API changes that are cheapest to do early come before features that would require the same migration later**. Items that deliver immediate UX value without blocking anything else are slotted in their natural place within those constraints.
+
+---
+
+### ~~Selection dimming *(item highlighting)*~~
+
+_Status: shipped (FEA12-01). `highlightedItemId` lets a host drive it; the in-app
+toggle is `Alt+I`._
+
+When exactly one item is selected, all other items fade to reduced opacity with a CSS transition (`opacity: 0.2`, `transition: opacity 0.3s`). Ports `nuno-andre/isoflow`'s implementation, extended to all item types (nodes, connectors, rectangles — the upstream only dims nodes) and exposed as a `highlightedItemId` prop so a host can drive focus externally without touching interaction state.
+
+Connects to the existing `nodeIndicatorComponent` pattern — "host drives visual state" — applied to selection context.
+
+*Prioritised third because:* the `highlightedItemId` prop is a new public API surface that should be locked down before stabilisation. Also a hard dependency of multi-floor management (below), where the same dimming mechanism is applied at floor scope.
+
+---
+
+### ~~SVG export *(shipped in FEA13-01)*~~
+
+_Status: shipped (FEA13-01)._
+
+A new "Export as SVG" option alongside the existing PNG and PDF entries in the main menu. The output is a resolution-independent vector file that opens in Illustrator, Figma, Inkscape, or any presentation tool at any scale — the natural highest-quality export format since the canvas is already SVG-DOM. Icons inline as `data:` URIs for portability; animated connectors export as static (documented caveat). Export policy: light theme by default; `exportTheme` prop override for embedders who need dark exports.
+
+*Prioritised fourth because:* no schema change and no dependency on items above. SVG export is placed before Diagram layers because the render pass it introduces — which must respect layer visibility to produce correct output — establishes the layer-filtering predicate that the Diagram layers / Redacted feature relies on. The export components are touched once here rather than separately for SVG and again for layer-awareness.
+
+---
+
+### Diagram layers with per-layer visibility toggle
+
+_Status: not started. No `layerId` in the schema yet._
+
+Items are assigned to named layers (e.g. "Topology", "Detail", "Annotations"). Each layer has a visibility toggle. Turning off "Detail" hides IP addresses, connection labels, and port numbers while leaving the base topology intact; turning off "Annotations" hides text boxes and status indicators without removing nodes or connectors. One diagram serves multiple audiences with a single toggle in the toolbar or via `iso.setLayerVisible('detail', false)` in the imperative API.
+
+Distinct from multi-view (separate complete canvases) and from grouping (spatial organisation). Layers cut across both.
+
+#### Redacted layer — export-time suppression
+
+A reserved built-in layer named **Redacted** serves a specific purpose beyond visibility: items on it are visible in the editor (so the diagram remains complete and navigable) but are **excluded from all exports** (PNG, PDF, SVG) unless the export dialog's **"Include redacted content"** checkbox is explicitly checked.
+
+The intended use is annotation-based. IP addresses, service identifiers, internal port numbers, and similar sensitive text live in TextBox items (or connector description labels) placed on the Redacted layer. When the diagram is shared externally those annotations are silently omitted — the structural topology (nodes, connectors, rectangles) is always preserved. Removing structural objects is the job of the ordinary visibility toggle; redaction is purely an export gate.
+
+If a diagram has no items on the Redacted layer, export behaviour is identical to today — the "Include redacted content" checkbox does not appear and nothing changes for the user.
+
+**Why this pairs naturally with layers.** The export pipeline (PNG, PDF, and SVG once that lands) already needs to be updated to respect layer visibility when rendering. Adding a redaction predicate in the same pass — skip any item whose layer is Redacted unless the export option opts in — is marginal incremental work. Building both together avoids a second pass through the export components later.
+
+*Prioritised fifth because:* layers add a `layerId` metadata field to the item schema. Landing this before multi-floor management avoids touching item metadata twice — if floors land first, layers would need to be retrofitted alongside an already complex floor model. The Redacted sub-feature is included here rather than as a separate item because the export pipeline is already layer-aware from SVG export (above).
+
+---
+
+### Multi-floor management *(new)*
+
+_Status: partial. The model already holds several views, and a host can switch
+between them with `useReticulyne().setView(viewId)` (FEA-06). Not built: an in-editor
+floor switcher, cross-floor connectors, and active/inactive floor dimming._
+
+Extends the diagram model along the z-axis, allowing a single canvas to represent a multi-storey building, a multi-tier network stack, or any environment where vertical layering has semantic meaning (Floor 1 / Floor 2 / Roof Plant; L2 / L3 / application tier; web / app / database).
+
+- **Floors are independent canvases.** Each floor edits and navigates exactly as the current canvas does — a floor is not a filtered view, it is a full peer diagram.
+- **Cross-floor connectors.** Links between items on different floors are fully supported. Each cross-floor connection renders as a stub on each floor, terminating at a floor-transition marker (keeping the isometric projection unambiguous). The stub clearly labels the remote floor and remote endpoint.
+- **Active / inactive dimming.** The active floor renders at full opacity. All other floors are rendered at reduced opacity — enough to read the topology, not enough to compete with the active plane. This is the dimming mechanism from selection dimming (above), applied at floor scope rather than item scope.
+- **Tab-strip navigation.** Floors are user-named and reordered; a tab strip (or keyboard Alt+Up/Down) switches the active floor.
+
+The concept synthesises two independent community contributions: `bgrewell/isoflow`'s vertical z-offset stacking of node groups gives the depth model; `nuno-andre/isoflow`'s selection dimming gives the visual vocabulary. Together they compose into a navigation paradigm where depth is physically meaningful rather than purely organisational.
+
+*Depends on: selection dimming and per-rectangle transparency / z-index (both above). Benefits from diagram layers (above) being settled first so item metadata is not migrated twice, and from SVG export (above) having already established the layer-aware export pipeline.*
+
+---
+
+### WebGL connector renderer *(future architectural direction)*
+
+_Status: not started; only when connector animation is a measured bottleneck._
+
+An optional Three.js layer for connector rendering, complementing the existing SVG layer. The SVG layer is efficient up to ~50 animated connectors; beyond that, `strokeDashoffset` animation triggers per-frame style recalculation across many SVG nodes. A WebGL overlay decouples animation frame rate from the DOM layout pipeline entirely. Architectural signal from `a876691666/Visoflow` (a Vue 3 reimplementation — not directly portable, but the direction is clear). Noted as the path to take when connector animation becomes a measured performance bottleneck at scale, not a near-term pick-up.
+
+---
+

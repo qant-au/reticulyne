@@ -29,6 +29,8 @@ possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELO
   sent anywhere.
 - **8-directional connector routing.** Connectors route along the grid and its 45°
   diagonals, giving shorter, less cluttered paths.
+- **Selection dimming.** When one item is selected everything else fades, and a host
+  can set the focus itself.
 - **Live dashboards** (opt-in). Animate connectors, fire signal pulses and decorate
   nodes with your own gauges, driven from a poller or websocket. See
   [Live dashboards](docs/embedding.md#live-dashboards).
@@ -83,12 +85,10 @@ issue for security reports.
 
 Planned, roughly in order:
 
-- **Selection dimming.** When one item is selected, everything else fades, and a host
-  can set the focus itself.
 - **Layers.** Named layers with visibility toggles, and a *Redacted* layer that stays
   visible in the editor but is left out of every export.
-- **Multiple floors.** One diagram across several floors or tiers, with links between
-  them.
+- **Multiple floors.** A diagram can already hold several views, which a host switches
+  between; still to come are an in-editor floor switcher and links between floors.
 - **A flat 2D view.** The same diagram drawn as a conventional network schematic
   alongside the isometric view.
 

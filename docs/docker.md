@@ -43,7 +43,6 @@ That script:
 2. Rebuilds both images from the single `Dockerfile` — defaults give the main editor; the examples variant is built with `--build-arg WEBPACK_SCRIPT=docker:examples:build --build-arg DIST_DIR=dist-docker-examples`.
 3. Starts both containers detached on host ports `2222` and `2223`, mapping each to the container's `8080`.
 4. Polls each URL until 200 OK (timeout 30s).
-5. (If Graphify is installed) runs `graphify update .` then `graphify watch .` in the background to keep the knowledge graph current.
 
 Environment overrides for non-default workflows:
 
@@ -53,7 +52,6 @@ EXAMPLES_PORT=4000 bash restart.sh             # override examples picker host p
 TAG=reticulyne:dev bash restart.sh
 NAME=reticulyne-staging bash restart.sh
 NO_EXAMPLES=1 bash restart.sh                  # skip the examples container
-NO_GRAPHIFY=1 bash restart.sh                  # skip the Graphify update + watch
 TIMEOUT_SECONDS=60 bash restart.sh
 ```
 

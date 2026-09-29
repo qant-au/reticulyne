@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # restart.sh — rebuild both standalone Reticulyne Docker images, serve them
-# side-by-side, and (re-)sync the Graphify knowledge graph.
+# side-by-side.
 #
 #   http://localhost:2222   reticulyne            (single full-screen editor —
 #                                                 just the Reticulyne component)
@@ -10,15 +10,13 @@
 #
 # Usage:
 #   bash restart.sh                       # rebuild & restart both, wait
-#                                         # for HTTP 200, run + watch
-#                                         # Graphify in background, then
-#                                         # tail the container logs until
+#                                         # for HTTP 200, then tail the
+#                                         # container logs until
 #                                         # the user presses 'D'
 #   PORT=3000 bash restart.sh             # override editor port (default 2222)
 #   EXAMPLES_PORT=4000 bash restart.sh    # override examples port (default 2223)
 #   TAG=reticulyne:dev bash restart.sh
 #   NO_EXAMPLES=1 bash restart.sh         # skip the examples container entirely
-#   NO_GRAPHIFY=1 bash restart.sh         # skip Graphify steps entirely
 #   NO_WATCH=1 bash restart.sh            # exit immediately after the
 #                                         # containers are healthy instead
 #                                         # of tailing their logs — for CI
@@ -31,8 +29,7 @@
 # skip the watch entirely.
 #
 # Exits 0 once both containers respond, or non-zero on build/start/poll
-# failure. The Graphify watcher continues running in the background
-# regardless of whether the log watch is active.
+# failure.
 
 set -euo pipefail
 
@@ -44,10 +41,7 @@ NAME="${NAME:-reticulyne}"
 EXAMPLES_NAME="${EXAMPLES_NAME:-reticulyne-examples}"
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-30}"
 NO_EXAMPLES="${NO_EXAMPLES:-0}"
-NO_GRAPHIFY="${NO_GRAPHIFY:-0}"
 NO_WATCH="${NO_WATCH:-0}"
-GRAPHIFY_LOG="${GRAPHIFY_LOG:-graphify-out/watch.log}"
-GRAPHIFY_PIDFILE="${GRAPHIFY_PIDFILE:-graphify-out/watch.pid}"
 
 cd "$(dirname "$0")"
 
@@ -127,47 +121,6 @@ else
     docker logs "$EXAMPLES_NAME" >&2 || true
     exit 1
   fi
-fi
-
-# ---- Graphify: incremental update + background watcher ----
-# Graphify (https://github.com/safishamsi/graphify) is an optional Python
-# CLI that maintains a queryable knowledge graph over this repo for
-# coding-assistant integrations. The watcher runs in the background so
-# this script does not block the user's terminal.
-if [[ "$NO_GRAPHIFY" == "1" ]]; then
-  echo "==> Skipping Graphify (NO_GRAPHIFY=1)"
-elif ! command -v graphify >/dev/null 2>&1; then
-  cat <<'EOF'
-==> Graphify is not on PATH — skipping the update / watch steps.
-    To install (one-time):
-      uv tool install graphifyy        # recommended (also: pipx / pip)
-    Then re-run `bash restart.sh` to bring the watcher up.
-EOF
-else
-  mkdir -p graphify-out
-
-  # Stop any prior background watcher we spawned ourselves.
-  if [[ -f "$GRAPHIFY_PIDFILE" ]]; then
-    old_pid=$(cat "$GRAPHIFY_PIDFILE" 2>/dev/null || true)
-    if [[ -n "${old_pid:-}" ]] && kill -0 "$old_pid" 2>/dev/null; then
-      echo "==> Stopping prior Graphify watcher (pid $old_pid)"
-      kill "$old_pid" 2>/dev/null || true
-    fi
-    rm -f "$GRAPHIFY_PIDFILE"
-  fi
-
-  echo "==> Running: graphify update . (one-shot incremental sync)"
-  graphify update . || echo "WARN: graphify update failed; continuing"
-
-  echo "==> Spawning: graphify watch . (background — log: $GRAPHIFY_LOG)"
-  # nohup + disown so the watcher survives this script exiting; stdout +
-  # stderr go to GRAPHIFY_LOG. The PID is recorded for clean shutdowns
-  # on the next restart.sh invocation.
-  nohup graphify watch . >"$GRAPHIFY_LOG" 2>&1 &
-  echo $! >"$GRAPHIFY_PIDFILE"
-  disown || true
-  echo "==> Graphify watcher started (pid $(cat "$GRAPHIFY_PIDFILE"))"
-  echo "    Tail with: tail -f $GRAPHIFY_LOG"
 fi
 
 echo "==> Done."

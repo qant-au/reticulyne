@@ -17,6 +17,7 @@ import { useModelStore } from 'src/stores/modelStore';
 import { useView } from 'src/hooks/useView';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useHistoryStore } from 'src/stores/historyStore';
+import { CUSTOM_ICON_COLLECTION } from 'src/utils/iconUpload';
 
 interface UseInitialDataManagerOptions {
   /**
@@ -130,9 +131,25 @@ export const useInitialDataManager = ({
 
       const hints = { ...read.hints, ...options };
       const { model: loaded, context } = sceneToModel(read.scene);
+      // A file carries only the icons it uses, so the editor keeps its own
+      // library beside them: the icons it offered before, less the diagram's
+      // own uploads, which belong to the diagram that was open.
+      const loadedIds = new Set(
+        loaded.icons.map((icon) => {
+          return icon.id;
+        })
+      );
+      const library = model.actions.get().icons.filter((icon) => {
+        return (
+          !loadedIds.has(icon.id) && icon.collection !== CUSTOM_ICON_COLLECTION
+        );
+      });
       const initialData: Model = {
         ...loaded,
-        icons: filterIconsByCollection(loaded.icons, iconCollectionsRef.current)
+        icons: filterIconsByCollection(
+          [...loaded.icons, ...library],
+          iconCollectionsRef.current
+        )
       };
 
       if (initialData.views.length === 0) {

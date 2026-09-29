@@ -1,6 +1,10 @@
 import type { Model, SaveHandler, SaveStatus } from 'src/types';
 import { validateScene } from 'src/vendor/accurona-core';
-import { sceneFromModel, type SceneContext } from 'src/scene/convert';
+import {
+  leanIcons,
+  sceneFromModel,
+  type SceneContext
+} from 'src/scene/convert';
 
 // One save path for the menu's Save, the pill's Retry and
 // auto-save, so all three report the same status. What is saved is a
@@ -46,7 +50,9 @@ export const performSave = async (
   try {
     // An editor that writes an invalid scene has a bug; saving it would
     // lose work on the next open, so it is reported as a failed save.
-    const checked = validateScene(sceneFromModel(model, getSceneContext()));
+    const checked = validateScene(
+      leanIcons(sceneFromModel(model, getSceneContext()))
+    );
     if (!checked.ok) {
       throw new Error(`The diagram is not a valid scene: ${checked.errors[0]}`);
     }

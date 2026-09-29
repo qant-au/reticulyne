@@ -13,7 +13,7 @@ import { useShallow } from 'zustand/shallow';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import { exportAsJSON, modelFromModelStore } from 'src/utils';
-import { sceneFromModel } from 'src/scene/convert';
+import { leanIcons, sceneFromModel } from 'src/scene/convert';
 
 export const useExportJson = () => {
   const model = useModelStore(
@@ -26,7 +26,9 @@ export const useExportJson = () => {
   });
 
   return useCallback(() => {
-    exportAsJSON(sceneFromModel(model, uiStateActions.get().sceneContext));
+    exportAsJSON(
+      leanIcons(sceneFromModel(model, uiStateActions.get().sceneContext))
+    );
     uiStateActions.setIsMainMenuOpen(false);
   }, [model, uiStateActions]);
 };

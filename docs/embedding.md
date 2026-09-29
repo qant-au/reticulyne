@@ -336,6 +336,8 @@ The bottom-centre strip shows `"Project title › View name"`. By default it fol
 
 > **Note:** icons are not bundled with the library. They must be supplied by the host application via `initialData.icons`. Each icon can carry a `collection` name (e.g. `"AWS"`, `"Azure"`, `"my-app"`). The `iconCollections` prop lets you filter which collections reach the editor without pre-processing `initialData` yourself.
 
+A saved or exported scene (Export as JSON, `onSave`, `getScene()`) carries only the icons its objects use and the ones uploaded into it (**My icons**), not the whole set you supplied. Loading a scene (`loadModel`, a new `initialData`) keeps the icons the editor already has beside the file's own, so the palette survives opening a file; the previous diagram's uploads are not carried over.
+
 When omitted, every icon in `initialData.icons` passes through unchanged. Collection names are matched **case-insensitively** (`"AWS"` matches `"aws"`). Icons whose `collection` field is `undefined` are treated as "uncategorised" and always pass through both filters.
 
 Changing `iconCollections` at runtime re-applies the filter on the next load — passing a new spec causes `<Reticulyne>` to re-run the model pipeline against the same `initialData` reference, so the filter actually takes effect without the host having to also rebuild `initialData`. Allow/deny array contents are compared by value, so an inline literal like `iconCollections={{ deny: ['AWS'] }}` is fine to pass on every render.

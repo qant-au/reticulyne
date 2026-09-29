@@ -19,6 +19,7 @@ import type {
   View
 } from 'src/types/model';
 import { generateId } from 'src/utils/common';
+import { CUSTOM_ICON_COLLECTION } from 'src/utils/iconUpload';
 
 // Reticulyne's model <-> the Accurona scene format, the file format.
 //
@@ -219,6 +220,27 @@ export const sceneFromModel = (model: Model, context: SceneContext): Scene => {
     };
   });
   return scene;
+};
+
+/**
+ * The scene as a file carries it: the icons its objects use and the ones
+ * uploaded into it, not the whole library the editor offers (about 2.6 MB
+ * of icon packs in every file). Opening a file keeps the editor's library.
+ */
+export const leanIcons = (scene: Scene): Scene => {
+  if (!scene.icons) return scene;
+  const used = new Set(
+    scene.objects.map((object) => {
+      return object.icon;
+    })
+  );
+  const icons = scene.icons.filter((icon) => {
+    return used.has(icon.id) || icon.collection === CUSTOM_ICON_COLLECTION;
+  });
+  // Like colours, an empty list is left out.
+  const lean: Scene = { ...scene, icons };
+  if (!icons.length) delete lean.icons;
+  return lean;
 };
 
 // --- Scene -> model ---------------------------------------------------

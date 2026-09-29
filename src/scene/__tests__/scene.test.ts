@@ -4,6 +4,7 @@ import { modelSchema } from 'src/schemas/model';
 import type { Model } from 'src/types';
 import {
   freshSceneContext,
+  leanIcons,
   legacyModelToScene,
   modelToSceneUpdate,
   readScene,
@@ -445,4 +446,26 @@ describe('readScene', () => {
   test('refuses something that is neither', () => {
     expect(readScene({ hello: 'world' }).ok).toBe(false);
   });
+});
+
+test('a file keeps only the icons its objects use and the uploaded ones', () => {
+  const scene: Scene = {
+    format: 'accurona-scene',
+    version: 1,
+    id: 's',
+    objects: [{ id: 'a', name: 'A', icon: 'used' }],
+    icons: [
+      { id: 'used', name: 'Used', url: 'u.svg', collection: 'pack' },
+      { id: 'unused', name: 'Unused', url: 'n.svg', collection: 'pack' },
+      { id: 'mine', name: 'Mine', url: 'm.svg', collection: 'My icons' }
+    ]
+  };
+  expect(
+    leanIcons(scene).icons?.map((icon) => {
+      return icon.id;
+    })
+  ).toEqual(['used', 'mine']);
+  expect(
+    leanIcons({ ...scene, objects: [], icons: [scene.icons![1]] })
+  ).not.toHaveProperty('icons');
 });

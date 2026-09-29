@@ -51,7 +51,7 @@ jobs:
 
       - name: Verify pack contents
         # Allowed top-level roots and dist/ file types (SEC-05) live in
-        # scripts/check-pack-contents.mjs, shared with release.yml.
+        # scripts/check-pack-contents.mjs.
         run: node scripts/check-pack-contents.mjs
 
   # End-to-end (Playwright) — label-gated, mandatory on release.

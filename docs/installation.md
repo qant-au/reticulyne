@@ -1,48 +1,23 @@
 # Installation
 
-`@qant-au/reticulyne` is published to **GitHub Packages**, not the public npm registry. To install
-you need to point your package manager at the scoped registry and authenticate with a GitHub
-token.
-
-## 1. Create a personal access token
-
-Create a [personal access token](https://github.com/settings/tokens) (classic) with the
-`read:packages` scope. If you publish from CI, use the workflow's built-in `GITHUB_TOKEN`
-instead — it already has the right scope for package reads.
-
-## 2. Configure your registry
-
-Add the following to a `.npmrc` file at the root of your consuming project (or `~/.npmrc`
-globally):
-
-```ini
-@qant-au:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
-
-The `${GITHUB_TOKEN}` syntax expands from your environment at install time — **do not commit
-the token into source**.
-
-## 3. Export the token
+Reticulyne is not published to a package registry at the moment; a public npm release is
+planned. Until then, build it from source and install the local build:
 
 ```bash
-export GITHUB_TOKEN=ghp_yourtokenhere
+git clone https://github.com/qant-au/reticulyne.git
+cd reticulyne
+npm ci
+npm run build
+npm pack            # writes qant-au-reticulyne-<version>.tgz
 ```
 
-In CI, set `GITHUB_TOKEN` as a secret on the workflow instead of writing it into `.npmrc`.
-
-## 4. Install
+Then, in your project:
 
 ```bash
-npm install @qant-au/reticulyne
+npm install /path/to/qant-au-reticulyne-<version>.tgz
 ```
 
-Yarn / pnpm work the same way:
-
-```bash
-yarn add @qant-au/reticulyne
-pnpm add @qant-au/reticulyne
-```
+To run the editor on its own instead, see [Standalone Docker](docker.md).
 
 ## Peer dependencies
 
@@ -52,7 +27,6 @@ yourself alongside the library:
 
 ```bash
 npm install \
-  @qant-au/reticulyne \
   react react-dom \
   @mui/material @mui/icons-material \
   @emotion/react @emotion/styled \
@@ -129,21 +103,6 @@ Most consumers don't need to — the targets above cover ~99% of global traffic.
 
 Render the component in your app and confirm it mounts — see [quickstart.md](quickstart.md)
 for the worked example.
-
-## Troubleshooting
-
-**`E401 Unable to authenticate`** — the token is missing or has the wrong scope. Confirm:
-- `$GITHUB_TOKEN` is exported in the shell where you ran `npm install`.
-- The token has `read:packages`.
-- The `.npmrc` registry line is at the project root, not a stale entry elsewhere on the
-  filesystem (`npm config get registry --location=project` to inspect).
-
-**`E404 Not Found` for `@qant-au/reticulyne`** — `@qant-au` is not pointed at GitHub Packages.
-Re-check the `@qant-au:registry=...` line in `.npmrc`. The default registry is public npm,
-which doesn't host this package.
-
-**Working in a monorepo?** Each workspace that imports `@qant-au/reticulyne` needs the registry
-configuration in scope. The easiest pattern is a single `.npmrc` at the monorepo root.
 
 ## Next steps
 

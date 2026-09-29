@@ -5,7 +5,7 @@ covers the quick highlights; everything below is the depth.
 
 ## Getting started
 
-- [Installation](installation.md) — install from GitHub Packages, including `.npmrc` setup and token requirements.
+- [Installation](installation.md) — build from source and install the local package.
 - [Quick start](quickstart.md) — minimal embed example, container sizing, Next.js note.
 
 ## Core reference

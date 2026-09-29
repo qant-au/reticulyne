@@ -396,16 +396,28 @@ export const DiagramShell = ({
             }
           );
           const next = { ...data, icons: [...bundledIcons, ...own] };
-          if (
-            typeof data !== 'object' ||
-            data === null ||
-            Array.isArray(data) ||
-            !initialDataSchema.safeParse(next).success
-          ) {
+          const parsed =
+            typeof data === 'object' && data !== null && !Array.isArray(data)
+              ? initialDataSchema.safeParse(next)
+              : null;
+          if (!parsed?.success) {
             setError(`“${file.name}” is not a valid diagram.`);
             return;
           }
-          show({ id: generateId(), data: next, stored: false });
+          // Saved straight away: opened unedited it was never auto-saved,
+          // so it was missing from the list and gone after a reload.
+          const id = generateId();
+          try {
+            store.save(id, { ...next, title: parsed.data.title } as Model);
+          } catch (e) {
+            setError(
+              e instanceof Error ? e.message : 'The diagram was not saved.'
+            );
+            show({ id, data: next, stored: false });
+            return;
+          }
+          setEntries(store.list());
+          show({ id, data: next, stored: true });
         })
         .catch(() => {
           setError(`“${file.name}” could not be read.`);

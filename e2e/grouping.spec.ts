@@ -119,6 +119,9 @@ test('undo of ungroup brings the same group id back', async ({ page }) => {
   const at = await load(page);
   await page.keyboard.press('Control+a');
   await page.keyboard.press('Control+g');
+  // Edits within 250 ms share one undo step, and a headless export can
+  // finish inside that window: let the group commit on its own first.
+  await page.waitForTimeout(400);
   const before = (await exported(page)).views[0].groups[0].id;
 
   await clickAt(page, at(0));

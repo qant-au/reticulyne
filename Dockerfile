@@ -18,7 +18,9 @@
 ARG WEBPACK_SCRIPT=docker:build
 ARG DIST_DIR=dist-docker
 
-FROM node:22.22-alpine AS build
+# Tag: node:22.22-alpine · Refreshed: 2026-09-29
+# Refresh: docker buildx imagetools inspect node:22.22-alpine  (use the top-level Digest)
+FROM node:22.22-alpine@sha256:e58326d0d441090181ac150dc2078d3e2cf6a0d42e809aebba3ef5880935ffdd AS build
 
 # Re-declare the ARG so it's available inside this stage. ARGs set
 # before the first FROM are otherwise only usable as substitutions
@@ -50,7 +52,9 @@ RUN npm run "${WEBPACK_SCRIPT}"
 # nginx-unprivileged variant — runs as the `nginx` user (uid 101) and
 # listens on 8080 out of the box, so the container ships without ever
 # starting a root-owned process. Pinned to the nginx stable line.
-FROM nginxinc/nginx-unprivileged:1.30-alpine
+# Tag: nginxinc/nginx-unprivileged:1.30-alpine · Refreshed: 2026-09-29
+# Refresh: docker buildx imagetools inspect nginxinc/nginx-unprivileged:1.30-alpine  (use the top-level Digest)
+FROM nginxinc/nginx-unprivileged:1.30-alpine@sha256:ed04ec1ff34502c339ee5c3ae3f855442398edc1d05591e2b98981dcbbd20b1e
 
 # Re-declare so the COPY below can substitute it.
 ARG DIST_DIR

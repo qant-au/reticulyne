@@ -41,7 +41,7 @@
     "start": "webpack serve --config ./webpack/dev.config.js",
     "dev": "nodemon --watch ./src/ -e ts,tsx --exec npm run build",
     "clean": "rm -rf dist dist-docker dist-docker-examples",
-    "build": "npm run clean && webpack --config ./webpack/prod.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "build": "npm run clean && webpack --config ./webpack/prod.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && node scripts/copy-vendor-types.mjs",
     "prepublishOnly": "npm run lint && npm test && npm run build",
     "test": "jest",
     "test:e2e": "playwright test",

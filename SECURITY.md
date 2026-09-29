@@ -1,8 +1,51 @@
 # Security policy
 
+## Supported versions
+
+Reticulyne is pre-1.0, and breaking changes can happen between minor releases. Only the
+latest release receives security fixes.
+
+| Version | Supported |
+| ------- | --------- |
+| 0.3.x   | Yes       |
+| < 0.3   | No        |
+
 ## Reporting a vulnerability
 
-Please open a private security advisory on the [GitHub repository](https://github.com/qant-au/reticulyne) (Security → Advisories → "Report a vulnerability"). Do not file a public issue for security reports.
+**Please do not open a public issue for a security report.** Use GitHub's private
+vulnerability reporting instead:
+
+<https://github.com/qant-au/reticulyne/security/advisories/new>
+
+We aim to acknowledge a report within **7 days** and to ship a fix or mitigation within
+**30 days** of confirming it. If you have not heard back, please follow up through the
+maintainer's contact form at <https://adamburgess.me/contact>.
+
+Please include:
+
+- a clear description of the issue and its impact;
+- steps to reproduce (a minimal diagram JSON or an HTML page that embeds the component, if applicable);
+- the release or commit SHA the report applies to;
+- any proof-of-concept code or screenshots.
+
+## In scope
+
+- The published React component (`src/`): XSS through node descriptions or `initialData`, validation of imported diagram JSON, link and icon-URL handling.
+- The imperative API and host callbacks (`useReticulyne()`, `onModelUpdated`, `onSave`).
+- The standalone Docker images (`Dockerfile`, `docker/nginx.conf`): CSP, security headers, MIME handling.
+- The contents of the published package tarball.
+
+## Out of scope
+
+- How a host application renders data it takes out of Reticulyne; see [the security model](docs/embedding.md#security-model).
+- The upstream [Isoflow](https://github.com/markmanx/isoflow) project, which Reticulyne started as a fork of.
+- Vulnerabilities in development-only dependencies that do not ship in the build; these are tracked with `npm audit`, which also runs in CI.
+- Self-XSS, for example pasting script into the browser's developer tools, or a file the user wrote themselves.
+
+## Disclosure
+
+We prefer coordinated disclosure. Once a fix is released we publish a GitHub security
+advisory that credits the reporter, unless they ask to stay anonymous.
 
 ## Known accepted residual advisories
 
@@ -13,12 +56,12 @@ The following `npm audit` advisories are knowingly carried in the published pack
 - **Severity (audit):** low.
 - **Was reachable via:** `react-quill-new ^3.8.3 → quill ^2.0.3`, the former rich-text editor for node descriptions.
 - **Status:** **closed by `DEP-04-follow-up`.** The editor was migrated from Quill to **TipTap** (`@tiptap/react` v3 with a minimal primitive set — Document/Paragraph/Text + Bold/Italic/Underline/Strike/Link). `react-quill-new` and its transitive `quill` are gone from the dependency tree, so `npm audit` no longer reports this advisory. Kept in this ledger as a historical entry.
-- **Why the migration is a net security improvement, not just a version bump.** Quill's old mitigation was a *paste-time* format allowlist: it filtered `<img>`/`<iframe>`/`<script>`/`<style>` on clipboard paste but could still let markup embedded directly in a `description` *value* survive to the DOM (hence the consumer-side DOMPurify recommendation). TipTap is schema-based, and the schema is the boundary. Registering only the five inline marks means:
-  1. **Parse-in (`generateJSON`, the `value` prop, editor content).** Incoming HTML is parsed against a ProseMirror schema built solely from the registered nodes/marks. Any tag with no parse rule (`<script>`, `<iframe>`, `<svg>`, `<img>`, `<style>`, `<form>`) is dropped, and any attribute not declared by an extension (`onerror`, `onload`, `srcdoc`, `style`) never enters the document. Unlike Quill this runs on the way *in*, so untrusted `initialData` HTML is neutralised before it can render.
+- **Why the migration is a net security improvement, not just a version bump.** Quill's old mitigation was a _paste-time_ format allowlist: it filtered `<img>`/`<iframe>`/`<script>`/`<style>` on clipboard paste but could still let markup embedded directly in a `description` _value_ survive to the DOM (hence the consumer-side DOMPurify recommendation). TipTap is schema-based, and the schema is the boundary. Registering only the five inline marks means:
+  1. **Parse-in (`generateJSON`, the `value` prop, editor content).** Incoming HTML is parsed against a ProseMirror schema built solely from the registered nodes/marks. Any tag with no parse rule (`<script>`, `<iframe>`, `<svg>`, `<img>`, `<style>`, `<form>`) is dropped, and any attribute not declared by an extension (`onerror`, `onload`, `srcdoc`, `style`) never enters the document. Unlike Quill this runs on the way _in_, so untrusted `initialData` HTML is neutralised before it can render.
   2. **Serialize-out (`generateHTML`, read-only display).** Output is regenerated purely from the schema, so it can only contain `<p>/<strong>/<em>/<u>/<s>/<a href>`.
   3. **Links.** `sanitizeLinkUrl.ts` is retained and wired into a `SafeLink` extension (`MarkdownEditor.tsx`) that routes every `href` through it on both parse and render, rejecting `javascript:`/`data:`/`vbscript:`/`file:`/`blob:` (and percent-encoded variants). Unlike the old Quill `Link` blot override, this is a per-editor extension with **no global module-load side effect**.
 - **Load-bearing invariant (unchanged in spirit):** the extension set in `EDITOR_EXTENSIONS` is the containment boundary. Adding an image, raw-HTML, or `iframe` extension reopens vectors this design closes and must be paired with a re-assessment.
-- **Consumer impact:** DOMPurifying the `description` field before passing `initialData` is now **optional hardening** rather than required, because the editor re-parses the value through the schema before rendering. Descriptions rendered *outside* Reticulyne remain the consumer's responsibility. See [`docs/embedding.md`](docs/embedding.md#security-model) and [`README.md`](README.md#security).
+- **Consumer impact:** DOMPurifying the `description` field before passing `initialData` is now **optional hardening** rather than required, because the editor re-parses the value through the schema before rendering. Descriptions rendered _outside_ Reticulyne remain the consumer's responsibility. See [`docs/embedding.md`](docs/embedding.md#security-model) and [`README.md`](README.md#security).
 - **Dependabot state, for future readers:** alert #135 was manually `dismissed` (reason `not_used`) on 2026-05-17, while Quill was still in the tree and no upstream patch existed. It sat in that state long after the TipTap migration removed the package, because GitHub's dependency-graph snapshot for `main` had gone stale (see `DEP-07`) and never re-evaluated it. Once the graph re-snapshotted, the alert moved to `fixed` on its own — a dismissal does **not** prevent a later auto-close. The substantive check remains the tree, not the alert: `grep -c quill package-lock.json` returns `0`.
 
 ### `webpack-dev-server` — XSS source-code disclosure
@@ -47,9 +90,9 @@ The standalone Docker image (built from this repository, served by nginx — see
 ### `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`
 
 - **Why `'unsafe-inline'`?** Reticulyne's styling stack is Emotion + MUI v9, both of which inject `<style>` tags at runtime as components mount. A strict `style-src 'self'` would block every Emotion-injected rule and the editor would render unstyled. A nonce-based policy is in principle possible but is not supported out of the box by Emotion's runtime injector.
-- **Why is the risk contained?** Inline *styles* cannot execute script. The CSS-injection surface lets an attacker re-skin the page (or, with a carefully-crafted CSS-leak primitive, exfiltrate measurable state from the same origin), but not break out of CSS into JavaScript. The XSS-execution path that would matter — inline `<script>` — is still closed by `script-src 'self'`.
+- **Why is the risk contained?** Inline _styles_ cannot execute script. The CSS-injection surface lets an attacker re-skin the page (or, with a carefully-crafted CSS-leak primitive, exfiltrate measurable state from the same origin), but not break out of CSS into JavaScript. The XSS-execution path that would matter — inline `<script>` — is still closed by `script-src 'self'`.
 - **Why `https://fonts.googleapis.com`?** The standalone editor uses Google Fonts (Roboto). The corresponding font-file fetch is allowed by `font-src https://fonts.gstatic.com data:`.
-- **Closes when:** Emotion (or whichever CSS-in-JS layer we use at the time) supports nonce- or hash-based style injection out of the box, *and* MUI's emit path follows. Until then, this clause stays.
+- **Closes when:** Emotion (or whichever CSS-in-JS layer we use at the time) supports nonce- or hash-based style injection out of the box, _and_ MUI's emit path follows. Until then, this clause stays.
 
 ### `script-src 'self'`
 
@@ -67,13 +110,14 @@ The image sends `Strict-Transport-Security: max-age=63072000; includeSubDomains;
 
 ### Embedders inheriting a strict CSP
 
-The CSP above is only applied by the standalone Docker image. A consumer embedding `<Reticulyne>` inside another React app inherits *that app's* CSP. Because Emotion injects styles at runtime, the host policy must permit it — typically `style-src 'self' 'unsafe-inline'` (or a nonce equivalent). The `script-src` clause can stay as strict as the rest of your app needs.
+The CSP above is only applied by the standalone Docker image. A consumer embedding `<Reticulyne>` inside another React app inherits _that app's_ CSP. Because Emotion injects styles at runtime, the host policy must permit it — typically `style-src 'self' 'unsafe-inline'` (or a nonce equivalent). The `script-src` clause can stay as strict as the rest of your app needs.
 
 ## Versioning of these notes
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
 Current counts (post-DEP-11):
+
 - `npm audit --omit=dev`: **0 vulnerabilities.** Runtime-scope advisories were last cleared by DEP-09 (`dompurify`) and DEP-10 (TipTap).
 - `npm audit` (including dev): **0 vulnerabilities.** The accepted `brace-expansion` residual closed in DEP-11 once upstream backported its fix. There is no accepted residual in the tree.
 - **Dependabot board: 0 open alerts** (measured 2026-09-27 after the DEP-11 push).
@@ -83,7 +127,7 @@ Current counts (post-DEP-11):
 
 `jspdf@4.2.1 → dompurify@3.4.10` pinned a version in the vulnerable range (`<=3.4.10`) of [`GHSA-cmwh-pvxp-8882`](https://github.com/advisories/GHSA-cmwh-pvxp-8882) (permanent `ALLOWED_ATTR` pollution via `setConfig()`, an incomplete fix of the 3.4.7 hook-pollution patch). This advisory is **production-reachable** — `jspdf` is a runtime dependency (PNG/PDF export) and ships in `dist/` — and was disclosed after, and independently of, the TipTap migration; the editor itself no longer bundles a sanitiser. Added `"dompurify": "^3.4.11"` to the top-level `overrides` block so every transitive resolution dedupes onto the upstream-patched release. `npm ls dompurify` now returns a single `dompurify@3.4.11` and `npm audit` (both with and without `--omit=dev`) reports it cleared. The `^3.4.11` shape picks up any future 3.x patch automatically.
 
-**Bumped to `^3.4.12` in `DEP-07`.** [`GHSA-c2j3-45gr-mqc4`](https://github.com/advisories/GHSA-c2j3-45gr-mqc4) (low) was disclosed against `<=3.4.11`, moving the floor one patch. Because this is the one *runtime*-scope package in the residual set, the override was raised rather than accepted. `npm ls dompurify` now returns a single `dompurify@3.4.12` under `jspdf@4.2.1`.
+**Bumped to `^3.4.12` in `DEP-07`.** [`GHSA-c2j3-45gr-mqc4`](https://github.com/advisories/GHSA-c2j3-45gr-mqc4) (low) was disclosed against `<=3.4.11`, moving the floor one patch. Because this is the one _runtime_-scope package in the residual set, the override was raised rather than accepted. `npm ls dompurify` now returns a single `dompurify@3.4.12` under `jspdf@4.2.1`.
 
 **Bumped to `^3.4.16` in `DEP-09`.** [`GHSA-55q2-fjhq-7xh7`](https://github.com/advisories/GHSA-55q2-fjhq-7xh7) (moderate, `IN_PLACE` hook removal leaves a detached subtree executable) was disclosed against `<=3.4.12`, so the previous floor became the vulnerable release and the CI `npm audit --omit=dev` gate went red on `main` from 2026-08-09. `npm ls dompurify` now returns a single `dompurify@3.4.16` under `jspdf@4.2.1`.
 
@@ -98,29 +142,29 @@ Two high-severity dev-only advisories landed against the `webpack-dev-server` an
 - **`fast-uri`** — `webpack-dev-server@5.2.5 → schema-utils@4.3.3 → ajv@8.20.0 → fast-uri@3.1.2` sat in the range of both [`GHSA-4c8g-83qw-93j6`](https://github.com/advisories/GHSA-4c8g-83qw-93j6) (`>=3.0.0 <3.1.3`) and [`GHSA-v2hh-gcrm-f6hx`](https://github.com/advisories/GHSA-v2hh-gcrm-f6hx) (`>=3.0.0 <=3.1.3`). Added `"fast-uri": "^3.1.4"`, which clears both and satisfies `ajv`'s declared range, so it dedupes cleanly across the two `ajv` paths (`ajv` and `ajv-formats → ajv`). `npm ls fast-uri` now returns `3.1.4` deduped.
 - **`brace-expansion`** — [`GHSA-3jxr-9vmj-r5cp`](https://github.com/advisories/GHSA-3jxr-9vmj-r5cp) (exponential-time expansion of consecutive non-expanding `{}` groups) is patched **within each affected major**, not only in 5.x. The tree carries three copies, and all three are overridden in place:
 
-  | Copy | Reached via | Was | Now |
-  |---|---|---|---|
-  | 1.x | `minimatch@3.1.5` ← `eslint@9`, `@eslint/config-array`, `@eslint/eslintrc`, `eslint-plugin-react`, `test-exclude` | 1.1.15 | **1.1.16** |
-  | 2.x | `minimatch@9.0.9` ← `glob@10` (under `jest`) | 2.1.1 | **2.1.2** |
-  | 5.x | `minimatch@10.2.5` ← `nodemon` | 5.0.6 | **5.0.8** |
+  | Copy | Reached via                                                                                                       | Was    | Now        |
+  | ---- | ----------------------------------------------------------------------------------------------------------------- | ------ | ---------- |
+  | 1.x  | `minimatch@3.1.5` ← `eslint@9`, `@eslint/config-array`, `@eslint/eslintrc`, `eslint-plugin-react`, `test-exclude` | 1.1.15 | **1.1.16** |
+  | 2.x  | `minimatch@9.0.9` ← `glob@10` (under `jest`)                                                                      | 2.1.1  | **2.1.2**  |
+  | 5.x  | `minimatch@10.2.5` ← `nodemon`                                                                                    | 5.0.6  | **5.0.8**  |
 
 **Why three per-major overrides instead of one.** A bare `"brace-expansion": "^5.0.8"` would force every copy to 5.x, a four-major jump against `minimatch@3`/`@9`, which declare `^1.1.7` and `^2.0.1` — that fights resolution across the whole lint and test toolchain. Because upstream backported this fix to `1.1.16` and `2.1.2`, the range-scoped form (`"brace-expansion@>=1.0.0 <2.0.0"`, `">=2.0.0 <3.0.0"`, `">=3.0.0 <5.0.7"`) clears `GHSA-3jxr-9vmj-r5cp` on every path while keeping each consumer inside its declared major. `npm ls brace-expansion` returns exactly `1.1.16`, `2.1.2`, `5.0.8`.
 
-  **Residual — `GHSA-mh99-v99m-4gvg` on the 1.x/2.x paths (accepted).** A *second*, distinct `brace-expansion` advisory ([`GHSA-mh99-v99m-4gvg`](https://github.com/advisories/GHSA-mh99-v99m-4gvg), unbounded expansion length → OOM crash, high) has a vulnerable range of `<=5.0.7` — it is patched **only in 5.0.8**, with no 1.x or 2.x backport. So the `1.1.16` and `2.1.2` copies still carry it, and the only mechanical fix is exactly the four-major jump rejected above (`npm audit`'s own `fixAvailable` proposes a `isSemVerMajor` *downgrade* of `eslint-plugin-react` to 7.22.0, which is worse). Accepted on reachability: **dev-only**, not present in the published `dist/`, and the glob patterns these copies expand are repo-authored config globs, never attacker-supplied input. Note this advisory inflates `npm audit`'s raw count considerably, because audit reports every transitive *dependent* (`eslint`, `jest`, `glob`, `minimatch`, `test-exclude`, `ts-jest`, …) alongside the package itself. **Closes when** `eslint` and `glob` ship `minimatch` majors that depend on `brace-expansion@>=5.0.8`.
+**Residual — `GHSA-mh99-v99m-4gvg` on the 1.x/2.x paths (accepted).** A _second_, distinct `brace-expansion` advisory ([`GHSA-mh99-v99m-4gvg`](https://github.com/advisories/GHSA-mh99-v99m-4gvg), unbounded expansion length → OOM crash, high) has a vulnerable range of `<=5.0.7` — it is patched **only in 5.0.8**, with no 1.x or 2.x backport. So the `1.1.16` and `2.1.2` copies still carry it, and the only mechanical fix is exactly the four-major jump rejected above (`npm audit`'s own `fixAvailable` proposes a `isSemVerMajor` _downgrade_ of `eslint-plugin-react` to 7.22.0, which is worse). Accepted on reachability: **dev-only**, not present in the published `dist/`, and the glob patterns these copies expand are repo-authored config globs, never attacker-supplied input. Note this advisory inflates `npm audit`'s raw count considerably, because audit reports every transitive _dependent_ (`eslint`, `jest`, `glob`, `minimatch`, `test-exclude`, `ts-jest`, …) alongside the package itself. **Closes when** `eslint` and `glob` ship `minimatch` majors that depend on `brace-expansion@>=5.0.8`.
 
-  **Closed in `DEP-11`.** Upstream backported the fix to the 1.x and 2.x lines after all (`1.1.21`, `2.1.7`), so the range-scoped overrides now carry it on every path without any major jump. `npm ls brace-expansion` returns `1.1.21`, `2.1.7`, `5.0.12`, and `npm audit` no longer reports `GHSA-mh99-v99m-4gvg` or the follow-on `GHSA-rgw5-rvv9-x895`.
+**Closed in `DEP-11`.** Upstream backported the fix to the 1.x and 2.x lines after all (`1.1.21`, `2.1.7`), so the range-scoped overrides now carry it on every path without any major jump. `npm ls brace-expansion` returns `1.1.21`, `2.1.7`, `5.0.12`, and `npm audit` no longer reports `GHSA-mh99-v99m-4gvg` or the follow-on `GHSA-rgw5-rvv9-x895`.
 
 ### `DEP-08` — bumped the dev toolchain to clear the last five Dependabot alerts
 
 The `DEP-07` dependency-graph refresh surfaced five dev-only alerts left over from before the graph went stale. **All five resolved without a single new override** — every patched release existed in-major and every consuming parent's declared range already permitted it. The lockfile was simply holding older still-satisfying versions, which `npm install` will not move; `npm update <pkg>` is the mechanism that does.
 
-| Package | Advisory | Reached via | Parent's declared range | Was → now |
-|---|---|---|---|---|
-| `postcss` | [`GHSA-r28c-9q8g-f849`](https://github.com/advisories/GHSA-r28c-9q8g-f849) (high) | `css-loader@7.1.4` + its `postcss-modules-*` (all deduped) | `^8.4.40` | 8.5.15 → **8.5.23** |
-| `shell-quote` | [`GHSA-395f-4hp3-45gv`](https://github.com/advisories/GHSA-395f-4hp3-45gv) (high) | `webpack-dev-server → launch-editor@2.14.1` | `^1.8.4` | 1.8.4 → **1.10.0** |
-| `js-yaml` | [`GHSA-52cp-r559-cp3m`](https://github.com/advisories/GHSA-52cp-r559-cp3m) (high) | `eslint@9 → @eslint/eslintrc` | `^4.1.1` | 4.2.0 → **4.3.0** |
-| `webpack-dev-server` | [`GHSA-m28w-2pqf-7qgj`](https://github.com/advisories/GHSA-m28w-2pqf-7qgj), [`GHSA-f5vj-f2hx-8m93`](https://github.com/advisories/GHSA-f5vj-f2hx-8m93) (moderate) | direct `devDependency` | `^5.2.4` | 5.2.5 → **5.2.6** |
-| `body-parser` | [`GHSA-v422-hmwv-36x6`](https://github.com/advisories/GHSA-v422-hmwv-36x6) (low) | `webpack-dev-server → express@4.22.2` | `~1.20.5` | 1.20.5 → **1.20.6** |
+| Package              | Advisory                                                                                                                                                          | Reached via                                                | Parent's declared range | Was → now           |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------- | ------------------- |
+| `postcss`            | [`GHSA-r28c-9q8g-f849`](https://github.com/advisories/GHSA-r28c-9q8g-f849) (high)                                                                                 | `css-loader@7.1.4` + its `postcss-modules-*` (all deduped) | `^8.4.40`               | 8.5.15 → **8.5.23** |
+| `shell-quote`        | [`GHSA-395f-4hp3-45gv`](https://github.com/advisories/GHSA-395f-4hp3-45gv) (high)                                                                                 | `webpack-dev-server → launch-editor@2.14.1`                | `^1.8.4`                | 1.8.4 → **1.10.0**  |
+| `js-yaml`            | [`GHSA-52cp-r559-cp3m`](https://github.com/advisories/GHSA-52cp-r559-cp3m) (high)                                                                                 | `eslint@9 → @eslint/eslintrc`                              | `^4.1.1`                | 4.2.0 → **4.3.0**   |
+| `webpack-dev-server` | [`GHSA-m28w-2pqf-7qgj`](https://github.com/advisories/GHSA-m28w-2pqf-7qgj), [`GHSA-f5vj-f2hx-8m93`](https://github.com/advisories/GHSA-f5vj-f2hx-8m93) (moderate) | direct `devDependency`                                     | `^5.2.4`                | 5.2.5 → **5.2.6**   |
+| `body-parser`        | [`GHSA-v422-hmwv-36x6`](https://github.com/advisories/GHSA-v422-hmwv-36x6) (low)                                                                                  | `webpack-dev-server → express@4.22.2`                      | `~1.20.5`               | 1.20.5 → **1.20.6** |
 
 Two declared floors were raised in `package.json` so a future install cannot silently resolve back below an advisory: `devDependencies.webpack-dev-server` `^5.2.4` → `^5.2.6`, and `overrides.js-yaml` `^4.2.0` → `^4.3.0`. `postcss`, `shell-quote`, and `body-parser` are transitive and needed no `package.json` change at all. `body-parser` carried no Dependabot alert and was cleared opportunistically once its parent range turned out to permit the patch.
 
@@ -141,11 +185,11 @@ Every `@tiptap/*` package declares an **exact** peer on `@tiptap/core`, so the f
 
 Seventeen Dependabot alerts reopened between 2026-07-26 and 2026-09-27, all against transitive **dev-only** packages: `fast-uri` (5), `undici` (5), `js-yaml` (2), `browserslist` (2), `nanoid`, `brace-expansion` (`GHSA-rgw5-rvv9-x895` plus the old `GHSA-mh99-v99m-4gvg` residual), `qs`, `baseline-browser-mapping`. Every patched release was in-major, so `npm audit fix` resolved all of them from the lockfile alone. The existing override floors were then raised to the resolved releases so a future install cannot fall back below them:
 
-| Override | Before | After |
-|---|---|---|
-| `fast-uri` | `^3.1.4` | `^3.1.8` |
-| `js-yaml` | `^4.3.0` | `^4.3.2` |
-| `qs` | `^6.15.2` | `^6.16.0` |
+| Override                              | Before                          | After                            |
+| ------------------------------------- | ------------------------------- | -------------------------------- |
+| `fast-uri`                            | `^3.1.4`                        | `^3.1.8`                         |
+| `js-yaml`                             | `^4.3.0`                        | `^4.3.2`                         |
+| `qs`                                  | `^6.15.2`                       | `^6.16.0`                        |
 | `brace-expansion` 1.x / 2.x / 3–5.0.6 | `^1.1.16` / `^2.1.2` / `^5.0.8` | `^1.1.21` / `^2.1.7` / `^5.0.12` |
 
 No new overrides were added; `undici`, `browserslist`, `nanoid` and `baseline-browser-mapping` needed only the lockfile refresh. Verified with lint, the 474 unit tests, a production build, and `e2e/multi-select.spec.ts` against the dev server (the path the bumped `express`/`qs` stack serves).
@@ -158,4 +202,4 @@ No new overrides were added; `undici`, `browserslist`, `nanoid` and `baseline-br
 
 ### `SEC7-01` — overrode transitive `qs` to clear `GHSA-q8mj-m7cp-5q26`
 
-`webpack-dev-server@5.2.4 → express@4.22.2 → qs@6.15.1` pinned a version in the vulnerable range (`>=6.11.1 <=6.15.1`) of `GHSA-q8mj-m7cp-5q26` / `CVE-2026-8723` (a `TypeError` in `qs.stringify` when called with `arrayFormat: 'comma'` + `encodeValuesOnly: true` on arrays containing `null`/`undefined`). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`) and Express only uses `qs` for query *parsing* — the vulnerable *stringify* path with that exact options combination is never invoked in practice — but Dependabot kept re-opening the alert after every routine dep bump that nudged the lockfile back onto `6.15.1`. Added `"qs": "^6.15.2"` to the existing top-level `overrides` block in `package.json` so every transitive `qs` resolution dedupes onto `6.15.2` (the upstream-patched release). `npm ls qs` now returns a single `qs@6.15.2` entry under both Express paths, `npm audit` no longer reports the advisory, and the Dependabot alert auto-closes once the lockfile lands on `main`. The `^6.15.2` shape (matching the existing `uuid` override) also means any future qs patch within the 6.x line is picked up automatically on the next `npm install`, so this entry should stay closed.
+`webpack-dev-server@5.2.4 → express@4.22.2 → qs@6.15.1` pinned a version in the vulnerable range (`>=6.11.1 <=6.15.1`) of `GHSA-q8mj-m7cp-5q26` / `CVE-2026-8723` (a `TypeError` in `qs.stringify` when called with `arrayFormat: 'comma'` + `encodeValuesOnly: true` on arrays containing `null`/`undefined`). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`) and Express only uses `qs` for query _parsing_ — the vulnerable _stringify_ path with that exact options combination is never invoked in practice — but Dependabot kept re-opening the alert after every routine dep bump that nudged the lockfile back onto `6.15.1`. Added `"qs": "^6.15.2"` to the existing top-level `overrides` block in `package.json` so every transitive `qs` resolution dedupes onto `6.15.2` (the upstream-patched release). `npm ls qs` now returns a single `qs@6.15.2` entry under both Express paths, `npm audit` no longer reports the advisory, and the Dependabot alert auto-closes once the lockfile lands on `main`. The `^6.15.2` shape (matching the existing `uuid` override) also means any future qs patch within the 6.x line is picked up automatically on the next `npm install`, so this entry should stay closed.

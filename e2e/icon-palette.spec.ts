@@ -37,8 +37,10 @@ const exportedItems = async (page: Page) => {
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('menuitem', { name: /Export as JSON/i }).click();
   const download = await downloadPromise;
-  return JSON.parse(await readFile(await download.path(), 'utf8')).views[0]
-    .items;
+  return (
+    JSON.parse(await readFile(await download.path(), 'utf8')).views[0]
+      .placements ?? []
+  );
 };
 
 test('drag an icon from the library onto the canvas; the library stays open', async ({

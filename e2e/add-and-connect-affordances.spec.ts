@@ -51,8 +51,13 @@ const exportedItems = async (page: Page) => {
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('menuitem', { name: /Export as JSON/i }).click();
   const download = await downloadPromise;
-  const model = JSON.parse(await readFile(await download.path(), 'utf8'));
-  return model.views[0].items as {
+  // The export is a scene: a view places objects.
+  const scene = JSON.parse(await readFile(await download.path(), 'utf8'));
+  return (scene.views[0].placements ?? []).map(
+    (p: { object: string; tile: { x: number; y: number } }) => {
+      return { id: p.object, tile: p.tile };
+    }
+  ) as {
     id: string;
     tile: { x: number; y: number };
   }[];
@@ -186,8 +191,8 @@ test('2.5: drag from a port to another node connects them', async ({
   const model = await exportedModel(page);
   const connectors = model.views[0].connectors ?? [];
   expect(connectors).toHaveLength(1);
-  const ends = connectors[0].anchors.map((x: { ref: { item?: string } }) => {
-    return x.ref.item;
+  const ends = connectors[0].anchors.map((x: { ref: { object?: string } }) => {
+    return x.ref.object;
   });
   expect(ends[0]).toBe('node-a');
   expect(ends[ends.length - 1]).toBe('node-b');
@@ -206,8 +211,8 @@ test('2.5: dragging from a node centre still moves it; a port drag into empty sp
 
   const model = await exportedModel(page);
   expect(model.views[0].connectors ?? []).toHaveLength(0);
-  const nodeA = model.views[0].items.find((i: { id: string }) => {
-    return i.id === 'node-a';
+  const nodeA = model.views[0].placements.find((p: { object: string }) => {
+    return p.object === 'node-a';
   });
   expect(nodeA.tile).not.toEqual({ x: 0, y: 0 });
 });

@@ -90,8 +90,8 @@ test('group two nodes, select and drag them as one, name, enter, ungroup', async
   expect(view.groups).toHaveLength(1);
   expect(view.groups[0].name).toBe('Web tier');
   const tile = (id: string) => {
-    return view.items.find((i: { id: string }) => {
-      return i.id === id;
+    return view.placements.find((p: { object: string }) => {
+      return p.object === id;
     }).tile;
   };
   expect(tile('a')).toEqual({ x: 0, y: -1 });
@@ -109,8 +109,8 @@ test('group two nodes, select and drag them as one, name, enter, ungroup', async
   model = await exported(page);
   expect(model.views[0].groups ?? []).toEqual([]);
   expect(
-    model.views[0].items.every((i: { parentGroupId?: string }) => {
-      return i.parentGroupId === undefined;
+    model.views[0].placements.every((p: { group?: string }) => {
+      return p.group === undefined;
     })
   ).toBe(true);
 });

@@ -53,6 +53,17 @@ test('clean on load, dirty after an edit, Saving… then Saved', async ({
   await expect(pill(page)).toHaveText('Saving…');
   await expect(pill(page)).toHaveText('Saved just now');
   expect(await saveCount(page)).toBe(1);
+  // onSave is handed a scene, the file format.
+  const saved = await page.evaluate(() => {
+    return (
+      window as unknown as {
+        __RETICULYNE_E2E_SAVES__: { format: string; title: string }[];
+      }
+    ).__RETICULYNE_E2E_SAVES__[0];
+  });
+  expect(saved.format).toBe('accurona-scene');
+  expect(saved.title).toBe('Edited');
+  expect(saved).not.toHaveProperty('items');
 });
 
 test('a failed save shows Retry, and Retry saves again', async ({ page }) => {

@@ -100,18 +100,18 @@ test('copy and paste the whole selection, connectors with it', async ({
   await expect(page.getByText('3 selected', { exact: true })).toBeVisible();
 
   const view = await exported(page);
-  expect(view.items).toHaveLength(4);
+  expect(view.placements).toHaveLength(4);
   expect(view.rectangles).toHaveLength(2);
   expect(view.connectors).toHaveLength(2);
   const pastedIds = new Set(
-    view.items.slice(2).map((i: { id: string }) => {
-      return i.id;
+    view.placements.slice(2).map((p: { object: string }) => {
+      return p.object;
     })
   );
   const copy = view.connectors[1];
   expect(
-    copy.anchors.every((a: { ref: { item?: string } }) => {
-      return !a.ref.item || pastedIds.has(a.ref.item);
+    copy.anchors.every((a: { ref: { object?: string } }) => {
+      return !a.ref.object || pastedIds.has(a.ref.object);
     })
   ).toBe(true);
 });

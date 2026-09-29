@@ -22,9 +22,9 @@ test('start a diagram from the Kubernetes template', async ({ page }) => {
     await readFile(await (await downloadPromise).path(), 'utf8')
   );
   expect(model.title).toBe('Kubernetes service');
-  expect(model.items).toHaveLength(6);
+  expect(model.objects).toHaveLength(6);
   expect(
-    model.items.every((i: { icon?: string }) => {
+    model.objects.every((i: { icon?: string }) => {
       return i.icon?.startsWith('k8s-');
     })
   ).toBe(true);

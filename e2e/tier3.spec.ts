@@ -60,8 +60,8 @@ const exportedTiles = async (page: Page) => {
   const view = JSON.parse(await readFile(await download.path(), 'utf8'))
     .views[0];
   return Object.fromEntries(
-    view.items.map((i: Node) => {
-      return [i.id, i.tile];
+    (view.placements ?? []).map((p: { object: string; tile: Node['tile'] }) => {
+      return [p.object, p.tile];
     })
   );
 };
@@ -197,11 +197,11 @@ test('a node pasted into another diagram brings its icon along', async ({
   const model = JSON.parse(
     await readFile(await (await downloadPromise).path(), 'utf8')
   );
-  expect(model.items).toHaveLength(1);
+  expect(model.objects).toHaveLength(1);
   const iconIds = model.icons.map((i: { id: string }) => {
     return i.id;
   });
-  expect(iconIds).toContain(model.items[0].icon);
+  expect(iconIds).toContain(model.objects[0].icon);
 });
 
 test('a node name stops at the 100 characters a file can hold', async ({

@@ -14,6 +14,7 @@ const makeEvent = (
     deltaMode: number;
     ctrlKey: boolean;
     metaKey: boolean;
+    shiftKey: boolean;
   }> = {}
 ) => {
   return {
@@ -175,6 +176,32 @@ describe('interpretWheelEvent', () => {
       expect(
         (result as { nextZoomBuffer?: number }).nextZoomBuffer
       ).toBeUndefined();
+    });
+  });
+
+  describe('Shift + wheel', () => {
+    test('a vertical-only delta pans sideways', () => {
+      const result = interpretWheelEvent(
+        makeEvent({ deltaY: 30, shiftKey: true }),
+        0
+      );
+      expect(result).toEqual({ kind: 'pan', panDx: -30, panDy: 0 });
+    });
+
+    test('a delta the browser already turned sideways is left alone', () => {
+      const result = interpretWheelEvent(
+        makeEvent({ deltaX: 30, shiftKey: true }),
+        0
+      );
+      expect(result).toEqual({ kind: 'pan', panDx: -30, panDy: 0 });
+    });
+
+    test('Ctrl + Shift + wheel still zooms', () => {
+      const result = interpretWheelEvent(
+        makeEvent({ deltaY: -PIXELS_PER_STEP, ctrlKey: true, shiftKey: true }),
+        0
+      );
+      expect(result.kind).toBe('zoom');
     });
   });
 });

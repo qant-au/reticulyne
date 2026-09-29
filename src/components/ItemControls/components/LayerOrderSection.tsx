@@ -6,6 +6,8 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useScene } from 'src/hooks/useScene';
 import { ItemReference, LayerOrderingAction } from 'src/types';
 import { PanelSection } from 'src/vendor/accurona-ui';
+import { shortcutHint } from 'src/vendor/accurona-core';
+import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 
 // the four layer actions, for one item or a whole selection
 // (moved as one block, one undo step). Ordering is within a kind, so a
@@ -20,25 +22,25 @@ const ACTIONS: {
   {
     action: 'BRING_TO_FRONT',
     label: 'Front',
-    shortcut: 'Ctrl+Shift+]',
+    shortcut: shortcutHint(KEYMAP, 'bring-to-front') ?? '',
     Icon: FlipToFrontIcon
   },
   {
     action: 'BRING_FORWARD',
     label: 'Forward',
-    shortcut: 'Ctrl+]',
+    shortcut: shortcutHint(KEYMAP, 'bring-forward') ?? '',
     Icon: ArrowUpwardIcon
   },
   {
     action: 'SEND_BACKWARD',
     label: 'Backward',
-    shortcut: 'Ctrl+[',
+    shortcut: shortcutHint(KEYMAP, 'send-backward') ?? '',
     Icon: ArrowDownwardIcon
   },
   {
     action: 'SEND_TO_BACK',
     label: 'Back',
-    shortcut: 'Ctrl+Shift+[',
+    shortcut: shortcutHint(KEYMAP, 'send-to-back') ?? '',
     Icon: FlipToBackIcon
   }
 ];

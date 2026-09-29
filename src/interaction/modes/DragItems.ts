@@ -73,6 +73,44 @@ const dragItems = (
       scene.updateConnector(connector.id, newConnector);
     }
   });
+
+  // A connector whose node ends all moved moves with them: its bare-tile
+  // waypoints shift too. Left behind, the moved line bent back to where
+  // the nodes had been (as a pasted copy's does not).
+  const moved = new Set(
+    items
+      .filter((i) => {
+        return i.type === 'ITEM';
+      })
+      .map((i) => {
+        return i.id;
+      })
+  );
+  if (moved.size < 2) return;
+  scene.connectors.forEach((connector) => {
+    const ends = connector.anchors.filter((a) => {
+      return a.ref.item !== undefined;
+    });
+    const waypoints = connector.anchors.some((a) => {
+      return a.ref.tile !== undefined;
+    });
+    if (
+      !waypoints ||
+      ends.length < 2 ||
+      !ends.every((a) => {
+        return moved.has(a.ref.item!);
+      })
+    ) {
+      return;
+    }
+    scene.updateConnector(connector.id, {
+      anchors: connector.anchors.map((a) => {
+        return a.ref.tile
+          ? { ...a, ref: { tile: CoordsUtils.add(a.ref.tile, delta) } }
+          : a;
+      })
+    });
+  });
 };
 
 export const DragItems: ModeActions = {

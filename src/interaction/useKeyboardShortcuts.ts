@@ -450,6 +450,35 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           default:
             break;
         }
+        // A nudge that would put a node on a tile another node holds is
+        // refused, as Align does: it stacked them, hiding the one below.
+        const moving = new Set(
+          selection
+            .filter((s) => {
+              return s.type === 'ITEM';
+            })
+            .map((s) => {
+              return s.id;
+            })
+        );
+        const taken = new Set(
+          (currentView.items ?? [])
+            .filter((i) => {
+              return !moving.has(i.id);
+            })
+            .map((i) => {
+              return `${i.tile.x},${i.tile.y}`;
+            })
+        );
+        const blocked = (currentView.items ?? []).some((i) => {
+          return (
+            moving.has(i.id) && taken.has(`${i.tile.x + dx},${i.tile.y + dy}`)
+          );
+        });
+        if (blocked) {
+          e.preventDefault();
+          return;
+        }
         // Same delta applied to every member, so a nudged group keeps its
         // internal spacing instead of drifting apart.
         selection.forEach((item) => {

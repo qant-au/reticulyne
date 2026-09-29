@@ -214,3 +214,15 @@ test('a node name stops at the 100 characters a file can hold', async ({
   await name.fill('y'.repeat(150));
   expect((await name.inputValue()).length).toBe(100);
 });
+
+test('a nudge onto a tile another node holds is refused', async ({ page }) => {
+  const c = await load(page, [
+    { id: 'a', tile: { x: 0, y: 0 } },
+    { id: 'b', tile: { x: 1, y: 0 } }
+  ]);
+  await page.mouse.click(c.x, c.y);
+  await page.keyboard.press('ArrowRight');
+  const tiles = await exportedTiles(page);
+  expect(tiles.a).toEqual({ x: 0, y: 0 });
+  expect(tiles.b).toEqual({ x: 1, y: 0 });
+});

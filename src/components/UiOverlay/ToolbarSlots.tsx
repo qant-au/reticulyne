@@ -15,7 +15,6 @@
 // Pure presentation: every slot reads from props.
 
 import { Box, Stack } from '@mui/material';
-import { UiElement } from 'src/components/UiElement/UiElement';
 import { ItemControlsManager } from 'src/components/ItemControls/ItemControlsManager';
 import { MainMenu } from 'src/components/MainMenu/MainMenu';
 import { ZoomControls } from 'src/components/ZoomControls/ZoomControls';
@@ -23,6 +22,7 @@ import { HelpButton } from 'src/components/HelpButton/HelpButton';
 import type { ToolName } from 'src/utils';
 import type { ItemControls } from 'src/types';
 import type { Size } from 'src/types/common';
+import { Surface } from 'src/vendor/accurona-ui';
 
 interface AppPadding {
   x: number;
@@ -56,7 +56,7 @@ export const ToolbarSlots = ({
   return (
     <>
       {availableTools.includes('ITEM_CONTROLS') && itemControls && (
-        <UiElement
+        <Surface
           sx={{
             position: 'absolute',
             width: '360px',
@@ -72,7 +72,7 @@ export const ToolbarSlots = ({
           }}
         >
           <ItemControlsManager />
-        </UiElement>
+        </Surface>
       )}
 
       {/* The help button shares the bottom-left row with the zoom

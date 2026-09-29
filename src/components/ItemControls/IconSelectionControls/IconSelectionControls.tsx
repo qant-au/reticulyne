@@ -1,19 +1,17 @@
 import { useCallback } from 'react';
 import { Stack, Alert, Typography } from '@mui/material';
-import { ControlsContainer } from 'src/components/ItemControls/components/ControlsContainer';
-import { Header } from 'src/components/ItemControls/components/Header';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { Icon } from 'src/types';
 import { useScene } from 'src/hooks/useScene';
 import { generateId } from 'src/utils';
 import { VIEW_ITEM_DEFAULTS } from 'src/config';
-import { Section } from 'src/components/ItemControls/components/Section';
 import { Searchbox } from 'src/components/ItemControls/IconSelectionControls/Searchbox';
 import { useIconFiltering } from 'src/hooks/useIconFiltering';
 import { useIconCategories } from 'src/hooks/useIconCategories';
 import { Icons } from './Icons';
 import { IconGrid } from './IconGrid';
 import { UploadIconButton } from './UploadIconButton';
+import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 interface Props {
   /** Header text. */
@@ -81,11 +79,11 @@ export const IconSelectionControls = ({
   );
 
   return (
-    <ControlsContainer
+    <Panel
       header={
         <>
-          <Header title={title} />
-          <Section sx={{ pt: 0, pb: 3 }}>
+          <PanelHeader title={title} />
+          <PanelSection sx={{ pt: 0, pb: 3 }}>
             <Stack spacing={2}>
               <Searchbox value={filter} onChange={setFilter} />
               <Alert severity="info">
@@ -93,12 +91,12 @@ export const IconSelectionControls = ({
               </Alert>
               <UploadIconButton />
             </Stack>
-          </Section>
+          </PanelSection>
         </>
       }
     >
       {filteredIcons && (
-        <Section>
+        <PanelSection>
           {filteredIcons.length === 0 ? (
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               No icons match “{filter}”.
@@ -106,11 +104,11 @@ export const IconSelectionControls = ({
           ) : (
             <IconGrid icons={filteredIcons} onMouseDown={onMouseDown} />
           )}
-        </Section>
+        </PanelSection>
       )}
       {!filteredIcons && (
         <Icons iconCategories={iconCategories} onMouseDown={onMouseDown} />
       )}
-    </ControlsContainer>
+    </Panel>
   );
 };

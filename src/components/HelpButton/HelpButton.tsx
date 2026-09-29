@@ -1,7 +1,6 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutlined';
-import { UiElement } from 'src/components/UiElement/UiElement';
-import { IconButton } from 'src/components/IconButton/IconButton';
 import { useUiStateStore } from 'src/stores/uiStateStore';
+import { Surface, ToolButton } from 'src/vendor/accurona-ui';
 
 export const HelpButton = () => {
   const uiStateActions = useUiStateStore((state) => {
@@ -12,10 +11,10 @@ export const HelpButton = () => {
   });
 
   return (
-    <UiElement>
-      <IconButton
+    <Surface>
+      <ToolButton
         name="Keyboard shortcuts (?)"
-        Icon={<HelpOutlineIcon />}
+        icon={<HelpOutlineIcon />}
         onClick={() => {
           if (dialog === 'KEYBOARD_SHORTCUTS') {
             uiStateActions.setDialog(null);
@@ -24,6 +23,6 @@ export const HelpButton = () => {
           }
         }}
       />
-    </UiElement>
+    </Surface>
   );
 };

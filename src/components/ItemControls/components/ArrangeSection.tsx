@@ -9,7 +9,7 @@ import {
   sortByPosition
 } from 'src/utils';
 import type { ItemReference } from 'src/types';
-import { Section } from './Section';
+import { PanelSection } from 'src/vendor/accurona-ui';
 
 // align / distribute for a multi-selection, along the tile
 // axes (see src/utils/arrange.ts). Each button is disabled, with the
@@ -88,7 +88,7 @@ export const ArrangeSection = ({
   if (members.length < 2) return null;
 
   return (
-    <Section title="Arrange">
+    <PanelSection title="Arrange">
       <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', rowGap: 1 }}>
         {OPS.map(({ op, label, hint }) => {
           const plan = planArrangement(op, members, anchor, otherNodeTiles);
@@ -116,6 +116,6 @@ export const ArrangeSection = ({
           );
         })}
       </Stack>
-    </Section>
+    </PanelSection>
   );
 };

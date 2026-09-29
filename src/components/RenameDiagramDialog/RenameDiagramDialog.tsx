@@ -1,12 +1,6 @@
 import { useState } from 'react';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField
-} from '@mui/material';
+import { Button, TextField } from '@mui/material';
+import { AppDialog } from 'src/vendor/accurona-ui';
 import { useModelStore } from 'src/stores/modelStore';
 
 // rename the diagram from the main menu. Writes the model's
@@ -32,36 +26,42 @@ export const RenameDiagramDialog = ({ onClose }: Props) => {
   };
 
   return (
-    <Dialog open onClose={onClose} fullWidth maxWidth="xs">
+    <AppDialog
+      open
+      onClose={onClose}
+      title="Rename diagram"
+      actions={
+        <>
+          <Button variant="text" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" form="rename-diagram-form" variant="contained">
+            Rename
+          </Button>
+        </>
+      }
+    >
       <form
+        id="rename-diagram-form"
         onSubmit={(e) => {
           e.preventDefault();
           save();
         }}
       >
-        <DialogTitle>Rename diagram</DialogTitle>
-        <DialogContent>
-          <TextField
-            id="rename-diagram-title"
-            label="Title"
-            value={value}
-            onChange={(e) => {
-              setValue(e.target.value.slice(0, MAX_LENGTH));
-            }}
-            helperText={`${value.length} / ${MAX_LENGTH}. Left blank, it becomes “Untitled”.`}
-            autoFocus
-            fullWidth
-            margin="dense"
-            slotProps={{ htmlInput: { maxLength: MAX_LENGTH } }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit" variant="contained">
-            Rename
-          </Button>
-        </DialogActions>
+        <TextField
+          id="rename-diagram-title"
+          label="Title"
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value.slice(0, MAX_LENGTH));
+          }}
+          helperText={`${value.length} / ${MAX_LENGTH}. Left blank, it becomes “Untitled”.`}
+          autoFocus
+          fullWidth
+          margin="dense"
+          slotProps={{ htmlInput: { maxLength: MAX_LENGTH } }}
+        />
       </form>
-    </Dialog>
+    </AppDialog>
   );
 };

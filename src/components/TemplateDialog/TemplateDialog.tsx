@@ -1,19 +1,11 @@
-import {
-  Box,
-  Card,
-  CardActionArea,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Typography,
-  useTheme
-} from '@mui/material';
+import { Box, Card, CardActionArea, Typography, useTheme } from '@mui/material';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { getTilePosition } from 'src/utils';
 import { templateToInitialData, type DiagramTemplate } from 'src/templates';
 import type { Coords } from 'src/types';
+import { AppDialog } from 'src/vendor/accurona-ui';
 
 // "New from template". Picking one replaces the diagram, the
 // same as Open does with a file.
@@ -149,50 +141,47 @@ export const TemplateDialog = ({ onClose }: Props) => {
   };
 
   return (
-    <Dialog open onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>New from template</DialogTitle>
-      <DialogContent>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-          Replaces the current diagram. Export it first if you want to keep it.
-        </Typography>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-            gap: 2
-          }}
-        >
-          {templates.map((template) => {
-            return (
-              <Card key={template.id} variant="outlined">
-                <CardActionArea
-                  aria-label={template.name}
-                  onClick={() => {
-                    choose(template);
+    <AppDialog open onClose={onClose} title="New from template" maxWidth="md">
+      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+        Replaces the current diagram. Export it first if you want to keep it.
+      </Typography>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          gap: 2
+        }}
+      >
+        {templates.map((template) => {
+          return (
+            <Card key={template.id} variant="outlined">
+              <CardActionArea
+                aria-label={template.name}
+                onClick={() => {
+                  choose(template);
+                }}
+                sx={{ p: 1.5, height: '100%', alignItems: 'flex-start' }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    bgcolor: 'action.hover',
+                    borderRadius: 1,
+                    mb: 1
                   }}
-                  sx={{ p: 1.5, height: '100%', alignItems: 'flex-start' }}
                 >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      bgcolor: 'action.hover',
-                      borderRadius: 1,
-                      mb: 1
-                    }}
-                  >
-                    <TemplatePreview template={template} />
-                  </Box>
-                  <Typography variant="subtitle2">{template.name}</Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    {template.description}
-                  </Typography>
-                </CardActionArea>
-              </Card>
-            );
-          })}
-        </Box>
-      </DialogContent>
-    </Dialog>
+                  <TemplatePreview template={template} />
+                </Box>
+                <Typography variant="subtitle2">{template.name}</Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {template.description}
+                </Typography>
+              </CardActionArea>
+            </Card>
+          );
+        })}
+      </Box>
+    </AppDialog>
   );
 };

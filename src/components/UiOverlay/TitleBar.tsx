@@ -6,9 +6,9 @@
 
 import { Box, Stack, Typography } from '@mui/material';
 import ChevronRight from '@mui/icons-material/ChevronRight';
-import { UiElement } from 'src/components/UiElement/UiElement';
 import type { Size } from 'src/types/common';
 import { SaveStatusPill } from './SaveStatusPill';
+import { Surface } from 'src/vendor/accurona-ui';
 
 interface AppPadding {
   x: number;
@@ -57,7 +57,7 @@ export const TitleBar = ({
         height: appPadding.y
       }}
     >
-      <UiElement
+      <Surface
         sx={{
           display: 'inline-flex',
           px: 2,
@@ -87,7 +87,7 @@ export const TitleBar = ({
           </Typography>
           <SaveStatusPill />
         </Stack>
-      </UiElement>
+      </Surface>
     </Box>
   );
 };

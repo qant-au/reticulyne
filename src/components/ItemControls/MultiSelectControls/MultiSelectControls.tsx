@@ -4,14 +4,12 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { ItemReference } from 'src/types';
 import { connectorsFirst } from 'src/utils';
-import { ControlsContainer } from '../components/ControlsContainer';
-import { Header } from '../components/Header';
-import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
 import { ArrangeSection } from '../components/ArrangeSection';
 import { GroupSection } from '../components/GroupSection';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
+import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 const TYPE_LABELS: Record<ItemReference['type'], [string, string]> = {
   ITEM: ['node', 'nodes'],
@@ -113,16 +111,14 @@ export const MultiSelectControls = () => {
   };
 
   return (
-    <ControlsContainer
-      header={<Header title={`${selection.length} selected`} />}
-    >
-      <Section>
+    <Panel header={<PanelHeader title={`${selection.length} selected`} />}>
+      <PanelSection>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {summary}
         </Typography>
-      </Section>
+      </PanelSection>
       {colourable.length > 0 && (
-        <Section title="Colour">
+        <PanelSection title="Colour">
           <ColorSelector
             onChange={(color) => {
               setColour(colourable, color);
@@ -137,7 +133,7 @@ export const MultiSelectControls = () => {
               colour.
             </Typography>
           )}
-        </Section>
+        </PanelSection>
       )}
       <GroupSection selection={selection} />
       <ArrangeSection selection={selection} />
@@ -149,11 +145,11 @@ export const MultiSelectControls = () => {
             : undefined
         }
       />
-      <Section>
+      <PanelSection>
         <Box>
           <DeleteButton onClick={deleteAll} />
         </Box>
-      </Section>
-    </ControlsContainer>
+      </PanelSection>
+    </Panel>
   );
 };

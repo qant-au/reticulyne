@@ -6,9 +6,6 @@ import React, {
   useState
 } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Box,
   Button,
   Stack,
@@ -33,6 +30,7 @@ import { Reticulyne } from 'src/Reticulyne';
 import { Loader } from 'src/components/Loader/Loader';
 import { createReticulyneTheme } from 'src/styles/theme';
 import { ColorPicker } from 'src/components/ColorSelector/ColorPicker';
+import { AppDialog } from 'src/vendor/accurona-ui';
 
 interface Props {
   quality?: number;
@@ -138,156 +136,151 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   }, [showGrid, backgroundColor, transparent]);
 
   return (
-    <Dialog open onClose={onClose}>
-      <DialogTitle>Export as image</DialogTitle>
-      <DialogContent>
-        <Stack spacing={2}>
-          <Alert severity="info">
-            <strong>
-              Certain browsers may not support exporting images properly.
-            </strong>{' '}
-            <br />
-            For best results, please use the latest version of either Chrome or
-            Firefox.
-          </Alert>
+    <AppDialog open onClose={onClose} title="Export as image" maxWidth="sm">
+      <Stack spacing={2}>
+        <Alert severity="info">
+          <strong>
+            Certain browsers may not support exporting images properly.
+          </strong>{' '}
+          <br />
+          For best results, please use the latest version of either Chrome or
+          Firefox.
+        </Alert>
 
-          {!imageData && (
-            <>
+        {!imageData && (
+          <>
+            <Box
+              sx={{
+                position: 'absolute',
+                width: 0,
+                height: 0,
+                overflow: 'hidden'
+              }}
+            >
               <Box
+                ref={containerRef}
                 sx={{
                   position: 'absolute',
-                  width: 0,
-                  height: 0,
-                  overflow: 'hidden'
-                }}
-              >
-                <Box
-                  ref={containerRef}
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0
-                  }}
-                  style={{
-                    width: unprojectedBounds.width * quality,
-                    height: unprojectedBounds.height * quality
-                  }}
-                >
-                  <Reticulyne
-                    editorMode="NON_INTERACTIVE"
-                    onModelUpdated={exportImage}
-                    initialData={{
-                      ...model,
-                      fitToView: true,
-                      view: currentView
-                    }}
-                    renderer={{
-                      showGrid,
-                      backgroundColor: transparent
-                        ? 'transparent'
-                        : backgroundColor
-                    }}
-                  />
-                </Box>
-              </Box>
-              <Box
-                sx={{
-                  position: 'relative',
                   top: 0,
-                  left: 0,
-                  width: 500,
-                  height: 300,
-                  bgcolor: 'background.paper'
-                }}
-              >
-                <Loader size={2} />
-              </Box>
-            </>
-          )}
-          <Stack
-            spacing={2}
-            sx={{
-              alignItems: 'center'
-            }}
-          >
-            {imageData && (
-              <Box
-                component="img"
-                sx={{
-                  maxWidth: '100%'
+                  left: 0
                 }}
                 style={{
-                  width: unprojectedBounds.width
-                }}
-                src={imageData}
-                alt="preview"
-              />
-            )}
-            <Box sx={{ width: '100%' }}>
-              <Box component="fieldset">
-                <Typography variant="caption" component="legend">
-                  Options
-                </Typography>
-
-                <FormControlLabel
-                  label="Show grid"
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={showGrid}
-                      onChange={(event) => {
-                        handleShowGridChange(event.target.checked);
-                      }}
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="Transparent background"
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={transparent}
-                      onChange={(event) => {
-                        setTransparent(event.target.checked);
-                      }}
-                    />
-                  }
-                />
-                {!transparent && (
-                  <FormControlLabel
-                    label="Background color"
-                    control={
-                      <ColorPicker
-                        value={backgroundColor}
-                        onChange={handleBackgroundColorChange}
-                      />
-                    }
-                  />
-                )}
-              </Box>
-            </Box>
-            {imageData && (
-              <Stack
-                sx={{
-                  alignItems: 'flex-end',
-                  width: '100%'
+                  width: unprojectedBounds.width * quality,
+                  height: unprojectedBounds.height * quality
                 }}
               >
-                <Stack direction="row" spacing={2}>
-                  <Button variant="text" onClick={onClose}>
-                    Cancel
-                  </Button>
-                  <Button onClick={downloadFile}>Download as PNG</Button>
-                </Stack>
-              </Stack>
-            )}
-          </Stack>
+                <Reticulyne
+                  editorMode="NON_INTERACTIVE"
+                  onModelUpdated={exportImage}
+                  initialData={{
+                    ...model,
+                    fitToView: true,
+                    view: currentView
+                  }}
+                  renderer={{
+                    showGrid,
+                    backgroundColor: transparent
+                      ? 'transparent'
+                      : backgroundColor
+                  }}
+                />
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                position: 'relative',
+                top: 0,
+                left: 0,
+                width: 500,
+                height: 300,
+                bgcolor: 'background.paper'
+              }}
+            >
+              <Loader size={2} />
+            </Box>
+          </>
+        )}
+        <Stack
+          spacing={2}
+          sx={{
+            alignItems: 'center'
+          }}
+        >
+          {imageData && (
+            <Box
+              component="img"
+              sx={{
+                maxWidth: '100%'
+              }}
+              style={{
+                width: unprojectedBounds.width
+              }}
+              src={imageData}
+              alt="preview"
+            />
+          )}
+          <Box sx={{ width: '100%' }}>
+            <Box component="fieldset">
+              <Typography variant="caption" component="legend">
+                Options
+              </Typography>
 
-          {exportError && (
-            <Alert severity="error">Could not export image</Alert>
+              <FormControlLabel
+                label="Show grid"
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={showGrid}
+                    onChange={(event) => {
+                      handleShowGridChange(event.target.checked);
+                    }}
+                  />
+                }
+              />
+              <FormControlLabel
+                label="Transparent background"
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={transparent}
+                    onChange={(event) => {
+                      setTransparent(event.target.checked);
+                    }}
+                  />
+                }
+              />
+              {!transparent && (
+                <FormControlLabel
+                  label="Background color"
+                  control={
+                    <ColorPicker
+                      value={backgroundColor}
+                      onChange={handleBackgroundColorChange}
+                    />
+                  }
+                />
+              )}
+            </Box>
+          </Box>
+          {imageData && (
+            <Stack
+              sx={{
+                alignItems: 'flex-end',
+                width: '100%'
+              }}
+            >
+              <Stack direction="row" spacing={2}>
+                <Button variant="text" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button onClick={downloadFile}>Download as PNG</Button>
+              </Stack>
+            </Stack>
           )}
         </Stack>
-      </DialogContent>
-    </Dialog>
+
+        {exportError && <Alert severity="error">Could not export image</Alert>}
+      </Stack>
+    </AppDialog>
   );
 };

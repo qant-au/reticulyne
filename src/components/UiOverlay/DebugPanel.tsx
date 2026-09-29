@@ -5,9 +5,9 @@
 //
 // Extracted from UiOverlay.tsx under QUA4-10.
 
-import { UiElement } from 'src/components/UiElement/UiElement';
 import { DebugUtils } from 'src/components/DebugUtils/DebugUtils';
 import type { Size } from 'src/types/common';
+import { Surface } from 'src/vendor/accurona-ui';
 
 interface AppPadding {
   x: number;
@@ -30,7 +30,7 @@ export const DebugPanel = ({
   if (!visible) return null;
 
   return (
-    <UiElement
+    <Surface
       sx={{
         position: 'absolute',
         width: 350,
@@ -43,6 +43,6 @@ export const DebugPanel = ({
       }}
     >
       <DebugUtils />
-    </UiElement>
+    </Surface>
   );
 };

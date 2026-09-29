@@ -28,11 +28,8 @@ LICENSE
 README.md
 
 # Repo-only material with no place in the build context (BLD-02).
-testing
 scripts
 .idea
 CLAUDE.md
 SECURITY.md
 CHANGELOG.md
-code-review-*.md
-action-items-*.md

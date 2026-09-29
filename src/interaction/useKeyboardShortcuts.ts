@@ -35,7 +35,7 @@ const isEditableFocus = (target: EventTarget | null): boolean => {
 // only when it's NOT held — so the conventions don't collide.
 //
 // UXA-01 realigned the tool layer onto Excalidraw's, because an operator
-// moving between Drafts' Excalidraw canvas and the isometric one should
+// moving between an Excalidraw canvas and the isometric one should
 // not have to retrain. The changes, and why each was safe:
 //
 //   A  → Connector, not Add-item. Excalidraw's A is arrow, and a

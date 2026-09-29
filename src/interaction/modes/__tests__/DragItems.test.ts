@@ -135,6 +135,52 @@ describe('DragItems mode', () => {
       });
     });
 
+    test('a connector whose ends both move takes its waypoints with it', () => {
+      const sceneOverride: Partial<SceneShape> = {
+        items: [
+          { id: 'a', tile: { x: 0, y: 0 } },
+          { id: 'b', tile: { x: 0, y: 3 } }
+        ] as unknown as SceneShape['items'],
+        connectors: [
+          {
+            id: 'k',
+            anchors: [
+              { id: 'k1', ref: { item: 'a' } },
+              { id: 'k2', ref: { tile: { x: 2, y: 1 } } },
+              { id: 'k3', ref: { item: 'b' } }
+            ]
+          }
+        ] as unknown as SceneShape['connectors']
+      };
+      const state = makeState({
+        mode: {
+          type: 'DRAG_ITEMS',
+          showCursor: true,
+          items: [
+            { type: 'ITEM', id: 'a' },
+            { type: 'ITEM', id: 'b' }
+          ],
+          isInitialMovement: false
+        },
+        mouse: {
+          mousedown: { screen: { x: 0, y: 0 }, tile: { x: 0, y: 0 } },
+          position: { screen: { x: 0, y: 0 }, tile: { x: 3, y: 0 } },
+          delta: { screen: { x: 30, y: 0 }, tile: { x: 3, y: 0 } }
+        },
+        scene: sceneOverride
+      });
+
+      DragItems.mousemove?.(state);
+
+      expect(state.scene.updateConnector).toHaveBeenCalledWith('k', {
+        anchors: [
+          { id: 'k1', ref: { item: 'a' } },
+          { id: 'k2', ref: { tile: { x: 5, y: 1 } } },
+          { id: 'k3', ref: { item: 'b' } }
+        ]
+      });
+    });
+
     test('moves a TEXTBOX by the delta', () => {
       const tb: TextBox = {
         id: 'tb-1',

@@ -104,6 +104,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     updateViewItem,
     updateTextBox,
     updateRectangle,
+    updateConnector,
     duplicateSelection,
     changeLayerOrder,
     createTextBox,
@@ -484,6 +485,39 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         selection.forEach((item) => {
           nudgeSelected(dx, dy, item);
         });
+        // A connector whose node ends all moved takes its waypoints along,
+        // as a drag does.
+        if (moving.size >= 2) {
+          (currentView.connectors ?? []).forEach((c) => {
+            const ends = c.anchors.filter((a) => {
+              return a.ref.item !== undefined;
+            });
+            const hasWaypoint = c.anchors.some((a) => {
+              return a.ref.tile !== undefined;
+            });
+            if (
+              !hasWaypoint ||
+              ends.length < 2 ||
+              !ends.every((a) => {
+                return moving.has(a.ref.item!);
+              })
+            ) {
+              return;
+            }
+            updateConnector(c.id, {
+              anchors: c.anchors.map((a) => {
+                return a.ref.tile
+                  ? {
+                      ...a,
+                      ref: {
+                        tile: { x: a.ref.tile.x + dx, y: a.ref.tile.y + dy }
+                      }
+                    }
+                  : a;
+              })
+            });
+          });
+        }
         e.preventDefault();
         return;
       }
@@ -668,6 +702,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     updateViewItem,
     updateTextBox,
     updateRectangle,
+    updateConnector,
     duplicateSelection,
     changeLayerOrder,
     createTextBox,

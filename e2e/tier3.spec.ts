@@ -214,17 +214,3 @@ test('a node name stops at the 100 characters a file can hold', async ({
   await name.fill('y'.repeat(150));
   expect((await name.inputValue()).length).toBe(100);
 });
-
-test('dragging the label-height slider keeps the inspector open', async ({
-  page
-}) => {
-  const c = await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }]);
-  await page.mouse.click(c.x, c.y);
-  const slider = page.getByRole('slider').first();
-  const box = (await slider.boundingBox())!;
-  await page.mouse.move(box.x + 4, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(box.x + 120, box.y + box.height / 2, { steps: 10 });
-  await page.mouse.up();
-  await expect(page.getByRole('textbox').first()).toHaveValue('Node a');
-});

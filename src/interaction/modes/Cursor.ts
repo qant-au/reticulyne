@@ -218,7 +218,7 @@ export const Cursor: ModeActions = {
       mousedown(state);
     }
   },
-  mousemove: ({ scene, uiState, modifiers, rendererRef }) => {
+  mousemove: ({ scene, uiState, modifiers }) => {
     if (uiState.mode.type !== 'CURSOR' || !hasMovedTile(uiState.mouse)) return;
 
     let item = uiState.mode.mousedownItem;
@@ -228,18 +228,6 @@ export const Cursor: ModeActions = {
     // (no button) never opens a band.
     if (!item) {
       if (uiState.editorMode !== 'EDITABLE' || !uiState.mouse.mousedown) return;
-      // The press must have been on the canvas. Presses anywhere are
-      // recorded, so dragging the inspector's label-height slider started
-      // a marquee under the panel, which also closed the inspector.
-      const rect = rendererRef.getBoundingClientRect();
-      const pressedOn =
-        typeof document.elementFromPoint === 'function'
-          ? document.elementFromPoint(
-              rect.left + uiState.mouse.mousedown.screen.x,
-              rect.top + uiState.mouse.mousedown.screen.y
-            )
-          : null;
-      if (pressedOn && pressedOn !== rendererRef) return;
 
       uiState.actions.setMode({
         type: 'MARQUEE',

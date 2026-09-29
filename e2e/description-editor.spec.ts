@@ -169,4 +169,9 @@ test('a click low in the description box types into it', async ({ page }) => {
   await page.mouse.click(box.x + box.width / 2, box.y + box.height - 12);
   await page.keyboard.type('host');
   await expect(editor).toContainText('host');
+
+  // Bold keeps the text focused: what is typed next goes in, in bold.
+  await page.getByRole('button', { name: 'Bold' }).click();
+  await page.keyboard.type(' name');
+  await expect(editor.locator('strong')).toHaveText('name');
 });

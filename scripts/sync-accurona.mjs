@@ -2,8 +2,8 @@
 //
 //   node scripts/sync-accurona.mjs [path-to-accurona-checkout]
 //
-// Copies packages/ui/dist/ into src/vendor/accurona-ui/ and records the
-// source commit. Defaults to ../accurona next to this repo.
+// Copies packages/<name>/dist/ into src/vendor/accurona-<name>/ (ui, core)
+// and records the source commit. Defaults to ../accurona next to this repo.
 // Run `npm run build` in the accurona checkout first.
 import { execFileSync } from 'node:child_process';
 import { cpSync, existsSync, rmSync, writeFileSync } from 'node:fs';
@@ -11,7 +11,10 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const source = resolve(process.argv[2] ?? resolve(root, '../accurona'));
-const packages = [{ name: 'ui', label: 'shared UI' }];
+const packages = [
+  { name: 'ui', label: 'shared UI' },
+  { name: 'core', label: 'core (the scene format)' }
+];
 
 for (const { name } of packages) {
   const dist = resolve(source, `packages/${name}/dist`);

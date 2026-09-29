@@ -20,6 +20,13 @@ test('Export as JSON downloads a parseable model file', async ({ page }) => {
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toMatch(/^reticulyne-export-.*\.json$/);
+  // The file is a scene (the Accurona scene format), never a model.
   const body = JSON.parse(await readFile(await download.path(), 'utf8'));
+  expect(body.format).toBe('accurona-scene');
+  expect(body.version).toBe(1);
+  expect(body.$schema).toMatch(/scene-v1\.json$/);
+  expect(Array.isArray(body.objects)).toBe(true);
   expect(Array.isArray(body.views)).toBe(true);
+  expect(body.views[0].kind).toBe('iso');
+  expect(body).not.toHaveProperty('items');
 });

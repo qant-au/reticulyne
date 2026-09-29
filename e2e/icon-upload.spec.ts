@@ -61,8 +61,8 @@ test('upload an icon, place it, and it is saved in the diagram', async ({
     collection: 'My icons'
   });
   expect(model.icons[0].url).toMatch(/^data:image\/svg\+xml/);
-  expect(model.items).toHaveLength(1);
-  expect(model.items[0].icon).toBe(model.icons[0].id);
+  expect(model.objects).toHaveLength(1);
+  expect(model.objects[0].icon).toBe(model.icons[0].id);
 });
 
 test('the same file uploaded twice is one icon', async ({ page }) => {

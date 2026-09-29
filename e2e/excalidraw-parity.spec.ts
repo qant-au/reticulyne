@@ -82,12 +82,12 @@ test('UXA-03: Alt+drag leaves the original and places a copy', async ({
   const download = await downloadPromise;
   const view = JSON.parse(await readFile(await download.path(), 'utf8'))
     .views[0];
-  expect(view.items).toHaveLength(2);
-  const original = view.items.find((i: { id: string }) => {
-    return i.id === 'node-a';
+  expect(view.placements).toHaveLength(2);
+  const original = view.placements.find((p: { object: string }) => {
+    return p.object === 'node-a';
   });
-  const copy = view.items.find((i: { id: string }) => {
-    return i.id !== 'node-a';
+  const copy = view.placements.find((p: { object: string }) => {
+    return p.object !== 'node-a';
   });
   expect(original.tile).toEqual({ x: 0, y: 0 });
   expect(copy.tile).not.toEqual({ x: 0, y: 0 });

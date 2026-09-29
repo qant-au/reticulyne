@@ -56,6 +56,15 @@ test('save two diagrams, switch between them, and reopen the last one', async ({
     }, 0);
   });
   expect(size).toBeLessThan(20_000);
+
+  // Each diagram is stored as a scene, the file format.
+  const stored = await page.evaluate(() => {
+    const id = localStorage.getItem('reticulyne.current')!;
+    return JSON.parse(localStorage.getItem(`reticulyne.diagram.${id}`)!);
+  });
+  expect(stored.format).toBe('accurona-scene');
+  expect(stored.title).toBe('Alpha');
+  expect(stored).not.toHaveProperty('items');
 });
 
 test('a named diagram auto-saves', async ({ page }) => {
@@ -120,6 +129,54 @@ test('import opens a file as a new diagram, saved straight away', async ({
   await page.keyboard.press('Escape');
   await page.reload();
   await titleBar(page, 'Imported net');
+});
+
+test('import opens a scene, keeping the parts Reticulyne does not show', async ({
+  page
+}) => {
+  await page.goto('/');
+  await page.getByTestId('diagram-import-input').setInputFiles({
+    name: 'site.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(
+      JSON.stringify({
+        format: 'accurona-scene',
+        version: 1,
+        id: 'site',
+        title: 'Imported site',
+        objects: [
+          { id: 'a', name: 'Edge router', props: { ip: '10.0.0.1' } },
+          { id: 'desk', element: 'desk' }
+        ],
+        views: [
+          {
+            id: 'plan',
+            kind: 'plan',
+            name: 'Plan',
+            floors: [{ id: 'g' }],
+            placements: [{ object: 'desk', floor: 'g', x: 0, y: 0 }]
+          },
+          {
+            id: 'net',
+            kind: 'schematic',
+            name: 'Network',
+            placements: [{ object: 'a', tile: { x: 0, y: 0 } }]
+          }
+        ]
+      })
+    )
+  });
+  await titleBar(page, 'Imported site');
+  await expect(page.getByText('Edge router', { exact: true })).toBeVisible();
+  const stored = await page.evaluate(() => {
+    const id = localStorage.getItem('reticulyne.current')!;
+    return JSON.parse(localStorage.getItem(`reticulyne.diagram.${id}`)!);
+  });
+  expect(stored.views.map((v: { kind: string }) => v.kind)).toEqual([
+    'plan',
+    'schematic'
+  ]);
+  expect(stored.objects[0].props).toEqual({ ip: '10.0.0.1' });
 });
 
 test('a file that is not JSON is refused with a message', async ({ page }) => {

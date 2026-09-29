@@ -30,7 +30,8 @@ export const DrawRectangle: ModeActions = {
 
     scene.createRectangle({
       id: newRectangleId,
-      color: scene.colors[0].id,
+      // A scene may list no colours; the renderer then uses its default.
+      color: scene.colors[0]?.id,
       from: uiState.mouse.position.tile,
       to: uiState.mouse.position.tile
     });

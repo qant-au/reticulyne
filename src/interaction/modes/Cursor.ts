@@ -107,7 +107,8 @@ const mousedown: ModeActionsAction = ({
       const connectorId = generateId();
       scene.createConnector({
         id: connectorId,
-        color: scene.colors[0].id,
+        // A scene may list no colours; the renderer then uses its default.
+        color: scene.colors[0]?.id,
         anchors: [
           { id: generateId(), ref: { item: portNode.id } },
           { id: generateId(), ref: { item: portNode.id } }

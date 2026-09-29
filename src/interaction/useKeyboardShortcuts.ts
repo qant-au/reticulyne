@@ -6,28 +6,43 @@ import { getItemByIdOrThrow, generateId, connectorsFirst } from 'src/utils';
 import { TEXTBOX_DEFAULTS } from 'src/config';
 import { useThemeToggle } from 'src/hooks/useThemeToggle';
 import type { ItemReference } from 'src/types';
+import {
+  isTypingTarget,
+  keymapFor,
+  resolveAction
+} from 'src/vendor/accurona-core';
 
 const NUDGE_STEP = 1;
 const SHIFT_MULTIPLIER = 5;
 
-const isEditableFocus = (target: EventTarget | null): boolean => {
-  if (!(target instanceof HTMLElement)) return false;
-  const tag = target.tagName;
-  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
-  if (target.isContentEditable) return true;
-  // An open menu (main, context, a host's) has the keyboard: its arrow
-  // keys and letters are for the menu, and H or - pressed there used to
-  // switch tool and zoom the canvas behind it.
-  if (target.closest('[role="menu"], [role="listbox"]')) return true;
-  return false;
-};
+// Reticulyne's bindings from the shared keymap. Rows the spec marks "where
+// built" that Reticulyne has not built stay unbound: Q (keep tool), align,
+// lock, and Ctrl/Cmd+Enter (there is no point-editing mode for connectors).
+export const KEYMAP = keymapFor('reticulyne', {
+  omit: [
+    'keep-tool',
+    'edit-geometry',
+    'align-left',
+    'align-right',
+    'align-top',
+    'align-bottom',
+    'lock'
+  ]
+});
 
-// FEA5-02: keyboard shortcuts that match the conventions of modern
-// canvas editors (Figma / Miro / Excalidraw / tldraw).
+const LAYER_ORDER = {
+  'bring-forward': 'BRING_FORWARD',
+  'send-backward': 'SEND_BACKWARD',
+  'bring-to-front': 'BRING_TO_FRONT',
+  'send-to-back': 'SEND_TO_BACK'
+} as const;
+
+// FEA5-02: keyboard shortcuts. Since lw-048 the bindings are the shared
+// keymap in @accurona/core (docs/keymap.md in Accurona), which Axonometra
+// binds too; this hook maps each action to what it does here.
 //
-// Single-letter tool switches plus zoom hotkeys. Tool switches and
-// duplicate fire only in EDITABLE mode; zoom + fit-to-view fire in any
-// mode that allows zooming (EDITABLE and EXPLORABLE_READONLY).
+// Editing bindings fire only in EDITABLE mode; selecting, panning, zoom,
+// fit, find, the theme toggle and ? fire read-only too, as the spec rules.
 //
 // Tool letters intentionally double up on Ctrl/Cmd-chord variants
 // (Ctrl+C copy, Ctrl+V paste, Ctrl+D duplicate). We dispatch the
@@ -222,8 +237,8 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
 
     const onKeyDown = (e: KeyboardEvent) => {
       // Don't steal keys from text inputs or contenteditable surfaces
-      // (Quill descriptions, MUI TextFields, etc).
-      if (isEditableFocus(e.target)) return;
+      // (Quill descriptions, MUI TextFields, open menus).
+      if (isTypingTarget(e.target)) return;
 
       // With a dialog open the canvas is behind it: only ? (to toggle the
       // shortcuts dialog) gets through. Without this, H switched tool and
@@ -236,438 +251,397 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         return;
       }
 
-      // Escape: deselect. Allowed in every editor mode — read-only
-      // diagrams may still surface a selection-driven detail panel.
-      if (e.key === 'Escape') {
-        // An icon armed for placement is put down again.
-        const { mode, iconPaletteOpen } = uiStateActions.get();
-        // The icon library closes on Esc, as the other panels do.
-        if (iconPaletteOpen && !(mode.type === 'PLACE_ICON' && mode.id)) {
-          uiStateActions.setIconPaletteOpen(false);
-          e.preventDefault();
-        }
-        if (mode.type === 'PLACE_ICON' && mode.id) {
-          uiStateActions.setMode({ ...mode, id: null });
-          e.preventDefault();
-        } else if (mode.type === 'PLACE_ICON') {
-          // Nothing armed: Esc leaves the Add item tool (it closed the
-          // picker but left the tool pressed).
-          selectTool();
-          e.preventDefault();
-        }
-        // A connector being dragged out is abandoned: releasing it on a
-        // node afterwards used to create it anyway.
-        if (mode.type === 'CONNECTOR' && mode.id) {
-          deleteConnector(mode.id);
-          uiStateActions.setMode({
-            type: 'CONNECTOR',
-            id: null,
-            showCursor: true
-          });
-          e.preventDefault();
-        }
-        if (itemControls || selection.length > 0) {
-          uiStateActions.clearSelection();
-          e.preventDefault();
-        }
-        // 1.7: and leave the group being edited.
-        if (editingGroupId) {
-          uiStateActions.setEditingGroupId(null);
-          e.preventDefault();
-        }
-        return;
-      }
+      // The shared keymap (@accurona/core) decides which action a key is;
+      // read-only drops every editing binding.
+      const action = resolveAction(e, KEYMAP, {
+        readOnly: !isEditable,
+        typingGuard: false
+      });
+      if (action === null) return;
 
-      const hasModifier = e.ctrlKey || e.metaKey;
-
-      // 2.7: Ctrl/Cmd+F opens the find bar, in any editor mode. Taken from
-      // the browser deliberately, as Excalidraw does: page find cannot see
-      // text drawn on the canvas.
-      if (hasModifier && !e.shiftKey && (e.key === 'f' || e.key === 'F')) {
-        uiStateActions.setSearchOpen(true);
+      const done = () => {
         e.preventDefault();
-        return;
-      }
-
-      // UXA-08: Alt+Shift+D flips light <-> dark, in any editor mode (it
-      // changes how the diagram looks, not the diagram). Matched on e.code:
-      // on a Mac, Alt+Shift+D types a symbol into e.key.
-      if (e.altKey && e.shiftKey && !hasModifier && e.code === 'KeyD') {
-        toggleTheme();
-        e.preventDefault();
-        return;
-      }
-
-      // === Zoom + fit-to-view (work in EDITABLE and EXPLORABLE_READONLY) ===
-      // UXA-01: both the bare keys (kept, they were here first and cost
-      // nothing) and Excalidraw's Ctrl/Cmd-chord forms. Chording steals the
-      // browser's page zoom, which is the trade Excalidraw itself makes —
-      // inside a canvas editor the diagram is what you want to zoom.
-      if (e.key === '+' || e.key === '=') {
-        uiStateActions.incrementZoom();
-        e.preventDefault();
-        return;
-      }
-      if (e.key === '-' || e.key === '_') {
-        uiStateActions.decrementZoom();
-        e.preventDefault();
-        return;
-      }
-      // Reset zoom is now Ctrl/Cmd+0 only. Bare 0 is left unbound and bare
-      // 1 becomes the Select tool below — both belong to Excalidraw's tool
-      // row, and keeping them on zoom was the single worst collision.
-      if (hasModifier && e.key === '0') {
-        uiStateActions.setZoom(1);
-        e.preventDefault();
-        return;
-      }
-      if (!hasModifier && (e.key === 'f' || e.key === 'F')) {
-        fitToView();
-        e.preventDefault();
-        return;
-      }
-      // Shift+1 fit-to-view / Shift+2 fit-to-selection (Excalidraw match).
-      // Read off `e.code` rather than `e.key`, because Shift+1 arrives as
-      // '!' on a US layout and as something else again elsewhere.
-      if (e.shiftKey && !hasModifier && e.code === 'Digit1') {
-        fitToView();
-        e.preventDefault();
-        return;
-      }
-      if (e.shiftKey && !hasModifier && e.code === 'Digit2') {
-        fitToSelection(selection);
-        e.preventDefault();
-        return;
-      }
-
-      // ? → toggle keyboard shortcuts dialog (works in all modes)
-      if (!hasModifier && e.key === '?') {
-        if (dialog === 'KEYBOARD_SHORTCUTS') {
-          uiStateActions.setDialog(null);
-        } else {
-          uiStateActions.setDialog('KEYBOARD_SHORTCUTS');
-        }
-        e.preventDefault();
-        return;
-      }
-
-      // Alt+I → toggle selection dimming (FEA12-01). Moved off bare I by
-      // UXA-01, which needs I for Add-item to mirror Excalidraw. Alt is
-      // otherwise unbound in Reticulyne, and dimming is a display toggle
-      // rather than a tool, so a chord is the right home for it. Works in
-      // all modes including read-only.
-      // Matched on `e.code`: macOS turns Option+I into a dead-key combining
-      // circumflex, so `e.key` is not 'i' there.
-      if (e.altKey && !hasModifier && e.code === 'KeyI') {
-        uiStateActions.toggleSelectionDimEnabled();
-        e.preventDefault();
-        return;
-      }
-
-      // Remaining shortcuts only fire in editable mode.
-      if (!isEditable) return;
-
-      // === Undo / redo (FEA5-03) ===
-      // Standard cross-platform conventions:
-      //   Ctrl/Cmd+Z         → undo
-      //   Ctrl/Cmd+Shift+Z   → redo (Mac convention)
-      //   Ctrl+Y             → redo (Windows convention)
-      if (hasModifier && (e.key === 'z' || e.key === 'Z')) {
-        if (e.shiftKey) {
-          redo();
-        } else {
-          undo();
-        }
-        e.preventDefault();
-        return;
-      }
-      if (e.ctrlKey && (e.key === 'y' || e.key === 'Y')) {
-        redo();
-        e.preventDefault();
-        return;
-      }
-
-      // === Select all (Ctrl/Cmd+A) — UXA-07, unlocked by 1.4 ===
-      // Connector anchors are excluded for the same reason the marquee
-      // excludes them: they are sub-parts, not top-level items.
-      if (hasModifier && (e.key === 'a' || e.key === 'A')) {
-        const all: ItemReference[] = [
-          ...(currentView.items ?? []).map((i) => {
-            return { type: 'ITEM' as const, id: i.id };
-          }),
-          ...(currentView.textBoxes ?? []).map((t) => {
-            return { type: 'TEXTBOX' as const, id: t.id };
-          }),
-          ...(currentView.connectors ?? []).map((c) => {
-            return { type: 'CONNECTOR' as const, id: c.id };
-          }),
-          ...(currentView.rectangles ?? []).map((r) => {
-            return { type: 'RECTANGLE' as const, id: r.id };
-          })
-        ];
-        uiStateActions.setSelection(all);
-        e.preventDefault();
-        return;
-      }
-
-      // === Selection-dependent shortcuts ===
-      // Every one of these operates on the whole `selection` array, which
-      // is a one-element array in the ordinary single-select case.
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (selection.length === 0) return;
-        // Clear first — the outline renderers look selected ids up in the
-        // scene, and would throw on a reference to a just-deleted item.
-        uiStateActions.clearSelection();
-        connectorsFirst(selection).forEach(deleteSelected);
-        e.preventDefault();
-        return;
-      }
-
-      if (
-        e.key === 'ArrowUp' ||
-        e.key === 'ArrowDown' ||
-        e.key === 'ArrowLeft' ||
-        e.key === 'ArrowRight'
-      ) {
-        if (selection.length === 0) return;
-        const step = NUDGE_STEP * (e.shiftKey ? SHIFT_MULTIPLIER : 1);
-        let dx = 0;
-        let dy = 0;
-        // Tile +y draws up-left and +x up-right (getTilePosition), so Up
-        // is +y: with -y, ArrowUp moved a node down the screen.
-        switch (e.key) {
-          case 'ArrowUp':
-            dy = step;
-            break;
-          case 'ArrowDown':
-            dy = -step;
-            break;
-          case 'ArrowLeft':
-            dx = -step;
-            break;
-          case 'ArrowRight':
-            dx = step;
-            break;
-          default:
-            break;
-        }
-        // A nudge that would put a node on a tile another node holds is
-        // refused, as Align does: it stacked them, hiding the one below.
-        const moving = new Set(
-          selection
-            .filter((s) => {
-              return s.type === 'ITEM';
-            })
-            .map((s) => {
-              return s.id;
-            })
-        );
-        const taken = new Set(
-          (currentView.items ?? [])
-            .filter((i) => {
-              return !moving.has(i.id);
-            })
-            .map((i) => {
-              return `${i.tile.x},${i.tile.y}`;
-            })
-        );
-        const blocked = (currentView.items ?? []).some((i) => {
-          return (
-            moving.has(i.id) && taken.has(`${i.tile.x + dx},${i.tile.y + dy}`)
-          );
-        });
-        if (blocked) {
-          e.preventDefault();
-          return;
-        }
-        // Same delta applied to every member, so a nudged group keeps its
-        // internal spacing instead of drifting apart.
-        selection.forEach((item) => {
-          nudgeSelected(dx, dy, item);
-        });
-        // A connector whose node ends all moved takes its waypoints along,
-        // as a drag does.
-        if (moving.size >= 2) {
-          (currentView.connectors ?? []).forEach((c) => {
-            const ends = c.anchors.filter((a) => {
-              return a.ref.item !== undefined;
-            });
-            const hasWaypoint = c.anchors.some((a) => {
-              return a.ref.tile !== undefined;
-            });
-            if (
-              !hasWaypoint ||
-              ends.length < 2 ||
-              !ends.every((a) => {
-                return moving.has(a.ref.item!);
-              })
-            ) {
-              return;
-            }
-            updateConnector(c.id, {
-              anchors: c.anchors.map((a) => {
-                return a.ref.tile
-                  ? {
-                      ...a,
-                      ref: {
-                        tile: { x: a.ref.tile.x + dx, y: a.ref.tile.y + dy }
-                      }
-                    }
-                  : a;
-              })
-            });
-          });
-        }
-        e.preventDefault();
-        return;
-      }
-
-      // === Group / ungroup ===
-      // Ctrl/Cmd+G groups the selection; with Shift, ungroups it. Matched on
-      // e.code so a Shift+G reads the same on every layout.
-      if (hasModifier && e.code === 'KeyG') {
-        if (e.shiftKey) {
-          ungroupSelection(selection);
-        } else {
-          groupSelection(selection);
-        }
-        e.preventDefault();
-        return;
-      }
-
-      // === Duplicate (Ctrl/Cmd+D) ===
-      // Ctrl+D in browsers opens the bookmark dialog — preventDefault
-      // is essential. As in Excalidraw it copies the whole selection
-      // (connectors skipped) and selects the copies, so a second press
-      // steps on from them; copying only the active item left every
-      // repeat stacked on one tile.
-      if (hasModifier && (e.key === 'd' || e.key === 'D')) {
-        const copies = duplicateSelection(selection);
-        if (copies.length > 0) {
-          uiStateActions.setSelection(copies);
-          e.preventDefault();
-        }
-        return;
-      }
-
-      // === Layer order (UXA-06) ===
-      // Excalidraw's bindings: Ctrl/Cmd+] forward, Ctrl/Cmd+[ backward,
-      // with Shift for to-front / to-back, plus the Mac Cmd+Opt+] / [
-      // variants. Matched on `e.code` because Shift+] arrives as `}` in
-      // `e.key` on a US layout. Acts on the whole selection as one block;
-      // nodes are depth-sorted and are left out.
-      if (
-        hasModifier &&
-        (e.code === 'BracketRight' || e.code === 'BracketLeft')
-      ) {
-        const orderable = selection.filter((item) => {
-          return (
-            item.type === 'RECTANGLE' ||
-            item.type === 'CONNECTOR' ||
-            item.type === 'TEXTBOX'
-          );
-        });
-        if (orderable.length === 0) return;
-        const forward = e.code === 'BracketRight';
-        const toEnd = e.shiftKey || (e.metaKey && e.altKey);
-        changeLayerOrder(
-          forward
-            ? toEnd
-              ? 'BRING_TO_FRONT'
-              : 'BRING_FORWARD'
-            : toEnd
-              ? 'SEND_TO_BACK'
-              : 'SEND_BACKWARD',
-          orderable
-        );
-        e.preventDefault();
-        return;
-      }
-
-      // === Copy / cut / paste (Ctrl/Cmd+C / X / V) (FEA5-04, UXA-04) ===
-      // Copy silently no-ops if nothing copyable is selected; paste no-ops
-      // if the clipboard is empty. preventDefault is essential - the
-      // browser's native Ctrl+C would otherwise copy the surrounding page
-      // text into the OS clipboard.
-      //
-      // Worklist 19: all three act on the whole selection. Connectors are
-      // not copyable (their anchors point at other items), so a cut
-      // removes only what it copied and leaves selected connectors alone.
-      // A paste selects everything it created.
-      if (hasModifier && (e.key === 'x' || e.key === 'X')) {
-        const copyable = selection.filter((item) => {
-          return item.type !== 'CONNECTOR' && item.type !== 'CONNECTOR_ANCHOR';
-        });
-        if (copyable.length > 0) {
-          copySelection(copyable);
-          uiStateActions.clearSelection();
-          copyable.forEach(deleteSelected);
-          e.preventDefault();
-        }
-        return;
-      }
-      if (hasModifier && (e.key === 'c' || e.key === 'C')) {
-        if (selection.length > 0 && copySelection(selection) > 0) {
-          e.preventDefault();
-        }
-        return;
-      }
-      if (hasModifier && (e.key === 'v' || e.key === 'V')) {
-        const pasted = paste();
-        if (pasted && pasted.length > 0) {
-          uiStateActions.setSelection(pasted);
-          e.preventDefault();
-        }
-        return;
-      }
-
-      // === Tool switches (bare key, no modifier) ===
-      // Anything held with Ctrl/Cmd is left for the browser / the chord
-      // handlers above (e.g. Ctrl+S = browser save, not ours to steal).
-      // Shift is excluded too, so Shift+1 / Shift+2 reach the fit handlers
-      // rather than being swallowed here as the Select tool.
-      if (hasModifier || e.shiftKey) return;
-
-      // UXA-01 binding table. Each tool takes its Excalidraw letter and
-      // its Excalidraw number; `e.code` is used for the digits so the
-      // binding survives non-US layouts where the top row is punctuation.
-      const isKey = (letters: string[], digit?: string) => {
-        if (digit !== undefined && e.code === digit) return true;
-        return letters.includes(e.key.toLowerCase());
       };
 
-      if (isKey(['v', 's'], 'Digit1')) {
-        selectTool();
-        e.preventDefault();
-        return;
-      }
-      if (isKey(['h'])) {
-        handTool();
-        e.preventDefault();
-        return;
-      }
-      // I / 9 → Add item. Was bare A until UXA-01; A is Excalidraw's arrow.
-      if (isKey(['i'], 'Digit9')) {
-        addItemTool();
-        e.preventDefault();
-        return;
-      }
-      if (isKey(['r'], 'Digit2')) {
-        rectangleTool();
-        e.preventDefault();
-        return;
-      }
-      // A / C / 5 → Connector. A is the Excalidraw arrow key; C is kept as
-      // the long-standing Reticulyne binding so existing muscle memory in
-      // the other direction is not broken either.
-      if (isKey(['a', 'c'], 'Digit5')) {
-        connectorTool();
-        e.preventDefault();
-        return;
-      }
-      if (isKey(['t'], 'Digit8')) {
-        textTool();
-        e.preventDefault();
+      switch (action) {
+        // Escape: deselect. Allowed in every editor mode — read-only
+        // diagrams may still surface a selection-driven detail panel.
+        case 'escape': {
+          // An icon armed for placement is put down again.
+          const { mode, iconPaletteOpen } = uiStateActions.get();
+          // The icon library closes on Esc, as the other panels do.
+          if (iconPaletteOpen && !(mode.type === 'PLACE_ICON' && mode.id)) {
+            uiStateActions.setIconPaletteOpen(false);
+            done();
+          }
+          if (mode.type === 'PLACE_ICON' && mode.id) {
+            uiStateActions.setMode({ ...mode, id: null });
+            done();
+          } else if (mode.type === 'PLACE_ICON') {
+            // Nothing armed: Esc leaves the Add item tool (it closed the
+            // picker but left the tool pressed).
+            selectTool();
+            done();
+          }
+          // A connector being dragged out is abandoned: releasing it on a
+          // node afterwards used to create it anyway.
+          if (mode.type === 'CONNECTOR' && mode.id) {
+            deleteConnector(mode.id);
+            uiStateActions.setMode({
+              type: 'CONNECTOR',
+              id: null,
+              showCursor: true
+            });
+            done();
+          }
+          if (itemControls || selection.length > 0) {
+            uiStateActions.clearSelection();
+            done();
+          }
+          // 1.7: and leave the group being edited.
+          if (editingGroupId) {
+            uiStateActions.setEditingGroupId(null);
+            done();
+          }
+          return;
+        }
+
+        // 2.7: Ctrl/Cmd+F opens the find bar, in any editor mode. Taken from
+        // the browser deliberately, as Excalidraw does: page find cannot see
+        // text drawn on the canvas.
+        case 'find':
+          uiStateActions.setSearchOpen(true);
+          done();
+          return;
+
+        // UXA-08: Alt+Shift+D flips light <-> dark, in any editor mode (it
+        // changes how the diagram looks, not the diagram).
+        case 'toggle-theme':
+          toggleTheme();
+          done();
+          return;
+
+        // Zoom + fit work in EDITABLE and EXPLORABLE_READONLY. Chording
+        // steals the browser's page zoom, which is the trade Excalidraw
+        // itself makes — inside a canvas editor the diagram is what you want
+        // to zoom.
+        case 'zoom-in':
+          uiStateActions.incrementZoom();
+          done();
+          return;
+        case 'zoom-out':
+          uiStateActions.decrementZoom();
+          done();
+          return;
+        case 'zoom-reset':
+          uiStateActions.setZoom(1);
+          done();
+          return;
+        case 'fit-all':
+          fitToView();
+          done();
+          return;
+        case 'fit-selection':
+          fitToSelection(selection);
+          done();
+          return;
+
+        case 'help':
+          uiStateActions.setDialog(
+            dialog === 'KEYBOARD_SHORTCUTS' ? null : 'KEYBOARD_SHORTCUTS'
+          );
+          done();
+          return;
+
+        // Alt+I → toggle selection dimming (FEA12-01), a display toggle, so
+        // it works read-only too.
+        case 'toggle-highlight':
+          uiStateActions.toggleSelectionDimEnabled();
+          done();
+          return;
+
+        // Selecting and panning are not editing: they work read-only, but
+        // not in a NON_INTERACTIVE render, which has no pointer at all.
+        case 'select':
+          if (editorMode === 'NON_INTERACTIVE') return;
+          selectTool();
+          done();
+          return;
+        case 'hand':
+          if (editorMode === 'NON_INTERACTIVE') return;
+          handTool();
+          done();
+          return;
+
+        // === Undo / redo (FEA5-03) ===
+        case 'undo':
+          undo();
+          done();
+          return;
+        case 'redo':
+          redo();
+          done();
+          return;
+
+        // === Select all — UXA-07 ===
+        // Connector anchors are excluded for the same reason the marquee
+        // excludes them: they are sub-parts, not top-level items. Selecting
+        // is editing here: the selection drives the edit panels.
+        case 'select-all': {
+          if (!isEditable) return;
+          const all: ItemReference[] = [
+            ...(currentView.items ?? []).map((i) => {
+              return { type: 'ITEM' as const, id: i.id };
+            }),
+            ...(currentView.textBoxes ?? []).map((t) => {
+              return { type: 'TEXTBOX' as const, id: t.id };
+            }),
+            ...(currentView.connectors ?? []).map((c) => {
+              return { type: 'CONNECTOR' as const, id: c.id };
+            }),
+            ...(currentView.rectangles ?? []).map((r) => {
+              return { type: 'RECTANGLE' as const, id: r.id };
+            })
+          ];
+          uiStateActions.setSelection(all);
+          done();
+          return;
+        }
+
+        // === Selection-dependent shortcuts ===
+        // Every one of these operates on the whole `selection` array, which
+        // is a one-element array in the ordinary single-select case.
+        case 'delete':
+          if (selection.length === 0) return;
+          // Clear first — the outline renderers look selected ids up in the
+          // scene, and would throw on a reference to a just-deleted item.
+          uiStateActions.clearSelection();
+          connectorsFirst(selection).forEach(deleteSelected);
+          done();
+          return;
+
+        // Enter opens the selected object for editing: a text box's text
+        // takes focus, anything else opens its panel with the first field
+        // focused, so the keyboard reaches what a double-click would.
+        case 'edit': {
+          const target =
+            selection.length === 1
+              ? selection[0]
+              : itemControls && itemControls.type !== 'ADD_ITEM'
+                ? itemControls
+                : null;
+          if (
+            !target ||
+            target.type === 'CONNECTOR_ANCHOR' ||
+            (selection.length > 1 && !itemControls)
+          ) {
+            return;
+          }
+          uiStateActions.setItemControls(target);
+          if (target.type === 'TEXTBOX') {
+            uiStateActions.setFocusTextBoxId(target.id);
+          } else {
+            requestAnimationFrame(() => {
+              document
+                .querySelector<HTMLElement>(
+                  '[data-item-controls] input:not([type="hidden"]), [data-item-controls] textarea, [data-item-controls] [contenteditable="true"]'
+                )
+                ?.focus();
+            });
+          }
+          done();
+          return;
+        }
+
+        case 'nudge': {
+          if (selection.length === 0) return;
+          const step = NUDGE_STEP * (e.shiftKey ? SHIFT_MULTIPLIER : 1);
+          let dx = 0;
+          let dy = 0;
+          // Tile +y draws up-left and +x up-right (getTilePosition), so Up
+          // is +y: with -y, ArrowUp moved a node down the screen.
+          switch (e.key) {
+            case 'ArrowUp':
+              dy = step;
+              break;
+            case 'ArrowDown':
+              dy = -step;
+              break;
+            case 'ArrowLeft':
+              dx = -step;
+              break;
+            case 'ArrowRight':
+              dx = step;
+              break;
+            default:
+              break;
+          }
+          // A nudge that would put a node on a tile another node holds is
+          // refused, as Align does: it stacked them, hiding the one below.
+          const moving = new Set(
+            selection
+              .filter((s) => {
+                return s.type === 'ITEM';
+              })
+              .map((s) => {
+                return s.id;
+              })
+          );
+          const taken = new Set(
+            (currentView.items ?? [])
+              .filter((i) => {
+                return !moving.has(i.id);
+              })
+              .map((i) => {
+                return `${i.tile.x},${i.tile.y}`;
+              })
+          );
+          const blocked = (currentView.items ?? []).some((i) => {
+            return (
+              moving.has(i.id) && taken.has(`${i.tile.x + dx},${i.tile.y + dy}`)
+            );
+          });
+          if (blocked) {
+            done();
+            return;
+          }
+          // Same delta applied to every member, so a nudged group keeps its
+          // internal spacing instead of drifting apart.
+          selection.forEach((item) => {
+            nudgeSelected(dx, dy, item);
+          });
+          // A connector whose node ends all moved takes its waypoints along,
+          // as a drag does.
+          if (moving.size >= 2) {
+            (currentView.connectors ?? []).forEach((c) => {
+              const ends = c.anchors.filter((a) => {
+                return a.ref.item !== undefined;
+              });
+              const hasWaypoint = c.anchors.some((a) => {
+                return a.ref.tile !== undefined;
+              });
+              if (
+                !hasWaypoint ||
+                ends.length < 2 ||
+                !ends.every((a) => {
+                  return moving.has(a.ref.item!);
+                })
+              ) {
+                return;
+              }
+              updateConnector(c.id, {
+                anchors: c.anchors.map((a) => {
+                  return a.ref.tile
+                    ? {
+                        ...a,
+                        ref: {
+                          tile: { x: a.ref.tile.x + dx, y: a.ref.tile.y + dy }
+                        }
+                      }
+                    : a;
+                })
+              });
+            });
+          }
+          done();
+          return;
+        }
+
+        case 'group':
+          groupSelection(selection);
+          done();
+          return;
+        case 'ungroup':
+          ungroupSelection(selection);
+          done();
+          return;
+
+        // === Duplicate (Ctrl/Cmd+D) ===
+        // Ctrl+D in browsers opens the bookmark dialog — preventDefault
+        // is essential. As in Excalidraw it copies the whole selection
+        // (connectors skipped) and selects the copies, so a second press
+        // steps on from them.
+        case 'duplicate': {
+          const copies = duplicateSelection(selection);
+          if (copies.length > 0) {
+            uiStateActions.setSelection(copies);
+            done();
+          }
+          return;
+        }
+
+        // === Layer order (UXA-06) ===
+        // Acts on the whole selection as one block; nodes are depth-sorted
+        // and are left out.
+        case 'bring-forward':
+        case 'send-backward':
+        case 'bring-to-front':
+        case 'send-to-back': {
+          const orderable = selection.filter((item) => {
+            return (
+              item.type === 'RECTANGLE' ||
+              item.type === 'CONNECTOR' ||
+              item.type === 'TEXTBOX'
+            );
+          });
+          if (orderable.length === 0) return;
+          changeLayerOrder(LAYER_ORDER[action], orderable);
+          done();
+          return;
+        }
+
+        // === Copy / cut / paste (FEA5-04, UXA-04) ===
+        // All three act on the whole selection. Connectors are not copyable
+        // (their anchors point at other items), so a cut removes only what
+        // it copied and leaves selected connectors alone. A paste selects
+        // everything it created.
+        case 'cut': {
+          const copyable = selection.filter((item) => {
+            return (
+              item.type !== 'CONNECTOR' && item.type !== 'CONNECTOR_ANCHOR'
+            );
+          });
+          if (copyable.length > 0) {
+            copySelection(copyable);
+            uiStateActions.clearSelection();
+            copyable.forEach(deleteSelected);
+            done();
+          }
+          return;
+        }
+        case 'copy':
+          if (selection.length > 0 && copySelection(selection) > 0) {
+            done();
+          }
+          return;
+        case 'paste': {
+          const pasted = paste();
+          if (pasted && pasted.length > 0) {
+            uiStateActions.setSelection(pasted);
+            done();
+          }
+          return;
+        }
+
+        // === Tools (UXA-01: Excalidraw's letters and number row) ===
+        case 'add-item':
+          addItemTool();
+          done();
+          return;
+        case 'rectangle':
+          rectangleTool();
+          done();
+          return;
+        case 'connector':
+          connectorTool();
+          done();
+          return;
+        case 'text':
+          textTool();
+          done();
+          return;
+        default:
+          return;
       }
     };
 

@@ -28,6 +28,8 @@ import { useExportJson } from './useExportJson';
 import { useExportPdf } from './useExportPdf';
 import { useSaveModel } from './useSaveModel';
 import { useSectionVisibility } from './useSectionVisibility';
+import { shortcutHint } from 'src/vendor/accurona-core';
+import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 import {
   AppDialog,
   Surface,
@@ -269,7 +271,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
         {showToolButtons && (
           <>
             <ToolButton
-              name="Select (V)"
+              name={`Select (${shortcutHint(KEYMAP, 'select')})`}
               icon={<NearMeIcon />}
               onClick={() => {
                 uiStateActions.setMode({
@@ -281,7 +283,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'CURSOR' || mode.type === 'DRAG_ITEMS'}
             />
             <ToolButton
-              name="Pan (H)"
+              name={`Pan (${shortcutHint(KEYMAP, 'hand')})`}
               icon={<PanToolIcon />}
               onClick={() => {
                 uiStateActions.setMode({
@@ -293,7 +295,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'PAN'}
             />
             <ToolButton
-              name="Add item (I)"
+              name={`Add item (${shortcutHint(KEYMAP, 'add-item')})`}
               icon={<AddIcon />}
               onClick={() => {
                 uiStateActions.setItemControls({
@@ -308,7 +310,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'PLACE_ICON'}
             />
             <ToolButton
-              name="Rectangle (R)"
+              name={`Rectangle (${shortcutHint(KEYMAP, 'rectangle')})`}
               icon={<CropSquareIcon />}
               onClick={() => {
                 uiStateActions.setMode({
@@ -320,7 +322,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'RECTANGLE.DRAW'}
             />
             <ToolButton
-              name="Connector (A)"
+              name={`Connector (${shortcutHint(KEYMAP, 'connector')})`}
               icon={<ConnectorIcon />}
               onClick={() => {
                 uiStateActions.setMode({
@@ -332,7 +334,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               isActive={mode.type === 'CONNECTOR'}
             />
             <ToolButton
-              name="Text (T)"
+              name={`Text (${shortcutHint(KEYMAP, 'text')})`}
               icon={<TitleIcon />}
               onClick={createTextBoxProxy}
               isActive={mode.type === 'TEXTBOX'}

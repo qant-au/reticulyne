@@ -102,8 +102,11 @@ All props are optional. The component renders a fully-functional editor with sen
 | `Del` / `⌫` | Delete selection |
 | `↑↓←→` | Nudge selection |
 | `⇧ ↑↓←→` | Nudge ×5 |
+| `Enter` | Edit the selected object: focus its text or the first field of its panel |
+| `⌘/Ctrl ]` / `[` | Bring forward / send backward (`⇧`, or `⌘ ⌥` on macOS, for front / back) |
 | `Esc` | Deselect |
 | `Alt I` | Toggle item highlighting (dims all items except the selected one) |
+| `Alt ⇧ D` | Toggle light / dark |
 | `?` | Toggle keyboard shortcuts dialog |
 
 ### Container sizing
@@ -156,9 +159,9 @@ The host page never sees these wheel events bubble — the renderer's wheel list
 
 The editor wires the conventions used by Figma, Miro, Excalidraw and tldraw. All shortcuts are window-level and are suppressed while focus is on a text input / textarea / contenteditable surface (e.g. an item-description editor), so they never collide with the host's own typing.
 
-The tool layer mirrors **Excalidraw's**, letter and number alike, so an operator moving between an Excalidraw canvas and this one is not retrained. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
+The bindings are the **shared linework keymap**, the same one [Axonometra](https://github.com/qant-au/axonometra) binds, aligned with **Excalidraw's**, letter and number alike, so an operator moving between an Excalidraw canvas and this one is not retrained. The specification, with every deliberate difference from Excalidraw, is [Accurona's `docs/keymap.md`](https://github.com/qant-au/accurona/blob/main/docs/keymap.md); the `?` dialog lists the same table. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
 
-**Tools — `EDITABLE` mode only.** Bare key, no modifier.
+**Tools.** Bare key, no modifier. Select and Hand work in `EXPLORABLE_READONLY` too; the drawing tools need `EDITABLE`.
 
 | Key | Tool |
 |---|---|
@@ -285,7 +288,8 @@ Undo/redo covers all document mutations (items, view items, connectors, rectangl
 
 - The clipboard lives in editor session state — copied selections survive across model loads, undo/redo, and view changes, but **not** across page refreshes. There is no integration with the OS clipboard.
 - Connectors are not copyable/duplicatable. Their anchors reference other items by id; the right "what does paste mean for a connector whose anchored items aren't in the target context?" semantics is not locked in. PRs welcome.
-- All shortcuts respect `editorMode` — `EXPLORABLE_READONLY` only gets zoom + fit-to-view + Escape; `NON_INTERACTIVE` gets none.
+- All shortcuts respect `editorMode`. `EXPLORABLE_READONLY` drops every editing binding and keeps selecting, panning, zoom, fit, find, the theme toggle, `Alt+I`, `Esc` and `?`. `NON_INTERACTIVE` keeps only the ones that change the view, never a tool.
+- `Ctrl/Cmd` + arrow does nothing (it is Excalidraw's flowchart walk); only a bare or `Shift` arrow nudges.
 
 ## Controlling UI visibility
 

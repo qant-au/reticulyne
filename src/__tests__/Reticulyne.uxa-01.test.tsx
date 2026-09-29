@@ -1,10 +1,19 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  cleanup,
+  act,
+  waitFor
+} from '@testing-library/react';
+import { useEffect } from 'react';
 import Reticulyne from '../Reticulyne';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import type { InitialData } from 'src/types';
+import { useScene } from 'src/hooks/useScene';
+import type { InitialData, UiStateStore } from 'src/types';
 
 beforeAll(() => {
   if (!('ResizeObserver' in globalThis)) {
@@ -75,7 +84,15 @@ const initialData: InitialData = {
   ]
 };
 
+let probeActions: UiStateStore['actions'] | null = null;
+
 const Probe = () => {
+  const actions = useUiStateStore((state) => {
+    return state.actions;
+  });
+  useEffect(() => {
+    probeActions = actions;
+  }, [actions]);
   const modeType = useUiStateStore((state) => {
     return state.mode.type;
   });
@@ -88,6 +105,13 @@ const Probe = () => {
   const selectionCount = useUiStateStore((state) => {
     return state.selection.length;
   });
+  const controls = useUiStateStore((state) => {
+    return state.itemControls?.type ?? 'none';
+  });
+  const { currentView } = useScene();
+  const nodeA = (currentView.items ?? []).find((i) => {
+    return i.id === 'node-a';
+  });
 
   return (
     <>
@@ -95,13 +119,17 @@ const Probe = () => {
       <div data-testid="zoom">{String(zoom)}</div>
       <div data-testid="dim">{String(dim)}</div>
       <div data-testid="selected">{String(selectionCount)}</div>
+      <div data-testid="controls">{controls}</div>
+      <div data-testid="node-a">
+        {nodeA ? `${nodeA.tile.x},${nodeA.tile.y}` : ''}
+      </div>
     </>
   );
 };
 
-const mount = () => {
+const mount = (editorMode: 'EDITABLE' | 'EXPLORABLE_READONLY' = 'EDITABLE') => {
   render(
-    <Reticulyne initialData={initialData}>
+    <Reticulyne initialData={initialData} editorMode={editorMode}>
       <Probe />
     </Reticulyne>
   );
@@ -284,6 +312,59 @@ describe('UXA-01 — Excalidraw tool hotkey alignment', () => {
       press({ key: 'a', ctrlKey: true });
       press({ key: '@', code: 'Digit2', shiftKey: true });
       expect(mode()).toBe('CURSOR');
+    });
+  });
+
+  // lw-048: the bindings now come from the shared keymap in Accurona.
+  describe('shared keymap', () => {
+    test('selecting and panning work read-only', () => {
+      mount('EXPLORABLE_READONLY');
+      expect(mode()).toBe('PAN');
+      press({ key: 'v' });
+      expect(mode()).toBe('CURSOR');
+      press({ key: 'h' });
+      expect(mode()).toBe('PAN');
+    });
+
+    test('tools that edit stay off read-only', () => {
+      mount('EXPLORABLE_READONLY');
+      press({ key: 'r' });
+      expect(mode()).toBe('PAN');
+    });
+
+    test('an arrow nudges; Ctrl + arrow does not (Excalidraw flowchart)', () => {
+      mount();
+      act(() => {
+        probeActions!.setSelection([{ type: 'ITEM', id: 'node-a' }]);
+      });
+      press({ key: 'ArrowUp', ctrlKey: true });
+      expect(screen.getByTestId('node-a').textContent).toBe('0,0');
+      press({ key: 'ArrowUp' });
+      expect(screen.getByTestId('node-a').textContent).toBe('0,1');
+    });
+
+    // Selecting already opens the panel; Enter puts the keyboard in it,
+    // where a double-click would.
+    test('Enter moves focus into the panel of the selected object', async () => {
+      mount();
+      act(() => {
+        probeActions!.setSelection([{ type: 'RECTANGLE', id: 'rect-1' }]);
+      });
+      expect(screen.getByTestId('controls').textContent).toBe('RECTANGLE');
+      press({ key: 'Enter' });
+      await waitFor(() => {
+        expect(
+          document.activeElement?.closest('[data-item-controls]')
+        ).not.toBeNull();
+      });
+    });
+
+    test('Q (keep tool) and Ctrl+Shift+L (lock) are left unbound', () => {
+      mount();
+      press({ key: 'r' });
+      press({ key: 'q' });
+      press({ key: 'L', code: 'KeyL', ctrlKey: true, shiftKey: true });
+      expect(mode()).toBe('RECTANGLE.DRAW');
     });
   });
 });

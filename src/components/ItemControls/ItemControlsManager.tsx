@@ -40,6 +40,8 @@ export const ItemControlsManager = () => {
 
   return (
     <Box
+      // Enter focuses the first field in here (useKeyboardShortcuts).
+      data-item-controls
       sx={{
         width: '100%'
       }}

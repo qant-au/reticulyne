@@ -55,6 +55,7 @@ interface WheelLike {
   deltaMode: number;
   ctrlKey: boolean;
   metaKey: boolean;
+  shiftKey?: boolean;
 }
 
 export function interpretWheelEvent(
@@ -106,6 +107,14 @@ export function interpretWheelEvent(
       pxX = e.deltaX;
       pxY = e.deltaY;
       break;
+  }
+
+  // Shift + wheel pans sideways (the shared keymap, as Excalidraw). Most
+  // browsers on macOS already turn it into deltaX; a plain mouse wheel on
+  // Windows and Linux does not, so a vertical-only delta is turned here.
+  if (e.shiftKey && pxX === 0) {
+    pxX = pxY;
+    pxY = 0;
   }
 
   // Subtract the delta so positive deltaY (browser "scroll content

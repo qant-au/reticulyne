@@ -4,7 +4,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import { modelFromModelStore, performSave } from 'src/utils';
 
-// ROADMAP 2.3: where saving stands, in the title bar. Renders nothing
+// where saving stands, in the title bar. Renders nothing
 // unless the host passed `onSave`, and nothing for a clean diagram that
 // has not been saved in this session.
 const ago = (ms: number) => {

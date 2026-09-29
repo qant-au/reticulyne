@@ -6,7 +6,7 @@ import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { getTilePosition } from 'src/utils';
 import type { Coords } from 'src/types';
 
-// ROADMAP 2.8: the whole diagram in miniature, bottom-right, with the
+// the whole diagram in miniature, bottom-right, with the
 // visible area outlined. Click or drag in it to move the view there.
 // Everything is in scene coordinates (the projected plane the renderer
 // scales and scrolls), so a scene point p is on screen at

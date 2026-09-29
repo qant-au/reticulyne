@@ -1,4 +1,4 @@
-// ROADMAP 2.7: find nodes by name, description or icon name. Ranked
+// find nodes by name, description or icon name. Ranked
 // exact name > name prefix > name substring > description > icon name,
 // then by name, so Enter walks the best hits first. Case-insensitive;
 // descriptions are rich-text HTML and are matched on their text only.

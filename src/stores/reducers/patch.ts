@@ -10,7 +10,7 @@ import { updateModelItem } from './modelItem';
 import { view as viewReducer } from './view';
 import type { State } from './types';
 
-// ROADMAP 1.5: a host's live update, as a set of per-id changes. Validated
+// a host's live update, as a set of per-id changes. Validated
 // against the same schemas a loaded model is, restricted to the fields a
 // patch may touch, so a patch cannot add, remove or re-anchor anything.
 const byId = <T extends z.ZodTypeAny>(schema: T) => {

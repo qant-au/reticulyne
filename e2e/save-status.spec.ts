@@ -1,7 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
 
 /**
- * ROADMAP 2.3 — the save-status pill, driven through the editor with a
+ * the save-status pill, driven through the editor with a
  * host onSave injected by the Docker entry's e2e hook (index-docker.tsx).
  */
 type SaveFixture = {

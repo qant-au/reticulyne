@@ -92,7 +92,7 @@ const mousedown: ModeActionsAction = ({
 }) => {
   if (uiState.mode.type !== 'CURSOR' || !isRendererInteraction) return;
 
-  // ROADMAP 2.5: a press on one of a node's ports starts a connector from
+  // a press on one of a node's ports starts a connector from
   // that node, without switching tools. Connector mode then draws it live
   // and commits or cancels on release. Shift is left to multi-select (1.4).
   if (uiState.editorMode === 'EDITABLE' && !modifiers.shift) {

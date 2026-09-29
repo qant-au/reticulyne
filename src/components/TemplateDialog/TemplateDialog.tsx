@@ -15,7 +15,7 @@ import { getTilePosition } from 'src/utils';
 import { templateToInitialData, type DiagramTemplate } from 'src/templates';
 import type { Coords } from 'src/types';
 
-// ROADMAP 2.14: "New from template". Picking one replaces the diagram, the
+// "New from template". Picking one replaces the diagram, the
 // same as Open does with a file.
 const W = 200;
 const H = 110;

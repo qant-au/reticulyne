@@ -15,14 +15,14 @@ potentially breaking and read the release notes before upgrading.
 
 ### Removed (breaking)
 
-- **`useReticulyne().Model` and `.uiState`** (ROADMAP 1.6). The raw
+- **`useReticulyne().Model` and `.uiState`**. The raw
   zustand escape hatches are gone. Write through `applyPatch`, `setTitle` or
   `loadModel`; read through `getModel`, `getNode`, `getViewport` and
   `getSelection`; drive the view and selection with the methods below.
 
 ### Added
 
-- **Groups** (ROADMAP 1.7). `Ctrl/Cmd+G` groups the selection and
+- **Groups**. `Ctrl/Cmd+G` groups the selection and
   `Ctrl/Cmd+Shift+G` ungroups it. A click selects the whole group, dragging
   moves it as one, and double-click works inside it. Groups can be named,
   coloured and nested. Schema: `groups` on a view, and `parentGroupId` on view
@@ -34,47 +34,47 @@ potentially breaking and read the release notes before upgrading.
 - **Docker editor: saved diagrams** (APP-01). A Diagrams menu creates,
   imports, switches and deletes diagrams kept in the browser's localStorage;
   Save and auto-save (every 5 s once named) use the editor's save support.
-- **Starter templates** (ROADMAP 2.14). **New from template** in the main
+- **Starter templates**. **New from template** in the main
   menu (`ACTION.NEW_FROM_TEMPLATE`, on by default) opens a picker with
   previews; `templates` replaces the bundled five.
 
-- **Upload icons** (ROADMAP 2.13). `onIconUpload` adds an Upload
+- **Upload icons**. `onIconUpload` adds an Upload
   button to the icon picker; uploads join a **My icons** collection saved in
   the diagram. `readIconAsDataUrl` embeds the file with no server, and the
   Docker editor uses it.
-- **Live updates that keep UI state** (ROADMAP 1.5). `useReticulyne().applyPatch`
+- **Live updates that keep UI state**. `useReticulyne().applyPatch`
   changes nodes, connectors, rectangles and text boxes by id without touching
   the selection, zoom or pan; waits out a drag or draw in progress; skips ids
   that no longer exist; stays off the undo stack unless `pushToUndo`.
   `updateNode` and `setConnectorRate` are shorthands for it.
-- **Typed imperative API** (ROADMAP 1.6). `getNode`, `getViewport`,
+- **Typed imperative API**. `getNode`, `getViewport`,
   `getSelection`, `focusNode`, `fitToView`, `select`, `clearSelection`,
   and the events `onNodeClick`, `onConnectorClick`, `onSelectionChange`
   and `onViewportChange`. `setZoom` now clamps to the editor range.
 
-- **Icon library panel** (ROADMAP 2.11). A toolbar toggle opens the icon
+- **Icon library panel**. A toolbar toggle opens the icon
   picker as a persistent right-hand panel; drag icons straight onto tiles.
 
-- **Find** (ROADMAP 2.7). `Ctrl/Cmd+F` opens a find bar; matches (by name,
+- **Find**. `Ctrl/Cmd+F` opens a find bar; matches (by name,
   then description, then icon name) are outlined on the canvas, and
   `Enter` / `Shift+Enter` select each one and bring it to the centre.
-- **Mini-map** (ROADMAP 2.8). An overview bottom-right with the visible area
+- **Mini-map**. An overview bottom-right with the visible area
   outlined; click or drag to move the view. `showMiniMap` prop; shown by
   default only when editable.
-- **Alignment guides** (ROADMAP 2.9). While dragging, a line to the nearest
+- **Alignment guides**. While dragging, a line to the nearest
   item on the same tile line. `showAlignmentGuides` prop, default on.
 
-- **Align and distribute** (ROADMAP 3.2). Align X / Y and Distribute X / Y
+- **Align and distribute**. Align X / Y and Distribute X / Y
   for a multi-selection, along the tile axes, one undo step; a move that
   would stack two nodes is disabled.
-- **Hover tooltip** (ROADMAP 3.1). A node's name and description snippet
+- **Hover tooltip**. A node's name and description snippet
   after a short rest, in any editor mode.
 
 - **Excalidraw parity** (UXA-02, -03, -05, -08). Hold `Space` and drag to pan
   from any tool; `Alt`+drag drags a copy; `Alt+Shift+D` flips light / dark
   for the session; the `?` dialog lists the pointer gestures and says what
   Excalidraw has that this editor leaves out on purpose.
-- **Pinch to zoom** on touch screens (ROADMAP 2.12). The renderer sets
+- **Pinch to zoom** on touch screens. The renderer sets
   `touch-action: none` so the browser no longer takes the gesture.
 
 - **Multi-item clipboard.** `Ctrl/Cmd+C`, `X` and `V` act on the whole
@@ -84,32 +84,32 @@ potentially breaking and read the release notes before upgrading.
 - **Bulk colour.** The multi-select panel gains a Colour row that recolours
   every connector and rectangle in the selection in one undo step.
 
-- **Drag from a port to connect** (ROADMAP 2.5). With the ordinary cursor, a
+- **Drag from a port to connect**. With the ordinary cursor, a
   node shows its ports on hover; dragging from one to another node draws a
   connector, and releasing elsewhere cancels. Dragging from a node's centre
   still moves it. Ports shrink their capture area when zoomed out so they
   never swallow the whole node.
 
-- **Save status and dirty state** (ROADMAP 2.3). With `onSave` supplied, the
+- **Save status and dirty state**. With `onSave` supplied, the
   title bar shows Unsaved changes / Saving… / Saved / Save failed with Retry,
   and the browser asks before closing a tab with unsaved changes. `onSave` may
   now return a Promise. New `autoSaveDebounce` prop, off by default.
 
-- **Double-click to add** (ROADMAP 2.2). Double-clicking an empty tile opens
+- **Double-click to add**. Double-clicking an empty tile opens
   the icon picker for that tile, and picking an icon places it there at once.
   Double-clicking an item opens its inspector. `EDITABLE` only.
-- **Connector hotspots** (ROADMAP 2.1). In connector mode, the node under the
+- **Connector hotspots**. In connector mode, the node under the
   pointer shows a port on each tile edge, so it is clear where a connector will
   attach.
 
-- **Diagram title** (ROADMAP 1.2). A "Rename diagram" main-menu action
+- **Diagram title**. A "Rename diagram" main-menu action
   (`'ACTION.RENAME'`, on by default), `useReticulyne().getTitle()` /
   `setTitle()`, and a JSON export named after the title. `title` is now
   optional in `initialData` and `loadModel()`; a model without one is
   `'Untitled'`.
 
 - **Layer ordering for connectors and text boxes, not just rectangles**
-  (ROADMAP 1.3). Front / Forward / Backward / Back buttons in each inspector
+ . Front / Forward / Backward / Back buttons in each inspector
   and in the multi-select panel, the right-click menu on connectors and text
   boxes, and Excalidraw's hotkeys: `Ctrl/Cmd+]` / `[`, with `Shift` for
   to-front / to-back (UXA-06). A multi-selection moves as one block in one
@@ -162,7 +162,7 @@ potentially breaking and read the release notes before upgrading.
 
 ## [0.3.0] - 2026-09-27
 
-### Added — real multi-select (ROADMAP 1.4)
+### Added — real multi-select
 
 Selection is no longer one item at a time.
 
@@ -177,7 +177,7 @@ Selection is no longer one item at a time.
   group keeps its internal spacing.
 - **Multi-edit inspector panel** when more than one item is selected: type
   breakdown, Delete, and layer order. Layer order acts on **rectangles only**
-  — the reducer still throws for other kinds (ROADMAP 1.3) — and the panel
+  — the reducer still throws for other kinds — and the panel
   says so when the selection is mixed.
 - **`Shift+2`** fits the viewport to the selection (`Shift+1` / `F` still fit
   the whole diagram).

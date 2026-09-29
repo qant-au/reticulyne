@@ -2,7 +2,7 @@ import { initialDataSchema } from 'src/schemas/model';
 import { icons, colors } from 'src/examples/initialData';
 import { TEMPLATES, templateToInitialData } from '../index';
 
-// ROADMAP 2.14: every bundled template must load. Runs on every PR with
+// every bundled template must load. Runs on every PR with
 // the rest of the unit suite.
 describe.each(TEMPLATES)('template "$name"', (template) => {
   test('every icon it names is in the bundled isopacks', () => {

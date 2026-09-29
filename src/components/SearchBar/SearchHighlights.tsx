@@ -3,7 +3,7 @@ import { IsoTileArea } from 'src/components/IsoTileArea/IsoTileArea';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 
-// ROADMAP 2.7: while search is open, a faint outline marks the tile of
+// while search is open, a faint outline marks the tile of
 // every matching node, so the whole result set is visible at once.
 export const SearchHighlights = () => {
   const theme = useTheme();

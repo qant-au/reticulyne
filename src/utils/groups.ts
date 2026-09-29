@@ -1,6 +1,6 @@
 import type { Coords, ItemReference, View } from 'src/types';
 
-// ROADMAP 1.7: reading groups off a view. Membership is `parentGroupId` on
+// reading groups off a view. Membership is `parentGroupId` on
 // each node (view item), rectangle, text box and group; these helpers turn
 // that into "who is in G" and "what does a click on X select".
 

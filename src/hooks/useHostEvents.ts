@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import type { ReticulyneProps, SelectedRef } from 'src/types';
 
-// ROADMAP 1.6: the selection and viewport callbacks. Both watch the store
+// the selection and viewport callbacks. Both watch the store
 // rather than the code paths that change it, so every source counts: a
 // click, a marquee, a keyboard shortcut, the mini-map, or the host's own
 // imperative call. Neither fires for the initial state.

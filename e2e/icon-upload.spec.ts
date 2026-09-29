@@ -2,7 +2,7 @@ import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * ROADMAP 2.13: the Docker shell passes readIconAsDataUrl as onIconUpload,
+ * the Docker shell passes readIconAsDataUrl as onIconUpload,
  * so an uploaded icon is embedded in the diagram under "My icons".
  */
 const svg = Buffer.from(

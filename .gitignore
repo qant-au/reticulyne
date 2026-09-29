@@ -40,7 +40,6 @@ yarn-error.log*
 /*backup
 
 # Local-only planning / research notes — not committed
-/ROADMAP-TODO.md
 /RENAME.md
 
 # IDE state — local-only, not shared via git

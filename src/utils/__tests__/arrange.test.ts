@@ -1,6 +1,6 @@
 import { planArrangement, ArrangeMember } from '../arrange';
 
-// ROADMAP 3.2: align / distribute planning.
+// align / distribute planning.
 const node = (id: string, x: number, y: number): ArrangeMember => {
   return { ref: { type: 'ITEM', id }, at: { x, y } };
 };

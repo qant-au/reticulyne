@@ -2,7 +2,7 @@ import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * ROADMAP 2.1 (connector hotspots) and 2.2 (double-click to add).
+ * Connector hotspots and double-click to add.
  *
  * Fixture: one node on tile (0, 0), which sits under the viewport centre,
  * and one icon in the library to pick.

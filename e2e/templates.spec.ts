@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * ROADMAP 2.14: "New from template" replaces the diagram with a starter,
+ * "New from template" replaces the diagram with a starter,
  * using the editor's own icon set (the Docker default: every isopack).
  */
 test('start a diagram from the Kubernetes template', async ({ page }) => {

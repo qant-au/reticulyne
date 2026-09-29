@@ -2,7 +2,7 @@ import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * ROADMAP 1.7: group, select as a unit, drag as a unit, name, enter with
+ * group, select as a unit, drag as a unit, name, enter with
  * a double-click, ungroup. A (0, 0) is the centre tile; B (0, 2) and
  * C (0, -3) sit on the same line. One tile along +Y is (-70.75, -40.95) px
  * on screen at 100% zoom.

@@ -81,19 +81,6 @@ model is in [Embedding: security model](docs/embedding.md#security-model).
 To report a vulnerability, see [SECURITY.md](SECURITY.md). Please do not open a public
 issue for security reports.
 
-## Roadmap
-
-Planned, roughly in order:
-
-- **Layers.** Named layers with visibility toggles, and a *Redacted* layer that stays
-  visible in the editor but is left out of every export.
-- **Multiple floors.** A diagram can already hold several views, which a host switches
-  between; still to come are an in-editor floor switcher and links between floors.
-- **A flat 2D view.** The same diagram drawn as a conventional network schematic
-  alongside the isometric view.
-
-The detailed record, including what has already shipped, is in [ROADMAP.md](ROADMAP.md).
-
 ## A sibling project: Axonometra
 
 Reticulyne has a sibling, [Axonometra](https://github.com/qant-au/axonometra), an
@@ -105,8 +92,6 @@ open-source floor planner with a 3D view. They are built to be used together:
 
 Both draw their equipment from one shared element library, so a rack is the same rack,
 at the same size and in the same colours, in a floor plan and in a network diagram.
-Planned next: a shared set of keyboard shortcuts across both tools, and linking a device
-on a floor plan to its node in a network diagram.
 
 ## Contributing
 

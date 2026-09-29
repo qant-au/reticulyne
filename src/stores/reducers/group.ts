@@ -3,7 +3,7 @@ import type { Group, ItemReference, View } from 'src/types';
 import { getItemByIdOrThrow, groupChain, parentGroupOf } from 'src/utils';
 import type { State, ViewReducerContext } from './types';
 
-// ROADMAP 1.7: group, ungroup and edit groups. Each is one reducer call,
+// group, ungroup and edit groups. Each is one reducer call,
 // so each is one undo step, and undoing an ungroup restores the group
 // with its original id (it is a snapshot restore), which keeps any data
 // a host keyed on that id.

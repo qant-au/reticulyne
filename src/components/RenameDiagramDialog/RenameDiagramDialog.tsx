@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useModelStore } from 'src/stores/modelStore';
 
-// ROADMAP 1.2: rename the diagram from the main menu. Writes the model's
+// rename the diagram from the main menu. Writes the model's
 // title directly; renaming is not part of the drawing's undo history.
 const MAX_LENGTH = 100;
 

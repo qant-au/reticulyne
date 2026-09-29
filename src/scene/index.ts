@@ -1,5 +1,6 @@
 export {
   freshSceneContext,
+  leanIcons,
   modelToSceneUpdate,
   sceneFromModel,
   sceneToModel,

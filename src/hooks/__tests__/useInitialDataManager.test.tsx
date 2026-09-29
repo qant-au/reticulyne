@@ -338,6 +338,36 @@ describe('useInitialDataManager', () => {
     expect(secondViewId).toBe(firstViewId);
   });
 
+  test('a file with only the icons it uses opens with the library kept, less the last diagram uploads', () => {
+    const slot = renderHarness();
+    act(() => {
+      slot.current.load({
+        ...INITIAL_DATA,
+        title: 'Library',
+        icons: [
+          { id: 'lib-a', name: 'A', url: 'a.svg', collection: 'pack' },
+          { id: 'lib-b', name: 'B', url: 'b.svg', collection: 'pack' },
+          { id: 'up', name: 'Up', url: 'up.svg', collection: 'My icons' }
+        ]
+      });
+    });
+    act(() => {
+      slot.current.load({
+        ...INITIAL_DATA,
+        title: 'Lean file',
+        icons: [{ id: 'lib-b', name: 'B', url: 'b.svg', collection: 'pack' }]
+      });
+    });
+    expect(
+      slot.current
+        .getModel()
+        .icons.map((i) => {
+          return i.id;
+        })
+        .sort()
+    ).toEqual(['lib-a', 'lib-b']);
+  });
+
   test('iconCollections.deny removes matching icons from the store', () => {
     const slot = renderHarness({ iconCollections: { deny: ['AWS'] } });
 

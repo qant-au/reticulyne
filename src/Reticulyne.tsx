@@ -49,7 +49,7 @@ import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
 import { TEMPLATES } from 'src/templates';
 import { isSceneDocument, type Scene } from 'src/vendor/accurona-core';
-import { sceneFromModel, type LoadHints } from 'src/scene';
+import { leanIcons, sceneFromModel, type LoadHints } from 'src/scene';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
 
 const App = ({
@@ -435,9 +435,11 @@ const useReticulyne = () => {
   // The diagram as a scene (the file format): the model merged into the
   // scene it was opened from, as a save hands it to onSave.
   const getScene = useCallback((): Scene => {
-    return sceneFromModel(
-      modelFromModelStore(ModelActions.get()),
-      uiStateActions.get().sceneContext
+    return leanIcons(
+      sceneFromModel(
+        modelFromModelStore(ModelActions.get()),
+        uiStateActions.get().sceneContext
+      )
     );
   }, [ModelActions, uiStateActions]);
 

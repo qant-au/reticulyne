@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import type { ZodIssue } from 'zod';
-import { InitialData, IconCollectionState } from 'src/types';
+import type { InitialData, IconCollectionState, Model } from 'src/types';
+import type { Scene } from 'src/vendor/accurona-core';
+import { readScene, sceneToModel, type LoadHints } from 'src/scene';
 import { INITIAL_DATA, INITIAL_SCENE_STATE } from 'src/config';
 import {
   getFitToViewParams,
@@ -15,7 +17,6 @@ import { useModelStore } from 'src/stores/modelStore';
 import { useView } from 'src/hooks/useView';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useHistoryStore } from 'src/stores/historyStore';
-import { initialDataSchema } from 'src/schemas/model';
 
 interface UseInitialDataManagerOptions {
   /**
@@ -39,7 +40,7 @@ export const useInitialDataManager = ({
   iconCollections
 }: UseInitialDataManagerOptions = {}) => {
   const [isReady, setIsReady] = useState(false);
-  const prevInitialData = useRef<InitialData | undefined>(undefined);
+  const prevInitialData = useRef<Scene | InitialData | undefined>(undefined);
   // BUG5-12: stash the view id that needs fit-to-view when `load` runs
   // before the Renderer has mounted (App returns null until isReady, but
   // isReady is set inside load — so on the very first load the renderer
@@ -96,15 +97,18 @@ export const useInitialDataManager = ({
   }, [iconCollections, iconCollectionsKey]);
 
   const load = useCallback(
-    (_initialData: InitialData) => {
+    (_initialData: Scene | InitialData, options: LoadHints = {}) => {
       if (!_initialData || prevInitialData.current === _initialData) return;
 
-      const validationResult = initialDataSchema.safeParse(_initialData);
+      // A scene, or a legacy model converted to one: either way the
+      // editor opens a validated scene and remembers it, so a save can
+      // merge into it.
+      const read = readScene(_initialData);
 
-      if (!validationResult.success) {
+      if (!read.ok) {
         const cb = onValidationErrorRef.current;
         if (cb) {
-          cb(validationResult.error.issues);
+          cb(read.issues);
         } else {
           // Fallback: surface in the console (visible in dev tools)
           // but do not pop a window.alert — a library popping native
@@ -114,7 +118,7 @@ export const useInitialDataManager = ({
           // into their own error-reporting pipeline.
           console.error(
             '[reticulyne] initialData failed schema validation:',
-            validationResult.error.issues
+            read.issues
           );
         }
         return;
@@ -124,16 +128,11 @@ export const useInitialDataManager = ({
       // on screen. Hiding the editor first left a blank page behind.
       setIsReady(false);
 
-      const initialData = {
-        ..._initialData,
-        // The raw input is stored, not the parsed output, so apply the
-        // schema's title default here or loadModel({...no title}) would
-        // leave the store without one (1.2).
-        title: validationResult.data.title,
-        icons: filterIconsByCollection(
-          _initialData.icons,
-          iconCollectionsRef.current
-        )
+      const hints = { ...read.hints, ...options };
+      const { model: loaded, context } = sceneToModel(read.scene);
+      const initialData: Model = {
+        ...loaded,
+        icons: filterIconsByCollection(loaded.icons, iconCollectionsRef.current)
       };
 
       if (initialData.views.length === 0) {
@@ -155,7 +154,14 @@ export const useInitialDataManager = ({
       // dead code — that spread is a fresh object built on line 94 and
       // never `===` to any future caller-supplied input.
       prevInitialData.current = _initialData;
-      model.actions.set(initialData);
+      // Fields the new model does not have are cleared, not kept from the
+      // diagram that was open before.
+      model.actions.set({
+        version: undefined,
+        description: undefined,
+        ...initialData
+      });
+      uiStateActions.setSceneContext(context);
       // A load replaces the diagram, views included. An undo reaching
       // back past it restored a model whose view no longer existed and
       // crashed the editor (after a template, a Clear, an import).
@@ -164,12 +170,12 @@ export const useInitialDataManager = ({
 
       const view = getItemByIdOrThrow(
         initialData.views,
-        initialData.view ?? initialData.views[0].id
+        hints.view ?? initialData.views[0].id
       );
 
       changeView(view.value.id, initialData);
 
-      if (initialData.fitToView) {
+      if (hints.fitToView) {
         const rendererSize = rendererEl?.getBoundingClientRect();
 
         if (

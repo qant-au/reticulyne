@@ -1,5 +1,6 @@
-// File-picker → JSON.parse → useInitialDataManager.load(...) flow used
-// by the "Open" entry in the main menu. Extracted under QUA4-09 so the
+// File-picker → parseJson → useInitialDataManager.load(...) flow used
+// by the "Open" entry in the main menu. The file is a scene (the file
+// format) or a legacy Reticulyne model, which load() converts. Extracted under QUA4-09 so the
 // MainMenu component stays focused on rendering.
 //
 // Returns a stable callback (its identity changes only when the
@@ -12,6 +13,7 @@ import type { ZodIssue } from 'zod';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import type { InitialData } from 'src/types';
+import { parseJson, type Scene } from 'src/vendor/accurona-core';
 
 // Parse a string of imported JSON and hand the result to load(). On
 // malformed input, surface the failure through the same console-
@@ -31,7 +33,7 @@ import type { InitialData } from 'src/types';
 // the full picker + FileReader stack.
 export const handleImportedJsonText = (
   raw: string | null,
-  load: (data: InitialData) => void,
+  load: (data: Scene | InitialData) => void,
   onValidationError?: (issues: ZodIssue[]) => void
 ): void => {
   if (raw === null) {
@@ -40,7 +42,9 @@ export const handleImportedJsonText = (
   }
   let modelData: unknown;
   try {
-    modelData = JSON.parse(raw);
+    // parseJson drops __proto__, constructor and prototype keys, so a
+    // file cannot reach an object's prototype.
+    modelData = parseJson(raw);
   } catch (parseErr) {
     if (onValidationError) {
       onValidationError([
@@ -51,10 +55,11 @@ export const handleImportedJsonText = (
     }
     return;
   }
-  // The shape check happens in load() via zod safeParse. The cast
-  // here just satisfies the typed signature; an actually-wrong shape
-  // is routed to onValidationError / the console fallback downstream.
-  load(modelData as InitialData);
+  // The shape check happens in load(): a scene is validated as a scene,
+  // anything else as a legacy model. The cast here just satisfies the
+  // typed signature; an actually-wrong shape is routed to
+  // onValidationError / the console fallback downstream.
+  load(modelData as Scene | InitialData);
 };
 
 export const useImportFile = () => {

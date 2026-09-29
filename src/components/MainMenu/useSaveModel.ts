@@ -42,7 +42,10 @@ export const useSaveModel = () => {
     // 2.3: through the shared path, so the title-bar pill reports it.
     void performSave(onSave, model, {
       getStatus: uiStateActions.getSaveStatus,
-      setStatus: uiStateActions.setSaveStatus
+      setStatus: uiStateActions.setSaveStatus,
+      getSceneContext: () => {
+        return uiStateActions.get().sceneContext;
+      }
     });
   }, [model, onSave, uiStateActions]);
 };

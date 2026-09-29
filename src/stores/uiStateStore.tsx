@@ -8,6 +8,7 @@ import {
 import { UiStateStore } from 'src/types';
 import { INITIAL_UI_STATE } from 'src/config';
 import { TEMPLATES } from 'src/templates';
+import { freshSceneContext } from 'src/scene/convert';
 import { createContextualStore } from './createContextualStore';
 
 const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
@@ -48,6 +49,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       onIconUpload: undefined,
       onDiagramReplaced: undefined,
       loadGeneration: 0,
+      sceneContext: freshSceneContext(),
       focusTextBoxId: null,
       templates: TEMPLATES,
       editingGroupId: null,
@@ -235,6 +237,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         markLoaded: () => {
           set({ loadGeneration: get().loadGeneration + 1 });
+        },
+        setSceneContext: (sceneContext) => {
+          set({ sceneContext });
         },
         setOnSave: (onSave) => {
           set({ onSave });

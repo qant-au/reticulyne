@@ -74,7 +74,10 @@ export const useSaveController = ({
     const timer = setTimeout(() => {
       void performSave(onSave, model, {
         getStatus: uiStateActions.getSaveStatus,
-        setStatus: uiStateActions.setSaveStatus
+        setStatus: uiStateActions.setSaveStatus,
+        getSceneContext: () => {
+          return uiStateActions.get().sceneContext;
+        }
       });
     }, autoSaveDebounce);
     return () => {

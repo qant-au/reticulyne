@@ -10,7 +10,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Reticulyne from '../Reticulyne';
-import type { Model } from 'src/types';
+import type { Scene } from 'src/vendor/accurona-core';
 
 // jsdom shims — copied from Reticulyne.smoke.test.tsx since the renderer
 // touches ResizeObserver and matchMedia on mount.
@@ -68,7 +68,7 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
     warnSpy.mockRestore();
   });
 
-  test('renders the Save menu entry and fires onSave with the current model when clicked', async () => {
+  test('renders the Save menu entry and fires onSave with the diagram as a scene when clicked', async () => {
     const onSave = jest.fn();
     render(
       <Reticulyne
@@ -95,9 +95,60 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
     });
 
     expect(onSave).toHaveBeenCalledTimes(1);
-    const arg = onSave.mock.calls[0][0] as Model;
+    const arg = onSave.mock.calls[0][0] as Scene;
+    expect(arg.format).toBe('accurona-scene');
     expect(arg.title).toBe('SaveTarget');
     expect(arg.views).toHaveLength(1);
+    expect(arg.views?.[0]).toMatchObject({ id: 'v1', kind: 'iso' });
+    // The legacy model's '#fff' is normalised to the scene format's #rrggbb.
+    expect(arg.colors).toEqual([{ id: 'c1', value: '#ffffff' }]);
+    expect(arg).not.toHaveProperty('items');
+  });
+
+  test('a scene opened and saved keeps what Reticulyne does not show', async () => {
+    // A placed node renders a label, which jsdom cannot scroll.
+    if (!Element.prototype.scrollTo) Element.prototype.scrollTo = () => {};
+    const onSave = jest.fn();
+    const opened: Scene = {
+      format: 'accurona-scene',
+      version: 1,
+      id: 'hq',
+      title: 'Head office',
+      objects: [
+        { id: 'sw', name: 'Switch', props: { ip: '10.0.0.2' } },
+        { id: 'desk', element: 'desk' }
+      ],
+      views: [
+        {
+          id: 'plan',
+          kind: 'plan',
+          name: 'Plan',
+          floors: [{ id: 'g' }],
+          placements: [{ object: 'desk', floor: 'g', x: 0, y: 0 }]
+        },
+        {
+          id: 'net',
+          kind: 'schematic',
+          name: 'Network',
+          placements: [{ object: 'sw', tile: { x: 0, y: 0 } }]
+        }
+      ]
+    };
+    render(
+      <Reticulyne
+        mainMenuOptions={['ACTION.SAVE']}
+        onSave={onSave}
+        initialData={opened}
+      />
+    );
+
+    await openMainMenu();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Save'));
+    });
+
+    expect(onSave).toHaveBeenCalledTimes(1);
+    expect(onSave.mock.calls[0][0]).toEqual(opened);
   });
 
   test('suppresses the Save entry when ACTION.SAVE is in mainMenuOptions but onSave is missing', async () => {

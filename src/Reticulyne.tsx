@@ -48,6 +48,8 @@ import {
 import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
 import { TEMPLATES } from 'src/templates';
+import { isSceneDocument, type Scene } from 'src/vendor/accurona-core';
+import { sceneFromModel, type LoadHints } from 'src/scene';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
 
 const App = ({
@@ -111,8 +113,10 @@ const App = ({
   // reference-equality dedupe guard inside `useInitialDataManager.load`
   // — every consumer re-render would re-seed the entire model store and
   // wipe any unsaved items the user had just placed.
+  // A scene is loaded as it is: its fields are not Reticulyne's defaults.
   const mergedInitialData = useMemo(() => {
-    return { ...INITIAL_DATA, ...initialData };
+    if (isSceneDocument(initialData)) return initialData as Scene;
+    return { ...INITIAL_DATA, ...(initialData as InitialData | undefined) };
   }, [initialData]);
 
   useEffect(() => {
@@ -428,8 +432,17 @@ const useReticulyne = () => {
     return modelFromModelStore(ModelActions.get());
   }, [ModelActions]);
 
+  // The diagram as a scene (the file format): the model merged into the
+  // scene it was opened from, as a save hands it to onSave.
+  const getScene = useCallback((): Scene => {
+    return sceneFromModel(
+      modelFromModelStore(ModelActions.get()),
+      uiStateActions.get().sceneContext
+    );
+  }, [ModelActions, uiStateActions]);
+
   const loadModel = useCallback(
-    (data: InitialData): void => {
+    (data: Scene | InitialData, options?: LoadHints): void => {
       if (editorModeRef.current !== 'EDITABLE') {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
@@ -439,7 +452,7 @@ const useReticulyne = () => {
         }
         return;
       }
-      initialDataManager.load(data);
+      initialDataManager.load(data, options);
     },
     [initialDataManager]
   );
@@ -803,12 +816,19 @@ const useReticulyne = () => {
 
   return {
     // Documented imperative API.
-    /** Return a snapshot of the current model. */
+    /** Return a snapshot of the current model (live editor state). */
     getModel,
     /**
-     * Replace the editor's contents with a new validated model. No-op
-     * (warns in dev) unless `editorMode` is `EDITABLE`; set
-     * `editorMode="EDITABLE"` before calling to allow programmatic loads.
+     * The diagram as a scene, the file format: what a save hands to
+     * `onSave`. Use this, not `getModel()`, to persist the diagram.
+     */
+    getScene,
+    /**
+     * Replace the editor's contents with a scene, or a legacy Reticulyne
+     * model (converted to a scene). Validated whole. `options` can fit the
+     * diagram to the screen or open a given view. No-op (warns in dev)
+     * unless `editorMode` is `EDITABLE`; set `editorMode="EDITABLE"` before
+     * calling to allow programmatic loads.
      */
     loadModel,
     /** The diagram title. */

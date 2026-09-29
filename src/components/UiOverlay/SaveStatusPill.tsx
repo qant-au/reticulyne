@@ -80,7 +80,10 @@ export const SaveStatusPill = () => {
           onClick={() => {
             void performSave(onSave, modelFromModelStore(modelActions.get()), {
               getStatus: uiStateActions.getSaveStatus,
-              setStatus: uiStateActions.setSaveStatus
+              setStatus: uiStateActions.setSaveStatus,
+              getSceneContext: () => {
+                return uiStateActions.get().sceneContext;
+              }
             });
           }}
         >

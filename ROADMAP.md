@@ -204,7 +204,7 @@ group only reorders within that group's children.
 
 ### ~~1.4 Real multi-select with bulk operations~~
 
-_Shipped 2026-08-10 (iso-003). Selection model, Shift+click, marquee drag,
+_Shipped 2026-08-10. Selection model, Shift+click, marquee drag,
 group drag/nudge/delete, and the multi-edit panel all landed; `Ctrl+A` and
 `Shift+2` came with it (UXA-07). Two deliberate departures from the sketch
 below: the selection lives in a new `selection: ItemReference[]` slice with
@@ -1130,7 +1130,7 @@ noted.
 
 #### ~~UXA-01 Tool hotkey realignment (full parity)~~
 
-_Shipped 2026-08-10 (iso-003), as specified below, with two additions the
+_Shipped 2026-08-10, as specified below, with two additions the
 sketch did not cover: `C` was kept as a second connector alias alongside the
 new `A`, so existing Reticulyne muscle memory is not broken in the other
 direction; and bare `I` moving to Add-item displaced the FEA12-01
@@ -1250,7 +1250,7 @@ reducer already wired into the context menu
 
 #### ~~UXA-04 Cut (`Ctrl/Cmd+X`)~~
 
-_Shipped 2026-08-10 (iso-003). Acts on the active item, not the whole
+_Shipped 2026-08-10. Acts on the active item, not the whole
 selection: the clipboard slice holds a single `ClipboardEntry` by
 construction (FEA5-04), so copy / cut / duplicate all stay single-item until
 that is widened. The `?` dialog now says "active item" on those three rows
@@ -1306,7 +1306,7 @@ the reducer to non-rectangle item types).
 
 #### ~~UXA-07 `Ctrl+A` select-all + `Shift+2` fit-to-selection (depends on 1.4)~~
 
-_Shipped 2026-08-10 (iso-003) alongside 1.4. `fitToSelection` lives on
+_Shipped 2026-08-10 alongside 1.4. `fitToSelection` lives on
 `useDiagramUtils` and reuses `getFitToViewParams` by handing it a view
 filtered to the selection, rather than teaching `fitToView.ts` about
 selection sets. It no-ops on an empty selection — `getProjectBounds` falls

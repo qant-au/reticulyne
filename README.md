@@ -54,8 +54,8 @@ export function Diagram() {
 }
 ```
 
-The package is currently published to GitHub Packages, which needs a one-off `.npmrc`
-entry: see [Installation](docs/installation.md). To run the editor on its own instead,
+The package is not on a registry yet (a public npm release is planned): build it from
+source as described in [Installation](docs/installation.md). To run the editor on its own instead,
 see [Standalone Docker](docs/docker.md).
 
 **Requirements:** React 18 or 19, MUI v9, Emotion and Zustand as peer dependencies.

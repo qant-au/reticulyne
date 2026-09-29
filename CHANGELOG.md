@@ -13,6 +13,13 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Removed
+
+- **Publishing to GitHub Packages.** Releases no longer publish the package, and the
+  repository no longer carries a registry `.npmrc`. Versions already published there are
+  left in place. Install from source until the public npm release
+  ([Installation](docs/installation.md)).
+
 ### Removed (breaking)
 
 - **`useReticulyne().Model` and `.uiState`**. The raw

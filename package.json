@@ -1,16 +1,12 @@
 {
   "name": "@qant-au/reticulyne",
   "version": "0.3.0",
-  "private": false,
+  "private": true,
   "description": "An open-source React component for drawing network diagrams.",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/qant-au/reticulyne.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/",
-    "access": "restricted"
   },
   "engines": {
     "node": ">=22.0.0"

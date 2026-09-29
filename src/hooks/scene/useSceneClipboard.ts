@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { produce } from 'immer';
 import { ClipboardEntry, Coords, ItemReference } from 'src/types';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import * as reducers from 'src/stores/reducers';
@@ -129,11 +130,10 @@ export const useSceneClipboard = ({
   // — which means paste is automatically captured by the FEA5-03
   // undo/redo history.
   //
-  // Connectors are deliberately not copyable: their anchors
-  // reference other items by id, and the right "paste a connector
-  // into a context where its anchored items may or may not exist"
-  // semantics isn't a UX call we want to lock in yet. Matches
-  // duplicateItem's existing exclusion.
+  // Connectors are copied with both of their ends and rewired to the
+  // copies; one whose ends are not both copied stays behind. Groups with
+  // two or more copied members are recreated around the copies (decided
+  // 2026-09-29, as Excalidraw does both).
   const setClipboard = useUiStateStore((state) => {
     return state.actions.setClipboard;
   });
@@ -157,9 +157,7 @@ export const useSceneClipboard = ({
             entries.push({
               kind: 'ITEM',
               modelItem,
-              viewItem: ungrouped(
-                getItemByIdOrThrow(currentView.items ?? [], t.id).value
-              ),
+              viewItem: getItemByIdOrThrow(currentView.items ?? [], t.id).value,
               icon: state.model.icons.find((i) => {
                 return i.id === modelItem.icon;
               })
@@ -169,15 +167,15 @@ export const useSceneClipboard = ({
           case 'TEXTBOX':
             entries.push({
               kind: 'TEXTBOX',
-              textBox: ungrouped(
-                getItemByIdOrThrow(currentView.textBoxes ?? [], t.id).value
-              )
+              textBox: getItemByIdOrThrow(currentView.textBoxes ?? [], t.id)
+                .value
             });
             break;
           case 'RECTANGLE': {
-            const rectangle = ungrouped(
-              getItemByIdOrThrow(currentView.rectangles ?? [], t.id).value
-            );
+            const rectangle = getItemByIdOrThrow(
+              currentView.rectangles ?? [],
+              t.id
+            ).value;
             entries.push({
               kind: 'RECTANGLE',
               rectangle,
@@ -188,9 +186,111 @@ export const useSceneClipboard = ({
             break;
           }
           default:
-            // CONNECTOR is intentionally not copyable.
+            // A connector comes along only with both of its ends (below).
             break;
         }
+      }
+
+      // Groups: one with two or more copied members (at any depth) is
+      // recreated around the copies; with fewer, the copy is ungrouped.
+      const groups = currentView.groups ?? [];
+      const parentOf = (id: string | undefined) => {
+        return groups.find((g) => {
+          return g.id === id;
+        });
+      };
+      const counts = new Map<string, number>();
+      for (const e of entries) {
+        const own =
+          e.kind === 'ITEM'
+            ? e.viewItem.parentGroupId
+            : e.kind === 'TEXTBOX'
+              ? e.textBox.parentGroupId
+              : e.kind === 'RECTANGLE'
+                ? e.rectangle.parentGroupId
+                : undefined;
+        for (let g = parentOf(own); g; g = parentOf(g.parentGroupId)) {
+          counts.set(g.id, (counts.get(g.id) ?? 0) + 1);
+        }
+      }
+      const kept = (id: string) => {
+        return (counts.get(id) ?? 0) >= 2;
+      };
+      // The nearest copied group at or above this one, or none.
+      const nearest = (id: string | undefined): string | undefined => {
+        for (let g = parentOf(id); g; g = parentOf(g.parentGroupId)) {
+          if (kept(g.id)) return g.id;
+        }
+        return undefined;
+      };
+      const regrouped = entries.map((e): ClipboardEntry => {
+        switch (e.kind) {
+          case 'ITEM':
+            return {
+              ...e,
+              viewItem: {
+                ...e.viewItem,
+                parentGroupId: nearest(e.viewItem.parentGroupId)
+              }
+            };
+          case 'TEXTBOX':
+            return {
+              ...e,
+              textBox: {
+                ...e.textBox,
+                parentGroupId: nearest(e.textBox.parentGroupId)
+              }
+            };
+          case 'RECTANGLE':
+            return {
+              ...e,
+              rectangle: {
+                ...e.rectangle,
+                parentGroupId: nearest(e.rectangle.parentGroupId)
+              }
+            };
+          default:
+            return e;
+        }
+      });
+      entries.splice(0, entries.length, ...regrouped);
+      for (const g of groups) {
+        if (kept(g.id)) {
+          entries.push({
+            kind: 'GROUP',
+            group: { ...g, parentGroupId: nearest(g.parentGroupId) }
+          });
+        }
+      }
+
+      // Connectors: every connector whose node ends are all copied, and
+      // whose anchor-to-anchor links stay inside itself, comes too.
+      const copiedNodes = new Set(
+        targets
+          .filter((t) => {
+            return t.type === 'ITEM';
+          })
+          .map((t) => {
+            return t.id;
+          })
+      );
+      for (const c of currentView.connectors ?? []) {
+        const first = c.anchors[0];
+        const last = c.anchors[c.anchors.length - 1];
+        const ownAnchors = new Set(
+          c.anchors.map((a) => {
+            return a.id;
+          })
+        );
+        const whole =
+          first?.ref.item !== undefined &&
+          last?.ref.item !== undefined &&
+          c.anchors.every((a) => {
+            if (a.ref.item !== undefined) return copiedNodes.has(a.ref.item);
+            if (a.ref.anchor !== undefined) return ownAnchors.has(a.ref.anchor);
+            return true;
+          });
+        if (whole) entries.push({ kind: 'CONNECTOR', connector: c });
       }
       return entries;
     },
@@ -234,6 +334,37 @@ export const useSceneClipboard = ({
       const shift = (c: Coords) => {
         return { x: c.x + offset.x, y: c.y + offset.y };
       };
+
+      // Groups go in first: a member naming a group the view does not
+      // have yet is refused. Each copied group gets a new id.
+      const groupIds = new Map<string, string>();
+      for (const entry of entries) {
+        if (entry.kind === 'GROUP') groupIds.set(entry.group.id, generateId());
+      }
+      const newGroup = (id: string | undefined) => {
+        return id === undefined ? undefined : groupIds.get(id);
+      };
+      if (groupIds.size > 0) {
+        state = produce(state, (draft) => {
+          const view = draft.model.views.find((v) => {
+            return v.id === currentViewId;
+          });
+          if (!view) return;
+          for (const entry of entries) {
+            if (entry.kind !== 'GROUP') continue;
+            view.groups = [
+              ...(view.groups ?? []),
+              {
+                ...entry.group,
+                id: groupIds.get(entry.group.id)!,
+                parentGroupId: newGroup(entry.group.parentGroupId)
+              }
+            ];
+          }
+        });
+      }
+
+      const nodeIds = new Map<string, string>();
       for (const entry of entries) {
         const newId = generateId();
         switch (entry.kind) {
@@ -260,10 +391,12 @@ export const useSceneClipboard = ({
               payload: {
                 ...entry.viewItem,
                 id: newId,
-                tile: shift(entry.viewItem.tile)
+                tile: shift(entry.viewItem.tile),
+                parentGroupId: newGroup(entry.viewItem.parentGroupId)
               },
               ctx: { viewId: currentViewId, state: afterModel }
             });
+            nodeIds.set(entry.viewItem.id, newId);
             refs.push({ type: 'ITEM', id: newId });
             break;
           }
@@ -273,7 +406,8 @@ export const useSceneClipboard = ({
               payload: {
                 ...entry.textBox,
                 id: newId,
-                tile: shift(entry.textBox.tile)
+                tile: shift(entry.textBox.tile),
+                parentGroupId: newGroup(entry.textBox.parentGroupId)
               },
               ctx: { viewId: currentViewId, state }
             });
@@ -286,7 +420,8 @@ export const useSceneClipboard = ({
                 ...entry.rectangle,
                 id: newId,
                 from: shift(entry.rectangle.from),
-                to: shift(entry.rectangle.to)
+                to: shift(entry.rectangle.to),
+                parentGroupId: newGroup(entry.rectangle.parentGroupId)
               },
               ctx: { viewId: currentViewId, state }
             });
@@ -295,6 +430,36 @@ export const useSceneClipboard = ({
           default:
             break;
         }
+      }
+
+      // Connectors last, rewired to the copies: node ends to the new
+      // nodes, bare-tile waypoints shifted, anchor links to new anchors.
+      for (const entry of entries) {
+        if (entry.kind !== 'CONNECTOR') continue;
+        const anchorIds = new Map(
+          entry.connector.anchors.map((a) => {
+            return [a.id, generateId()] as const;
+          })
+        );
+        state = reducers.view({
+          action: 'CREATE_CONNECTOR',
+          payload: {
+            ...entry.connector,
+            id: generateId(),
+            anchors: entry.connector.anchors.map((a) => {
+              return {
+                id: anchorIds.get(a.id)!,
+                ref:
+                  a.ref.item !== undefined
+                    ? { item: nodeIds.get(a.ref.item)! }
+                    : a.ref.anchor !== undefined
+                      ? { anchor: anchorIds.get(a.ref.anchor)! }
+                      : { tile: shift(a.ref.tile!) }
+              };
+            })
+          },
+          ctx: { viewId: currentViewId, state }
+        });
       }
       return { state, refs };
     },
@@ -318,12 +483,41 @@ export const useSceneClipboard = ({
     count: 0
   });
 
+  // The first diagonal step, from `start` on, at which no copied node
+  // lands on a tile a node already holds: a copy there hid the node under
+  // it. (Align/Distribute refuse the same outcome.)
+  const freeStep = useCallback(
+    (entries: ClipboardEntry[], start: number) => {
+      const view = getState().model.views.find((v) => {
+        return v.id === currentViewId;
+      });
+      const taken = new Set(
+        (view?.items ?? []).map((i) => {
+          return `${i.tile.x},${i.tile.y}`;
+        })
+      );
+      const tiles = entries.flatMap((e) => {
+        return e.kind === 'ITEM' ? [e.viewItem.tile] : [];
+      });
+      for (let n = start; n < start + 200; n += 1) {
+        const clash = tiles.some((t) => {
+          return taken.has(
+            `${t.x + DUPLICATE_TILE_OFFSET.x * n},${t.y + DUPLICATE_TILE_OFFSET.y * n}`
+          );
+        });
+        if (!clash) return n;
+      }
+      return start;
+    },
+    [getState, currentViewId]
+  );
+
   const paste = useCallback((): ItemReference[] | null => {
     if (clipboard.length === 0) return null;
     if (pastes.current.clip !== clipboard) {
       pastes.current = { clip: clipboard, count: 0 };
     }
-    pastes.current.count += 1;
+    pastes.current.count = freeStep(clipboard, pastes.current.count + 1);
     const n = pastes.current.count;
     const { state, refs } = createFrom(clipboard, {
       x: DUPLICATE_TILE_OFFSET.x * n,
@@ -331,10 +525,10 @@ export const useSceneClipboard = ({
     });
     setState(state);
     return refs;
-  }, [clipboard, createFrom, setState]);
+  }, [clipboard, createFrom, setState, freeStep]);
 
   /**
-   * UXA-03: copy these items in place (connectors skipped) in one undo
+   * UXA-03: copy these items in place (with the connectors between them) in one undo
    * step and return the copies, for Alt+drag to move instead of the
    * originals. Does not touch the clipboard.
    */
@@ -350,7 +544,7 @@ export const useSceneClipboard = ({
   );
 
   /**
-   * Ctrl/Cmd+D: copy these items one tile on (connectors skipped) in one
+   * Ctrl/Cmd+D: copy these items to the first free diagonal step, with the connectors between them, in one
    * undo step and return the copies, which the caller selects so that
    * pressing it again steps on from them instead of stacking.
    */
@@ -358,11 +552,15 @@ export const useSceneClipboard = ({
     (targets: ItemReference[]): ItemReference[] => {
       const entries = entriesFor(targets);
       if (entries.length === 0) return [];
-      const { state, refs } = createFrom(entries, DUPLICATE_TILE_OFFSET);
+      const n = freeStep(entries, 1);
+      const { state, refs } = createFrom(entries, {
+        x: DUPLICATE_TILE_OFFSET.x * n,
+        y: DUPLICATE_TILE_OFFSET.y * n
+      });
       setState(state);
       return refs;
     },
-    [entriesFor, createFrom, setState]
+    [entriesFor, createFrom, setState, freeStep]
   );
 
   return {

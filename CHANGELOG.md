@@ -13,6 +13,16 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **The file format is now the [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md)**, shared with Axonometra: one JSON document of objects and the views that place them. Reticulyne draws its `iso` and `schematic` views and, on save, merges the edited diagram into the scene it opened, so plan views, unplaced objects, connections, object `props` / `ports` / `links`, layers and a connector's `connection` are kept.
+  - `onSave` receives a validated `Scene`, not a `Model` (the Save entry, Retry and auto-save).
+  - **Export as JSON** downloads a scene file (same file names).
+  - The Docker editor stores diagrams in `localStorage` as scenes; diagrams stored as models by older versions still open.
+  - Reticulyne models are **read, never written**: `initialData`, `useReticulyne().loadModel` and Open accept a scene or a legacy model, which is converted to a scene (one `iso` view per Reticulyne view; ids outside the scene id rule are remapped and colours normalised to `#rrggbb`). There is no way to save a model.
+  - Open parses files with a reviver that drops `__proto__`, `constructor` and `prototype` keys.
+  - `onModelUpdated` is unchanged: a live-state notification with the `Model`, not a save. Persist with `onSave` or `getScene()`.
+
 ### Changed
 
 - The theme, toolbar buttons, main menu, context menu, properties panels and dialogs now come from [Accurona](https://github.com/qant-au/accurona)'s shared UI (`@accurona/ui`, vendored into `src/vendor/accurona-ui/` by `scripts/sync-accurona.mjs`), the same components Axonometra uses, so the two tools look and behave alike. The main menu is no longer modal: a click outside closes it and still reaches the canvas. Every dialog has a titled header with a Close button.
@@ -33,6 +43,8 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- `useReticulyne().getScene()` returns the diagram as a scene. `loadModel(data, { fitToView?, view? })` takes view hints for a scene.
+- The package exports the `Scene` and `SceneResult` types, `validateScene`, `parseScene` and `serializeScene` (from `@accurona/core`, vendored into `src/vendor/accurona-core/`), and `legacyModelToScene`.
 - **Groups**. `Ctrl/Cmd+G` groups the selection and
   `Ctrl/Cmd+Shift+G` ungroups it. A click selects the whole group, dragging
   moves it as one, and double-click works inside it. Groups can be named,
@@ -154,6 +166,8 @@ potentially breaking and read the release notes before upgrading.
 
 ### Fixed
 
+- Drawing a connector or rectangle no longer throws when the diagram lists no colours.
+- The published type declarations resolve the vendored Accurona types (they imported a path missing from `dist`).
 - **Clicking the exact centre of a node could do nothing.** The dotted line
   from a node up to its label took the press.
 - **Docker images kept returning users on an old build.** Their bundles were

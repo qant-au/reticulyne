@@ -40,7 +40,7 @@ All props are optional. The component renders a fully-functional editor with sen
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `initialData` | `InitialData` | `INITIAL_DATA` (empty model) | Diagram contents to hydrate on mount. Validated against `modelSchema` (Zod). On rejection the editor renders empty and the failure is routed to `onValidationError` (or `console.error` if that prop is omitted). |
+| `initialData` | `Scene \| InitialData` | `INITIAL_DATA` (empty diagram) | Diagram to open on mount: a scene ([the file format](#the-file-format-scenes)), or a legacy Reticulyne model, converted to a scene on load. Validated whole (Zod). On rejection the editor renders empty and the failure is routed to `onValidationError` (or `console.error` if that prop is omitted). |
 | `mainMenuOptions` | `MainMenuOptions` | full menu | Whitelist of main-menu items. Pass `[]` to hide the main menu entirely. See [Controlling UI visibility](#controlling-ui-visibility). |
 | `showTitleBar` | `boolean` | `undefined` (follows editorMode) | Override title-bar visibility. `false` = always hidden; `true` = always shown; omitted = controlled by editor mode (`EDITABLE` / `EXPLORABLE_READONLY` show it, `NON_INTERACTIVE` hides it). |
 | `showAlignmentGuides` | `boolean` | `true` | While dragging, draw a guide to the nearest other item on the same tile X or Y line. Items already sit on whole tiles, so there is no separate snap setting. |
@@ -53,7 +53,7 @@ All props are optional. The component renders a fully-functional editor with sen
 | `onSelectionChange` | `(selection: SelectedRef[]) => void` | `undefined` | The selection changed, from any source (click, marquee, keyboard, `select()`). Receives `{ type, id }` copies; not called on mount. |
 | `onViewportChange` | `(viewport: Viewport) => void` | `undefined` | Zoom, pan or the current view changed: `{ zoom, scroll: { x, y }, viewId }`. Fires on every step of a pan or pinch, so throttle in the host if the handler is expensive. Not called on mount. |
 | `iconCollections` | `{ allow?: string[]; deny?: string[] }` | `undefined` (no filtering) | Filter icon collections by name (case-insensitive). `allow` keeps only matched collections; `deny` removes matched collections. Both can be combined. When omitted, all icons from `initialData.icons` pass through. |
-| `onModelUpdated` | `(model: Model) => void` | `undefined` | Callback invoked whenever the model changes. Callback identity does **not** need to be memoised — the component stores it in a ref to avoid identity churn. |
+| `onModelUpdated` | `(model: Model) => void` | `undefined` | Live-state notification, invoked whenever the model changes. Not a save: persist with `onSave` or `getScene()`, which give the scene. Callback identity does **not** need to be memoised — the component stores it in a ref to avoid identity churn. |
 | `width` | `number \| string` | `'100%'` | Width passed to the root `Box`. Numbers are treated as px; strings are passed verbatim (e.g. `'640px'`, `'50vw'`). |
 | `height` | `number \| string` | `'100%'` | Height passed to the root `Box`. Same semantics as `width`. |
 | `enableDebugTools` | `boolean` | `false` | Toggles the in-editor debug overlay. |
@@ -299,9 +299,9 @@ Available values (`MainMenuOptionsEnum`):
 
 | Value | What it renders |
 |---|---|
-| `'ACTION.OPEN'` | Open a diagram from a local JSON file |
+| `'ACTION.OPEN'` | Open a diagram from a local JSON file: a scene, or a legacy model (converted) |
 | `'ACTION.NEW_FROM_TEMPLATE'` | Replace the diagram with a starter diagram (see the `templates` prop) |
-| `'EXPORT.JSON'` | Download the current model as JSON |
+| `'EXPORT.JSON'` | Download the diagram as a scene file (JSON) |
 | `'EXPORT.PNG'` | Export the diagram as a PNG image |
 | `'EXPORT.PDF'` | Export the diagram as a PDF |
 | `'EXPORT.SVG'` | Export the diagram as SVG. Opens a dialog with background colour picker and two download buttons: **vector SVG** (true-flat, Illustrator/Inkscape/Figma compatible — text boxes not captured) and **universal SVG** (foreignObject, full-fidelity in browsers and Figma) |
@@ -360,16 +360,38 @@ Changing `iconCollections` at runtime re-applies the filter on the next load —
 />
 ```
 
+### The file format: scenes
+
+Reticulyne opens and saves the [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md), the file format it shares
+with [Axonometra](https://github.com/qant-au/axonometra). A scene lists each thing once as
+an **object**, and **views** place objects: Reticulyne draws the `iso` and `schematic`
+views, Axonometra the `plan` views. What `onSave` receives, what Export as JSON downloads
+and what `getScene()` returns are all scenes.
+
+On save the edited diagram is merged into the scene that was opened, so a plan view,
+objects no diagram view places, connections, object `props` / `ports` / `links`, layers
+and the connection a connector draws survive a round trip through Reticulyne. A legacy
+Reticulyne model (`InitialData`) is still accepted as input, by `initialData`,
+`loadModel` and Open, and converted to a scene (one `iso` view per Reticulyne view, ids
+and colours normalised to the scene format's rules). It is never written.
+
+```ts
+import { parseScene, serializeScene, type Scene } from '@qant-au/reticulyne';
+
+const text = serializeScene(scene); // validated; throws on an invalid scene
+const result = parseScene(text);    // { ok: true, scene } or { ok: false, errors }
+```
+
 ### Host-managed save — `onSave` + `'ACTION.SAVE'`
 
-The default `'EXPORT.JSON'` menu entry downloads a `.json` file to the user's disk — useful for ad-hoc archival, but rarely what a host application wants. For a hosted editor whose state lives in the parent application, the natural save path is "hand the model back to the host" — register an `'ACTION.SAVE'` entry in `mainMenuOptions` and pass an `onSave` callback:
+The default `'EXPORT.JSON'` menu entry downloads a `.json` scene file to the user's disk — useful for ad-hoc archival, but rarely what a host application wants. For a hosted editor whose state lives in the parent application, the natural save path is "hand the diagram back to the host" — register an `'ACTION.SAVE'` entry in `mainMenuOptions` and pass an `onSave` callback. It receives the diagram as a validated scene:
 
 ```tsx
 <Reticulyne
-  initialData={diagramFromBackend}
+  initialData={sceneFromBackend}
   mainMenuOptions={['ACTION.SAVE', 'EXPORT.PDF']}
-  onSave={(model) => {
-    return postToBackend(model);
+  onSave={(scene) => {
+    return postToBackend(scene);
   }}
 />
 ```
@@ -399,7 +421,7 @@ An edit made while a save is in flight leaves the diagram dirty afterwards. With
 <Reticulyne
   initialData={diagram}
   mainMenuOptions={['ACTION.SAVE', 'EXPORT.JSON']}
-  onSave={(model) => fetch('/api/diagram', { method: 'PUT', body: JSON.stringify(model) })}
+  onSave={(scene) => fetch('/api/diagram', { method: 'PUT', body: serializeScene(scene) })}
   autoSaveDebounce={2000}
 />
 ```
@@ -415,22 +437,24 @@ A typical embedded deployment that shows only what the host needs:
   mainMenuOptions={['ACTION.SAVE', 'EXPORT.PDF', 'EXPORT.PNG']}
   showTitleBar={false}
   iconCollections={{ deny: ['AWS', 'GCP', 'Azure', 'Kubernetes'] }}
-  onSave={(model) => saveToBackend(model)}
+  onSave={(scene) => saveToBackend(scene)}
   onModelUpdated={(model) => updateLocalDraft(model)}
 />
 ```
 
-`onSave` fires explicitly when the user clicks Save; `onModelUpdated` fires on every model change. Most hosts will use one or the other — `onSave` for an explicit-save workflow, `onModelUpdated` for autosave-on-every-change.
+`onSave` fires when the user clicks Save (and by auto-save, with `autoSaveDebounce`), with the diagram as a scene; `onModelUpdated` fires on every model change with the editor's live model. `onModelUpdated` is a notification, not a save: to persist, use `onSave` (with `autoSaveDebounce` for save-as-you-go) or `useReticulyne().getScene()`, so what is stored is the file format and keeps the parts of the scene Reticulyne does not show.
 
 ## Callback: `onModelUpdated`
 
 ```tsx
 onModelUpdated={(model: Model) => {
-  // model includes: title, version, icons[], colors[], items[], views[]
+  // model includes: title, icons[], colors[], items[], views[]
   // Note: descriptions are HTML strings, not Markdown.
-  persistToBackend(model);
+  updateLocalPreview(model);
 }}
 ```
+
+This is live editor state, not a file: persist with `onSave` or `getScene()`.
 
 Identity stability is handled by the component — passing a fresh inline closure on every render does **not** re-fire the callback unless the model itself changed.
 
@@ -446,10 +470,11 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 
 | Member | Signature | Notes |
 |---|---|---|
-| `getModel()` | `() => Model` | Serialised current model. |
+| `getModel()` | `() => Model` | The editor's current model (live state; not a file). |
+| `getScene()` | `() => Scene` | The diagram as a scene, the file format: what a save hands to `onSave`. Use this to persist the diagram. |
 | `getTitle()` | `() => string` | The diagram title. |
 | `setTitle(title)` | `(title: string) => void` | Rename the diagram. Gated on `editorMode === 'EDITABLE'`; schema-validated (over 100 characters goes to `onValidationError`); a blank title becomes `'Untitled'`. Not recorded in undo history. |
-| `loadModel(data)` | `(data: InitialData) => void` | Validate + hydrate fresh data. Gated on `editorMode === 'EDITABLE'`. |
+| `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => void` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor) of the model. Allowed in every editor mode; clears the selection; warns and does nothing for an unknown id. The editor has no view-switcher UI of its own, so this is how a host offers one. |
 | `setZoom(z)` | `(z: number) => void` | Set absolute zoom, clamped to 0.2 to 1. |
@@ -486,11 +511,11 @@ re-hydrates the editor in any mode, so a viewer never needs `loadModel`.
 
 ```tsx
 import Reticulyne from '@qant-au/reticulyne';
-import type { InitialData } from '@qant-au/reticulyne';
+import type { Scene } from '@qant-au/reticulyne';
 import { useEffect, useState } from 'react';
 
 function DiagramViewer({ diagramId }: { diagramId: string }) {
-  const [data, setData] = useState<InitialData | null>(null);
+  const [data, setData] = useState<Scene | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -513,19 +538,18 @@ function DiagramViewer({ diagramId }: { diagramId: string }) {
 
 **Editable editor: `loadModel` from a child.** Mount in `EDITABLE` and call
 `loadModel` whenever the host wants to replace the contents, for example on
-"Revert to saved". `setView` then picks the floor to show.
+"Revert to saved". The `view` option picks the view to show.
 
 ```tsx
-import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
+import Reticulyne, { useReticulyne, type Scene } from '@qant-au/reticulyne';
 
 function RevertButton({ diagramId }: { diagramId: string }) {
-  const { loadModel, setView } = useReticulyne();
+  const { loadModel } = useReticulyne();
   return (
     <button
       onClick={async () => {
-        const saved = await fetchDiagram(diagramId);
-        loadModel(saved);
-        setView(saved.views[0].id);
+        const saved: Scene = await fetchDiagram(diagramId);
+        loadModel(saved, { view: 'network' });
       }}
     >
       Revert to saved
@@ -702,7 +726,7 @@ The `description` field is rendered through a **TipTap** editor ([`src/component
 
 1. **Schema-based sanitisation (both directions).** The editor registers only `Document`, `Paragraph`, `Text`, and the marks `Bold`, `Italic`, `Underline`, `Strike`, `Link` (`EDITOR_EXTENSIONS` in [`MarkdownEditor.tsx`](../src/components/MarkdownEditor/MarkdownEditor.tsx)). ProseMirror's parser has no rule for any other tag, so `<script>`, `<iframe>`, `<svg>`, `<img>`, `<style>`, `<form>` and every undeclared attribute (`onerror`, `onload`, `srcdoc`, `style`) are dropped when the `value`/`initialData` HTML is parsed **in**, and the serialiser can only emit the registered marks on the way **out**. **Do not widen `EDITOR_EXTENSIONS`** (e.g. an image, `iframe`, or raw-HTML extension) without re-evaluating this: those reopen vectors the current design closes.
 2. **`SafeLink` protocol rejection** ([`src/components/MarkdownEditor/sanitizeLinkUrl.ts`](../src/components/MarkdownEditor/sanitizeLinkUrl.ts)). The `Link` mark is extended so every `href` is routed through `sanitizeLinkUrl` on both parse and render. Allowed protocols: `http`, `https`, `mailto`, `tel`; forbidden (link dropped / replaced): `javascript`, `data`, `vbscript`, `file`, `blob` — including percent-encoded variants such as `javascript%3a`. This applies to user-typed links and to `value`-prop HTML alike.
-3. **JSON validation.** Both the `initialData` prop and the in-editor "open JSON file" flow run every model through `initialDataSchema.safeParse()` (Zod) before any state mutation. Cross-references (view items must exist in model items, connector anchors must reference valid items) are also validated. This protects you from malformed data but **does not sanitise HTML in the `description` field** — Zod has no opinion on HTML.
+3. **JSON validation.** A file is parsed with `parseJson`, which drops `__proto__`, `constructor` and `prototype` keys. Both the `initialData` prop and the in-editor "open JSON file" flow then validate the whole document before any state mutation: a scene against the scene schema, a legacy model through `initialDataSchema.safeParse()` (Zod) and then as the scene it converts to. Cross-references (view items must exist in model items, connector anchors must reference valid items) are also validated. This protects you from malformed data but **does not sanitise HTML in the `description` field** — Zod has no opinion on HTML.
 4. **Icon URL allowlist + export-time SVG sanitisation** (SEC-01). `iconSchema.url` is restricted at validation time to `http(s):`, `blob:`, relative paths, and image-only `data:` URIs (`png`/`jpeg`/`gif`/`webp`/`svg+xml`); `javascript:`, `file:`, and non-image `data:` (e.g. `data:text/html`) are rejected, so a crafted `initialData` can't smuggle an executable URL into an `<img src>`. When you export to SVG, every inlined SVG icon is additionally stripped of `<script>`, `<foreignObject>`, and `on*` handlers — so an exported file opened directly from a `file:` origin can't execute embedded content. The export inliner also re-checks each icon URL against the same allowlist *before* fetching it (SEC-11), so even an embedder running a permissive `connect-src` can't be coerced into fetching `file:`/cross-protocol targets through the export path.
 
 ### What the library does NOT do for you

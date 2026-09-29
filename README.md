@@ -24,9 +24,14 @@ possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELO
   original Isoflow set.
 - **Editor modes.** Fully editable, explore-only, or non-interactive, for editors,
   viewers and dashboards.
-- **Export.** JSON, PNG, PDF and SVG (a flat vector SVG for Illustrator, Inkscape and
-  Figma, or a full-fidelity browser SVG). Every export runs in the browser; nothing is
-  sent anywhere.
+- **One file format, shared with Axonometra.** Diagrams open and save as the
+  [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md): one JSON document of objects and the views that
+  place them. Reticulyne draws the isometric and schematic views, and keeps the floor
+  plans, connections and object details it does not show when it saves. Files saved by
+  older versions (Reticulyne models) still open, and are saved as scenes.
+- **Export.** JSON (the scene file), PNG, PDF and SVG (a flat vector SVG for Illustrator,
+  Inkscape and Figma, or a full-fidelity browser SVG). Every export runs in the browser;
+  nothing is sent anywhere.
 - **8-directional connector routing.** Connectors route along the grid and its 45°
   diagonals, giving shorter, less cluttered paths.
 - **Selection dimming.** When one item is selected everything else fades, and a host

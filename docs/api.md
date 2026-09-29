@@ -10,7 +10,7 @@ For deeper notes on editor modes, container sizing, and the security model, see
 
 ```tsx
 import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
-import type { ReticulyneProps, InitialData, Model } from '@qant-au/reticulyne';
+import type { ReticulyneProps, InitialData, Model, Scene } from '@qant-au/reticulyne';
 ```
 
 `Reticulyne` is the default React component. `useReticulyne` is the imperative hook (only
@@ -23,7 +23,7 @@ Every prop is optional.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `initialData` | `InitialData` | empty model | Diagram to hydrate on mount. Validated against `modelSchema` (Zod). On rejection the editor renders empty and the failure is routed to `onValidationError` (or `console.error` if that prop is omitted). |
+| `initialData` | `Scene \| InitialData` | empty diagram | Diagram to open on mount: a [scene](#the-file-format-scenes), or a legacy Reticulyne model (`InitialData`), which is converted to a scene on load. A scene is validated against the scene schema, a model against `initialDataSchema` (Zod), and either is refused whole. On rejection the editor renders empty and the failure is routed to `onValidationError` (or `console.error` if that prop is omitted). |
 | `mainMenuOptions` | `MainMenuOptions` | full menu | Whitelist of main-menu entries. Pass `[]` to hide the main menu entirely. |
 | `showTitleBar` | `boolean` | `undefined` (follows editorMode) | Override title-bar visibility. `false` = always hidden; `true` = always shown; omitted = controlled by editor mode (`EDITABLE` / `EXPLORABLE_READONLY` show it, `NON_INTERACTIVE` hides it). |
 | `showAlignmentGuides` | `boolean` | `true` | While dragging, draw a guide to the nearest other item on the same tile X or Y line. Items already sit on whole tiles, so there is no separate snap setting. |
@@ -52,7 +52,7 @@ Every prop is optional.
 | `themeMode` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Controls the editor colour scheme. `'light'` / `'dark'` force the respective palette. `'auto'` (the default) mirrors the OS/browser `prefers-color-scheme` and switches live. **Breaking change (FEA9-01):** this previously defaulted to `'light'` — see the note below the table. |
 | `exportTheme` | `'light' \| 'dark'` | `'light'` | Controls the initial background colour in the export dialog (PNG / PDF). `'light'` seeds the light-mode background (`#f6faff`); `'dark'` seeds the dark-mode background (`#1a1d24`). The user can still change it inside the dialog. |
 | `children` | `ReactNode` | `undefined` | Children rendered inside the Reticulyne provider tree. Intended use is a "driver" child that calls `useReticulyne()` to drive the editor from outside — pulse connectors on a timer, update colours from a poller, etc. Driver components typically return `null`. |
-| `onSave` | `(model: Model) => void \| Promise<unknown>` | `undefined` | Invoked when the user clicks the **Save** menu entry (or by auto-save, below). Return a Promise to get an accurate status pill: "Saving…" while pending, "Saved" on resolve, "Save failed" with Retry on reject. Receives the current model snapshot — the host persists it however it wants. The Save entry only renders when (a) `'ACTION.SAVE'` appears in `mainMenuOptions` AND (b) `onSave` is supplied; listing `'ACTION.SAVE'` without `onSave` logs a one-shot `console.warn` so the misconfiguration is visible in dev. |
+| `onSave` | `(scene: Scene) => void \| Promise<unknown>` | `undefined` | Invoked when the user clicks the **Save** menu entry (or by auto-save, below). Return a Promise to get an accurate status pill: "Saving…" while pending, "Saved" on resolve, "Save failed" with Retry on reject. Receives the diagram as a validated [scene](#the-file-format-scenes): the editor's model merged into the scene it opened, so plan views, connections and anything else Reticulyne does not show are kept. The host persists it however it wants (`serializeScene(scene)` gives the file text). The Save entry only renders when (a) `'ACTION.SAVE'` appears in `mainMenuOptions` AND (b) `onSave` is supplied; listing `'ACTION.SAVE'` without `onSave` logs a one-shot `console.warn` so the misconfiguration is visible in dev. |
 | `autoSaveDebounce` | `number \| false` | `false` | Save through `onSave` this many milliseconds after the last edit. Off by default, so a host that wired `onSave` for an explicit Save is not saved on every edit. A failed auto-save pauses until the user presses Retry. No effect without `onSave`. |
 
 > **Breaking change (FEA9-01):** Prior to this release `themeMode` defaulted to `'light'`. The default is now `'auto'`, which follows the user's OS colour-scheme preference. Embedders that relied on the implicit light theme must now pass `themeMode="light"` explicitly to preserve the previous behaviour.
@@ -79,11 +79,11 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 
 | Identifier | Default? | What it does |
 |---|---|---|
-| `'ACTION.OPEN'` | on | Load a previously-exported JSON file. |
+| `'ACTION.OPEN'` | on | Open a JSON file: a scene, or a legacy Reticulyne model (converted to a scene). |
 | `'ACTION.NEW_FROM_TEMPLATE'` | on | Replace the diagram with a starter from `templates`. Hidden when `templates` is empty. |
-| `'ACTION.SAVE'` | off | Render a **Save** menu entry that fires the `onSave` prop with the current model. Only appears when both `'ACTION.SAVE'` is listed AND the `onSave` prop is supplied. Off-by-default because there's no useful behaviour without a host callback. Added in v4.1.0. |
+| `'ACTION.SAVE'` | off | Render a **Save** menu entry that fires the `onSave` prop with the diagram as a scene. Only appears when both `'ACTION.SAVE'` is listed AND the `onSave` prop is supplied. Off-by-default because there's no useful behaviour without a host callback. Added in v4.1.0. |
 | `'ACTION.RENAME'` | on | Open a dialog to rename the diagram; the title shows in the title bar and names the JSON export. (Menu label: "Rename diagram".) |
-| `'EXPORT.JSON'` | on | Download the current model as JSON, named after the diagram title (`Site-network.json`), or `reticulyne-export-<timestamp>.json` while it is `'Untitled'`. |
+| `'EXPORT.JSON'` | on | Download the diagram as a scene file (JSON), named after the diagram title (`Site-network.json`), or `reticulyne-export-<timestamp>.json` while it is `'Untitled'`. |
 | `'EXPORT.PNG'` | on | Render the current view to PNG and download. (Menu label: "Export as Image".) |
 | `'EXPORT.PDF'` | on | Render the current view to PNG and embed it in a single-page A4 PDF, then download. All client-side via jsPDF — no network call. Added in v4.0.0. |
 | `'ACTION.CLEAR_CANVAS'` | on | Wipe items + views back to an empty scene. (Menu label: "Clear".) |
@@ -96,10 +96,35 @@ surfaces upstream-project branding. Consumers that previously opted in with
 `mainMenuOptions: ['LINK.DISCORD', ...]` will see a TypeScript error and should drop the
 identifier.
 
+## The file format: scenes
+
+Reticulyne's file format is the [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md), shared with
+[Axonometra](https://github.com/qant-au/axonometra): one JSON document with a list of
+**objects** (each thing, once) and **views** that place them. Reticulyne draws the `iso`
+and `schematic` views; `plan` views are Axonometra's. Everything Reticulyne writes is a
+scene: `onSave`, Export as JSON, `getScene()` and the Docker editor's saved diagrams.
+
+- **Opening** a scene shows its `iso` and `schematic` views and the objects placed in
+  them. Object `name`, `description` and `icon` are edited; everything else is kept.
+- **Saving** merges the edited diagram back into the scene that was opened, so plan
+  views, objects no diagram view places, connections, object `props`, `ports` and
+  `links`, layers and the `connection` a connector draws all survive. A view keeps its
+  kind; a view added in Reticulyne is `iso`. A connector whose end is moved to another
+  object stops drawing its connection.
+- **Legacy models** (`InitialData`, below) are read, never written. Opening one converts
+  it to a scene with one `iso` view per Reticulyne view. Ids the scene format does not
+  allow (`/^[A-Za-z0-9_-]{1,64}$/`) are rewritten, and a colour that is not `#rrggbb`
+  is expanded (`#rgb`) or dropped. Saving then writes the scene.
+- Files are parsed with `parseJson`, which drops `__proto__`, `constructor` and
+  `prototype` keys, and validated whole before anything is loaded.
+
+`Scene`, `validateScene`, `parseScene`, `serializeScene` and `legacyModelToScene` are
+exported for hosts that store or check diagrams themselves.
+
 ## `InitialData`
 
-Equal to the `Model` shape, with `title` optional (it defaults to `'Untitled'`), plus two
-optional view hints:
+A legacy Reticulyne model, accepted as input only (see above). Equal to the `Model`
+shape, with `title` optional (it defaults to `'Untitled'`), plus two optional view hints:
 
 ```ts
 type InitialData = Omit<Model, 'title'> & {
@@ -137,10 +162,11 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 
 | Member | Signature | Notes |
 |---|---|---|
-| `getModel()` | `() => Model` | Serialised current model. |
+| `getModel()` | `() => Model` | The editor's current model (live state; not a file). |
+| `getScene()` | `() => Scene` | The diagram as a scene, the file format: what a save hands to `onSave`. Use this to persist the diagram. |
 | `getTitle()` | `() => string` | The diagram title. |
 | `setTitle(title)` | `(title: string) => void` | Rename the diagram. Gated on `editorMode === 'EDITABLE'`; schema-validated (over 100 characters goes to `onValidationError`); a blank title becomes `'Untitled'`. Not recorded in undo history. |
-| `loadModel(data)` | `(data: InitialData) => void` | Validate + hydrate fresh data. Gated on `editorMode === 'EDITABLE'`. |
+| `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => void` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view; a legacy model's own `fitToView` / `view` still work. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor). Allowed in every editor mode; clears the selection; warns and no-ops on an unknown id. |
 | `setZoom(z)` | `(z: number) => void` | Set absolute zoom, clamped to 0.2 to 1. |
@@ -194,6 +220,8 @@ The package also re-exports from `src/standaloneExports.ts`:
 - `INITIAL_DATA`, `INITIAL_SCENE_STATE` — the default-empty model and scene state.
 - Schemas from `src/schemas/` — `modelSchema`, plus item / view / connector schemas.
 - Types — `ReticulyneProps`, `InitialData`, and the full `Model` tree from `src/types/model.ts`.
+- The scene format — the `Scene` and `SceneResult` types, `validateScene`, `parseScene`,
+  `serializeScene` (from Accurona), and `legacyModelToScene` to convert a stored model.
 - Option maps, as **runtime values** (FEA-05): `EditorModeEnum`, `MainMenuOptionsEnum`,
   `ProjectionOrientationEnum`, `AnchorPositionOptions`, `DialogTypeEnum`,
   `LayerOrderingActionOptions`, `tileOriginOptions`, `ItemReferenceTypeOptions`. Each is an

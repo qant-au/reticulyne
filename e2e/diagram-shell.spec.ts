@@ -92,7 +92,9 @@ test('delete asks, then removes the diagram', async ({ page }) => {
   await expect(page.getByText('Saved diagrams appear here.')).toBeVisible();
 });
 
-test('import opens a file as a new, unsaved diagram', async ({ page }) => {
+test('import opens a file as a new diagram, saved straight away', async ({
+  page
+}) => {
   await page.goto('/');
   await page.getByTestId('diagram-import-input').setInputFiles({
     name: 'net.json',
@@ -112,7 +114,12 @@ test('import opens a file as a new, unsaved diagram', async ({ page }) => {
   await titleBar(page, 'Imported net');
   await expect(page.getByText('Edge router', { exact: true })).toBeVisible();
   await diagrams(page).click();
-  await expect(page.getByText('Saved diagrams appear here.')).toBeVisible();
+  await expect(
+    page.getByRole('menuitem', { name: /Imported net/ })
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.reload();
+  await titleBar(page, 'Imported net');
 });
 
 test('a file that is not JSON is refused with a message', async ({ page }) => {
@@ -135,7 +142,9 @@ for (const [label, body] of [
       items: [],
       icons: [],
       colors: [],
-      views: [{ id: 'v', name: 'Main', items: [{ id: 'x', tile: { x: 0, y: 0 } }] }]
+      views: [
+        { id: 'v', name: 'Main', items: [{ id: 'x', tile: { x: 0, y: 0 } }] }
+      ]
     })
   ]
 ]) {
@@ -190,7 +199,9 @@ test('a saved diagram the editor would refuse opens a new one, with a message', 
       items: [{ id: 'a', name: 'x'.repeat(101), icon: 'none' }],
       icons: [],
       colors: [{ id: 'c', value: '#999999' }],
-      views: [{ id: 'v', name: 'Main', items: [{ id: 'a', tile: { x: 0, y: 0 } }] }]
+      views: [
+        { id: 'v', name: 'Main', items: [{ id: 'a', tile: { x: 0, y: 0 } }] }
+      ]
     };
     window.localStorage.setItem('reticulyne.diagram.bad', JSON.stringify(bad));
     window.localStorage.setItem(
@@ -200,6 +211,8 @@ test('a saved diagram the editor would refuse opens a new one, with a message', 
     window.localStorage.setItem('reticulyne.current', 'bad');
   });
   await page.goto('/');
-  await expect(page.getByText(/last diagram could not be opened/)).toBeVisible();
+  await expect(
+    page.getByText(/last diagram could not be opened/)
+  ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Main menu' })).toBeVisible();
 });

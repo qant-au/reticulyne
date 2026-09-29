@@ -23,6 +23,8 @@ export const ExpandButton = ({ isExpanded, onClick, sx }: Props) => {
         ...sx
       }}
       onClick={onClick}
+      // Icon only: without a name it read as an unlabelled button.
+      aria-label={isExpanded ? 'Show less' : 'Show more'}
     >
       {isExpanded ? (
         <ReadLessIcon sx={{ color: 'common.white' }} />

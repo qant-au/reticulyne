@@ -3,15 +3,19 @@
  */
 import { exportAsJSON } from 'src/utils/exportOptions';
 import { handleImportedJsonText } from 'src/components/MainMenu/useImportFile';
-import { initialDataSchema } from 'src/schemas/model';
 import { model as fixtureModel } from 'src/fixtures/model';
-import type { InitialData } from 'src/types';
+import { SCENE_SCHEMA_URL, type Scene } from 'src/vendor/accurona-core';
+import {
+  legacyModelToScene,
+  readScene,
+  sceneFromModel,
+  sceneToModel
+} from 'src/scene';
 
 // QUA-09: the EXPORT.JSON → ACTION.OPEN path is the persistence contract.
-// exportAsJSON serialises the Model to JSON; the import path parses it and
-// re-validates through initialDataSchema. This round-trips a known-valid
-// fixture and asserts the imported, schema-validated model is identical —
-// a guard against export/import drifting out of schema parity.
+// exportAsJSON writes a scene (the file format); the import path parses it
+// and validates it as a scene. This round-trips a known-valid fixture and
+// asserts the imported scene, and the model it opens to, are identical.
 
 // exportOptions pulls in html-to-image + jspdf at module load (used by the
 // PNG/PDF/SVG paths, not by exportAsJSON). Stub them so the import is hermetic.
@@ -50,22 +54,49 @@ beforeEach(() => {
 });
 
 describe('JSON export → import round-trip (QUA-09)', () => {
-  test('a model survives export then import unchanged', async () => {
-    exportAsJSON(fixtureModel);
+  test('the export is a scene that opens to the same diagram', async () => {
+    const opened = legacyModelToScene(fixtureModel, 'fixture');
+    const { model, context } = sceneToModel(opened);
+    exportAsJSON(sceneFromModel(model, context));
 
     expect(createObjectURL).toHaveBeenCalledTimes(1);
     const blob = createObjectURL.mock.calls[0][0];
     expect(blob.type).toContain('application/json');
     const json = await readBlobText(blob);
+    const body = JSON.parse(json);
+    expect(body.format).toBe('accurona-scene');
+    expect(body.$schema).toBe(SCENE_SCHEMA_URL);
+    expect(body).not.toHaveProperty('items');
 
-    let imported: InitialData | undefined;
+    let imported: Scene | undefined;
     handleImportedJsonText(json, (data) => {
-      const result = initialDataSchema.safeParse(data);
-      expect(result.success).toBe(true);
-      if (result.success) imported = result.data as InitialData;
+      const result = readScene(data);
+      expect(result.ok).toBe(true);
+      if (result.ok) imported = result.scene;
     });
 
-    expect(imported).toEqual(fixtureModel);
+    expect(imported).toEqual({ $schema: SCENE_SCHEMA_URL, ...opened });
+    expect(sceneToModel(imported!).model).toEqual(model);
+  });
+
+  test('a legacy model file still opens, converted to a scene', () => {
+    let imported: Scene | undefined;
+    handleImportedJsonText(JSON.stringify(fixtureModel), (data) => {
+      const result = readScene(data);
+      if (result.ok) imported = result.scene;
+    });
+    expect(imported?.format).toBe('accurona-scene');
+    expect(imported?.objects).toHaveLength(fixtureModel.items.length);
+  });
+
+  test('keys that reach a prototype are dropped on parse', () => {
+    const load = jest.fn();
+    handleImportedJsonText(
+      '{"__proto__": {"polluted": true}, "title": "x"}',
+      load
+    );
+    expect(load).toHaveBeenCalledWith({ title: 'x' });
+    expect(({} as { polluted?: boolean }).polluted).toBeUndefined();
   });
 
   test('malformed JSON does not reach load and is logged', () => {

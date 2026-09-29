@@ -1,7 +1,12 @@
 import type { Model, SaveHandler, SaveStatus } from 'src/types';
+import { validateScene } from 'src/vendor/accurona-core';
+import { sceneFromModel, type SceneContext } from 'src/scene/convert';
 
 // One save path for the menu's Save, the pill's Retry and
-// auto-save, so all three report the same status.
+// auto-save, so all three report the same status. What is saved is a
+// scene (the file format): the model merged into the scene it was opened
+// from. The dirty check still fingerprints the model, which is what the
+// user edits.
 
 // FNV-1a over the model's JSON. Only used to compare "is this what was
 // saved?", so a 32-bit hash of the serialised model is plenty and keeps
@@ -19,10 +24,13 @@ export const fingerprintModel = (model: Model): string => {
 interface SaveDeps {
   getStatus: () => SaveStatus;
   setStatus: (patch: Partial<SaveStatus>) => void;
+  /** The scene the diagram was opened from, read at save time. */
+  getSceneContext: () => SceneContext;
 }
 
 /**
- * Hand the model to the host and track the outcome. The fingerprint is
+ * Hand the diagram to the host, as a validated scene, and track the
+ * outcome. The fingerprint is
  * taken from the model as sent, so an edit made while the save is in
  * flight still leaves the diagram dirty afterwards. A second call while
  * one is in flight is ignored; auto-save re-arms once it settles.
@@ -30,13 +38,19 @@ interface SaveDeps {
 export const performSave = async (
   onSave: SaveHandler,
   model: Model,
-  { getStatus, setStatus }: SaveDeps
+  { getStatus, setStatus, getSceneContext }: SaveDeps
 ): Promise<void> => {
   if (getStatus().state === 'saving') return;
   const fingerprint = fingerprintModel(model);
   setStatus({ state: 'saving', error: null });
   try {
-    await onSave(model);
+    // An editor that writes an invalid scene has a bug; saving it would
+    // lose work on the next open, so it is reported as a failed save.
+    const checked = validateScene(sceneFromModel(model, getSceneContext()));
+    if (!checked.ok) {
+      throw new Error(`The diagram is not a valid scene: ${checked.errors[0]}`);
+    }
+    await onSave(checked.scene);
     setStatus({
       state: 'saved',
       lastSavedAt: Date.now(),

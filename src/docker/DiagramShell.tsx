@@ -25,7 +25,6 @@ import Reticulyne, { INITIAL_DATA, readIconAsDataUrl } from 'src/Reticulyne';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import { generateId } from 'src/utils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { initialDataSchema } from 'src/schemas/model';
 import type {
   Colors,
   Icon,
@@ -33,6 +32,7 @@ import type {
   Model,
   ReticulyneProps
 } from 'src/types';
+import { parseJson, type Scene } from 'src/vendor/accurona-core';
 import {
   createDiagramStorage,
   type DiagramEntry,
@@ -52,7 +52,8 @@ const AUTO_SAVE_MS = 5000;
 
 interface Current {
   id: string;
-  data: InitialData;
+  /** A stored or imported diagram is a scene; a new one starts as a model. */
+  data: Scene | InitialData;
   /** Set once the diagram has been saved at least once. */
   stored: boolean;
 }
@@ -255,7 +256,7 @@ interface ShellProps {
   bundledIcons: Icon[];
   colors: Colors;
   /** Opens this instead of the last diagram (the e2e hook). */
-  initialData?: InitialData;
+  initialData?: Scene | InitialData;
   /** Passed through to <Reticulyne>; the e2e hook uses it. */
   editorProps?: Partial<ReticulyneProps>;
   storage?: Storage;
@@ -285,12 +286,11 @@ export const DiagramShell = ({
       return { id: generateId(), data: initialData, stored: false };
     }
     const last = store.getCurrent();
-    const model = last ? store.load(last) : null;
-    // One the editor would refuse (saved by an older build that let a
-    // field run past the schema) gave a blank page on every reload.
-    return last && model && initialDataSchema.safeParse(model).success
-      ? { id: last, data: model, stored: true }
-      : blank();
+    // load() validates: one the editor would refuse (saved by an older
+    // build that let a field run past the schema) gave a blank page on
+    // every reload.
+    const scene = last ? store.load(last) : null;
+    return last && scene ? { id: last, data: scene, stored: true } : blank();
   });
   const [entries, setEntries] = useState(() => {
     return store.list();
@@ -346,16 +346,18 @@ export const DiagramShell = ({
     });
   };
 
+  // Saves are scenes. The editor builds each one from the model it last
+  // reported, so that model's fingerprint is what is now saved.
   const onSave = useCallback(
-    async (model: Model) => {
+    async (scene: Scene) => {
       try {
-        store.save(current.id, model);
+        store.save(current.id, scene);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'The diagram was not saved.');
         throw e;
       }
       store.setCurrent(current.id);
-      savedPrint.current = fingerprint(model);
+      savedPrint.current = latestPrint.current;
       setEntries(store.list());
       setError(null);
     },
@@ -376,9 +378,9 @@ export const DiagramShell = ({
       file
         .text()
         .then((text) => {
-          let data: InitialData;
+          let data: unknown;
           try {
-            data = JSON.parse(text) as InitialData;
+            data = parseJson(text);
           } catch {
             setError(
               `“${file.name}” is not a diagram file (it is not valid JSON).`
@@ -387,28 +389,18 @@ export const DiagramShell = ({
           }
           // Checked before switching, so a file that is JSON but not a
           // diagram leaves the current one open with an error, instead of
-          // swapping to data the editor then refuses.
-          const own = (Array.isArray(data?.icons) ? data.icons : []).filter(
-            (icon) => {
-              return !bundledIcons.some((b) => {
-                return b.id === icon.id;
-              });
-            }
-          );
-          const next = { ...data, icons: [...bundledIcons, ...own] };
-          const parsed =
-            typeof data === 'object' && data !== null && !Array.isArray(data)
-              ? initialDataSchema.safeParse(next)
-              : null;
-          if (!parsed?.success) {
+          // swapping to data the editor then refuses. A scene is read as
+          // it is; a legacy model is converted to one.
+          const id = generateId();
+          const next = store.open(data, id);
+          if (!next) {
             setError(`“${file.name}” is not a valid diagram.`);
             return;
           }
           // Saved straight away: opened unedited it was never auto-saved,
           // so it was missing from the list and gone after a reload.
-          const id = generateId();
           try {
-            store.save(id, { ...next, title: parsed.data.title } as Model);
+            store.save(id, next);
           } catch (e) {
             setError(
               e instanceof Error ? e.message : 'The diagram was not saved.'
@@ -467,9 +459,9 @@ export const DiagramShell = ({
           onImport={onImport}
           onOpen={(id) => {
             leave('Open another diagram', () => {
-              const model = store.load(id);
-              if (model && initialDataSchema.safeParse(model).success) {
-                show({ id, data: model, stored: true });
+              const scene = store.load(id);
+              if (scene) {
+                show({ id, data: scene, stored: true });
               } else setError('That diagram could not be read.');
             });
           }}

@@ -7,6 +7,8 @@ import Reticulyne, { useReticulyne } from '../Reticulyne';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { model as fixtureModel } from 'src/fixtures/model';
 import { fingerprintModel, performSave } from 'src/utils/save';
+import { freshSceneContext } from 'src/scene';
+import { validateScene } from 'src/vendor/accurona-core';
 import type { Model, SaveStatus, UiStateActions } from 'src/types';
 
 // save status, dirty tracking and opt-in auto-save.
@@ -64,9 +66,34 @@ describe('performSave', () => {
       },
       setStatus: (p: Partial<SaveStatus>) => {
         status = { ...status, ...p };
+      },
+      getSceneContext: () => {
+        return freshSceneContext();
       }
     };
   };
+
+  test('hands the host the diagram as a validated scene', async () => {
+    const onSave = jest.fn();
+    await performSave(onSave, fixtureModel, store());
+    const scene = onSave.mock.calls[0][0];
+    expect(scene.format).toBe('accurona-scene');
+    expect(validateScene(scene).ok).toBe(true);
+    expect(scene.objects).toHaveLength(fixtureModel.items.length);
+    expect(scene).not.toHaveProperty('items');
+  });
+
+  test('a model that is not a valid scene fails the save, not the host', async () => {
+    const deps = store();
+    const onSave = jest.fn();
+    await performSave(
+      onSave,
+      { ...fixtureModel, items: [{ id: 'bad id!', name: 'x' }], views: [] },
+      deps
+    );
+    expect(onSave).not.toHaveBeenCalled();
+    expect(deps.getStatus().state).toBe('error');
+  });
 
   test('awaits the host and records what was saved', async () => {
     const deps = store();
@@ -244,7 +271,10 @@ describe('save controller (2.3)', () => {
     act(() => {
       pending = performSave(onSave, api().getModel(), {
         getStatus: api().ui.getSaveStatus,
-        setStatus: api().ui.setSaveStatus
+        setStatus: api().ui.setSaveStatus,
+        getSceneContext: () => {
+          return api().ui.get().sceneContext;
+        }
       });
     });
     act(() => {

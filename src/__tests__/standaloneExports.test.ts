@@ -21,3 +21,17 @@ test.each([
   ];
   expect(map[key]).toBe(key);
 });
+
+// The scene format helpers load without a DOM too.
+test('exports the scene format helpers', () => {
+  const scene = standalone.legacyModelToScene(
+    { title: 'T', icons: [], colors: [], items: [], views: [] },
+    'id'
+  );
+  expect(standalone.validateScene(scene).ok).toBe(true);
+  const text = standalone.serializeScene(scene);
+  expect(standalone.parseScene(text)).toEqual({
+    ok: true,
+    scene: JSON.parse(text)
+  });
+});

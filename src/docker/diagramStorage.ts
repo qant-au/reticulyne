@@ -1,11 +1,21 @@
-import type { Icon, Model } from 'src/types';
+import {
+  isSceneDocument,
+  parseJson,
+  serializeScene,
+  type Scene
+} from 'src/vendor/accurona-core';
+import { readScene, sceneSafeId } from 'src/scene';
+import type { Icon } from 'src/types';
 
 // APP-01: the Docker editor's diagrams, kept in the browser's localStorage.
 // One key per diagram plus an index, so listing never parses every
-// diagram. The bundled icon packs are stripped on write and put back on
-// read: they are ~4 MB and identical in every diagram, and storing them
-// would fill the ~5 MB quota with a single save. Uploaded icons are the
-// diagram's own and are kept.
+// diagram. Each diagram is stored as a scene (the file format). The
+// bundled icon packs are stripped on write and put back on read: they are
+// ~4 MB and identical in every diagram, and storing them would fill the
+// ~5 MB quota with a single save. A bundled icon an object uses is kept,
+// so the stored text is a valid scene on its own. Uploaded icons are the
+// diagram's own and are kept. Diagrams saved by older builds, as
+// Reticulyne models, are still read (and converted).
 
 export interface DiagramEntry {
   id: string;
@@ -35,12 +45,26 @@ const isQuotaError = (e: unknown) => {
   );
 };
 
+const isObject = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+};
+
 export const createDiagramStorage = (
   storage: Storage,
   bundledIcons: Icon[]
 ) => {
-  const bundledIds = new Set(
+  // Legacy models name the bundled icons by their own ids; a scene names
+  // them by scene-safe ones (the same, bar one AWS icon with an '&').
+  const rawBundledIds = new Set(
     bundledIcons.map((icon) => {
+      return icon.id;
+    })
+  );
+  const bundled = bundledIcons.map((icon) => {
+    return { ...icon, id: sceneSafeId(icon.id) };
+  });
+  const bundledIds = new Set(
+    bundled.map((icon) => {
       return icon.id;
     })
   );
@@ -63,7 +87,50 @@ export const createDiagramStorage = (
     }
   };
 
+  /**
+   * A parsed diagram file (a scene, or a legacy model) with the bundled
+   * icons put back, as a validated scene; null when it is neither.
+   */
+  const open = (value: unknown, id?: string): Scene | null => {
+    if (!isObject(value)) return null;
+    const own = (Array.isArray(value.icons) ? value.icons : []) as Icon[];
+    let data: unknown;
+    if (isSceneDocument(value)) {
+      const ownIds = new Set(
+        own.map((icon) => {
+          return icon.id;
+        })
+      );
+      data = {
+        ...value,
+        icons: [
+          ...bundled.filter((icon) => {
+            return !ownIds.has(icon.id);
+          }),
+          ...own
+        ]
+      };
+    } else {
+      data = {
+        ...value,
+        icons: [
+          ...bundledIcons,
+          ...own.filter((icon) => {
+            return !rawBundledIds.has(icon?.id);
+          })
+        ]
+      };
+    }
+    const result = readScene(
+      data,
+      id === undefined ? undefined : sceneSafeId(id)
+    );
+    return result.ok ? result.scene : null;
+  };
+
   return {
+    open,
+
     /** Saved diagrams, most recently saved first. */
     list(): DiagramEntry[] {
       return [...readIndex()].sort((a, b) => {
@@ -72,32 +139,43 @@ export const createDiagramStorage = (
     },
 
     /** The diagram with the bundled icons put back, or null. */
-    load(id: string): Model | null {
+    load(id: string): Scene | null {
       try {
         const raw = storage.getItem(diagramKey(id));
         if (!raw) return null;
-        const model = JSON.parse(raw) as Model;
-        return { ...model, icons: [...bundledIcons, ...(model.icons ?? [])] };
+        return open(parseJson(raw), id);
       } catch {
         return null;
       }
     },
 
-    /** Throws StorageFullError when the quota is reached. */
-    save(id: string, model: Model, now = Date.now()): void {
-      const stored = {
-        ...model,
-        icons: model.icons.filter((icon) => {
-          return !bundledIds.has(icon.id);
+    /**
+     * Stores the scene without the bundled icons it does not use. Throws
+     * StorageFullError when the quota is reached, and an Error if the
+     * scene is invalid.
+     */
+    save(id: string, scene: Scene, now = Date.now()): void {
+      const used = new Set(
+        scene.objects.map((object) => {
+          return object.icon;
+        })
+      );
+      const stored: Scene = {
+        ...scene,
+        icons: (scene.icons ?? []).filter((icon) => {
+          return !bundledIds.has(icon.id) || used.has(icon.id);
         })
       };
-      write(diagramKey(id), JSON.stringify(stored));
+      write(diagramKey(id), serializeScene(stored));
       const others = readIndex().filter((entry) => {
         return entry.id !== id;
       });
       write(
         INDEX_KEY,
-        JSON.stringify([...others, { id, name: model.title, updatedAt: now }])
+        JSON.stringify([
+          ...others,
+          { id, name: scene.title ?? 'Untitled', updatedAt: now }
+        ])
       );
     },
 

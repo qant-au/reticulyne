@@ -3,7 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Box } from '@mui/material';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import type { InitialData, Model } from 'src/types';
+import type { InitialData } from 'src/types';
+import type { Scene } from 'src/vendor/accurona-core';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import type { EditorModeEnum } from 'src/types/common';
 import { icons, colors } from './examples/initialData';
@@ -20,7 +21,7 @@ import { DiagramShell } from './docker/DiagramShell';
 declare global {
   interface Window {
     __RETICULYNE_E2E__?: {
-      initialData?: InitialData;
+      initialData?: Scene | InitialData;
       editorMode?: keyof typeof EditorModeEnum;
       /**
        * When true, wrap the editor in a scrolling parent taller than
@@ -40,7 +41,7 @@ declare global {
       enableAnimation?: boolean;
       /**
        * 2.3: give the editor a host onSave for the save-status spec.
-       * Saves are recorded on window.__RETICULYNE_E2E_SAVES__; delayMs
+       * Saves (scenes) are recorded on window.__RETICULYNE_E2E_SAVES__; delayMs
        * holds each save pending, fail makes it reject.
        */
       save?: {
@@ -69,10 +70,10 @@ const saveProps = saveConfig
   ? {
       mainMenuOptions: [...MAIN_MENU_OPTIONS, 'ACTION.SAVE' as const],
       autoSaveDebounce: saveConfig.autoSaveDebounce ?? false,
-      onSave: (model: Model) => {
+      onSave: (scene: Scene) => {
         window.__RETICULYNE_E2E_SAVES__ = [
           ...(window.__RETICULYNE_E2E_SAVES__ ?? []),
-          model
+          scene
         ];
         return new Promise<void>((resolve, reject) => {
           setTimeout(() => {

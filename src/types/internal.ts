@@ -26,6 +26,8 @@ import type {
 } from './model';
 import type { ItemReference, ConnectorPath } from './scene';
 import type { QueuedPatch } from './imperative';
+import type { Scene as SceneDocument } from 'src/vendor/accurona-core';
+import type { SceneContext } from 'src/scene/convert';
 import type { DiagramTemplate } from 'src/templates';
 import { DialogTypeEnum, type AnchorPosition } from './ui';
 import type {
@@ -97,8 +99,9 @@ export type SceneStore = Scene & {
 // === UI-state runtime shapes ===
 
 // 2.3: a host save callback may return a Promise; the editor awaits it
-// to show Saving / Saved / failed.
-export type SaveHandler = (model: Model) => void | Promise<unknown>;
+// to show Saving / Saved / failed. It is handed the diagram as a scene,
+// the file format.
+export type SaveHandler = (scene: SceneDocument) => void | Promise<unknown>;
 
 export interface SaveStatus {
   state: 'idle' | 'saving' | 'saved' | 'error';
@@ -329,6 +332,10 @@ export interface UiState {
   // save status can re-baseline (isReady alone does not change between
   // two loads: both of its flips land in one render).
   loadGeneration: number;
+  // The scene the diagram was opened from, and the kind of each view it
+  // had. A save merges the model into it (src/scene); every load, Clear
+  // and template replaces it.
+  sceneContext: SceneContext;
   // A text box just placed: its inspector takes focus once, so typing
   // goes into it instead of running as tool shortcuts.
   focusTextBoxId: string | null;
@@ -402,6 +409,7 @@ export interface UiStateActions {
   setOnIconUpload: (handler: IconUploadHandler | undefined) => void;
   setOnDiagramReplaced: (handler: (() => void) | undefined) => void;
   markLoaded: () => void;
+  setSceneContext: (context: SceneContext) => void;
   setFocusTextBoxId: (id: string | null) => void;
   setTemplates: (templates: DiagramTemplate[]) => void;
   setEditingGroupId: (id: string | null) => void;

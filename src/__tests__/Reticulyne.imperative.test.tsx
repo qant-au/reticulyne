@@ -10,6 +10,7 @@ import { model as fixtureModel } from 'src/fixtures/model';
 import { getTilePosition } from 'src/utils';
 import { MAX_ZOOM } from 'src/config';
 import type { InitialData, UiStateActions } from 'src/types';
+import { validateScene, type Scene } from 'src/vendor/accurona-core';
 
 // applyPatch and the typed imperative API (and its events), driven through a mounted <Reticulyne> as a host would.
 
@@ -297,5 +298,47 @@ describe('reads, view and selection (1.6)', () => {
     const api = mount();
     expect('Model' in api()).toBe(false);
     expect('uiState' in api()).toBe(false);
+  });
+});
+
+describe('getScene and loadModel with a scene', () => {
+  test('getScene returns the diagram as a valid scene, edits included', () => {
+    const api = mount();
+    act(() => {
+      api().applyPatch({ items: { node1: { name: 'Primary DB' } } });
+    });
+    const scene = api().getScene();
+    expect(validateScene(scene).ok).toBe(true);
+    expect(
+      scene.objects.find((o) => {
+        return o.id === 'node1';
+      })?.name
+    ).toBe('Primary DB');
+  });
+
+  test('loadModel takes a scene, with view hints as options', () => {
+    const api = mount();
+    const scene: Scene = {
+      format: 'accurona-scene',
+      version: 1,
+      id: 'loaded',
+      title: 'Loaded',
+      objects: [{ id: 'x', name: 'X' }],
+      views: [
+        { id: 'a', kind: 'iso', name: 'A' },
+        {
+          id: 'b',
+          kind: 'schematic',
+          name: 'B',
+          placements: [{ object: 'x', tile: { x: 0, y: 0 } }]
+        }
+      ]
+    };
+    act(() => {
+      api().loadModel(scene, { view: 'b' });
+    });
+    expect(api().getTitle()).toBe('Loaded');
+    expect(api().getViewport().viewId).toBe('b');
+    expect(api().getScene()).toEqual(scene);
   });
 });

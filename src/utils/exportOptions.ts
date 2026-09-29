@@ -1,8 +1,9 @@
 import { toPng, toSvg } from 'html-to-image';
 import { jsPDF } from 'jspdf';
-import { Model, Size } from '../types';
+import { Size } from '../types';
 import { sanitizeSvgDataUri } from './sanitizeSvgDataUri';
 import { isAllowedIconUrl } from '../schemas/common';
+import { serializeScene, type Scene } from '../vendor/accurona-core';
 
 export const generateGenericFilename = (extension: string) => {
   return `reticulyne-export-${new Date().toISOString()}.${extension}`;
@@ -73,12 +74,15 @@ export const downloadFile = (data: Blob, filename: string) => {
   }, DOWNLOAD_REVOKE_DELAY_MS);
 };
 
-export const exportAsJSON = (model: Model) => {
-  const data = new Blob([JSON.stringify(model)], {
+// The diagram's file: a scene, the file format. serializeScene validates
+// it and throws on an invalid one rather than writing a file that would
+// not open again.
+export const exportAsJSON = (scene: Scene) => {
+  const data = new Blob([serializeScene(scene)], {
     type: 'application/json;charset=utf-8'
   });
 
-  downloadFile(data, filenameForTitle(model.title, 'json'));
+  downloadFile(data, filenameForTitle(scene.title ?? 'Untitled', 'json'));
 };
 
 export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {

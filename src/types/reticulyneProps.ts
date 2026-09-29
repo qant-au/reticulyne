@@ -5,6 +5,7 @@ import type { Connector, Model, ModelItem, View, ViewItem } from './model';
 import type { RendererProps } from './rendererProps';
 import type { SelectedRef, Viewport } from './imperative';
 import type { DiagramTemplate } from 'src/templates';
+import type { Scene } from 'src/vendor/accurona-core';
 
 export type NodeIndicatorComponent = (props: {
   item: ModelItem;
@@ -27,8 +28,10 @@ export type IconUploadHandler = (
   file: File
 ) => Promise<{ url: string; name?: string }>;
 
-// `title` is optional on input (1.2): the schema supplies 'Untitled', so a
-// loaded Model always has one.
+// A Reticulyne model, the file format before the scene format. Still read
+// (as `initialData`, by `loadModel` and by Open), converted to a scene on
+// load, and never written. `title` is optional on input (1.2): the schema
+// supplies 'Untitled', so a loaded Model always has one.
 export type InitialData = Omit<Model, 'title'> & {
   title?: string;
   fitToView?: boolean;
@@ -36,8 +39,18 @@ export type InitialData = Omit<Model, 'title'> & {
 };
 
 export interface ReticulyneProps {
-  initialData?: InitialData;
+  /**
+   * The diagram to open: a scene (the file format), or a legacy
+   * Reticulyne model, which is converted to a scene on load. Saves are
+   * always scenes, merged into the one opened here.
+   */
+  initialData?: Scene | InitialData;
   mainMenuOptions?: MainMenuOptions;
+  /**
+   * Live state: called with the editor's model after every change. It is
+   * a notification, not a save. To persist the diagram use `onSave` or
+   * `useReticulyne().getScene()`, which give the scene.
+   */
   onModelUpdated?: (Model: Model) => void;
   width?: number | string;
   height?: number | string;
@@ -129,8 +142,11 @@ export interface ReticulyneProps {
    */
   onValidationError?: (issues: ZodIssue[]) => void;
   /**
-   * Invoked when the user clicks the "Save" menu entry. Receives the
-   * current model snapshot. The host application is responsible for
+   * Invoked when the user clicks the "Save" menu entry, and by
+   * auto-save. Receives the diagram as a scene (the file format): the
+   * model merged into the scene that was opened, so plan views,
+   * connections and anything else Reticulyne does not show are kept.
+   * The host application is responsible for
    * persisting it however it wants — POSTing to a backend, queueing
    * for sync, etc.
    *
@@ -147,7 +163,7 @@ export interface ReticulyneProps {
    * it is pending, "Saved" when it resolves, and "Save failed" with a
    * Retry button when it rejects. A plain `void` return counts as saved.
    */
-  onSave?: (model: Model) => void | Promise<unknown>;
+  onSave?: (scene: Scene) => void | Promise<unknown>;
   /**
    * 2.3: save automatically this many milliseconds after the last edit,
    * through `onSave`. Off (`false`) by default, so a host that wired

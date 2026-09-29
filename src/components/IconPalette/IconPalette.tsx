@@ -25,7 +25,9 @@ export const IconPalette = () => {
       data-testid="icon-palette"
       sx={{
         position: 'absolute',
-        top: 16,
+        // Below md the toolbar reaches under a 320px panel pinned at the
+        // top, so the panel starts beneath the toolbar row there.
+        top: { xs: 96, md: 16 },
         right: 16,
         // Stops above the mini-map (150 px tall at 16 px from the bottom).
         bottom: 190,

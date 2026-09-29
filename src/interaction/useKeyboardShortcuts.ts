@@ -239,7 +239,12 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
       // diagrams may still surface a selection-driven detail panel.
       if (e.key === 'Escape') {
         // An icon armed for placement is put down again.
-        const { mode } = uiStateActions.get();
+        const { mode, iconPaletteOpen } = uiStateActions.get();
+        // The icon library closes on Esc, as the other panels do.
+        if (iconPaletteOpen && !(mode.type === 'PLACE_ICON' && mode.id)) {
+          uiStateActions.setIconPaletteOpen(false);
+          e.preventDefault();
+        }
         if (mode.type === 'PLACE_ICON' && mode.id) {
           uiStateActions.setMode({ ...mode, id: null });
           e.preventDefault();

@@ -56,7 +56,7 @@ Two side-by-side standalone Docker images come up via `bash restart.sh`:
 
 - When working on a structured review/audit, **one commit per task ID** with the ID in the subject line as `<type>(<id>): <subject>` (e.g. `fix(SEC-01): bump zod to patch DoS advisory`). Task IDs follow `<TYPE>-NN` where TYPE is one of `SEC`, `BLD`, `DEP`, `QUA`, `BUG`, `PRF`, `FEA`, `DOC`. Subsequent review passes append a digit to the type to avoid collision in `git log` (e.g. `SEC3-01` for the third pass).
 - **Do not rebase, force-push, or amend earlier commits.** Each commit stands as evidence of one task's verification state.
-- **Do not push to the remote** unless explicitly asked.
+- **Push after every commit** (`git push` to `origin/main`), as in the rest of the workspace, unless told otherwise for a particular change. (Changed 2026-09-29 at Adam's request; this line used to say not to push unless asked.)
 
 ## Port registry
 

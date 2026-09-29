@@ -221,6 +221,9 @@ const EditableMarkdown = ({
           overflowY: 'auto',
           px: 1.5,
           py: 1,
+          // The wrapper EditorContent renders must fill the box too, or the
+          // editable area is one line tall and a click below it misses.
+          '& > div': { height: '100%' },
           '.ProseMirror': { outline: 'none', minHeight: '100%' },
           '.ProseMirror p': { m: 0 },
           ...styles

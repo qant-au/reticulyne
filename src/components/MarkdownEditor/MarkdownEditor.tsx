@@ -104,7 +104,16 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
   };
 
   return (
-    <Stack direction="row" spacing={0.5} sx={{ mb: 0.5 }}>
+    <Stack
+      direction="row"
+      spacing={0.5}
+      sx={{ mb: 0.5 }}
+      // A press on a button must not take focus from the text, or what is
+      // typed next after Bold goes nowhere.
+      onMouseDown={(e) => {
+        e.preventDefault();
+      }}
+    >
       <IconButton
         size="small"
         aria-label="Bold"

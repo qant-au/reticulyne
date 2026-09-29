@@ -83,7 +83,8 @@ export const Connector: ModeActions = {
 
     const newConnector: ConnectorI = {
       id: generateId(),
-      color: scene.colors[0].id,
+      // A scene may list no colours; the renderer then uses its default.
+      color: scene.colors[0]?.id,
       anchors: []
     };
 

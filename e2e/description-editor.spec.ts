@@ -137,3 +137,36 @@ test('selecting a node mounts the editable editor and the bold toolbar works', a
 
   expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
 });
+
+test('a click low in the description box types into it', async ({ page }) => {
+  await page.addInitScript((iconSvg) => {
+    window.__RETICULYNE_E2E__ = {
+      editorMode: 'EDITABLE',
+      initialData: {
+        title: 'desc',
+        items: [{ id: 'a', name: 'Item A', icon: 'icon-tiny' }],
+        icons: [
+          { id: 'icon-tiny', name: 'T', url: iconSvg, collection: 'test' }
+        ],
+        colors: [{ id: 'color1', value: '#888888' }],
+        views: [
+          { id: 'v', name: 'Main', items: [{ id: 'a', tile: { x: 0, y: 0 } }] }
+        ]
+      }
+    };
+  }, tinyIconSvg);
+  await page.goto('/');
+  await expect(page).toHaveTitle(/Reticulyne/);
+  const vp = page.viewportSize()!;
+  await page.mouse.click(vp.width / 2, vp.height / 2 + 3);
+  const editor = page.locator('.ProseMirror[contenteditable="true"]').first();
+  await expect(editor).toBeAttached({ timeout: 10000 });
+  await expect(page.getByRole('button', { name: 'Bold' })).toBeVisible();
+  const box = (await editor.locator('xpath=../..').boundingBox())!;
+  const pm = (await editor.boundingBox())!;
+  // The editable area fills the box, not just its first line.
+  expect(pm.height).toBeGreaterThan(box.height / 2);
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height - 12);
+  await page.keyboard.type('host');
+  await expect(editor).toContainText('host');
+});

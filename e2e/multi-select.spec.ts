@@ -155,7 +155,7 @@ test.describe('1.4 — multi-select', () => {
   });
 
   // Layer ordering throws `Invalid item type` for anything but a rectangle
-  // (src/stores/reducers/layerOrdering.ts; ROADMAP 1.3 would widen it). The
+  // (src/stores/reducers/layerOrdering.ts). The
   // panel therefore filters to rectangles — this asserts the mixed selection
   // that first exposed the crash stays usable.
   test('Front / Back on a mixed selection does not crash the editor', async ({

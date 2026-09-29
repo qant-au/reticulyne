@@ -13,7 +13,7 @@ import {
   isDrawableImage
 } from 'src/utils';
 
-// ROADMAP 2.13: "Upload icon" in the picker. The host stores the file
+// "Upload icon" in the picker. The host stores the file
 // (onIconUpload) and hands back a URL; the icon joins the diagram's
 // "My icons" collection and is armed for placing, like a picked icon.
 export const UploadIconButton = () => {

@@ -1,6 +1,6 @@
 import type { Coords, ItemReference } from 'src/types';
 
-// ROADMAP 3.2: align and distribute a multi-selection. The isometric grid
+// align and distribute a multi-selection. The isometric grid
 // has no screen "left" or "top", so both work along the tile axes: align
 // puts every member on the active member's X (or Y) line; distribute keeps
 // the two outermost members and spaces the rest evenly between them,

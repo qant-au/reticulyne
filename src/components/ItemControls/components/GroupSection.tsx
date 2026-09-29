@@ -37,7 +37,7 @@ const NameField = ({
   );
 };
 
-// ROADMAP 1.7: in the multi-select panel. Group the selection, or, when
+// in the multi-select panel. Group the selection, or, when
 // the selection is a group, name it, colour it or ungroup it.
 export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
   const { currentView, colors, groupSelection, ungroupSelection, updateGroup } =

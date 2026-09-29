@@ -237,7 +237,7 @@ the **active item** (the one most recently added to the selection).
 | `Ctrl/Cmd + X` | Cut the selection (connectors stay) |
 | `Ctrl/Cmd + V` | Paste with a one-tile offset (works repeatedly) |
 
-**Groups** (ROADMAP 1.7, `EDITABLE` only). Select two or more nodes, rectangles
+**Groups** (`EDITABLE` only). Select two or more nodes, rectangles
 or text boxes and press `Ctrl/Cmd + G` (or **Group** in the selection panel).
 A group draws as a faint area under its members and acts as one thing: a click
 on any member selects the whole group, and dragging, deleting, copying and

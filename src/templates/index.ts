@@ -10,7 +10,7 @@ import type {
 } from 'src/types';
 import { VIEW_ITEM_DEFAULTS } from 'src/config';
 
-// ROADMAP 2.14: starter diagrams for "New from template". A template holds
+// starter diagrams for "New from template". A template holds
 // the drawing only; icons and colours come from the editor it is opened
 // in, so a host's own icon set and palette stay in charge. Node icons name
 // ids from the bundled isopacks (isoflow, aws, kubernetes); a host whose

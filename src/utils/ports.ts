@@ -1,7 +1,7 @@
 import type { Coords, Scroll, Size } from 'src/types';
 import { getTilePosition } from './coordinates';
 
-// ROADMAP 2.1 / 2.5: a node's four ports sit on the midpoints of its
+// a node's four ports sit on the midpoints of its
 // tile's edges. This is their screen-space geometry, shared by the
 // hotspot renderer (what to show) and the interaction modes (what a
 // press or a release is aiming at), so the two can never disagree.

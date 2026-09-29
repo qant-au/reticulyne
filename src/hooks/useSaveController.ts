@@ -10,7 +10,7 @@ interface Args {
   autoSaveDebounce: number | false;
 }
 
-// ROADMAP 2.3, mounted once by App. Keeps `saveStatus.isDirty` current,
+// Save status, mounted once by App. Keeps `saveStatus.isDirty` current,
 // treats a freshly loaded diagram as saved, runs opt-in auto-save, and
 // warns before the tab closes on unsaved work. All of it is inert unless
 // the host passed `onSave`: without a save target "unsaved" means nothing.

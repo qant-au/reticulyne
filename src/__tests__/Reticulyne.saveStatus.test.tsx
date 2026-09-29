@@ -9,7 +9,7 @@ import { model as fixtureModel } from 'src/fixtures/model';
 import { fingerprintModel, performSave } from 'src/utils/save';
 import type { Model, SaveStatus, UiStateActions } from 'src/types';
 
-// ROADMAP 2.3: save status, dirty tracking and opt-in auto-save.
+// save status, dirty tracking and opt-in auto-save.
 
 beforeAll(() => {
   if (!Element.prototype.scrollTo) {

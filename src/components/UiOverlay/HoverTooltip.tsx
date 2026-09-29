@@ -6,7 +6,7 @@ import { useScene } from 'src/hooks/useScene';
 import { getItemAtTile } from 'src/utils';
 import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
 
-// ROADMAP 3.1: rest the pointer on an item and, after a moment, its name
+// rest the pointer on an item and, after a moment, its name
 // and the start of its description appear beside it. Useful in read-only
 // embeds, where there is no inspector to open. Shown only for the cursor
 // and hand tools with no button held, so it never sits over a drag.

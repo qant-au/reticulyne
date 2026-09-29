@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 
 /**
  * Worklist 20: UXA-02 (Space+drag pan), UXA-03 (Alt+drag duplicate),
- * UXA-05 (help dialog), UXA-08 (Alt+Shift+D theme), and ROADMAP 2.12
+ * UXA-05 (help dialog), UXA-08 (Alt+Shift+D theme), and pinch to zoom
  * (pinch to zoom). One node on the centre tile.
  */
 const tinyIconSvg =

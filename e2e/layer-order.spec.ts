@@ -2,7 +2,7 @@ import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * ROADMAP 1.3 / UXA-06 — layer ordering, driven through the browser.
+ * UXA-06 — layer ordering, driven through the browser.
  *
  * Three rectangles, of which only `rA` covers the centre tile. Each test
  * does one ordering action on a fresh page and reads the result back from

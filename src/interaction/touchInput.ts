@@ -1,7 +1,7 @@
 import { MIN_ZOOM, MAX_ZOOM } from 'src/config';
 import type { Coords, Size } from 'src/types';
 
-// ROADMAP 2.12: two-finger pinch to zoom, with the midpoint panning.
+// two-finger pinch to zoom, with the midpoint panning.
 // Pure maths, kept apart from the event plumbing in useInteractionManager
 // (mirrors wheelInput.ts). Screen coordinates are relative to the
 // renderer element; a scene point p sits at screen = size/2 + scroll + p*zoom.

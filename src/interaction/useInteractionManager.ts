@@ -105,7 +105,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     null
   );
 
-  // ROADMAP 2.12: two touch pointers are a pinch, handled here and never
+  // two touch pointers are a pinch, handled here and never
   // passed to the mode handlers. The finger left down when a pinch ends is
   // ignored until it lifts, so it cannot turn into a stray drag.
   const touchRef = useRef<{
@@ -274,7 +274,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     [uiStateActions, rendererSize, interceptTouch]
   );
 
-  // ROADMAP 2.2: double-click an empty tile to add an item there, or an
+  // double-click an empty tile to add an item there, or an
   // item to open its inspector. EDITABLE only, and only from the plain
   // cursor tool, so it never fights a drawing or placing mode.
   const onDoubleClick = useCallback(

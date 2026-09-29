@@ -8,7 +8,6 @@ import {
 } from '../iconUpload';
 import { filterIconsByCollection } from '../common';
 
-// ROADMAP 2.13.
 const svg = '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>';
 
 describe('readIconAsDataUrl', () => {

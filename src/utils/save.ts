@@ -1,6 +1,6 @@
 import type { Model, SaveHandler, SaveStatus } from 'src/types';
 
-// ROADMAP 2.3. One save path for the menu's Save, the pill's Retry and
+// One save path for the menu's Save, the pill's Retry and
 // auto-save, so all three report the same status.
 
 // FNV-1a over the model's JSON. Only used to compare "is this what was

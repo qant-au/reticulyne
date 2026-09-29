@@ -1,7 +1,7 @@
 import type { Coords } from './common';
 import type { Connector, Group, Rectangle, TextBox } from './model';
 
-// ROADMAP 1.5 / 1.6: the shapes the imperative API (useReticulyne) takes
+// the shapes the imperative API (useReticulyne) takes
 // and returns. Read methods hand back these narrow DTOs, never the store's
 // own objects, so a host cannot mutate editor state by holding a reference.
 

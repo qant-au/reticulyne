@@ -9,14 +9,13 @@ import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
 import type { Coords } from 'src/types';
 
-// ROADMAP 2.1 / 2.5: the node under the pointer shows a port on each of
+// the node under the pointer shows a port on each of
 // its four tile edges: in connector mode, and in the plain cursor mode of
 // an editable diagram, where pressing a port starts a connector (2.5).
 //
 // Discoverability only. A connector anchor references a node, not an edge
 // of it (the schema has no side), so every port leads to the same anchor.
-// Snapping to a specific edge would need an anchor-side field; see the
-// ROADMAP 2.1 note.
+// Snapping to a specific edge would need an anchor-side field in the schema.
 const Ports = ({ tile }: { tile: Coords }) => {
   const theme = useTheme();
   const { css, pxSize } = useIsoProjection({ from: tile, to: tile });

@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { IconSelectionControls } from 'src/components/ItemControls/IconSelectionControls/IconSelectionControls';
 
-// ROADMAP 2.11: the icon library as a persistent panel on the right,
+// the icon library as a persistent panel on the right,
 // opened from the toolbar and left open while you work. Press an icon and
 // drag it onto a tile (the same ghost and drop as the add-item picker), or
 // click it and then click the canvas. Editable diagrams only.

@@ -51,7 +51,7 @@ This is a single repository. There are no sub-projects to tier. Allocate depth r
 | `src/vendor/`, `src/fixtures/`, `src/assets/`, `src/examples/` | Medium | Third-party vendored code, demo data, icon packs — vendored code carries elevated supply-chain risk |
 | `docker/nginx.conf`, `Dockerfile`, `restart.sh`, `webpack/docker*.config.js` | High | Standalone deployment surface — the two public Docker images |
 | `webpack/`, `tsconfig*.json`, `eslint.config.js`, `jest.config.js`, `playwright.config.ts` | Medium | Build, type, lint, test configuration |
-| `docs/`, `README.md`, `ROADMAP.md`, `SECURITY.md`, `TODO.md`, `CLAUDE.md` | Medium | Documentation and project-state surface |
+| `docs/`, `README.md`, `SECURITY.md`, `CLAUDE.md` | Medium | Documentation and project-state surface |
 | `e2e/`, `src/**/__tests__/` | High (for coverage assessment) | Test surface — Playwright E2E and Jest unit/component |
 | `dist/`, `dist-docker/`, `dist-docker-examples/`, `graphify-out/`, `playwright-out/` | Skip | Build artefacts — do not review |
 
@@ -76,14 +76,13 @@ Use all tools at your disposal:
 
 Sequence:
 
-1. Read `CLAUDE.md`, `README.md`, `SECURITY.md`, `ROADMAP.md`, `TODO.md`, `docs/embedding.md`, `docs/docker.md` in full first — they establish intent and contract.
+1. Read `CLAUDE.md`, `README.md`, `SECURITY.md`, `docs/embedding.md`, `docs/docker.md` in full first — they establish intent and contract.
 2. Read entry points in full: `src/Reticulyne.tsx`, `src/index.tsx`, `src/index-docker.tsx`, `src/standaloneExports.ts`.
 3. Read store definitions and the imperative `useReticulyne` / `useIsoflow` hook in full.
 4. Read schemas in `src/schemas/` in full — this is the validation boundary for embedder/import data.
 5. Read `Dockerfile`, `docker/nginx.conf`, `restart.sh` in full.
 6. Read `package.json`, `package-lock.json` summary, `webpack/*.config.js` for build config.
 7. Scan the rest of `src/` for the categories below.
-8. Cross-reference findings against `TODO.md` (Section 9).
 
 Read files in full unless they are clearly mechanical (long generated type files, large icon JSON fixtures). When skipping, say so explicitly.
 
@@ -96,8 +95,6 @@ The repo must have, at minimum:
 - `README.md` — purpose, install, requirements, GitHub Packages auth, test surface
 - `LICENSE`
 - `SECURITY.md` — reporting + residual-advisory ledger
-- `TODO.md` — outstanding tasks
-- `ROADMAP.md` — direction
 - `CLAUDE.md` — Claude Code project instructions
 - `docs/embedding.md` — the embedding contract
 - `docs/docker.md` — standalone Docker deployment
@@ -362,9 +359,6 @@ For each documentation file, assess:
 - Reporting channel present?
 - Residual-advisory ledger entries each cite an in-source mitigation that actually exists?
 
-**`ROADMAP.md` / `TODO.md`:**
-- Are they current, or are they listing items that have been completed or abandoned?
-
 **In-source documentation:**
 - Are complex hooks (interaction state machine, store wiring, coordinate transforms) explained?
 - Are workarounds / known limitations commented at the call site?
@@ -399,13 +393,7 @@ For each documentation file, assess:
 
 ---
 
-## Section 9: TODO & Commit-Convention Cross-Reference
-
-Read `TODO.md` before completing the review. When a finding overlaps with a TODO item, cross-reference inline:
-
-    See also: TODO.md — "relevant TODO item text"
-
-Do not enumerate TODO items in the output. Only surface them when they map to a finding you have made independently.
+## Section 9: Commit-Convention Cross-Reference
 
 Cross-reference the commit convention from `CLAUDE.md`:
 
@@ -483,7 +471,6 @@ Description: What the issue is and why it matters in concrete terms.
 Recommendation: Specific, actionable steps to fix it.
 Suggested commit ID: `SEC-NN` (or `SEC2-NN` for second-pass items, per the commit convention)
 Status: New | Recurring (code-review-YYYY-MM-DD.md)
-See also: TODO.md — "todo item text" (only if applicable)
 
 ---
 

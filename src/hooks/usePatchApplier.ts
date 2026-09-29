@@ -6,7 +6,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import * as reducers from 'src/stores/reducers';
 import type { ApplyPatchOptions, DiagramPatch, UiState } from 'src/types';
 
-// ROADMAP 1.5: true while the user is part-way through a gesture that a
+// true while the user is part-way through a gesture that a
 // model change underneath would corrupt: dragging items, a marquee, or
 // drawing or resizing a connector or rectangle. Patches wait until it ends.
 export const isGestureActive = (ui: Pick<UiState, 'mode'>): boolean => {

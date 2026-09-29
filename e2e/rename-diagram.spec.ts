@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * ROADMAP 1.2 — rename the diagram from the main menu. The new title shows
+ * rename the diagram from the main menu. The new title shows
  * in the title bar and names the JSON export, and the exported model
  * carries it.
  */

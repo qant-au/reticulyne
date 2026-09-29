@@ -2,7 +2,7 @@ import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * ROADMAP 2.11 — the persistent icon library: open it from the toolbar,
+ * the persistent icon library: open it from the toolbar,
  * drag an icon onto the canvas, and it stays open for the next one.
  */
 const tinyIconSvg =

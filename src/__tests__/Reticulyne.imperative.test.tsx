@@ -11,8 +11,7 @@ import { getTilePosition } from 'src/utils';
 import { MAX_ZOOM } from 'src/config';
 import type { InitialData, UiStateActions } from 'src/types';
 
-// ROADMAP 1.5 (applyPatch) and 1.6 (the typed imperative API and its
-// events), driven through a mounted <Reticulyne> as a host would.
+// applyPatch and the typed imperative API (and its events), driven through a mounted <Reticulyne> as a host would.
 
 beforeAll(() => {
   if (!Element.prototype.scrollTo) {

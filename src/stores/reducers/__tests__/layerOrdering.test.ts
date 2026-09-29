@@ -121,7 +121,7 @@ describe('Layer ordering reducers works correctly', () => {
   });
 });
 
-// ROADMAP 1.3: connectors, text boxes, group moves, nodes ignored.
+// connectors, text boxes, group moves, nodes ignored.
 const getModelWithAllKinds = () => {
   return produce(getModel(), (draft) => {
     draft.views[0].textBoxes = ['tb1', 'tb2', 'tb3', 'tb4'].map((id) => {

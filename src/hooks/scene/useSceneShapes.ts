@@ -128,7 +128,7 @@ export const useSceneShapes = ({
     [getState, setState, currentViewId]
   );
 
-  // ROADMAP 3.2: apply an arrangement's moves (see src/utils/arrange.ts)
+  // apply an arrangement's moves (see src/utils/arrange.ts)
   // in one undo step. A rectangle moves both corners, keeping its size;
   // connectors follow their nodes when the view syncs.
   const applyMoves = useCallback(

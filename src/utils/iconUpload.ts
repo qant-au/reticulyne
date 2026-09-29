@@ -1,6 +1,6 @@
 import { SCHEMA_LIMITS } from 'src/schemas/common';
 
-// ROADMAP 2.13: uploaded icons. The host stores the file and returns a URL
+// uploaded icons. The host stores the file and returns a URL
 // (`onIconUpload`); `readIconAsDataUrl` is a ready-made handler that keeps
 // the icon inside the diagram JSON instead, as a data: URL.
 

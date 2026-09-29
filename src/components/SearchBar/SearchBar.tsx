@@ -7,7 +7,7 @@ import { useScene } from 'src/hooks/useScene';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { searchNodes } from 'src/utils';
 
-// ROADMAP 2.7: Ctrl/Cmd+F opens this bar. Typing lists matching nodes
+// Ctrl/Cmd+F opens this bar. Typing lists matching nodes
 // (highlighted on the canvas by SearchHighlights); Enter goes to the next
 // match, selecting it and centring the view on it, Shift+Enter to the
 // previous; Esc closes. Any editor mode: finding a node changes nothing.

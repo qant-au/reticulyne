@@ -9,7 +9,7 @@
 
 Dark mode infrastructure was built in FEA7-04 (theme factory, `useResolvedThemeMode`, `themeMode` prop, Grid, Quill overrides, examples toggle, tests). An audit pass identifies seven remaining gaps that prevent the feature from shipping:
 
-1. `themeMode` defaults to `'light'`; ROADMAP specifies `'auto'`
+1. `themeMode` defaults to `'light'`; the spec calls for `'auto'`
 2. `DEFAULT_COLOR` (new-node default) is a static light-mode constant
 3. Connector direction glyphs are hardcoded `fill="black"` — invisible on dark canvas
 4. Node label stem and card background are hardcoded dark/white — incorrect in dark mode
@@ -23,7 +23,7 @@ Dark mode infrastructure was built in FEA7-04 (theme factory, `useResolvedThemeM
 
 | Decision | Choice | Rationale |
 |---|---|---|
-| `themeMode` default | `'auto'` | Matches ROADMAP §1.1 spec |
+| `themeMode` default | `'auto'` | Matches the spec |
 | Connector glyph fill | `theme.palette.common.white` | Consistent with existing white stroke on same element |
 | Label stem stroke | `theme.palette.text.primary` | Adaptive: near-black in light, near-white in dark |
 | Label card background | `theme.palette.background.paper` | Replaces hardcoded `common.white` |
@@ -86,5 +86,5 @@ Internal additions (not public API):
 
 ## Coordination Notes
 
-- ROADMAP §2.10 (Replace Quill with TipTap) will retire the Quill dark-mode CSS overrides in `GlobalStyles.tsx`. No action needed here; the overrides are harmless until that swap lands.
+- Replacing Quill with TipTap will retire the Quill dark-mode CSS overrides in `GlobalStyles.tsx`. No action needed here; the overrides are harmless until that swap lands.
 - The `exportTheme` prop is also relevant to §2.4 (SVG export) — that task should read `exportTheme` from the store using the same pattern.

@@ -1,7 +1,7 @@
 import { startPinch, updatePinch } from '../touchInput';
 import { MAX_ZOOM, MIN_ZOOM } from 'src/config';
 
-// ROADMAP 2.12: the pinch maths.
+// the pinch maths.
 const size = { width: 1000, height: 800 };
 const toScreen = (
   p: { x: number; y: number },

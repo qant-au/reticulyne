@@ -11,7 +11,7 @@ import {
 import type { ItemReference } from 'src/types';
 import { Section } from './Section';
 
-// ROADMAP 3.2: align / distribute for a multi-selection, along the tile
+// align / distribute for a multi-selection, along the tile
 // axes (see src/utils/arrange.ts). Each button is disabled, with the
 // reason on hover, when its arrangement cannot apply.
 const OPS: { op: ArrangeOp; label: string; hint: string }[] = [

@@ -9,7 +9,7 @@ import type { Coords } from 'src/types';
 
 const PAD = 0.4;
 
-// ROADMAP 1.7: each group as a faint area under its members, labelled with
+// each group as a faint area under its members, labelled with
 // its name. Outermost groups are drawn first so nested ones sit on top.
 // The group being edited (double-click) gets a stronger outline.
 export const Groups = () => {

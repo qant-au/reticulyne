@@ -1,7 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
 
 /**
- * ROADMAP 2.7 (find), 2.8 (mini-map) and 2.9 (alignment guides).
+ * Find, the mini-map and alignment guides.
  * Three nodes: A and C share tile X = 0; B sits well away.
  */
 const tinyIconSvg =

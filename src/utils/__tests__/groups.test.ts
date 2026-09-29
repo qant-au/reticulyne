@@ -11,7 +11,7 @@ import {
   groupMembers
 } from '../groups';
 
-// ROADMAP 1.7. Four nodes and a rectangle; groups built through the
+// Four nodes and a rectangle; groups built through the
 // reducers, as the UI does.
 const baseView = (): View => {
   return {

@@ -3,7 +3,7 @@ import { ItemReference, LayerOrderingAction, View } from 'src/types';
 import { getItemByIdOrThrow } from 'src/utils';
 import { State, ViewReducerContext } from './types';
 
-// ROADMAP 1.3. Rectangles, connectors and text boxes each render in
+// Rectangles, connectors and text boxes each render in
 // array order within their own layer (index 0 frontmost; the layers
 // reverse before painting), so reordering the array is what moves them.
 // Nodes are different: each node's z-index is its isometric depth

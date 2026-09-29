@@ -4,7 +4,7 @@ import { useScene } from 'src/hooks/useScene';
 import { getTilePosition } from 'src/utils';
 import type { Coords } from 'src/types';
 
-// ROADMAP 2.9. Snapping is inherent: items live on whole tiles and a drag
+// Snapping is inherent: items live on whole tiles and a drag
 // moves tile by tile, so there is no free position to snap from. What was
 // missing is the guide: while dragging, a line joins each dragged node or
 // text box to the nearest other item sharing its tile X or Y, so lining

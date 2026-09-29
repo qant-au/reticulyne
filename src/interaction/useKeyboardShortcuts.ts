@@ -522,7 +522,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         return;
       }
 
-      // === Group / ungroup (ROADMAP 1.7) ===
+      // === Group / ungroup ===
       // Ctrl/Cmd+G groups the selection; with Shift, ungroups it. Matched on
       // e.code so a Shift+G reads the same on every layout.
       if (hasModifier && e.code === 'KeyG') {
@@ -550,7 +550,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         return;
       }
 
-      // === Layer order (UXA-06, ROADMAP 1.3) ===
+      // === Layer order (UXA-06) ===
       // Excalidraw's bindings: Ctrl/Cmd+] forward, Ctrl/Cmd+[ backward,
       // with Shift for to-front / to-back, plus the Mac Cmd+Opt+] / [
       // variants. Matched on `e.code` because Shift+] arrives as `}` in

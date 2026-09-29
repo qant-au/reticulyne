@@ -7,7 +7,7 @@ import { useScene } from 'src/hooks/useScene';
 import { ItemReference, LayerOrderingAction } from 'src/types';
 import { Section } from './Section';
 
-// ROADMAP 1.3: the four layer actions, for one item or a whole selection
+// the four layer actions, for one item or a whole selection
 // (moved as one block, one undo step). Ordering is within a kind, so a
 // rectangle never passes a text box. Nodes are depth-sorted and are never
 // passed in here.

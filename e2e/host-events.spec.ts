@@ -1,7 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
 
 /**
- * ROADMAP 1.6: onNodeClick / onConnectorClick. Node A sits on the centre
+ * onNodeClick / onConnectorClick. Node A sits on the centre
  * tile (0, 0), node B at (0, 4), and connector c1 runs between them along
  * X = 0. One tile along +Y is (-70.75, -40.95) px on screen at 100% zoom.
  */

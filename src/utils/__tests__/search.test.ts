@@ -1,6 +1,5 @@
 import { searchNodes } from '../search';
 
-// ROADMAP 2.7.
 const nodes = [
   { id: 'a', name: 'Web server', iconName: 'server' },
   { id: 'b', name: 'web', description: '<p>Front door</p>' },

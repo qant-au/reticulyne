@@ -10,7 +10,7 @@ import {
 } from 'src/utils';
 import type { SceneCore } from './types';
 
-// ROADMAP 1.7: group and ungroup the selection (Ctrl+G / Ctrl+Shift+G and
+// group and ungroup the selection (Ctrl+G / Ctrl+Shift+G and
 // the multi-select panel), and rename or colour a group.
 export const useSceneGroups = ({
   getState,

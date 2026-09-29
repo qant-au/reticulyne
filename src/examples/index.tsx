@@ -48,6 +48,8 @@ export const Examples = () => {
     return window.innerWidth >= 600;
   });
 
+  const narrow = useMediaQuery('(max-width: 599.95px)');
+
   const Example = useMemo(() => {
     return examples[currentExample].component;
   }, [currentExample]);
@@ -64,10 +66,17 @@ export const Examples = () => {
               : '100%',
             // Match the sidebar's 200ms ease-in-out so the diagram
             // re-fits in lockstep with the rail sliding in/out.
-            transition: 'margin-left 200ms ease-in-out, width 200ms ease-in-out'
+            transition: narrow
+              ? 'none'
+              : 'margin-left 200ms ease-in-out, width 200ms ease-in-out'
           }}
         >
-          {Example && <Example />}
+          {/* On a phone the example is keyed on the rail too: it fitted
+              itself to the 130px left while the rail was open and kept
+              that zoom after the rail closed. */}
+          {Example && (
+            <Example key={narrow ? String(isSidebarExpanded) : 'wide'} />
+          )}
         </Box>
         <SidebarTheme>
           <ExamplesSidebar

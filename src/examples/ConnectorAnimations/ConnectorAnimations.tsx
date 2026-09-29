@@ -79,9 +79,10 @@ export const ConnectorAnimations = () => {
       <Box
         sx={{
           position: 'absolute',
-          // Above the zoom controls: at the top-left it covered the
+          // Above the zoom controls and, on a narrow canvas, the raised title
+          // bar: at the top-left it covered the
           // editor's toolbar.
-          bottom: 96,
+          bottom: 144,
           left: 16,
           p: 1.5,
           bgcolor: 'rgba(255,255,255,0.9)',

@@ -784,6 +784,81 @@ describe('useScene', () => {
       expect(nameOf(ref!.id)).toBe(original);
     });
 
+    test('a connector between two copied nodes is pasted, wired to the copies', () => {
+      const slot = setup();
+      act(() => {
+        slot.current.scene.copySelection([
+          { type: 'ITEM', id: 'node1' },
+          { type: 'ITEM', id: 'node2' }
+        ]);
+      });
+      let refs: { type: string; id: string }[] | null = null;
+      act(() => {
+        refs = slot.current.scene.paste();
+      });
+      const newIds = refs!.map((r) => {
+        return r.id;
+      });
+      const connectors = slot.current.getModel().views[0].connectors ?? [];
+      expect(connectors).toHaveLength(3);
+      const pasted = connectors.find((c) => {
+        return !['connector1', 'connector2'].includes(c.id);
+      })!;
+      expect(
+        pasted.anchors.map((a) => {
+          return a.ref.item;
+        })
+      ).toEqual(newIds);
+    });
+
+    test('a copied group pastes as a new group around the copies', () => {
+      const slot = setup();
+      const both = [
+        { type: 'ITEM' as const, id: 'node1' },
+        { type: 'ITEM' as const, id: 'node2' }
+      ];
+      act(() => {
+        slot.current.scene.groupSelection(both);
+      });
+      const original = slot.current.getModel().views[0].groups![0].id;
+      act(() => {
+        slot.current.scene.copySelection(both);
+      });
+      let refs: { type: string; id: string }[] | null = null;
+      act(() => {
+        refs = slot.current.scene.paste();
+      });
+      const view = slot.current.getModel().views[0];
+      expect(view.groups).toHaveLength(2);
+      const parents = refs!.map((r) => {
+        return view.items.find((i) => {
+          return i.id === r.id;
+        })!.parentGroupId;
+      });
+      expect(parents[0]).toBeDefined();
+      expect(parents[0]).not.toBe(original);
+      expect(parents[1]).toBe(parents[0]);
+    });
+
+    test('a paste steps past a tile another node holds', () => {
+      const slot = setup();
+      act(() => {
+        slot.current.scene.updateViewItem('node3', { tile: { x: 1, y: 1 } });
+      });
+      act(() => {
+        slot.current.scene.copySelection({ type: 'ITEM', id: 'node1' });
+      });
+      let refs: { type: string; id: string }[] | null = null;
+      act(() => {
+        refs = slot.current.scene.paste();
+      });
+      expect(
+        slot.current.scene.items.find((i) => {
+          return i.id === refs![0].id;
+        })!.tile
+      ).toEqual({ x: 2, y: 2 });
+    });
+
     test('worklist 19: a multi-item copy pastes as one group, one undo step', () => {
       const slot = setup();
       const [a, b] = slot.current.scene.items;
@@ -793,7 +868,8 @@ describe('useScene', () => {
         slot.current.scene.copySelection([
           { type: 'ITEM', id: a.id },
           { type: 'ITEM', id: b.id },
-          // Connectors are not copyable and are skipped, not an error.
+          // A selected connector adds nothing itself: it comes along
+          // because both of its ends are copied (see the test above).
           { type: 'CONNECTOR', id: 'connector1' }
         ]);
       });

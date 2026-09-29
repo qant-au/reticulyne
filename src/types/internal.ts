@@ -20,7 +20,9 @@ import type {
   ViewItem,
   TextBox,
   Rectangle,
-  Colors
+  Colors,
+  Connector,
+  Group
 } from './model';
 import type { ItemReference, ConnectorPath } from './scene';
 import type { QueuedPatch } from './imperative';
@@ -270,7 +272,11 @@ export type ClipboardEntry =
       icon?: Icon;
     }
   | { kind: 'TEXTBOX'; textBox: TextBox }
-  | { kind: 'RECTANGLE'; rectangle: Rectangle; color?: Colors[number] };
+  | { kind: 'RECTANGLE'; rectangle: Rectangle; color?: Colors[number] }
+  // A connector whose ends are both in the copy, rewired to the copies.
+  | { kind: 'CONNECTOR'; connector: Connector }
+  // A group with at least two copied members, recreated around the copies.
+  | { kind: 'GROUP'; group: Group };
 
 export interface UiState {
   view: string;

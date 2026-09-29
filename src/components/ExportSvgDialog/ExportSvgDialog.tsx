@@ -1,8 +1,5 @@
 import { useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Box,
   Button,
   Stack,
@@ -24,6 +21,7 @@ import { Reticulyne } from 'src/Reticulyne';
 import { Loader } from 'src/components/Loader/Loader';
 import { createReticulyneTheme } from 'src/styles/theme';
 import { ColorPicker } from 'src/components/ColorSelector/ColorPicker';
+import { AppDialog } from 'src/vendor/accurona-ui';
 
 interface Props {
   onClose: () => void;
@@ -115,119 +113,113 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
   }, [effectiveBgColor, model.title]);
 
   return (
-    <Dialog open onClose={onClose}>
-      <DialogTitle>Export as SVG</DialogTitle>
-      <DialogContent>
-        <Stack spacing={2}>
+    <AppDialog open onClose={onClose} title="Export as SVG" maxWidth="sm">
+      <Stack spacing={2}>
+        <Box
+          sx={{
+            position: 'absolute',
+            width: 0,
+            height: 0,
+            overflow: 'hidden'
+          }}
+        >
           <Box
-            sx={{
-              position: 'absolute',
-              width: 0,
-              height: 0,
-              overflow: 'hidden'
+            ref={containerRef}
+            sx={{ position: 'absolute', top: 0, left: 0 }}
+            style={{
+              width: unprojectedBounds.width,
+              height: unprojectedBounds.height
             }}
           >
-            <Box
-              ref={containerRef}
-              sx={{ position: 'absolute', top: 0, left: 0 }}
-              style={{
-                width: unprojectedBounds.width,
-                height: unprojectedBounds.height
+            <Reticulyne
+              editorMode="NON_INTERACTIVE"
+              onModelUpdated={onModelReady}
+              initialData={{
+                ...model,
+                fitToView: true,
+                view: currentView
               }}
-            >
-              <Reticulyne
-                editorMode="NON_INTERACTIVE"
-                onModelUpdated={onModelReady}
-                initialData={{
-                  ...model,
-                  fitToView: true,
-                  view: currentView
-                }}
-              />
-            </Box>
+            />
           </Box>
+        </Box>
 
-          {!isReady && (
-            <Box
-              sx={{
-                position: 'relative',
-                width: 500,
-                height: 300,
-                bgcolor: 'background.paper'
-              }}
-            >
-              <Loader size={2} />
-            </Box>
-          )}
+        {!isReady && (
+          <Box
+            sx={{
+              position: 'relative',
+              width: 500,
+              height: 300,
+              bgcolor: 'background.paper'
+            }}
+          >
+            <Loader size={2} />
+          </Box>
+        )}
 
-          {isReady && (
-            <>
-              <Box sx={{ width: '100%' }}>
-                <Box component="fieldset">
-                  <Typography variant="caption" component="legend">
-                    Options
-                  </Typography>
+        {isReady && (
+          <>
+            <Box sx={{ width: '100%' }}>
+              <Box component="fieldset">
+                <Typography variant="caption" component="legend">
+                  Options
+                </Typography>
+                <FormControlLabel
+                  label="Transparent background"
+                  control={
+                    <input
+                      type="checkbox"
+                      checked={transparent}
+                      onChange={(e) => {
+                        return setTransparent(e.target.checked);
+                      }}
+                      style={{ marginRight: 8 }}
+                    />
+                  }
+                />
+                {!transparent && (
                   <FormControlLabel
-                    label="Transparent background"
+                    label="Background color"
                     control={
-                      <input
-                        type="checkbox"
-                        checked={transparent}
-                        onChange={(e) => {
-                          return setTransparent(e.target.checked);
-                        }}
-                        style={{ marginRight: 8 }}
+                      <ColorPicker
+                        value={backgroundColor}
+                        onChange={setBackgroundColor}
                       />
                     }
                   />
-                  {!transparent && (
-                    <FormControlLabel
-                      label="Background color"
-                      control={
-                        <ColorPicker
-                          value={backgroundColor}
-                          onChange={setBackgroundColor}
-                        />
-                      }
-                    />
-                  )}
-                </Box>
+                )}
               </Box>
+            </Box>
 
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Vector SVG keeps shapes and icons editable, but leaves out text:
-                labels and text boxes. Universal SVG includes everything, as one
-                picture.
-              </Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              Vector SVG keeps shapes and icons editable, but leaves out text:
+              labels and text boxes. Universal SVG includes everything, as one
+              picture.
+            </Typography>
 
-              <Stack
-                direction="row"
-                spacing={2}
-                sx={{ justifyContent: 'flex-end' }}
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ justifyContent: 'flex-end' }}
+            >
+              <Button variant="text" onClick={onClose} disabled={isExporting}>
+                Cancel
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleDownloadVector}
+                disabled={isExporting}
               >
-                <Button variant="text" onClick={onClose} disabled={isExporting}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={handleDownloadVector}
-                  disabled={isExporting}
-                >
-                  Download vector SVG
-                </Button>
-                <Button
-                  onClick={handleDownloadUniversal}
-                  disabled={isExporting}
-                >
-                  Download universal SVG
-                </Button>
-              </Stack>
-            </>
-          )}
+                Download vector SVG
+              </Button>
+              <Button onClick={handleDownloadUniversal} disabled={isExporting}>
+                Download universal SVG
+              </Button>
+            </Stack>
+          </>
+        )}
 
-          {exportError && <Alert severity="error">{exportError}</Alert>}
-        </Stack>
-      </DialogContent>
-    </Dialog>
+        {exportError && <Alert severity="error">{exportError}</Alert>}
+      </Stack>
+    </AppDialog>
   );
 };

@@ -5,7 +5,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { groupMatchingSelection } from 'src/utils';
 import type { ItemReference } from 'src/types';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
-import { Section } from './Section';
+import { PanelSection } from 'src/vendor/accurona-ui';
 
 // Keyed on the group and its saved name, so it starts over when either
 // changes rather than syncing state in an effect.
@@ -58,7 +58,7 @@ export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
   if (!group) {
     if (groupable.length < 2) return null;
     return (
-      <Section title="Group">
+      <PanelSection title="Group">
         <Button
           variant="outlined"
           size="small"
@@ -68,12 +68,12 @@ export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
         >
           Group (Ctrl+G)
         </Button>
-      </Section>
+      </PanelSection>
     );
   }
 
   return (
-    <Section title="Group">
+    <PanelSection title="Group">
       <Stack spacing={1.5}>
         <NameField
           key={`${group.id}:${group.name ?? ''}`}
@@ -113,6 +113,6 @@ export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
           Ungroup (Ctrl+Shift+G)
         </Button>
       </Stack>
-    </Section>
+    </PanelSection>
   );
 };

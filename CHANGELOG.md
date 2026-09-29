@@ -13,6 +13,10 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Changed
+
+- The theme, toolbar buttons, main menu, context menu, properties panels and dialogs now come from [Accurona](https://github.com/qant-au/accurona)'s shared UI (`@accurona/ui`, vendored into `src/vendor/accurona-ui/` by `scripts/sync-accurona.mjs`), the same components Axonometra uses, so the two tools look and behave alike. The main menu is no longer modal: a click outside closes it and still reaches the canvas. Every dialog has a titled header with a Close button.
+
 ### Removed
 
 - **Publishing to GitHub Packages.** Releases no longer publish the package, and the

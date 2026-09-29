@@ -1,14 +1,5 @@
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Box,
-  Stack,
-  Typography,
-  Divider,
-  IconButton
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box, Stack, Typography, Divider } from '@mui/material';
+import { AppDialog } from 'src/vendor/accurona-ui';
 
 interface Props {
   onClose: () => void;
@@ -197,75 +188,65 @@ const ShortcutRow = ({ keys, description }: Shortcut) => {
 
 export const KeyboardShortcutsDialog = ({ onClose }: Props) => {
   return (
-    <Dialog open onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle sx={{ pr: 6 }}>Keyboard Shortcuts</DialogTitle>
-      {/* Esc and ? close it too, but on a phone the backdrop left to tap
-          is a thin strip. */}
-      <IconButton
-        aria-label="Close"
-        onClick={onClose}
-        sx={{ position: 'absolute', right: 8, top: 8 }}
-      >
-        <CloseIcon />
-      </IconButton>
-      <DialogContent>
-        <Stack spacing={2}>
-          {SHORTCUT_SECTIONS.map((section, sectionIndex) => {
-            return (
-              <Box key={section.title}>
-                {sectionIndex > 0 && <Divider sx={{ mb: 2 }} />}
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: 'text.disabled',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                    fontWeight: 700,
-                    display: 'block',
-                    mb: 0.5
-                  }}
-                >
-                  {section.title}
-                </Typography>
-                <Stack>
-                  {section.shortcuts.map((shortcut) => {
-                    return (
-                      <ShortcutRow
-                        key={shortcut.description}
-                        keys={shortcut.keys}
-                        description={shortcut.description}
-                      />
-                    );
-                  })}
-                </Stack>
-              </Box>
-            );
-          })}
-          <Divider />
-          {/* UXA-05: say what is absent on purpose, so nobody hunts for it. */}
-          <Box data-testid="excalidraw-differences">
-            <Typography
-              variant="caption"
-              sx={{
-                color: 'text.disabled',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                fontWeight: 700,
-                display: 'block',
-                mb: 0.5
-              }}
-            >
-              Differences from Excalidraw
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              No diamond, ellipse, line, freedraw, eraser, frame, laser or
-              eye-dropper: this editor places icons on an isometric grid rather
-              than drawing free shapes. No element lock or flip. A plain mouse
-              wheel pans; hold Ctrl/⌘ to zoom.
-            </Typography>
-          </Box>
-        </Stack>
-      </DialogContent>
-    </Dialog>
+    // Esc and ? close it too, but on a phone the backdrop left to tap is a
+    // thin strip, so the header keeps its Close button.
+    <AppDialog open onClose={onClose} title="Keyboard Shortcuts">
+      <Stack spacing={2}>
+        {SHORTCUT_SECTIONS.map((section, sectionIndex) => {
+          return (
+            <Box key={section.title}>
+              {sectionIndex > 0 && <Divider sx={{ mb: 2 }} />}
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.disabled',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  fontWeight: 700,
+                  display: 'block',
+                  mb: 0.5
+                }}
+              >
+                {section.title}
+              </Typography>
+              <Stack>
+                {section.shortcuts.map((shortcut) => {
+                  return (
+                    <ShortcutRow
+                      key={shortcut.description}
+                      keys={shortcut.keys}
+                      description={shortcut.description}
+                    />
+                  );
+                })}
+              </Stack>
+            </Box>
+          );
+        })}
+        <Divider />
+        {/* UXA-05: say what is absent on purpose, so nobody hunts for it. */}
+        <Box data-testid="excalidraw-differences">
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.disabled',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              fontWeight: 700,
+              display: 'block',
+              mb: 0.5
+            }}
+          >
+            Differences from Excalidraw
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            No diamond, ellipse, line, freedraw, eraser, frame, laser or
+            eye-dropper: this editor places icons on an isometric grid rather
+            than drawing free shapes. No element lock or flip. A plain mouse
+            wheel pans; hold Ctrl/⌘ to zoom.
+          </Typography>
+        </Box>
+      </Stack>
+    </AppDialog>
   );
 };

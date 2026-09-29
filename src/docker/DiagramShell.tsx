@@ -23,7 +23,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import ExpandIcon from '@mui/icons-material/ExpandMore';
 import Reticulyne, { INITIAL_DATA, readIconAsDataUrl } from 'src/Reticulyne';
 import { MAIN_MENU_OPTIONS } from 'src/config';
-import { UiElement } from 'src/components/UiElement/UiElement';
 import { generateId } from 'src/utils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { initialDataSchema } from 'src/schemas/model';
@@ -39,6 +38,7 @@ import {
   type DiagramEntry,
   type DiagramStorage
 } from './diagramStorage';
+import { Surface } from 'src/vendor/accurona-ui';
 
 // APP-01: the Docker editor as a small app. Diagrams live in this
 // browser's localStorage; a "Diagrams" menu at the top creates, imports,
@@ -133,7 +133,7 @@ const DiagramBar = ({
         zIndex: 5
       }}
     >
-      <UiElement>
+      <Surface>
         <Button
           variant="text"
           startIcon={<FolderIcon />}
@@ -154,7 +154,7 @@ const DiagramBar = ({
             Diagrams
           </Box>
         </Button>
-      </UiElement>
+      </Surface>
       {error && (
         <Alert severity="error" onClose={onClearError} sx={{ maxWidth: 420 }}>
           {error}

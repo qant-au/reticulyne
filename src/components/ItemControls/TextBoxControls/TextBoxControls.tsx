@@ -13,11 +13,9 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { getIsoProjectionCss } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
 import { NAME_MAX } from 'src/schemas/common';
-import { ControlsContainer } from '../components/ControlsContainer';
-import { Header } from '../components/Header';
-import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
+import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 interface Props {
   id: string;
@@ -56,8 +54,8 @@ export const TextBoxControls = ({ id }: Props) => {
   if (!textBox) return null;
 
   return (
-    <ControlsContainer header={<Header title="Edit text" />}>
-      <Section>
+    <Panel header={<PanelHeader title="Edit text" />}>
+      <PanelSection>
         <TextField
           label="Text"
           slotProps={{ htmlInput: { maxLength: NAME_MAX } }}
@@ -77,8 +75,8 @@ export const TextBoxControls = ({ id }: Props) => {
             updateTextBox(textBox.id, { content: e.target.value as string });
           }}
         />
-      </Section>
-      <Section title="Text size">
+      </PanelSection>
+      <PanelSection title="Text size">
         <Slider
           marks
           step={0.3}
@@ -92,8 +90,8 @@ export const TextBoxControls = ({ id }: Props) => {
             });
           }}
         />
-      </Section>
-      <Section title="Alignment">
+      </PanelSection>
+      <PanelSection title="Alignment">
         <ToggleButtonGroup
           value={textBox.orientation}
           exclusive
@@ -115,9 +113,9 @@ export const TextBoxControls = ({ id }: Props) => {
             />
           </ToggleButton>
         </ToggleButtonGroup>
-      </Section>
+      </PanelSection>
       <LayerOrderSection targets={[{ type: 'TEXTBOX', id }]} />
-      <Section>
+      <PanelSection>
         <Box>
           <DeleteButton
             onClick={() => {
@@ -126,7 +124,7 @@ export const TextBoxControls = ({ id }: Props) => {
             }}
           />
         </Box>
-      </Section>
-    </ControlsContainer>
+      </PanelSection>
+    </Panel>
   );
 };

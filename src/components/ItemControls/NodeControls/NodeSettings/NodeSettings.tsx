@@ -4,7 +4,7 @@ import { NAME_MAX } from 'src/schemas/common';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { DeleteButton } from '../../components/DeleteButton';
-import { Section } from '../../components/Section';
+import { PanelSection } from 'src/vendor/accurona-ui';
 
 export type NodeUpdates = {
   model: Partial<ModelItem>;
@@ -29,7 +29,7 @@ export const NodeSettings = ({
 
   return (
     <>
-      <Section title="Name">
+      <PanelSection title="Name">
         <TextField
           value={modelItem.name}
           slotProps={{ htmlInput: { maxLength: NAME_MAX } }}
@@ -38,8 +38,8 @@ export const NodeSettings = ({
             if (modelItem.name !== text) onModelItemUpdated({ name: text });
           }}
         />
-      </Section>
-      <Section title="Description">
+      </PanelSection>
+      <PanelSection title="Description">
         <MarkdownEditor
           value={modelItem.description}
           onChange={(text) => {
@@ -47,9 +47,9 @@ export const NodeSettings = ({
               onModelItemUpdated({ description: text });
           }}
         />
-      </Section>
+      </PanelSection>
       {modelItem.name && (
-        <Section title="Label height">
+        <PanelSection title="Label height">
           <Slider
             marks
             step={20}
@@ -61,13 +61,13 @@ export const NodeSettings = ({
               onViewItemUpdated({ labelHeight });
             }}
           />
-        </Section>
+        </PanelSection>
       )}
-      <Section>
+      <PanelSection>
         <Box>
           <DeleteButton onClick={onDeleted} />
         </Box>
-      </Section>
+      </PanelSection>
     </>
   );
 };

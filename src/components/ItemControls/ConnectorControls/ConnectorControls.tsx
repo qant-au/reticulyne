@@ -20,10 +20,9 @@ import { useConnector } from 'src/hooks/useConnector';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
-import { ControlsContainer } from '../components/ControlsContainer';
-import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
+import { Panel, PanelSection } from 'src/vendor/accurona-ui';
 
 // User-facing labels for the connector-direction dropdown (FEA4-02).
 // All-caps to match the surrounding form controls and remove the
@@ -85,7 +84,7 @@ const widthOptions = [
   { value: 30, label: 'THICK' }
 ] as const;
 
-// Inline label that matches the existing <Section title="..."> visual
+// Inline label that matches the existing <PanelSection title="..."> visual
 // language (small uppercase, secondary text colour). Used for each
 // half-width dropdown column in the 2×2 grid below.
 const inlineSectionLabel = {
@@ -112,8 +111,8 @@ export const ConnectorControls = ({ id }: Props) => {
   const isArrowDisabled = connector.direction === 'NONE';
 
   return (
-    <ControlsContainer>
-      <Section>
+    <Panel>
+      <PanelSection>
         <TextField
           label="Description"
           value={connector.description}
@@ -130,15 +129,15 @@ export const ConnectorControls = ({ id }: Props) => {
             });
           }}
         />
-      </Section>
-      <Section>
+      </PanelSection>
+      <PanelSection>
         <ColorSelector
           onChange={(color) => {
             return updateConnector(connector.id, { color });
           }}
           activeColor={connector.color}
         />
-      </Section>
+      </PanelSection>
       <Box
         sx={{
           pt: 3,
@@ -329,7 +328,7 @@ export const ConnectorControls = ({ id }: Props) => {
         </Box>
       )}
       <LayerOrderSection targets={[{ type: 'CONNECTOR', id }]} />
-      <Section>
+      <PanelSection>
         <Box>
           <DeleteButton
             onClick={() => {
@@ -338,7 +337,7 @@ export const ConnectorControls = ({ id }: Props) => {
             }}
           />
         </Box>
-      </Section>
-    </ControlsContainer>
+      </PanelSection>
+    </Panel>
   );
 };

@@ -5,7 +5,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useScene } from 'src/hooks/useScene';
 import { ItemReference, LayerOrderingAction } from 'src/types';
-import { Section } from './Section';
+import { PanelSection } from 'src/vendor/accurona-ui';
 
 // the four layer actions, for one item or a whole selection
 // (moved as one block, one undo step). Ordering is within a kind, so a
@@ -54,7 +54,7 @@ export const LayerOrderSection = ({ targets, note }: Props) => {
   if (targets.length === 0) return null;
 
   return (
-    <Section title="Layer order">
+    <PanelSection title="Layer order">
       <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', rowGap: 1 }}>
         {ACTIONS.map(({ action, label, shortcut, Icon }) => {
           return (
@@ -88,6 +88,6 @@ export const LayerOrderSection = ({ targets, note }: Props) => {
           </Typography>
         </Box>
       )}
-    </Section>
+    </PanelSection>
   );
 };

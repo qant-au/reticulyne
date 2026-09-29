@@ -5,11 +5,9 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { useColor } from 'src/hooks/useColor';
 import { HexField } from './HexField';
-import { ControlsContainer } from '../components/ControlsContainer';
-import { Header } from '../components/Header';
-import { Section } from '../components/Section';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
+import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 const inlineSectionLabel = {
   color: 'text.secondary',
@@ -31,8 +29,8 @@ export const RectangleControls = ({ id }: Props) => {
   if (!rectangle) return null;
 
   return (
-    <ControlsContainer header={<Header title="Edit rectangle" />}>
-      <Section>
+    <Panel header={<PanelHeader title="Edit rectangle" />}>
+      <PanelSection>
         <ColorSelector
           onChange={(color) => {
             // Picking a swatch drops a hex override, which otherwise kept
@@ -42,8 +40,8 @@ export const RectangleControls = ({ id }: Props) => {
           // No swatch shows as chosen while a hex override paints over it.
           activeColor={rectangle.colorValue ? undefined : rectangle.color}
         />
-      </Section>
-      <Section title="Fill colour">
+      </PanelSection>
+      <PanelSection title="Fill colour">
         <HexField
           label="Fill hex override"
           value={rectangle.colorValue}
@@ -52,8 +50,8 @@ export const RectangleControls = ({ id }: Props) => {
             updateRectangle(rectangle.id, { colorValue });
           }}
         />
-      </Section>
-      <Section title="Border colour">
+      </PanelSection>
+      <PanelSection title="Border colour">
         <HexField
           label="Border hex override"
           value={rectangle.outlineColor}
@@ -62,7 +60,7 @@ export const RectangleControls = ({ id }: Props) => {
             updateRectangle(rectangle.id, { outlineColor });
           }}
         />
-      </Section>
+      </PanelSection>
       <Box sx={{ pt: 3, px: 3 }}>
         <Typography variant="body2" sx={inlineSectionLabel}>
           Transparency
@@ -82,7 +80,7 @@ export const RectangleControls = ({ id }: Props) => {
         />
       </Box>
       <LayerOrderSection targets={[{ type: 'RECTANGLE', id }]} />
-      <Section>
+      <PanelSection>
         <Box>
           <DeleteButton
             onClick={() => {
@@ -91,7 +89,7 @@ export const RectangleControls = ({ id }: Props) => {
             }}
           />
         </Box>
-      </Section>
-    </ControlsContainer>
+      </PanelSection>
+    </Panel>
   );
 };

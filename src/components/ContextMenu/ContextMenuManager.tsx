@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { getTilePosition, CoordsUtils } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
-import { ContextMenu } from './ContextMenu';
+import { ContextMenu } from 'src/vendor/accurona-ui';
 
 interface Props {
   anchorEl?: HTMLElement;
@@ -37,7 +37,7 @@ export const ContextMenuManager = ({ anchorEl }: Props) => {
         getTilePosition({ tile: contextMenu.tile }),
         zoom
       )}
-      menuItems={[
+      items={[
         ...(contextMenu.item.type === 'ITEM' ||
         contextMenu.item.type === 'TEXTBOX' ||
         contextMenu.item.type === 'RECTANGLE'

@@ -1,17 +1,5 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import {
-  Menu,
-  Typography,
-  Divider,
-  Card,
-  Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button
-} from '@mui/material';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { Typography, Stack, DialogContentText, Button } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ExportJsonIcon from '@mui/icons-material/DataObject';
@@ -30,19 +18,23 @@ import TitleIcon from '@mui/icons-material/Title';
 import RenameIcon from '@mui/icons-material/DriveFileRenameOutline';
 import LibraryIcon from '@mui/icons-material/CategoryOutlined';
 import NewFromTemplateIcon from '@mui/icons-material/DashboardCustomizeOutlined';
-import { UiElement } from 'src/components/UiElement/UiElement';
-import { IconButton } from 'src/components/IconButton/IconButton';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { useScene } from 'src/hooks/useScene';
 import { TEXTBOX_DEFAULTS } from 'src/config';
 import { generateId } from 'src/utils';
-import { MenuItem } from './MenuItem';
 import { useImportFile } from './useImportFile';
 import { useExportJson } from './useExportJson';
 import { useExportPdf } from './useExportPdf';
 import { useSaveModel } from './useSaveModel';
 import { useSectionVisibility } from './useSectionVisibility';
+import {
+  AppDialog,
+  Surface,
+  ToolButton,
+  ToolMenu,
+  type ToolMenuItem
+} from 'src/vendor/accurona-ui';
 
 interface Props {
   /**
@@ -55,7 +47,6 @@ interface Props {
 }
 
 export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMainMenuOpen = useUiStateStore((state) => {
     return state.isMainMenuOpen;
   });
@@ -107,14 +98,6 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
       );
     }
   }, [mainMenuOptions, onSave]);
-
-  const onToggleMenu = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      setAnchorEl(event.currentTarget);
-      uiStateActions.setIsMainMenuOpen(true);
-    },
-    [uiStateActions]
-  );
 
   const gotoUrl = useCallback((url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -169,6 +152,88 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
     });
   }, [uiStateActions, createTextBox, mousePosition]);
 
+  const has = (option: (typeof mainMenuOptions)[number]) => {
+    return mainMenuOptions.includes(option);
+  };
+  const menuItems: ToolMenuItem[] = [
+    ...(has('ACTION.OPEN')
+      ? [{ label: 'Open', icon: <FolderOpenIcon />, onClick: onOpenModel }]
+      : []),
+    ...(has('ACTION.NEW_FROM_TEMPLATE') && templates.length > 0
+      ? [
+          {
+            label: 'New from template',
+            icon: <NewFromTemplateIcon />,
+            onClick: onNewFromTemplate
+          }
+        ]
+      : []),
+    ...(has('ACTION.SAVE') && onSave
+      ? [{ label: 'Save', icon: <SaveIcon />, onClick: onSaveModel }]
+      : []),
+    ...(has('ACTION.RENAME')
+      ? [{ label: 'Rename diagram', icon: <RenameIcon />, onClick: onRename }]
+      : []),
+    ...(has('EXPORT.JSON')
+      ? [
+          {
+            label: 'Export as JSON',
+            icon: <ExportJsonIcon />,
+            onClick: onExportAsJSON
+          }
+        ]
+      : []),
+    ...(has('EXPORT.PNG')
+      ? [
+          {
+            label: 'Export as Image',
+            icon: <ExportImageIcon />,
+            onClick: onExportAsImage
+          }
+        ]
+      : []),
+    ...(has('EXPORT.PDF')
+      ? [
+          {
+            label: 'Export as PDF',
+            icon: <ExportPdfIcon />,
+            onClick: onExportAsPdf
+          }
+        ]
+      : []),
+    ...(has('EXPORT.SVG')
+      ? [
+          {
+            label: 'Export as SVG',
+            icon: <ExportSvgIcon />,
+            onClick: onExportAsSvg
+          }
+        ]
+      : []),
+    ...(has('ACTION.CLEAR_CANVAS')
+      ? [
+          {
+            label: 'Clear',
+            icon: <DeleteOutlineIcon />,
+            onClick: onClearCanvas
+          }
+        ]
+      : []),
+    ...(sectionVisibility.links && has('LINK.GITHUB')
+      ? [
+          {
+            label: 'GitHub',
+            icon: <GitHubIcon />,
+            divider: true,
+            onClick: () => {
+              gotoUrl(`${REPOSITORY_URL}`);
+            }
+          }
+        ]
+      : [])
+  ];
+  const showVersion = sectionVisibility.version && has('VERSION');
+
   const hasMainMenu = mainMenuOptions.length > 0;
 
   // Nothing to render if the host disabled both halves of the combined
@@ -179,20 +244,33 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
   }
 
   return (
-    <UiElement>
+    <Surface>
       <Stack direction="row">
         {hasMainMenu && (
-          <IconButton
-            Icon={<MenuIcon />}
+          <ToolMenu
             name="Main menu"
-            onClick={onToggleMenu}
+            icon={<MenuIcon />}
+            openOnHover={false}
+            placement="bottom-start"
+            offset={16}
+            minWidth={250}
+            open={isMainMenuOpen}
+            onOpenChange={uiStateActions.setIsMainMenuOpen}
+            items={menuItems}
+            footer={
+              showVersion && (
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Reticulyne v{PACKAGE_VERSION}
+                </Typography>
+              )
+            }
           />
         )}
         {showToolButtons && (
           <>
-            <IconButton
+            <ToolButton
               name="Select (V)"
-              Icon={<NearMeIcon />}
+              icon={<NearMeIcon />}
               onClick={() => {
                 uiStateActions.setMode({
                   type: 'CURSOR',
@@ -202,9 +280,9 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               }}
               isActive={mode.type === 'CURSOR' || mode.type === 'DRAG_ITEMS'}
             />
-            <IconButton
+            <ToolButton
               name="Pan (H)"
-              Icon={<PanToolIcon />}
+              icon={<PanToolIcon />}
               onClick={() => {
                 uiStateActions.setMode({
                   type: 'PAN',
@@ -214,9 +292,9 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               }}
               isActive={mode.type === 'PAN'}
             />
-            <IconButton
+            <ToolButton
               name="Add item (I)"
-              Icon={<AddIcon />}
+              icon={<AddIcon />}
               onClick={() => {
                 uiStateActions.setItemControls({
                   type: 'ADD_ITEM'
@@ -229,9 +307,9 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               }}
               isActive={mode.type === 'PLACE_ICON'}
             />
-            <IconButton
+            <ToolButton
               name="Rectangle (R)"
-              Icon={<CropSquareIcon />}
+              icon={<CropSquareIcon />}
               onClick={() => {
                 uiStateActions.setMode({
                   type: 'RECTANGLE.DRAW',
@@ -241,9 +319,9 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               }}
               isActive={mode.type === 'RECTANGLE.DRAW'}
             />
-            <IconButton
+            <ToolButton
               name="Connector (A)"
-              Icon={<ConnectorIcon />}
+              icon={<ConnectorIcon />}
               onClick={() => {
                 uiStateActions.setMode({
                   type: 'CONNECTOR',
@@ -253,15 +331,15 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
               }}
               isActive={mode.type === 'CONNECTOR'}
             />
-            <IconButton
+            <ToolButton
               name="Text (T)"
-              Icon={<TitleIcon />}
+              icon={<TitleIcon />}
               onClick={createTextBoxProxy}
               isActive={mode.type === 'TEXTBOX'}
             />
-            <IconButton
+            <ToolButton
               name="Icon library"
-              Icon={<LibraryIcon />}
+              icon={<LibraryIcon />}
               onClick={() => {
                 uiStateActions.setIconPaletteOpen(!iconPaletteOpen);
               }}
@@ -270,154 +348,32 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
           </>
         )}
       </Stack>
-      {hasMainMenu && (
-        <Menu
-          anchorEl={anchorEl}
-          open={isMainMenuOpen}
-          onClose={() => {
-            uiStateActions.setIsMainMenuOpen(false);
-          }}
-          elevation={0}
-          // Worklist 29: while the menu plays its close transition its
-          // full-page modal root stays mounted and swallowed the next click
-          // (after an export the transition could stall until that click
-          // arrived, so the first click on an item did nothing). A closing
-          // menu now lets clicks through to the canvas.
-          sx={{
-            mt: 2,
-            pointerEvents: isMainMenuOpen ? 'auto' : 'none'
-          }}
-          slotProps={{
-            list: {
-              sx: {
-                minWidth: '250px',
-                py: 0
-              }
-            }
-          }}
-        >
-          <Card sx={{ py: 1 }}>
-            {mainMenuOptions.includes('ACTION.OPEN') && (
-              <MenuItem onClick={onOpenModel} Icon={<FolderOpenIcon />}>
-                Open
-              </MenuItem>
-            )}
-            {mainMenuOptions.includes('ACTION.NEW_FROM_TEMPLATE') &&
-              templates.length > 0 && (
-                <MenuItem
-                  onClick={onNewFromTemplate}
-                  Icon={<NewFromTemplateIcon />}
-                >
-                  New from template
-                </MenuItem>
-              )}
-
-            {mainMenuOptions.includes('ACTION.SAVE') && onSave && (
-              <MenuItem onClick={onSaveModel} Icon={<SaveIcon />}>
-                Save
-              </MenuItem>
-            )}
-
-            {mainMenuOptions.includes('ACTION.RENAME') && (
-              <MenuItem onClick={onRename} Icon={<RenameIcon />}>
-                Rename diagram
-              </MenuItem>
-            )}
-
-            {mainMenuOptions.includes('EXPORT.JSON') && (
-              <MenuItem onClick={onExportAsJSON} Icon={<ExportJsonIcon />}>
-                Export as JSON
-              </MenuItem>
-            )}
-
-            {mainMenuOptions.includes('EXPORT.PNG') && (
-              <MenuItem onClick={onExportAsImage} Icon={<ExportImageIcon />}>
-                Export as Image
-              </MenuItem>
-            )}
-
-            {mainMenuOptions.includes('EXPORT.PDF') && (
-              <MenuItem onClick={onExportAsPdf} Icon={<ExportPdfIcon />}>
-                Export as PDF
-              </MenuItem>
-            )}
-
-            {mainMenuOptions.includes('EXPORT.SVG') && (
-              <MenuItem onClick={onExportAsSvg} Icon={<ExportSvgIcon />}>
-                Export as SVG
-              </MenuItem>
-            )}
-
-            {mainMenuOptions.includes('ACTION.CLEAR_CANVAS') && (
-              <MenuItem onClick={onClearCanvas} Icon={<DeleteOutlineIcon />}>
-                Clear
-              </MenuItem>
-            )}
-
-            {sectionVisibility.links && (
-              <>
-                <Divider />
-
-                {mainMenuOptions.includes('LINK.GITHUB') && (
-                  <MenuItem
-                    onClick={() => {
-                      uiStateActions.setIsMainMenuOpen(false);
-                      return gotoUrl(`${REPOSITORY_URL}`);
-                    }}
-                    Icon={<GitHubIcon />}
-                  >
-                    GitHub
-                  </MenuItem>
-                )}
-              </>
-            )}
-
-            {sectionVisibility.version && (
-              <>
-                <Divider />
-
-                {mainMenuOptions.includes('VERSION') && (
-                  <MenuItem>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: 'text.secondary'
-                      }}
-                    >
-                      Reticulyne v{PACKAGE_VERSION}
-                    </Typography>
-                  </MenuItem>
-                )}
-              </>
-            )}
-          </Card>
-        </Menu>
-      )}
-      <Dialog
+      <AppDialog
         open={confirmClear}
         onClose={() => {
           setConfirmClear(false);
         }}
+        title="Clear the canvas?"
+        actions={
+          <>
+            <Button
+              variant="text"
+              onClick={() => {
+                setConfirmClear(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button color="error" variant="contained" onClick={onConfirmClear}>
+              Clear
+            </Button>
+          </>
+        }
       >
-        <DialogTitle>Clear the canvas?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Everything in this diagram is removed. This cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setConfirmClear(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button color="error" variant="contained" onClick={onConfirmClear}>
-            Clear
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </UiElement>
+        <DialogContentText>
+          Everything in this diagram is removed. This cannot be undone.
+        </DialogContentText>
+      </AppDialog>
+    </Surface>
   );
 };

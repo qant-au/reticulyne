@@ -1,5 +1,5 @@
-import { Box, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box } from '@mui/material';
+import { CloseButton } from 'src/vendor/accurona-ui';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { IconSelectionControls } from 'src/components/ItemControls/IconSelectionControls/IconSelectionControls';
 
@@ -42,16 +42,13 @@ export const IconPalette = () => {
         '& > div:last-of-type': { flex: 1, minHeight: 0, overflowY: 'auto' }
       }}
     >
-      <IconButton
-        aria-label="Close icon library"
-        size="small"
+      <CloseButton
+        label="Close icon library"
         onClick={() => {
           uiStateActions.setIconPaletteOpen(false);
         }}
         sx={{ position: 'absolute', top: 8, right: 8, zIndex: 3 }}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
+      />
       <IconSelectionControls title="Icon library" armFromAnyMode />
     </Box>
   );

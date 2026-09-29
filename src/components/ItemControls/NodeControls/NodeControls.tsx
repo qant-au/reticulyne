@@ -8,11 +8,9 @@ import { useScene } from 'src/hooks/useScene';
 import { useViewItem } from 'src/hooks/useViewItem';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelItem } from 'src/hooks/useModelItem';
-import { ControlsContainer } from '../components/ControlsContainer';
-import { Header } from '../components/Header';
 import { Icons } from '../IconSelectionControls/Icons';
 import { NodeSettings } from './NodeSettings/NodeSettings';
-import { Section } from '../components/Section';
+import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 interface Props {
   id: string;
@@ -38,7 +36,7 @@ export const NodeControls = ({ id }: Props) => {
   if (!viewItem || !modelItem) return null;
 
   return (
-    <ControlsContainer header={<Header title="Edit object" />}>
+    <Panel header={<PanelHeader title="Edit object" />}>
       <Box
         sx={{
           bgcolor: (theme) => {
@@ -46,7 +44,7 @@ export const NodeControls = ({ id }: Props) => {
           }
         }}
       >
-        <Section sx={{ py: 2 }}>
+        <PanelSection sx={{ py: 2 }}>
           <Stack
             direction="row"
             spacing={2}
@@ -83,7 +81,7 @@ export const NodeControls = ({ id }: Props) => {
               </Button>
             )}
           </Stack>
-        </Section>
+        </PanelSection>
       </Box>
       {mode === 'SETTINGS' && (
         <NodeSettings
@@ -110,6 +108,6 @@ export const NodeControls = ({ id }: Props) => {
           }}
         />
       )}
-    </ControlsContainer>
+    </Panel>
   );
 };

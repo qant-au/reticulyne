@@ -3,11 +3,10 @@ import ZoomOutIcon from '@mui/icons-material/Remove';
 import FitToScreenIcon from '@mui/icons-material/CropFreeOutlined';
 import { Stack, Box, Typography, Divider } from '@mui/material';
 import { toPx } from 'src/utils';
-import { UiElement } from 'src/components/UiElement/UiElement';
-import { IconButton } from 'src/components/IconButton/IconButton';
 import { MAX_ZOOM, MIN_ZOOM } from 'src/config';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
+import { Surface, ToolButton } from 'src/vendor/accurona-ui';
 
 export const ZoomControls = () => {
   const uiStateStoreActions = useUiStateStore((state) => {
@@ -20,11 +19,11 @@ export const ZoomControls = () => {
 
   return (
     <Stack direction="row" spacing={1}>
-      <UiElement>
+      <Surface>
         <Stack direction="row">
-          <IconButton
+          <ToolButton
             name="Zoom out (-)"
-            Icon={<ZoomOutIcon />}
+            icon={<ZoomOutIcon />}
             onClick={uiStateStoreActions.decrementZoom}
             disabled={zoom <= MIN_ZOOM}
           />
@@ -47,21 +46,21 @@ export const ZoomControls = () => {
             </Typography>
           </Box>
           <Divider orientation="vertical" flexItem />
-          <IconButton
+          <ToolButton
             name="Zoom in (+)"
-            Icon={<ZoomInIcon />}
+            icon={<ZoomInIcon />}
             onClick={uiStateStoreActions.incrementZoom}
             disabled={zoom >= MAX_ZOOM}
           />
         </Stack>
-      </UiElement>
-      <UiElement>
-        <IconButton
+      </Surface>
+      <Surface>
+        <ToolButton
           name="Fit to view (F)"
-          Icon={<FitToScreenIcon />}
+          icon={<FitToScreenIcon />}
           onClick={fitToView}
         />
-      </UiElement>
+      </Surface>
     </Stack>
   );
 };

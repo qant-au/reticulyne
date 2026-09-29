@@ -20,5 +20,5 @@ covers the quick highlights; everything below is the depth.
 
 ## Project
 
-- [Contributing](contributing.md) — current development stance, dev workflow once contributions reopen.
+- [Contributing](contributing.md) — how to report bugs, propose changes and send pull requests; dev setup and tests.
 - [Security policy](../SECURITY.md) — reporting and the residual-advisory ledger.

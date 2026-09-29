@@ -1,19 +1,18 @@
 # Contributing
 
-## Current status
+Thanks for your interest in Reticulyne. Issues and pull requests are open. The project
+is pre-1.0, so expect breaking changes between minor versions.
 
-This project is in a heavy-development phase. **The issue tracker and pull requests are
-closed** while we work through dependency upgrades, build modernisation, and security
-hardening. See the README's [Contributing and support](../README.md#contributing-and-support)
-section for the up-to-date stance.
+## Ground rules
 
-This isn't permanent — the project will reopen for standard open-source contribution once
-the foundational work is complete. Until then, please refrain from filing issues, feature
-requests, or pull requests. If you'd like to get in touch in the meantime, reach out via
-GitHub.
-
-The remainder of this page documents the development workflow for when contributions
-reopen, and for maintainers working on the project today.
+- Be civil. See the [Code of Conduct](../CODE_OF_CONDUCT.md).
+- Security issues go to private vulnerability reporting, never a public issue. See
+  [SECURITY.md](../SECURITY.md).
+- Substantial work should start as a
+  [discussion](https://github.com/qant-au/reticulyne/discussions) or an issue, so we can
+  agree on scope before you write code.
+- Bugs need steps to reproduce. An exported diagram (JSON) that shows the problem helps
+  most.
 
 ## Development setup
 
@@ -63,7 +62,7 @@ Specs live under `e2e/`; outputs (traces, videos, HTML reports) land in `playwri
 
 ## Branch and commit conventions
 
-For maintainers landing changes (and contributors when the project reopens):
+For everyone landing changes:
 
 - **Branch prefixes** — `feature/` for new functionality, `fix/` for bug fixes, `chore/`
   for refactors and non-functional changes, `docs/` for documentation-only changes.

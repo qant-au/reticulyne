@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Box,
   Button,
+  ClickAwayListener,
   IconButton,
-  Popover,
+  Paper,
+  Popper,
   Stack,
   TextField,
   Tooltip,
@@ -69,9 +71,14 @@ export const LayersButton = () => {
     return hasRedactedContent({ views });
   }, [views]);
 
+  const buttonBox = useRef<HTMLDivElement | null>(null);
+  const close = () => {
+    setAnchor(null);
+  };
+
   return (
     <Surface>
-      <Box data-testid="layers-button">
+      <Box data-testid="layers-button" ref={buttonBox}>
         <ToolButton
           name="Layers"
           icon={<LayersOutlinedIcon />}
@@ -83,102 +90,142 @@ export const LayersButton = () => {
           }}
         />
       </Box>
-      <Popover
+      {/* A non-modal popover (sweep 2026-09-30): the MUI Popover is a modal
+          and set aria-hidden on the rest of the page while open. Kept in
+          the DOM beside its button, so Tab reaches it next, and fixed so
+          the card it sits in does not clip it. */}
+      <Popper
         open={!!anchor}
         anchorEl={anchor}
-        onClose={() => {
-          setAnchor(null);
+        placement="top-start"
+        // Popper calls itself a tooltip; the dialog is the Paper inside.
+        role="presentation"
+        disablePortal
+        popperOptions={{ strategy: 'fixed' }}
+        sx={{
+          zIndex: (theme) => {
+            return theme.zIndex.modal;
+          }
         }}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        slotProps={{ paper: { sx: { width: 300, p: 1.5 } } }}
       >
-        <Stack spacing={1} data-testid="layers-panel">
-          <Typography variant="subtitle2">Layers</Typography>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Box sx={{ width: 34 }} />
-            <Typography variant="body2" sx={{ flex: 1 }}>
-              Base
-            </Typography>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              always shown
-            </Typography>
-          </Stack>
-          {layers.map((layer) => {
-            const visible = layer.visible !== false;
-            return (
-              <Stack
-                key={layer.id}
-                direction="row"
-                spacing={1}
-                sx={{ alignItems: 'center' }}
-                data-testid={`layer-row-${layer.id}`}
-              >
-                <Tooltip title={visible ? 'Hide layer' : 'Show layer'}>
-                  <IconButton
-                    size="small"
-                    aria-label={`${visible ? 'Hide' : 'Show'} ${layer.name}`}
-                    aria-pressed={visible}
-                    onClick={() => {
-                      updateLayer(layer.id, { visible: !visible });
-                    }}
-                  >
-                    {visible ? (
-                      <VisibilityOutlinedIcon fontSize="small" />
-                    ) : (
-                      <VisibilityOffOutlinedIcon fontSize="small" />
-                    )}
-                  </IconButton>
-                </Tooltip>
-                <NameField
-                  key={`${layer.id}:${layer.name}`}
-                  initial={layer.name}
-                  onCommit={(name) => {
-                    updateLayer(layer.id, { name });
-                  }}
-                />
-                <Tooltip title="Delete layer (its items move to Base)">
-                  <IconButton
-                    size="small"
-                    aria-label={`Delete ${layer.name}`}
-                    onClick={() => {
-                      deleteLayer(layer.id);
-                    }}
-                  >
-                    <DeleteOutlineIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
-            );
-          })}
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Box sx={{ width: 34, display: 'flex', justifyContent: 'center' }}>
-              <LockOutlinedIcon fontSize="small" color="action" />
-            </Box>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="body2">Redacted</Typography>
-              <Typography
-                variant="caption"
-                component="p"
-                sx={{ color: 'text.secondary' }}
-              >
-                Shown here, left out of exports unless you include it.
-                {redactedInUse ? '' : ' Nothing is on it yet.'}
-              </Typography>
-            </Box>
-          </Stack>
-          <Button
-            size="small"
-            variant="outlined"
-            disabled={layers.length >= LAYERS_MAX}
-            onClick={() => {
-              addLayer(`Layer ${layers.length + 1}`);
+        <ClickAwayListener
+          onClickAway={(e) => {
+            // The button toggles it itself.
+            if (buttonBox.current?.contains(e.target as Node)) return;
+            close();
+          }}
+        >
+          <Paper
+            role="dialog"
+            aria-label="Layers"
+            aria-modal="false"
+            elevation={8}
+            sx={{ width: 300, p: 1.5, mb: 1 }}
+            onKeyDown={(e) => {
+              if (e.key !== 'Escape') return;
+              e.stopPropagation();
+              close();
+              anchor?.focus();
             }}
           >
-            Add layer
-          </Button>
-        </Stack>
-      </Popover>
+            <Stack spacing={1} data-testid="layers-panel">
+              <Typography variant="subtitle2">Layers</Typography>
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                <Box sx={{ width: 34 }} />
+                <Typography variant="body2" sx={{ flex: 1 }}>
+                  Base
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  always shown
+                </Typography>
+              </Stack>
+              {layers.map((layer) => {
+                const visible = layer.visible !== false;
+                return (
+                  <Stack
+                    key={layer.id}
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                    data-testid={`layer-row-${layer.id}`}
+                  >
+                    {/* To the side, not below: below it covered the next row's name
+                    field (sweep 2026-09-30). */}
+                    <Tooltip
+                      title={visible ? 'Hide layer' : 'Show layer'}
+                      placement="left"
+                    >
+                      <IconButton
+                        size="small"
+                        aria-label={`${visible ? 'Hide' : 'Show'} ${layer.name}`}
+                        aria-pressed={visible}
+                        onClick={() => {
+                          updateLayer(layer.id, { visible: !visible });
+                        }}
+                      >
+                        {visible ? (
+                          <VisibilityOutlinedIcon fontSize="small" />
+                        ) : (
+                          <VisibilityOffOutlinedIcon fontSize="small" />
+                        )}
+                      </IconButton>
+                    </Tooltip>
+                    <NameField
+                      key={`${layer.id}:${layer.name}`}
+                      initial={layer.name}
+                      onCommit={(name) => {
+                        updateLayer(layer.id, { name });
+                      }}
+                    />
+                    <Tooltip
+                      title="Delete layer (its items move to Base)"
+                      placement="right"
+                    >
+                      <IconButton
+                        size="small"
+                        aria-label={`Delete ${layer.name}`}
+                        onClick={() => {
+                          deleteLayer(layer.id);
+                        }}
+                      >
+                        <DeleteOutlineIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Stack>
+                );
+              })}
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                <Box
+                  sx={{ width: 34, display: 'flex', justifyContent: 'center' }}
+                >
+                  <LockOutlinedIcon fontSize="small" color="action" />
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="body2">Redacted</Typography>
+                  <Typography
+                    variant="caption"
+                    component="p"
+                    sx={{ color: 'text.secondary' }}
+                  >
+                    Shown here, left out of exports unless you include it.
+                    {redactedInUse ? '' : ' Nothing is on it yet.'}
+                  </Typography>
+                </Box>
+              </Stack>
+              <Button
+                size="small"
+                variant="outlined"
+                disabled={layers.length >= LAYERS_MAX}
+                onClick={() => {
+                  addLayer(`Layer ${layers.length + 1}`);
+                }}
+              >
+                Add layer
+              </Button>
+            </Stack>
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
     </Surface>
   );
 };

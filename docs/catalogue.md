@@ -1,8 +1,16 @@
 # Catalogue
 
-> **Status: specification.** Nothing described here is built yet. Today a Reticulyne item is
-> `{ id, name, description?, icon? }` and a node's four "ports" are tile-edge hotspots used only
-> for connecting by drag. This document defines the catalogue that replaces that.
+> **Status: the data and the schema are built; the editor does not use them yet.** The
+> registries, the schema and the rules below are in `src/catalogue/` and exported from the
+> package (`CATALOGUE`, `validateCatalogue`, `expandPorts`, `itemToSceneObject`,
+> `accuronaIcons`, `catalogueItemIcon`). The palette and the topology warnings are not built:
+> in the editor today an item is still `{ id, name, description?, icon? }` and a node's four
+> "ports" are tile-edge hotspots used only for connecting by drag.
+>
+> An item with an Accurona twin draws with the element's isometric view: `accuronaIcons()`
+> returns those drawings as icons (collection `Accurona`, ids `accurona-<element id>`), and
+> `catalogueItemIcon(item)` names the one an item uses. Only the drawings of cross-referenced
+> elements are vendored (`node scripts/sync-accurona.mjs` picks them from `src/catalogue/items.ts`).
 
 The **catalogue** is Reticulyne's list of the things a diagram connects: devices with ports, the
 passive parts that make up a bus (tees, terminators, power injectors), and virtual things that

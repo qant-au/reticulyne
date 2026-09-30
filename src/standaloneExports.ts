@@ -48,4 +48,36 @@ export {
   serializeScene
 } from 'src/vendor/accurona-core';
 export type { Scene, SceneResult } from 'src/vendor/accurona-core';
+
+// The catalogue (docs/catalogue.md): media, protocols and items with
+// ports, validation, the scene object a placed item becomes, and the
+// isometric drawings of the Accurona elements items cross-reference.
+// Plain data and functions, so safe to load without `window`.
+export {
+  CATALOGUE,
+  FAMILIES,
+  FAMILY_NAMES,
+  ACCURONA_ICON_COLLECTION,
+  accuronaElement,
+  accuronaIcons,
+  catalogueItemIcon,
+  expandPorts,
+  itemToSceneObject,
+  validateCatalogue
+} from 'src/catalogue';
+export type {
+  Capability,
+  Catalogue,
+  CatalogueIssue,
+  CatalogueItem,
+  CatalogueLink,
+  CatalogueResult,
+  ExpandedPort,
+  Family,
+  Medium,
+  PortRole,
+  PortTemplate,
+  Protocol,
+  Topology
+} from 'src/catalogue';
 export { legacyModelToScene } from 'src/scene/legacy';

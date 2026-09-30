@@ -85,7 +85,15 @@ export const TitleBar = ({
   const narrow = titleBarRaised(rendererSize.width, appPadding, bottomRowWidth);
   const rightReserve = rightReserveFor(rendererSize.width, appPadding);
   const left = narrow ? appPadding.x : reserve;
-  const right = rendererSize.width - rightReserve;
+  // A row up on a phone, it spans the zoom row below it: capped at the
+  // canvas less the padding, it stopped ~30px short of that row's right
+  // end, the title cut beside empty space (sweep 2026-09-30, round 4).
+  const right = narrow
+    ? Math.min(
+        rendererSize.width - GAP,
+        Math.max(rendererSize.width - rightReserve, left + bottomRowWidth)
+      )
+    : rendererSize.width - rightReserve;
   const short = title.length <= SHORT_TITLE;
 
   // Centred on the canvas, under the Diagrams button, whenever it fits;
@@ -95,7 +103,7 @@ export const TitleBar = ({
   // its distance from the centre to an edge, shrink by equal amounts (a
   // shrink factor the inverse of the basis), so the bar's centre stays on
   // the canvas centre until a spacer reaches 0; then the other takes the
-  // rest. On a phone, centred in the width it spans.
+  // rest. On a phone, the room is the zoom row's span: centred in it.
   const centre = narrow ? (left + right) / 2 : rendererSize.width / 2;
   const toLeft = Math.max(1, centre - left);
   const toRight = Math.max(1, right - centre);
@@ -145,19 +153,21 @@ export const TitleBar = ({
         >
           {/* Nothing truncates while there is room. When there is not, the
               title gives way first, down to a few letters and an ellipsis;
-              then the floors; the save status never. Flex basis 0 is what
-              orders it: the title takes only the room the rest leave, and
-              once it is at its minimum the floors shrink. A share of the
-              bar for the floors (60%) was a share of the bar's own content
-              width, so a short title cut "Main" to "M..." with room to
-              spare (sweep 2026-09-30, round 3). */}
+              then the floors; the save status never. The title's shrink
+              factor, far above the floors', is what orders it: it takes
+              nearly all the shortfall until it is at its minimum. A share
+              of the bar for the floors (60%) was a share of the bar's own
+              content width, so a short title cut "Main" to "M..." with
+              room to spare (sweep 2026-09-30, round 3); a flex basis of 0
+              kept the bar at the width of the rest, the title cut with
+              room beside it (round 4). */}
           <Typography
             noWrap
             data-testid="title-bar-title"
             sx={{
               fontWeight: 600,
               color: 'text.secondary',
-              flex: short ? 'none' : '1 1 0',
+              flex: short ? 'none' : '0 100000 auto',
               minWidth: short ? undefined : '3em'
             }}
           >

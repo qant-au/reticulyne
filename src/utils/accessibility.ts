@@ -266,19 +266,37 @@ export const describeSelection = (
   return `${selection.length} objects selected`;
 };
 
-/** The free tile nearest `tile` that no node stands on. */
+/**
+ * The free tile nearest `tile` that no node stands on. It prefers a tile
+ * with no node on any of the eight around it either: a node's label rises
+ * above its tile, so one placed on a neighbouring tile sat on top of the
+ * other's label. With no such tile, any free tile.
+ */
 export const freeTileNear = (view: View, tile: Coords): Coords => {
   const taken = new Set(
     view.items.map((item) => {
       return `${item.tile.x},${item.tile.y}`;
     })
   );
-  for (let ring = 0; ring < 64; ring += 1) {
-    for (let dx = -ring; dx <= ring; dx += 1) {
-      for (let dy = -ring; dy <= ring; dy += 1) {
-        if (Math.max(Math.abs(dx), Math.abs(dy)) !== ring) continue;
-        const candidate = { x: tile.x + dx, y: tile.y + dy };
-        if (!taken.has(`${candidate.x},${candidate.y}`)) return candidate;
+  const isFree = (at: Coords) => {
+    return !taken.has(`${at.x},${at.y}`);
+  };
+  const isClear = (at: Coords) => {
+    for (let dx = -1; dx <= 1; dx += 1) {
+      for (let dy = -1; dy <= 1; dy += 1) {
+        if (!isFree({ x: at.x + dx, y: at.y + dy })) return false;
+      }
+    }
+    return true;
+  };
+  for (const accept of [isClear, isFree]) {
+    for (let ring = 0; ring < 64; ring += 1) {
+      for (let dx = -ring; dx <= ring; dx += 1) {
+        for (let dy = -ring; dy <= ring; dy += 1) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== ring) continue;
+          const candidate = { x: tile.x + dx, y: tile.y + dy };
+          if (accept(candidate)) return candidate;
+        }
       }
     }
   }

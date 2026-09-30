@@ -35,14 +35,20 @@ interface Props {
   spacing: (multiplier: number) => number;
   rendererSize: Size;
   itemControls: ItemControls | null;
+  // The zoom row's element, measured so the title bar keeps clear of it.
+  bottomRowRef?: (el: HTMLDivElement | null) => void;
 }
+
+// Below this canvas width the zoom row drops its percentage readout.
+const COMPACT_WIDTH = 480;
 
 export const ToolbarSlots = ({
   availableTools,
   appPadding,
   spacing,
   rendererSize,
-  itemControls
+  itemControls,
+  bottomRowRef
 }: Props) => {
   // The combined toolbar renders when EITHER half is active — i.e.
   // the host wants the hamburger (MAIN_MENU) and/or the tool buttons
@@ -86,6 +92,7 @@ export const ToolbarSlots = ({
           came out in the universal SVG. */}
       {availableTools.includes('ZOOM_CONTROLS') && (
         <Stack
+          ref={bottomRowRef}
           direction="row"
           spacing={1}
           sx={{
@@ -97,7 +104,11 @@ export const ToolbarSlots = ({
             left: appPadding.x
           }}
         >
-          <ZoomControls />
+          <ZoomControls
+            compact={
+              rendererSize.width > 0 && rendererSize.width < COMPACT_WIDTH
+            }
+          />
           <HelpButton />
         </Stack>
       )}

@@ -165,6 +165,35 @@ describe('connector coordinate system', () => {
         y: 3 + CONNECTOR_SEARCH_OFFSET.y
       });
     });
+
+    test('a route through a manual waypoint keeps the waypoint once', () => {
+      // Sweep 2026-09-30: each leg started on the tile the last one ended
+      // on, so the waypoint appeared twice - a zero-length segment.
+      const view = makeView([
+        { id: 'a', x: 0, y: 0 },
+        { id: 'b', x: 6, y: 0 }
+      ]);
+      const anchors: ConnectorAnchor[] = [
+        { id: 'a1', ref: { item: 'a' } },
+        { id: 'w1', ref: { tile: { x: 3, y: 3 } } },
+        { id: 'a2', ref: { item: 'b' } }
+      ];
+
+      const { tiles, rectangle } = getConnectorPath({ anchors, view });
+
+      for (let i = 1; i < tiles.length; i += 1) {
+        expect(tiles[i]).not.toEqual(tiles[i - 1]);
+      }
+      const waypoint = normalisePositionFromOrigin({
+        position: { x: 3, y: 3 },
+        origin: rectangle.from
+      });
+      expect(
+        tiles.filter((t) => {
+          return t.x === waypoint.x && t.y === waypoint.y;
+        })
+      ).toHaveLength(1);
+    });
   });
 
   // FEA4-02: connector direction-arrow control. The arrow icon shape

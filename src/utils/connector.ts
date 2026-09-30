@@ -255,12 +255,21 @@ export const getConnectorPath = ({
         ]
       });
 
-      return [
-        ...acc,
+      const segment = [
         ...(useExit ? [prev] : []),
         ...path,
         ...(useEntry ? [position] : [])
       ];
+      // Each leg starts where the one before ended (the waypoint between
+      // them): keep that point once, not as a zero-length segment.
+      if (
+        acc.length > 0 &&
+        segment.length > 0 &&
+        CoordsUtils.isEqual(acc[acc.length - 1], segment[0])
+      ) {
+        segment.shift();
+      }
+      return [...acc, ...segment];
     },
     []
   );

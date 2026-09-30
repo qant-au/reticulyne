@@ -20,6 +20,16 @@ beforeAll(() => {
   if (!Element.prototype.scrollTo) {
     Element.prototype.scrollTo = () => {};
   }
+  // Text boxes measure their content with a canvas 2D context, which
+  // jsdom does not implement. Stub just enough of it for `getTextWidth`.
+  HTMLCanvasElement.prototype.getContext = (() => {
+    return {
+      font: '',
+      measureText: () => {
+        return { width: 10 };
+      }
+    };
+  }) as unknown as HTMLCanvasElement['getContext'];
   if (!('ResizeObserver' in globalThis)) {
     (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
       class {
@@ -216,6 +226,32 @@ describe('keyboard access', () => {
     expect(view().rectangles).toHaveLength(1);
     expect(ui().selection[0].type).toBe('RECTANGLE');
     expect(ui().mode.type).toBe('CURSOR');
+  });
+
+  test('Enter on a text box reached with Tab puts focus in its text', () => {
+    const canvas = mount({
+      initialData: {
+        ...diagram,
+        views: [
+          {
+            ...diagram.views[0],
+            textBoxes: [{ id: 't', content: 'Label', tile: { x: 0, y: 3 } }]
+          }
+        ]
+      }
+    });
+    while (selected()[0] !== 'TEXTBOX:t') tab(canvas);
+    // Open the panel first, as a selection does in the browser, so
+    // autoFocus on mount alone cannot pass this.
+    act(() => {
+      ui().actions.setItemControls({ type: 'TEXTBOX', id: 't' });
+    });
+    press(canvas, { key: 'Enter', code: 'Enter' });
+    const field = screen.getByRole('textbox', { name: 'Text' }) as HTMLInputElement;
+    expect(document.activeElement).toBe(field);
+    expect(field.selectionStart).toBe(0);
+    expect(field.selectionEnd).toBe('Label'.length);
+    expect(ui().focusTextBoxId).toBeNull();
   });
 
   test('the connector tool with a node selected: Enter asks what to connect it to', () => {

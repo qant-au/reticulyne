@@ -1,12 +1,15 @@
 {
-  "name": "@qant-au/reticulyne",
-  "version": "0.3.0",
-  "private": true,
+  "name": "@reticulyne/editor",
+  "version": "0.4.0",
   "description": "An open-source React component for drawing network diagrams.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qant-au/reticulyne.git"
+    "url": "git+https://github.com/qant-au/reticulyne.git"
+  },
+  "homepage": "https://github.com/qant-au/reticulyne#readme",
+  "bugs": {
+    "url": "https://github.com/qant-au/reticulyne/issues"
   },
   "engines": {
     "node": ">=22.0.0"
@@ -37,6 +40,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "webpack serve --config ./webpack/dev.config.js",
     "dev": "nodemon --watch ./src/ -e ts,tsx --exec npm run build",

@@ -1,6 +1,7 @@
 # Changelog
 
-All notable changes to `@qant-au/reticulyne` are documented in this file.
+All notable changes to `@reticulyne/editor` (`@qant-au/reticulyne` up to 0.3.0) are
+documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -13,8 +14,11 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-30
+
 ### Changed (breaking)
 
+- **The package is `@reticulyne/editor`, on the public npm registry**, installed with no token. It was `@qant-au/reticulyne` on GitHub Packages up to 0.3.0: change the dependency and the imports.
 - **The file format is now the [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md)**, shared with Axonometra: one JSON document of objects and the views that place them. Reticulyne draws its `iso` and `schematic` views and, on save, merges the edited diagram into the scene it opened, so plan views, unplaced objects, connections, object `props` / `ports` / `links`, layers and a connector's `connection` are kept.
   - `onSave` receives a validated `Scene`, not a `Model` (the Save entry, Retry and auto-save).
   - **Export as JSON** downloads a scene file (same file names).

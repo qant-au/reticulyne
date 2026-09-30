@@ -1,6 +1,6 @@
-# Embedding `@qant-au/reticulyne`
+# Embedding `@reticulyne/editor`
 
-This document describes the contract a consumer of `@qant-au/reticulyne` can rely on: every prop, every callback, the imperative API exposed by the `useReticulyne` hook, the container-sizing rules, and the security model.
+This document describes the contract a consumer of `@reticulyne/editor` can rely on: every prop, every callback, the imperative API exposed by the `useReticulyne` hook, the container-sizing rules, and the security model.
 
 Audience: a frontend developer embedding the editor inside a larger React application.
 
@@ -9,18 +9,18 @@ Audience: a frontend developer embedding the editor inside a larger React applic
 ## Importing
 
 ```tsx
-import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
+import Reticulyne, { useReticulyne } from '@reticulyne/editor';
 ```
 
 The default export is the `Reticulyne` React component. The named export `useReticulyne` is the imperative hook (only callable inside `<Reticulyne>`'s subtree). Standalone exports (schemas, reducers, types) are also re-exported from the default entrypoint.
 
-## Required peer dependencies (v2 onwards)
+## Required peer dependencies
 
-`@qant-au/reticulyne@2+` externalises its UI / state / theming stack. Install these alongside the library:
+`@reticulyne/editor` externalises its UI / state / theming stack. Install these alongside the library:
 
 ```bash
 npm install \
-  @qant-au/reticulyne \
+  @reticulyne/editor \
   react react-dom \
   @mui/material @mui/icons-material \
   @emotion/react @emotion/styled \
@@ -29,10 +29,11 @@ npm install \
 
 ### Getting the package
 
-Reticulyne is not published to a package registry at the moment; build it from source as
-described in [`installation.md`](./installation.md).
+`@reticulyne/editor` is on npm; the command above installs it with no token or registry
+setup. It was `@qant-au/reticulyne` on GitHub Packages up to 0.3.0
+([`installation.md`](./installation.md)).
 
-`@qant-au/reticulyne@3` requires **MUI v9** (v2 required MUI v5). If your application already uses MUI v9 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and v1 → v2 → v3 migration notes.
+It requires **MUI v9** (v2 required MUI v5). If your application already uses MUI v9 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and v1 → v2 → v3 migration notes.
 
 ## Component props (`<Reticulyne>`)
 
@@ -382,7 +383,7 @@ Reticulyne model (`InitialData`) is still accepted as input, by `initialData`,
 and colours normalised to the scene format's rules). It is never written.
 
 ```ts
-import { parseScene, serializeScene, type Scene } from '@qant-au/reticulyne';
+import { parseScene, serializeScene, type Scene } from '@reticulyne/editor';
 
 const text = serializeScene(scene); // validated; throws on an invalid scene
 const result = parseScene(text);    // { ok: true, scene } or { ok: false, errors }
@@ -516,8 +517,8 @@ the pattern that matches the editor you are showing.
 re-hydrates the editor in any mode, so a viewer never needs `loadModel`.
 
 ```tsx
-import Reticulyne from '@qant-au/reticulyne';
-import type { Scene } from '@qant-au/reticulyne';
+import Reticulyne from '@reticulyne/editor';
+import type { Scene } from '@reticulyne/editor';
 import { useEffect, useState } from 'react';
 
 function DiagramViewer({ diagramId }: { diagramId: string }) {
@@ -547,7 +548,7 @@ function DiagramViewer({ diagramId }: { diagramId: string }) {
 "Revert to saved". The `view` option picks the view to show.
 
 ```tsx
-import Reticulyne, { useReticulyne, type Scene } from '@qant-au/reticulyne';
+import Reticulyne, { useReticulyne, type Scene } from '@reticulyne/editor';
 
 function RevertButton({ diagramId }: { diagramId: string }) {
   const { loadModel } = useReticulyne();
@@ -584,7 +585,7 @@ These fields are designed for embedders that push status colours from external s
 Example using `applyPatch` from a driver child:
 
 ```typescript
-import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
+import Reticulyne, { useReticulyne } from '@reticulyne/editor';
 
 function StatusOverlay() {
   const { applyPatch } = useReticulyne();
@@ -620,7 +621,7 @@ Worked example — a simulated three-tier system whose API and database states w
 
 ```tsx
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
+import Reticulyne, { useReticulyne } from '@reticulyne/editor';
 
 type Status = 'up' | 'degraded' | 'down';
 const STATUS_COLOR: Record<Status, string> = {
@@ -751,7 +752,7 @@ What remains **your** responsibility is anything you do with a `description` **o
 
 ```tsx
 import DOMPurify from 'dompurify';
-import Reticulyne from '@qant-au/reticulyne';
+import Reticulyne from '@reticulyne/editor';
 
 // Match the editor's own allowlist so a round-trip through Reticulyne is lossless.
 const SANITISE_OPTIONS: DOMPurify.Config = {

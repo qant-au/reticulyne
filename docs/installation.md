@@ -1,27 +1,21 @@
 # Installation
 
-Reticulyne is not published to a package registry at the moment; a public npm release is
-planned. Until then, build it from source and install the local build:
+Reticulyne is on npm as [`@reticulyne/editor`](https://www.npmjs.com/package/@reticulyne/editor).
+No token or registry setup is needed:
 
 ```bash
-git clone https://github.com/qant-au/reticulyne.git
-cd reticulyne
-npm ci
-npm run build
-npm pack            # writes qant-au-reticulyne-<version>.tgz
+npm install @reticulyne/editor
 ```
 
-Then, in your project:
-
-```bash
-npm install /path/to/qant-au-reticulyne-<version>.tgz
-```
+It was published as `@qant-au/reticulyne` on GitHub Packages up to 0.3.0. Moving from
+there, change the dependency and the imports to `@reticulyne/editor`; the API is the one
+described in the [changelog](../CHANGELOG.md) for 0.4.0.
 
 To run the editor on its own instead, see [Standalone Docker](docker.md).
 
 ## Peer dependencies
 
-`@qant-au/reticulyne@3` externalises its UI / state / theming stack so consumers can share a
+`@reticulyne/editor` externalises its UI / state / theming stack so consumers can share a
 single copy with their own app instead of bundling duplicates. You need to install these
 yourself alongside the library:
 
@@ -43,7 +37,7 @@ npm install \
 | `@emotion/styled` | `^11.14.1` | Required by MUI's CSS-in-JS engine. |
 | `zustand` | `^5.0.13` | Used internally by the library; sharing a copy with the consumer's own zustand store is supported. |
 
-npm 7+ auto-installs declared peer deps, so a fresh `npm install @qant-au/reticulyne` will pull
+npm 7+ auto-installs declared peer deps, so a fresh `npm install @reticulyne/editor` will pull
 them in. If you're on npm 6 or you want explicit lockfile entries, install them directly.
 
 No CSS imports are required — styles are injected at runtime by Emotion.
@@ -96,7 +90,7 @@ versions of the platform). Internet Explorer, Opera Mini, and any vendor-discont
 browser are excluded.
 
 If your application needs to target older browsers, transpile the package output yourself
-in your consuming build (e.g. run Babel against `node_modules/@qant-au/reticulyne/dist`).
+in your consuming build (e.g. run Babel against `node_modules/@reticulyne/editor/dist`).
 Most consumers don't need to — the targets above cover ~99% of global traffic.
 
 ## Verify

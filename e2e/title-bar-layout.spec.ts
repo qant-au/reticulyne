@@ -242,6 +242,58 @@ test('at 390 the floor tabs stay in their own space, cut only with an ellipsis, 
   }
 });
 
+// Round 5: at 390 the shown floor drew "Ground ..." (a 61.20px box for
+// 61.33px of text) beside "L..." and "L..."; at 430 it read "Gr..." while
+// 390 collapsed to the menu and showed it whole. The shown floor is now
+// never cut, measured to the sub-pixel, and a cut tab keeps three letters.
+for (const width of [390, 430]) {
+  test(`at ${width} with three floors and the save status the shown floor is whole`, async ({
+    page
+  }) => {
+    await open(page, width, 844, {
+      title: 'Sweep B building',
+      views: [
+        { id: 'g', name: 'Ground net' },
+        { id: 'l1', name: 'Level 1 net' },
+        { id: 'lab', name: 'Lab' }
+      ],
+      save: true
+    });
+    await rename(page, 'Sweep B building two');
+    await expect(page.getByTestId('save-status')).toBeVisible();
+    const tabs = await page.getByTestId('floor-switcher').evaluate((sw) => {
+      return [...sw.querySelectorAll('[role="tab"]')].map((t) => {
+        const span = t.querySelector('span')!;
+        const text = span.firstChild!;
+        const range = document.createRange();
+        range.selectNodeContents(text);
+        const textWidth = range.getBoundingClientRect().width;
+        range.setEnd(text, Math.min(3, text.textContent!.length));
+        return {
+          name: text.textContent,
+          active: t.getAttribute('aria-selected') === 'true',
+          box: span.getBoundingClientRect().width,
+          textWidth,
+          threeLetters: range.getBoundingClientRect().width,
+          scrollCut: span.scrollWidth > span.clientWidth
+        };
+      });
+    });
+    const shown = tabs.find((t) => {
+      return t.active;
+    })!;
+    expect(shown.name).toBe('Ground net');
+    expect(shown.scrollCut).toBe(false);
+    expect(shown.box).toBeGreaterThanOrEqual(shown.textWidth);
+    // A floor not shown, when cut, still shows three letters.
+    for (const t of tabs) {
+      if (!t.active && t.box < t.textWidth) {
+        expect(t.box).toBeGreaterThan(t.threeLetters);
+      }
+    }
+  });
+}
+
 // At 390 the bar stopped at 276px (x57-333) under a zoom row spanning
 // x41-363, the title cut with ~30px unused.
 test('at 390 a long title uses the width of the row below', async ({ page }) => {

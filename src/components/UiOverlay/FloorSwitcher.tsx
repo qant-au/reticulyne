@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
   ButtonBase,
@@ -19,6 +19,13 @@ import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { NAME_MAX, SCHEMA_LIMITS } from 'src/schemas/common';
 import { floorsOf } from 'src/vendor/accurona-core';
+import {
+  CUT_MIN_CHARS,
+  ceilPx,
+  planFloorTabs,
+  type FloorTabMeasure,
+  type FloorTabsPlan
+} from './floorTabsLayout';
 
 // lw-053: the floor switcher, in the title bar where the view name was. A
 // floor is a view, and the tabs read as the building does, lowest first.
@@ -64,25 +71,65 @@ const FloorName = ({
   );
 };
 
-// In the title bar the diagram's title gives way first (TitleBar), then the
-// floors: the floors not shown first, each with an ellipsis, down to a
-// letter or two; only then the shown floor's name, which keeps a few
-// letters. The other floors kept their names and scrolled, so on a phone
-// they ran on to the options button, cut with no ellipsis ("First flo",
-// "Lab" a sliver), while the shown floor read "Gr..." (sweep 2026-09-30,
-// round 4). A shrink factor far above the shown floor's is what orders it.
-// Scrolling is left for more floors than even that fits. A shown name this
-// short never truncates: a minimum wider than the name itself would leave
-// a gap beside it.
+// A shown name this short never truncates: a minimum wider than the name
+// itself would leave a gap beside it.
 const nameShrink = (name: string) => {
   return name.length <= 4
     ? { flexShrink: 0 }
     : { flexShrink: 1, minWidth: '3.5em' };
 };
-const otherShrink = (name: string) => {
-  return name.length <= 2
-    ? { flexShrink: 0 }
-    : { flexShrink: 10000, minWidth: '2.75em' };
+
+// In the title bar the diagram's title gives way first (TitleBar), then the
+// floors not shown, each with an ellipsis; the shown floor is never cut
+// while the tabs are out; and when they do not fit, they collapse (see
+// floorTabsLayout). Each name's text width is measured with a Range (the
+// span's own scroll width is rounded to a whole pixel), the cut form as
+// its first letters plus an ellipsis.
+const measureFloorTabs = (
+  scroller: HTMLElement
+): { tabs: FloorTabMeasure[]; pad: number; gap: number } | null => {
+  const buttons = [
+    ...scroller.querySelectorAll<HTMLElement>('[data-floor-id]')
+  ];
+  if (!buttons.length) return null;
+  const canvas = document.createElement('canvas').getContext('2d');
+  const range = document.createRange();
+  const tabs = buttons.map((button) => {
+    const span = button.querySelector('span')!;
+    const text = span.firstChild;
+    const name = text?.textContent ?? '';
+    let full = 0;
+    let prefix = 0;
+    if (text && name) {
+      range.selectNodeContents(text);
+      full = range.getBoundingClientRect().width;
+      range.setEnd(text, Math.min(name.length, CUT_MIN_CHARS));
+      prefix = range.getBoundingClientRect().width;
+    }
+    let ellipsis = 0;
+    if (canvas) {
+      canvas.font = getComputedStyle(span).font;
+      ellipsis = canvas.measureText('…').width;
+    }
+    return {
+      id: button.dataset.floorId!,
+      full: ceilPx(full),
+      cut: ceilPx(prefix + ellipsis)
+    };
+  });
+  const style = getComputedStyle(buttons[0]);
+  const pad =
+    (parseFloat(style.paddingLeft) || 0) +
+    (parseFloat(style.paddingRight) || 0);
+  const gap =
+    buttons.length > 1
+      ? Math.max(
+          0,
+          buttons[1].getBoundingClientRect().left -
+            buttons[0].getBoundingClientRect().right
+        )
+      : 0;
+  return { tabs, pad, gap };
 };
 
 export const FloorSwitcher = ({
@@ -158,15 +205,87 @@ export const FloorSwitcher = ({
       return f.id + ':' + f.name;
     })
   ].join('|');
-  // The room the tabs did not fit in; collapsed while the room is the same.
-  const [collapsedFor, setCollapsedFor] = useState<string | null>(null);
-  const collapsed = collapsedFor === fitKey;
+  // Round 5: the tabs' widths are worked out (planFloorTabs) from each
+  // name's measured width, not left to flex shrinking. First the names are
+  // measured at their natural width; then the tab list is given the width
+  // of them all in full, and whatever flex leaves it is the room; then the
+  // plan for that room. Each is kept while the names (the measures) or the
+  // room (the plan) are the same.
+  const nameKey = floors
+    .map((f) => {
+      return f.id + ':' + f.name;
+    })
+    .join('|');
+  const [measured, setMeasured] = useState<{
+    key: string;
+    tabs: FloorTabMeasure[];
+    pad: number;
+    gap: number;
+  } | null>(null);
+  const measures =
+    renaming === null && measured?.key === nameKey ? measured : null;
+  const [planned, setPlanned] = useState<
+    (FloorTabsPlan & { key: string; room: number }) | null
+  >(null);
+  const plan = measures && planned?.key === fitKey ? planned : null;
+  const collapsed = !!plan?.collapsed;
+  const allFull = measures
+    ? measures.tabs.reduce((sum, t) => {
+        return sum + t.full + measures.pad;
+      }, 0) +
+      measures.gap * Math.max(0, measures.tabs.length - 1)
+    : 0;
   useLayoutEffect(() => {
     const el = scrollerRef.current;
-    if (!collapsed && el && el.scrollWidth > el.clientWidth + 1) {
-      setCollapsedFor(fitKey);
+    if (!el || renaming !== null) return;
+    const room = el.getBoundingClientRect().width;
+    // Not laid out (jsdom, or hidden): nothing to measure.
+    if (room <= 0) return;
+    if (!measures) {
+      const m = measureFloorTabs(el);
+      if (m) setMeasured({ key: nameKey, ...m });
+      return;
     }
-  }, [collapsed, fitKey]);
+    if (!plan) {
+      setPlanned({
+        key: fitKey,
+        room,
+        ...planFloorTabs({
+          room,
+          tabs: measures.tabs,
+          activeId: currentView.id,
+          pad: measures.pad,
+          gap: measures.gap
+        })
+      });
+    }
+  }, [measures, plan, fitKey, nameKey, renaming, currentView.id]);
+  // Room that changes with no change of key (a longer "Saved 1 min ago")
+  // plans again.
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || !plan || plan.collapsed || typeof ResizeObserver === 'undefined')
+      return undefined;
+    const observer = new ResizeObserver(() => {
+      if (Math.abs(el.getBoundingClientRect().width - plan.room) > 0.5) {
+        setPlanned(null);
+      }
+    });
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+    };
+  }, [plan]);
+  // A web font arriving after the names were measured changes their widths.
+  useEffect(() => {
+    let live = true;
+    void document.fonts?.ready.then(() => {
+      if (live) setMeasured(null);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
 
   // One floor, and nothing to add: just its name, as before floors.
   if (floors.length === 1 && !editable) {
@@ -216,6 +335,9 @@ export const FloorSwitcher = ({
         direction="row"
         spacing={0.5}
         sx={{ alignItems: 'center', minWidth: 0, overflowX: 'auto' }}
+        // Its width is every name in full, so the room flex leaves it does
+        // not depend on the plan made for that room.
+        style={measures && !collapsed ? { width: allFull } : undefined}
       >
         {shownFloors.map((floor) => {
           const active = floor.id === currentView.id;
@@ -237,6 +359,7 @@ export const FloorSwitcher = ({
               role="tab"
               aria-selected={active}
               data-testid={`floor-tab-${floor.id}`}
+              data-floor-id={floor.id}
               title={
                 [
                   onPlan.get(floor.id),
@@ -256,12 +379,21 @@ export const FloorSwitcher = ({
                 py: 0.25,
                 borderRadius: 1,
                 // Collapsed, the one tab left gives way to the end, with
-                // an ellipsis, rather than overflow its space.
+                // an ellipsis, rather than overflow its space. Otherwise
+                // its planned width, or while measuring its own.
+                boxSizing: 'border-box',
                 ...(collapsed
                   ? { flexShrink: 1, minWidth: 0 }
-                  : active
-                    ? nameShrink(floor.name)
-                    : otherShrink(floor.name)),
+                  : {
+                      flexShrink: 0,
+                      width: plan
+                        ? plan.widths[floor.id]
+                        : measures
+                          ? (measures.tabs.find((t) => {
+                              return t.id === floor.id;
+                            })?.full ?? 0) + measures.pad
+                          : undefined
+                    }),
                 fontWeight: 600,
                 typography: 'body2',
                 color: active ? 'text.primary' : 'text.secondary',

@@ -3,15 +3,19 @@ import { id, constrainedStrings } from './common';
 
 // lw-053: a logical link between two items, whatever views they are
 // placed in. It is the scene format's `connections` entry (Accurona
-// docs/scene-format.md, "Connections"), less the ports, kind, props and
-// links Reticulyne does not edit; those are kept from the opened scene
-// on save. Reticulyne draws one whose ends are on different views
+// docs/scene-format.md, "Connections"), less the props and links
+// Reticulyne does not edit; those are kept from the opened scene on save.
+// lw-083: `kind` (the medium id) and `fromPort`/`toPort` attach it to
+// the two items' catalogue ports. Reticulyne draws one whose ends are on different views
 // (floors) as a transition stub on each floor.
 export const connectionSchema = z
   .object({
     id,
     from: id,
     to: id,
+    fromPort: id.optional(),
+    toPort: id.optional(),
+    kind: constrainedStrings.name.optional(),
     description: constrainedStrings.description.optional()
   })
   .strict();

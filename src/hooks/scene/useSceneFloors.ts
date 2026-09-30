@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import * as reducers from 'src/stores/reducers';
+import type { ConnectionPortUpdate } from 'src/stores/reducers/floors';
 import type { State } from 'src/stores/reducers/types';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useView } from 'src/hooks/useView';
@@ -159,6 +160,16 @@ export const useSceneFloors = ({
     [apply]
   );
 
+  // lw-083: a connection's ports and medium, chosen in the inspector.
+  const updateConnection = useCallback(
+    (id: string, updates: ConnectionPortUpdate) => {
+      apply((state) => {
+        return reducers.updateConnection(state, id, updates);
+      });
+    },
+    [apply]
+  );
+
   return {
     showFloor,
     showAdjacentFloor,
@@ -167,6 +178,7 @@ export const useSceneFloors = ({
     moveFloor,
     deleteFloor,
     connectItems,
+    updateConnection,
     deleteConnection
   };
 };

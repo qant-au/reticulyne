@@ -54,7 +54,10 @@ const building = (): Scene => {
 describe('connections', () => {
   test('load: only the ones between two items Reticulyne shows', () => {
     const { model } = sceneToModel(building());
-    expect(model.connections).toEqual([{ id: 'c1', from: 'sw', to: 'ap' }]);
+    // lw-083: with the port and medium it is attached to.
+    expect(model.connections).toEqual([
+      { id: 'c1', from: 'sw', fromPort: '14', to: 'ap', kind: 'ethernet' }
+    ]);
     expect(modelSchema.safeParse(model).success).toBe(true);
   });
 

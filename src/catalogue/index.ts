@@ -27,3 +27,14 @@ export {
   schematicIcons
 } from './place';
 export { ITEM_SYMBOLS } from './symbols';
+export {
+  pickPorts,
+  portCapacity,
+  portRole,
+  topologyWarnings
+} from './topology';
+export type {
+  TopologyConnection,
+  TopologyItem,
+  TopologyWarning
+} from './topology';

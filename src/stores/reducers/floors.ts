@@ -36,6 +36,26 @@ export const deleteConnection = (state: State, id: string): State => {
   return { ...state, model: { ...state.model, connections: remaining } };
 };
 
+export type ConnectionPortUpdate = Partial<
+  Pick<Connection, 'fromPort' | 'toPort' | 'kind'>
+>;
+
+/** lw-083: changes a connection's ports or kind. */
+export const updateConnection = (
+  state: State,
+  id: string,
+  updates: ConnectionPortUpdate
+): State => {
+  const connections = state.model.connections ?? [];
+  const index = connections.findIndex((c) => {
+    return c.id === id;
+  });
+  if (index === -1) return state;
+  const next = [...connections];
+  next[index] = { ...next[index], ...updates };
+  return { ...state, model: { ...state.model, connections: next } };
+};
+
 /** Moves a view to `index` in the list, which is the floor order. */
 export const moveView = (
   state: State,

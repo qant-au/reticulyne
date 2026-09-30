@@ -90,6 +90,7 @@ const connectorToScene = (c: Connector): SceneConnector => {
     animated: c.animated,
     animationRate: c.animationRate,
     animationFlow: c.animationFlow,
+    connection: c.connection,
     layer: c.layerId,
     locked: c.locked
   });
@@ -293,11 +294,23 @@ export const sceneFromModel = (model: Model, context: SceneContext): Scene => {
       return [c.id, c];
     })
   );
+  // lw-083: mergeScene drops a connector's `connection` when the opened
+  // scene did not have it; the model's connector says what it draws.
+  const drawnBy = new Map(
+    model.views.flatMap((view) => {
+      return (view.connectors ?? []).flatMap((c) => {
+        return c.connection === undefined ? [] : [[c.id, c.connection]];
+      });
+    }) as [string, string][]
+  );
   scene.views = scene.views?.map((view) => {
     if (view.kind === 'plan' || !view.connectors) return view;
     return {
       ...view,
-      connectors: view.connectors.map((c) => {
+      connectors: view.connectors.map((drawn) => {
+        const connection = drawn.connection ?? drawnBy.get(drawn.id);
+        const c =
+          connection === drawn.connection ? drawn : { ...drawn, connection };
         if (c.connection === undefined) return c;
         const conn = connections.get(c.connection);
         const a = endObject(c.anchors[0]);
@@ -381,6 +394,7 @@ const viewFromScene = (view: DiagramView): View => {
         animationRate: c.animationRate,
         animationFlow: c.animationFlow,
         anchors: c.anchors.map(anchorFromScene),
+        connection: c.connection,
         layerId: c.layer,
         locked: c.locked
       });
@@ -460,6 +474,9 @@ export const sceneToModel = (
         id: c.id,
         from: c.from,
         to: c.to,
+        fromPort: c.fromPort,
+        toPort: c.toPort,
+        kind: c.kind,
         description: c.description
       });
     });

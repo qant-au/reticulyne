@@ -66,8 +66,12 @@ export {
   catalogueItemSymbol,
   expandPorts,
   itemToSceneObject,
+  pickPorts,
+  portCapacity,
+  portRole,
   schematicIconUrl,
   schematicIcons,
+  topologyWarnings,
   validateCatalogue
 } from 'src/catalogue';
 export type {
@@ -83,6 +87,9 @@ export type {
   PortRole,
   PortTemplate,
   Protocol,
-  Topology
+  Topology,
+  TopologyConnection,
+  TopologyItem,
+  TopologyWarning
 } from 'src/catalogue';
 export { legacyModelToScene } from 'src/scene/legacy';

@@ -79,7 +79,13 @@ export const VIEW_ITEM_DEFAULTS: Required<
 export const CONNECTOR_DEFAULTS: Required<
   Omit<
     Connector,
-    'id' | 'color' | 'animationRate' | 'animationFlow' | 'layerId' | 'locked'
+    | 'id'
+    | 'color'
+    | 'animationRate'
+    | 'animationFlow'
+    | 'connection'
+    | 'layerId'
+    | 'locked'
   >
 > = {
   width: 10,

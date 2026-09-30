@@ -81,6 +81,9 @@ export const connectorSchema = z
     // END_TO_START" rule.
     animationFlow: z.enum(connectorAnimationFlowOptions).optional(),
     anchors: z.array(anchorSchema).max(SCHEMA_LIMITS.ANCHORS),
+    // lw-083: the model connection this connector draws, when its two
+    // ends are items with catalogue ports.
+    connection: id.optional(),
     layerId: id.optional(),
     locked: z.boolean().optional()
   })

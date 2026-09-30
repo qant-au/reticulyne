@@ -23,6 +23,10 @@ import { useScene } from 'src/hooks/useScene';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
 import { LayerSection } from '../components/LayerSection';
+import {
+  ConnectionPortsSection,
+  TopologyWarnings
+} from '../components/TopologySection';
 import { Panel, PanelSection } from 'src/vendor/accurona-ui';
 
 // User-facing labels for the connector-direction dropdown (FEA4-02).
@@ -131,6 +135,8 @@ export const ConnectorControls = ({ id }: Props) => {
           }}
         />
       </PanelSection>
+      <ConnectionPortsSection connectionId={connector.connection} />
+      <TopologyWarnings connectionId={connector.connection} />
       <PanelSection>
         <ColorSelector
           onChange={(color) => {

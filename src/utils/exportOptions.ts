@@ -5,6 +5,14 @@ import { sanitizeSvgDataUri } from './sanitizeSvgDataUri';
 import { isAllowedIconUrl } from '../schemas/common';
 import { serializeScene, type Scene } from '../vendor/accurona-core';
 
+// Host indicators (nodeIndicatorComponent, connectorIndicatorComponent)
+// are live host state, not the diagram, so no export draws them. The PNG
+// and SVG dialogs render a fresh editor without them; the PDF captures
+// the live canvas, so the capture itself leaves their slots out.
+export const leaveOutHostIndicators = (node: HTMLElement) => {
+  return !node.hasAttribute?.('data-host-indicator');
+};
+
 export const generateGenericFilename = (extension: string) => {
   return `reticulyne-export-${new Date().toISOString()}.${extension}`;
 };
@@ -156,6 +164,7 @@ export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
   const imageData = await toPng(el, {
     ...size,
     cacheBust: true,
+    filter: leaveOutHostIndicators,
     // html-to-image rejects a capture with an image that will not load by
     // throwing the image's bare DOM error Event, which says nothing (sweep
     // 2026-09-30, Export as PDF). Note it here and fail below with a real
@@ -478,7 +487,10 @@ export const exportAsUniversalSvg = async (
   const prevBg = style.background;
   style.background = bgColor;
   try {
-    const dataUrl = await toSvg(el, { cacheBust: true });
+    const dataUrl = await toSvg(el, {
+      cacheBust: true,
+      filter: leaveOutHostIndicators
+    });
     // Decoded here rather than with fetch(dataUrl): a page whose CSP has
     // connect-src 'self' (the Docker image's) refuses to fetch a data:
     // URL, and the export always failed with "Failed to fetch".

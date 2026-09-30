@@ -41,6 +41,7 @@ export const ConnectorIndicator = ({ connector, view, Indicator }: Props) => {
   return (
     <Box
       data-testid="connector-indicator-slot"
+      data-host-indicator=""
       sx={{ position: 'absolute' }}
       style={{ left: midpoint.x, top: midpoint.y }}
     >

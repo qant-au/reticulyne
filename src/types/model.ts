@@ -19,14 +19,16 @@ import {
   connectorStyleOptions,
   connectorDirectionOptions,
   connectorGlyphOptions,
-  connectorAnimationFlowOptions
+  connectorAnimationFlowOptions,
+  anchorSideOptions
 } from 'src/schemas';
 
 export {
   connectorStyleOptions,
   connectorDirectionOptions,
   connectorGlyphOptions,
-  connectorAnimationFlowOptions
+  connectorAnimationFlowOptions,
+  anchorSideOptions
 } from 'src/schemas';
 export type Model = z.infer<typeof modelSchema>;
 export type ModelItems = z.infer<typeof modelItemsSchema>;
@@ -42,6 +44,7 @@ export type ConnectorDirection = (typeof connectorDirectionOptions)[number];
 export type ConnectorGlyph = (typeof connectorGlyphOptions)[number];
 export type ConnectorAnimationFlow =
   (typeof connectorAnimationFlowOptions)[number];
+export type AnchorSide = (typeof anchorSideOptions)[number];
 export type ConnectorAnchor = z.infer<typeof anchorSchema>;
 export type Connector = z.infer<typeof connectorSchema>;
 export type TextBox = z.infer<typeof textBoxSchema>;

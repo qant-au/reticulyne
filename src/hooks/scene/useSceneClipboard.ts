@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { ClipboardEntry, Coords, ItemReference } from 'src/types';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import * as reducers from 'src/stores/reducers';
-import { generateId, getItemByIdOrThrow } from 'src/utils';
+import { endRef, generateId, getItemByIdOrThrow } from 'src/utils';
 import type { SceneCore } from './types';
 
 const DUPLICATE_TILE_OFFSET = { x: 1, y: 1 };
@@ -451,7 +451,7 @@ export const useSceneClipboard = ({
                 id: anchorIds.get(a.id)!,
                 ref:
                   a.ref.item !== undefined
-                    ? { item: nodeIds.get(a.ref.item)! }
+                    ? endRef(nodeIds.get(a.ref.item)!, a.ref.side)
                     : a.ref.anchor !== undefined
                       ? { anchor: anchorIds.get(a.ref.anchor)! }
                       : { tile: shift(a.ref.tile!) }

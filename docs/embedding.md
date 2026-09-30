@@ -195,7 +195,7 @@ The bindings are the **shared linework keymap**, the same one [Axonometra](https
 | Hold `Space` and drag | Pan, from any tool; release `Space` to return to it |
 | `Alt` + drag an item | Drag a copy, leaving the original in place; with a multi-selection the whole group is copied (connectors are not). `EDITABLE` only |
 | Pinch (touch) | Zoom about the fingers; moving both fingers pans |
-| Drag from a node's port to another node | Draw a connector without switching tools. Hovering a node shows a port on each edge; press one and release on the target node or its port. Releasing anywhere else cancels. `Shift` + press on a port extends the selection instead (`EDITABLE` only) |
+| Drag from a node's port to another node | Draw a connector without switching tools. Hovering a node shows a port on each edge; press one and release on the target node or its port. An end pressed or released on a port leaves through that edge of the node; one released on the node itself docks on its centre. Releasing anywhere else cancels. `Shift` + press on a port extends the selection instead (`EDITABLE` only) |
 | `Shift` + click | Add the item to the selection, or remove it if already in |
 | Drag on empty canvas | Marquee select everything the band touches |
 | `Shift` + drag | Add the marquee's contents to the existing selection |

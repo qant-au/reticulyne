@@ -18,7 +18,8 @@ import {
   CoordsUtils,
   getAnchorTile,
   connectorPathTileToGlobal,
-  getNodeAtPointerPort,
+  getPortAtPointer,
+  endRef,
   isLocked
 } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
@@ -97,7 +98,7 @@ const mousedown: ModeActionsAction = ({
   // that node, without switching tools. Connector mode then draws it live
   // and commits or cancels on release. Shift is left to multi-select (1.4).
   if (uiState.editorMode === 'EDITABLE' && !modifiers.shift) {
-    const portNode = getNodeAtPointerPort({
+    const port = getPortAtPointer({
       mouse: uiState.mouse,
       zoom: uiState.zoom,
       scroll: uiState.scroll,
@@ -105,15 +106,15 @@ const mousedown: ModeActionsAction = ({
       nodes: scene.items,
       projection: scene.projection
     });
-    if (portNode) {
+    if (port) {
       const connectorId = generateId();
       scene.createConnector({
         id: connectorId,
         // A scene may list no colours; the renderer then uses its default.
         color: scene.colors[0]?.id,
         anchors: [
-          { id: generateId(), ref: { item: portNode.id } },
-          { id: generateId(), ref: { item: portNode.id } }
+          { id: generateId(), ref: endRef(port.node.id, port.side) },
+          { id: generateId(), ref: { item: port.node.id } }
         ]
       });
       uiState.actions.setMode({

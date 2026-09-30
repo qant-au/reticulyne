@@ -14,6 +14,8 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-01
+
 ### Changed (breaking)
 
 - **The canvas is a tab stop.** It is focusable (`tabIndex=0`) in every editor mode but `NON_INTERACTIVE`, adding one stop to the host page's tab order; before, it was focusable only with `enableGlobalKeyboardShortcuts={false}`. `Tab` pressed on the canvas now moves between its objects before focus moves on.

@@ -22,7 +22,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { useScene } from 'src/hooks/useScene';
 import { TEXTBOX_DEFAULTS } from 'src/config';
-import { generateId } from 'src/utils';
+import { generateId, repositoryWebUrl } from 'src/utils';
 import { useImportFile } from './useImportFile';
 import { useExportJson } from './useExportJson';
 import { useExportPdf } from './useExportPdf';
@@ -228,7 +228,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
             icon: <GitHubIcon />,
             divider: true,
             onClick: () => {
-              gotoUrl(`${REPOSITORY_URL}`);
+              gotoUrl(repositoryWebUrl(REPOSITORY_URL));
             }
           }
         ]

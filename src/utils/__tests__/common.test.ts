@@ -1,4 +1,4 @@
-import { clamp, connectorsFirst } from '../common';
+import { clamp, connectorsFirst, repositoryWebUrl } from '../common';
 
 describe('Tests common utilities', () => {
   test('clamp() works correctly', () => {
@@ -27,5 +27,30 @@ describe('Tests common utilities', () => {
         return i.id;
       })
     ).toEqual(['k3', 'n3', 'n5']);
+  });
+});
+
+// Sweep 2026-09-30 (E24): Main menu > GitHub opened package.json's
+// git+https://...git, which no browser opens as a page.
+describe('repositoryWebUrl', () => {
+  test('npm repository urls become the web page', () => {
+    expect(repositoryWebUrl('git+https://github.com/qant-au/reticulyne.git')).toBe(
+      'https://github.com/qant-au/reticulyne'
+    );
+    expect(repositoryWebUrl('git://github.com/qant-au/reticulyne.git')).toBe(
+      'https://github.com/qant-au/reticulyne'
+    );
+    expect(repositoryWebUrl('git@github.com:qant-au/reticulyne.git')).toBe(
+      'https://github.com/qant-au/reticulyne'
+    );
+    expect(repositoryWebUrl('https://github.com/qant-au/reticulyne')).toBe(
+      'https://github.com/qant-au/reticulyne'
+    );
+  });
+
+  test("the package's own url", () => {
+    expect(repositoryWebUrl(REPOSITORY_URL)).toBe(
+      'https://github.com/qant-au/reticulyne'
+    );
   });
 });

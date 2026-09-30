@@ -209,10 +209,17 @@ export declare const diagramPlacementSchema: z.ZodObject<{
     layer: z.ZodOptional<z.ZodString>;
     locked: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
+export declare const ANCHOR_SIDES: readonly ["+X", "-X", "+Y", "-Y"];
 export declare const anchorSchema: z.ZodObject<{
     id: z.ZodString;
     ref: z.ZodUnion<readonly [z.ZodObject<{
         object: z.ZodString;
+        side: z.ZodOptional<z.ZodEnum<{
+            "+X": "+X";
+            "-X": "-X";
+            "+Y": "+Y";
+            "-Y": "-Y";
+        }>>;
     }, z.core.$strict>, z.ZodObject<{
         anchor: z.ZodString;
     }, z.core.$strict>, z.ZodObject<{
@@ -230,6 +237,12 @@ export declare const connectorSchema: z.ZodObject<{
         id: z.ZodString;
         ref: z.ZodUnion<readonly [z.ZodObject<{
             object: z.ZodString;
+            side: z.ZodOptional<z.ZodEnum<{
+                "+X": "+X";
+                "-X": "-X";
+                "+Y": "+Y";
+                "-Y": "-Y";
+            }>>;
         }, z.core.$strict>, z.ZodObject<{
             anchor: z.ZodString;
         }, z.core.$strict>, z.ZodObject<{
@@ -341,6 +354,12 @@ export declare const diagramViewSchema: z.ZodObject<{
             id: z.ZodString;
             ref: z.ZodUnion<readonly [z.ZodObject<{
                 object: z.ZodString;
+                side: z.ZodOptional<z.ZodEnum<{
+                    "+X": "+X";
+                    "-X": "-X";
+                    "+Y": "+Y";
+                    "-Y": "-Y";
+                }>>;
             }, z.core.$strict>, z.ZodObject<{
                 anchor: z.ZodString;
             }, z.core.$strict>, z.ZodObject<{
@@ -503,6 +522,12 @@ export declare const viewSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
             id: z.ZodString;
             ref: z.ZodUnion<readonly [z.ZodObject<{
                 object: z.ZodString;
+                side: z.ZodOptional<z.ZodEnum<{
+                    "+X": "+X";
+                    "-X": "-X";
+                    "+Y": "+Y";
+                    "-Y": "-Y";
+                }>>;
             }, z.core.$strict>, z.ZodObject<{
                 anchor: z.ZodString;
             }, z.core.$strict>, z.ZodObject<{
@@ -735,6 +760,12 @@ export declare const sceneShapeSchema: z.ZodObject<{
                 id: z.ZodString;
                 ref: z.ZodUnion<readonly [z.ZodObject<{
                     object: z.ZodString;
+                    side: z.ZodOptional<z.ZodEnum<{
+                        "+X": "+X";
+                        "-X": "-X";
+                        "+Y": "+Y";
+                        "-Y": "-Y";
+                    }>>;
                 }, z.core.$strict>, z.ZodObject<{
                     anchor: z.ZodString;
                 }, z.core.$strict>, z.ZodObject<{
@@ -975,6 +1006,12 @@ export declare const sceneSchema: z.ZodObject<{
                 id: z.ZodString;
                 ref: z.ZodUnion<readonly [z.ZodObject<{
                     object: z.ZodString;
+                    side: z.ZodOptional<z.ZodEnum<{
+                        "+X": "+X";
+                        "-X": "-X";
+                        "+Y": "+Y";
+                        "-Y": "-Y";
+                    }>>;
                 }, z.core.$strict>, z.ZodObject<{
                     anchor: z.ZodString;
                 }, z.core.$strict>, z.ZodObject<{

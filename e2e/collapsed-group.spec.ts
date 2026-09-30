@@ -110,3 +110,38 @@ test('dragging the box moves the group and keeps its connector', async ({
     { object: 'pc1' }
   ]);
 });
+
+// Sweep 2026-09-30: the docked connector ran on past its arrowhead to the
+// box's centre, and the name ran over the box's lower-right edge.
+test('the docked connector stops at the box edge; the name sits under the box', async ({
+  page
+}) => {
+  const box = await boxArea(page);
+  const centre = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  const end = await page.evaluate(() => {
+    const lines = [...document.querySelectorAll('polyline')].filter((l) => {
+      return (
+        !l.closest('[data-testid="collapsed-group"]') &&
+        l.getAttribute('stroke') !== '#fff' &&
+        l.getAttribute('stroke') !== '#ffffff'
+      );
+    });
+    const line = lines[lines.length - 1];
+    const pts = line.points;
+    const last = pts.getItem(pts.numberOfItems - 1);
+    const m = line.getScreenCTM()!;
+    return {
+      x: m.a * last.x + m.c * last.y + m.e,
+      y: m.b * last.x + m.d * last.y + m.f
+    };
+  });
+  // Where the end sits in the box's diamond: 0 at the centre, 1 on its edge.
+  const reach =
+    Math.abs(end.x - centre.x) / (box.width / 2) +
+    Math.abs(end.y - centre.y) / (box.height / 2);
+  expect(reach).toBeGreaterThan(0.85);
+
+  const label = (await page.getByText('Desk pair (2)').boundingBox())!;
+  expect(label.y).toBeGreaterThanOrEqual(box.y + box.height - 4);
+  expect(Math.abs(label.x + label.width / 2 - centre.x)).toBeLessThan(4);
+});

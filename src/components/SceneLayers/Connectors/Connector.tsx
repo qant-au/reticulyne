@@ -6,7 +6,10 @@ import {
   getColorVariant,
   getConnectorDirectionIcon,
   flipConnectorTileY,
-  anchorWorldYToRenderY
+  anchorWorldYToRenderY,
+  clipPathAtCollapsedBoxes,
+  collapsedBoxes,
+  connectorPathTileToGlobal
 } from 'src/utils';
 import { Circle } from 'src/components/Circle/Circle';
 import { Svg } from 'src/components/Svg/Svg';
@@ -42,7 +45,7 @@ export const Connector = ({
 }: Props) => {
   const theme = useTheme();
   const color = useColor(_connector.color);
-  const { currentView } = useScene();
+  const { currentView, visibleView } = useScene();
   // useConnector may return null during the final render cycle after the
   // connector is deleted but before this component unmounts. All hook
   // calls below use _connector (the always-valid prop) so they are
@@ -93,11 +96,29 @@ export const Connector = ({
   // rectangle.from" coordinate space into the renderer's SVG-local
   // space. See flipConnectorTileY for the why — BUG4-01 fixed the
   // X mirror; this is the Y companion.
+  //
+  // lw-062: an end docked on a collapsed group's box stops at the box's
+  // edge, where its arrow is, instead of running on to the box's centre.
   const renderTiles = useMemo(() => {
-    return _connector.path.tiles.map((tile) => {
-      return { x: tile.x, y: flipConnectorTileY(tile.y, gridSize.height) };
+    const origin = _connector.path.rectangle.from;
+    const clipped = clipPathAtCollapsedBoxes(
+      _connector.path.tiles.map((tile) => {
+        return connectorPathTileToGlobal(tile, origin);
+      }),
+      collapsedBoxes(visibleView)
+    );
+    return clipped.map((tile) => {
+      return {
+        x: tile.x - origin.x,
+        y: flipConnectorTileY(tile.y - origin.y, gridSize.height)
+      };
     });
-  }, [_connector.path.tiles, gridSize.height]);
+  }, [
+    _connector.path.tiles,
+    _connector.path.rectangle.from,
+    visibleView,
+    gridSize.height
+  ]);
 
   const pathString = useMemo(() => {
     return renderTiles.reduce((acc, tile) => {

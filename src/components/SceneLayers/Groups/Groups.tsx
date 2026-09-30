@@ -166,11 +166,32 @@ export const Groups = () => {
           members.every((m) => {
             return selectedKeys.has(`${m.type}:${m.id}`);
           });
-        const label = getTilePosition({
-          tile: { x: box.tile.x + BOX, y: box.tile.y - BOX },
-          origin: 'BOTTOM',
-          projection: currentView.kind
+        // Centred under the box's lowest point (its bottom corner in the
+        // isometric view): at the right-hand corner the name ran over the
+        // box's lower-right edge (sweep 2026-09-30).
+        const corners = [
+          { x: box.tile.x - BOX, y: box.tile.y - BOX },
+          { x: box.tile.x + BOX, y: box.tile.y - BOX },
+          { x: box.tile.x + BOX, y: box.tile.y + BOX },
+          { x: box.tile.x - BOX, y: box.tile.y + BOX }
+        ].map((tile) => {
+          return getTilePosition({
+            tile,
+            origin: 'BOTTOM',
+            projection: currentView.kind
+          });
         });
+        const label = {
+          x:
+            corners.reduce((sum, c) => {
+              return sum + c.x;
+            }, 0) / corners.length,
+          y: Math.max(
+            ...corners.map((c) => {
+              return c.y;
+            })
+          )
+        };
         return (
           <Box
             key={group.id}

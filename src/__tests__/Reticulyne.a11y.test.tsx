@@ -389,6 +389,7 @@ describe('lw-082: the catalogue palette', () => {
       'Wireless',
       'Serial and field bus',
       'Marine and vehicle',
+      'Building control',
       'Security and access',
       'Fire',
       'AV',

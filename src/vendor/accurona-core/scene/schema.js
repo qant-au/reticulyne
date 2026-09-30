@@ -186,7 +186,8 @@ export const diagramPlacementSchema = z.strictObject({
     tile: tileSchema,
     labelHeight: z.number().min(-1_000).max(1_000).optional(),
     group: idSchema.optional(),
-    layer: idSchema.optional()
+    layer: idSchema.optional(),
+    locked: z.boolean().optional()
 });
 export const anchorSchema = z.strictObject({
     id: idSchema,
@@ -225,7 +226,8 @@ export const connectorSchema = z.strictObject({
     animated: z.boolean().optional(),
     animationRate: z.number().min(0).max(1).optional(),
     animationFlow: z.enum(['forward', 'reverse', 'both']).optional(),
-    layer: idSchema.optional()
+    layer: idSchema.optional(),
+    locked: z.boolean().optional()
 });
 export const rectangleSchema = z.strictObject({
     id: idSchema,
@@ -237,7 +239,8 @@ export const rectangleSchema = z.strictObject({
     transparency: z.number().min(0).max(1).optional(),
     zIndex: z.number().int().optional(),
     group: idSchema.optional(),
-    layer: idSchema.optional()
+    layer: idSchema.optional(),
+    locked: z.boolean().optional()
 });
 export const textBoxSchema = z.strictObject({
     id: idSchema,
@@ -246,7 +249,8 @@ export const textBoxSchema = z.strictObject({
     fontSize: z.number().min(0).max(1_000).optional(),
     orientation: z.enum(['X', 'Y']).optional(),
     group: idSchema.optional(),
-    layer: idSchema.optional()
+    layer: idSchema.optional(),
+    locked: z.boolean().optional()
 });
 export const groupSchema = z.strictObject({
     id: idSchema,

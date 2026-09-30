@@ -11,6 +11,13 @@
 > returns those drawings as icons (collection `Accurona`, ids `accurona-<element id>`), and
 > `catalogueItemIcon(item)` names the one an item uses. Only the drawings of cross-referenced
 > elements are vendored (`node scripts/sync-accurona.mjs` picks them from `src/catalogue/items.ts`).
+>
+> Every built-in item also has a **2D schematic symbol** for the flat, Visio-style view:
+> `catalogueItemSymbol(item)` returns it as SVG, and `schematicIcons()` returns them as flat icons
+> (collection `Schematic`, ids `schematic-<item id>`). An item with a twin uses the schematic
+> Accurona generates from the element's model (`dist/schematic/<id>.svg`, vendored beside the
+> isometric drawings); an item with no twin has one drawn in `src/catalogue/symbols.ts`. The flat
+> view that draws with them is not built yet.
 
 The **catalogue** is Reticulyne's list of the things a diagram connects: devices with ports, the
 passive parts that make up a bus (tees, terminators, power injectors), and virtual things that
@@ -310,7 +317,8 @@ An item that has a physical twin names it with an external link:
 
 - The link is the scene format's `ExternalLink { source, ref }`. It is optional and **not
   validated**: an unknown element id is not an error.
-- An item with a twin can borrow the element's isometric drawing instead of having its own icon.
+- An item with a twin can borrow the element's isometric drawing instead of having its own icon,
+  and uses the element's generated 2D schematic as its symbol in the flat view.
 - First twins worth adding: `wifi-ap`, `network-switch`, `router`, `firewall`, `nas`, `ip-phone`,
   `cctv-dome`, `cctv-bullet`, `cctv-ptz`, `nvr`, `alarm-panel`, `card-reader`, `pir-sensor`,
   `door-contact`, `intercom`, `fire-panel`, `smoke-detector`, `heat-detector`,

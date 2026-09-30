@@ -17,8 +17,12 @@ export { expandPorts, validateCatalogue } from './validate';
 export type { CatalogueIssue, CatalogueResult, ExpandedPort } from './validate';
 export {
   ACCURONA_ICON_COLLECTION,
+  SCHEMATIC_ICON_COLLECTION,
   accuronaElement,
   accuronaIcons,
   catalogueItemIcon,
-  itemToSceneObject
+  catalogueItemSymbol,
+  itemToSceneObject,
+  schematicIcons
 } from './place';
+export { ITEM_SYMBOLS } from './symbols';

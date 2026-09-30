@@ -6,7 +6,8 @@ import type { CatalogueItem, CatalogueLink } from './schema';
 //
 // `twin(id)` is the cross-reference to an Accurona element. The vendoring
 // script (scripts/sync-accurona.mjs) reads these calls to pick which
-// isometric drawings to bring in, so keep each one a literal id.
+// isometric and schematic drawings to bring in, so keep each one a literal id.
+// An item with no twin has its schematic drawn in symbols.ts.
 
 const twin = (ref: string): CatalogueLink[] => {
   return [{ source: 'accurona', ref }];

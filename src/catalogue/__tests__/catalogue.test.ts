@@ -1,13 +1,18 @@
 import { emptyScene, validateScene } from 'src/vendor/accurona-core';
 import { ISO_DRAWINGS } from 'src/vendor/accurona-iso';
+import { SCHEMATIC_DRAWINGS } from 'src/vendor/accurona-schematic';
 import { iconSchema } from 'src/schemas/icons';
 import {
   CATALOGUE,
+  ITEM_SYMBOLS,
+  SCHEMATIC_ICON_COLLECTION,
   accuronaElement,
   accuronaIcons,
   catalogueItemIcon,
+  catalogueItemSymbol,
   expandPorts,
   itemToSceneObject,
+  schematicIcons,
   validateCatalogue,
   type Catalogue,
   type CatalogueItem
@@ -110,6 +115,90 @@ describe('accuronaIcons', () => {
         links: [{ source: 'accurona', ref: 'no-such-element' }]
       })
     ).toBeUndefined();
+  });
+});
+
+describe('schematic symbols', () => {
+  const wellFormed = (svg: string) => {
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    return (
+      doc.documentElement.nodeName === 'svg' &&
+      !doc.querySelector('parsererror') &&
+      !/NaN|undefined|Infinity/.test(svg)
+    );
+  };
+
+  it('every built-in item has one', () => {
+    const missing = CATALOGUE.items.filter((item) => {
+      return !catalogueItemSymbol(item);
+    });
+    expect(
+      missing.map((item) => {
+        return item.id;
+      })
+    ).toEqual([]);
+  });
+
+  it('an item with a twin uses the schematic generated from its element', () => {
+    const twinned = CATALOGUE.items.filter((item) => {
+      return accuronaElement(item);
+    });
+    expect(twinned.length).toBeGreaterThan(0);
+    for (const item of twinned) {
+      expect(catalogueItemSymbol(item)).toBe(
+        SCHEMATIC_DRAWINGS[accuronaElement(item)!].svg
+      );
+    }
+    // And the vendored drawings are exactly the ones referenced.
+    expect(Object.keys(SCHEMATIC_DRAWINGS).sort()).toEqual(
+      Object.keys(ISO_DRAWINGS).sort()
+    );
+  });
+
+  it('are drawn by hand exactly for the items with no twin', () => {
+    const untwinned = CATALOGUE.items.filter((item) => {
+      return !accuronaElement(item);
+    });
+    expect(Object.keys(ITEM_SYMBOLS).sort()).toEqual(
+      untwinned
+        .map((item) => {
+          return item.id;
+        })
+        .sort()
+    );
+  });
+
+  it('are well-formed SVG', () => {
+    for (const item of CATALOGUE.items) {
+      expect([item.id, wellFormed(catalogueItemSymbol(item)!)]).toEqual([
+        item.id,
+        true
+      ]);
+    }
+  });
+
+  it('become valid flat icons, one per item', () => {
+    const icons = schematicIcons();
+    expect(icons).toHaveLength(CATALOGUE.items.length);
+    for (const icon of icons) {
+      expect(iconSchema.safeParse(icon).success).toBe(true);
+      expect(icon.isIsometric).toBe(false);
+      expect(icon.collection).toBe(SCHEMATIC_ICON_COLLECTION);
+    }
+    expect(
+      icons.find((icon) => {
+        return icon.id === 'schematic-internet';
+      })?.name
+    ).toBe('Internet');
+  });
+
+  it('a host item with neither a twin nor a symbol has none', () => {
+    expect(catalogueItemSymbol({ id: 'custom-thing' })).toBeUndefined();
+    expect(
+      schematicIcons([
+        { id: 'custom-thing', name: 'X', family: 'virtual', ports: [] }
+      ])
+    ).toEqual([]);
   });
 });
 

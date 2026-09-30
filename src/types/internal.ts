@@ -172,6 +172,10 @@ export interface DragItemsMode {
   showCursor: boolean;
   items: ItemReference[];
   isInitialMovement: boolean;
+  // The part of the drag not yet applied because it would have put a node
+  // on a tile another node holds: the nodes wait at their last free tile
+  // and catch up with the pointer on the next free one.
+  refused?: Coords;
 }
 
 // 1.4: marquee ("rubber band") drag-select. Entered from CURSOR when the

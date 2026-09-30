@@ -249,3 +249,38 @@ test('dragging the label-height slider keeps the inspector open', async ({
   await expect(page.getByRole('textbox').first()).toHaveValue('Node a');
   await expect(slider).not.toHaveAttribute('aria-valuenow', before ?? '');
 });
+
+// Sweep 2026-09-30: a drag dropped a node on another node's tile, stacking
+// them and hiding the moved node's label. Refused, as a nudge is.
+test('a drag onto a tile another node holds is refused', async ({ page }) => {
+  const c = await load(page, [
+    { id: 'a', tile: { x: 0, y: 0 } },
+    { id: 'b', tile: { x: 1, y: 0 } }
+  ]);
+  // Tile +x draws up and to the right: (70.75, -40.95) px at 100%.
+  await page.mouse.move(c.x, c.y);
+  await page.mouse.down();
+  await page.mouse.move(c.x + 35, c.y - 20, { steps: 4 });
+  await page.mouse.move(c.x + 71, c.y - 41, { steps: 4 });
+  await page.mouse.up();
+  const tiles = await exportedTiles(page);
+  expect(tiles.a).toEqual({ x: 0, y: 0 });
+  expect(tiles.b).toEqual({ x: 1, y: 0 });
+});
+
+test('a drag across an occupied tile lands on the free one past it', async ({
+  page
+}) => {
+  const c = await load(page, [
+    { id: 'a', tile: { x: 0, y: 0 } },
+    { id: 'b', tile: { x: 1, y: 0 } }
+  ]);
+  await page.mouse.move(c.x, c.y);
+  await page.mouse.down();
+  await page.mouse.move(c.x + 71, c.y - 41, { steps: 6 });
+  await page.mouse.move(c.x + 142, c.y - 82, { steps: 6 });
+  await page.mouse.up();
+  const tiles = await exportedTiles(page);
+  expect(tiles.a).toEqual({ x: 2, y: 0 });
+  expect(tiles.b).toEqual({ x: 1, y: 0 });
+});

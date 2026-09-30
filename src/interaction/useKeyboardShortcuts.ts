@@ -10,7 +10,8 @@ import {
   collapsedBoxes,
   collapsedGroupMembers,
   keyboardStops,
-  stopIndex
+  stopIndex,
+  wouldStackNodes
 } from 'src/utils';
 import { TEXTBOX_DEFAULTS } from 'src/config';
 import { useThemeToggle } from 'src/hooks/useThemeToggle';
@@ -649,21 +650,13 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
                 return s.id;
               })
           );
-          const taken = new Set(
-            (currentView.items ?? [])
-              .filter((i) => {
-                return !moving.has(i.id);
-              })
-              .map((i) => {
-                return `${i.tile.x},${i.tile.y}`;
-              })
-          );
-          const blocked = (currentView.items ?? []).some((i) => {
-            return (
-              moving.has(i.id) && taken.has(`${i.tile.x + dx},${i.tile.y + dy}`)
-            );
-          });
-          if (blocked) {
+          if (
+            wouldStackNodes(
+              selection,
+              { x: dx, y: dy },
+              currentView.items ?? []
+            )
+          ) {
             done();
             return;
           }

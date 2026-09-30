@@ -6,7 +6,8 @@ import {
   CoordsUtils,
   hasMovedTile,
   getAnchorParent,
-  getItemAtTile
+  getItemAtTile,
+  wouldStackNodes
 } from 'src/utils';
 
 const dragItems = (
@@ -132,30 +133,45 @@ export const DragItems: ModeActions = {
     renderer.style.userSelect = 'auto';
   },
   mousemove: ({ uiState, scene }) => {
-    if (uiState.mode.type !== 'DRAG_ITEMS' || !uiState.mouse.mousedown) return;
+    const { mode } = uiState;
+    if (mode.type !== 'DRAG_ITEMS' || !uiState.mouse.mousedown) return;
 
-    if (uiState.mode.isInitialMovement) {
-      const delta = CoordsUtils.subtract(
+    let delta: Coords;
+    if (mode.isInitialMovement) {
+      delta = CoordsUtils.subtract(
         uiState.mouse.position.tile,
         uiState.mouse.mousedown.tile
       );
+    } else {
+      if (!hasMovedTile(uiState.mouse) || !uiState.mouse.delta?.tile) return;
+      delta = uiState.mouse.delta.tile;
+    }
+    const wanted = CoordsUtils.add(delta, mode.refused ?? CoordsUtils.zero());
 
-      dragItems(uiState.mode.items, uiState.mouse.position.tile, delta, scene);
-
+    // A drag onto a tile another node holds is refused, as a nudge is
+    // (BUG15-56): dropped there, the moved node sat on the other and its
+    // label was hidden (sweep 2026-09-30). The nodes wait at their last
+    // free tile, so a drop there leaves them on it.
+    if (wouldStackNodes(mode.items, wanted, scene.currentView.items ?? [])) {
       uiState.actions.setMode(
-        produce(uiState.mode, (draft) => {
+        produce(mode, (draft) => {
           draft.isInitialMovement = false;
+          draft.refused = wanted;
         })
       );
-
       return;
     }
 
-    if (!hasMovedTile(uiState.mouse) || !uiState.mouse.delta?.tile) return;
+    dragItems(mode.items, uiState.mouse.position.tile, wanted, scene);
 
-    const delta = uiState.mouse.delta.tile;
-
-    dragItems(uiState.mode.items, uiState.mouse.position.tile, delta, scene);
+    if (mode.isInitialMovement || mode.refused) {
+      uiState.actions.setMode(
+        produce(mode, (draft) => {
+          draft.isInitialMovement = false;
+          delete draft.refused;
+        })
+      );
+    }
   },
   mouseup: ({ uiState }) => {
     uiState.actions.setMode({

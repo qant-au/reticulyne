@@ -15,17 +15,18 @@
     "node": ">=22.0.0"
   },
   "main": "./dist/index.js",
+  "module": "./dist/esm/index.mjs",
   "types": "./dist/Reticulyne.d.ts",
   "exports": {
     ".": {
       "types": "./dist/Reticulyne.d.ts",
-      "import": "./dist/index.js",
+      "import": "./dist/esm/index.mjs",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./standalone": {
       "types": "./dist/standaloneExports.d.ts",
-      "import": "./dist/standaloneExports.js",
+      "import": "./dist/esm/standaloneExports.mjs",
       "require": "./dist/standaloneExports.js",
       "default": "./dist/standaloneExports.js"
     },
@@ -47,7 +48,7 @@
     "start": "webpack serve --config ./webpack/dev.config.js",
     "dev": "nodemon --watch ./src/ -e ts,tsx --exec npm run build",
     "clean": "rm -rf dist dist-docker dist-docker-examples",
-    "build": "npm run clean && webpack --config ./webpack/prod.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && node scripts/copy-vendor-types.mjs",
+    "build": "npm run clean && webpack --config ./webpack/prod.config.js && webpack --config ./webpack/esm.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && node scripts/copy-vendor-types.mjs",
     "prepublishOnly": "npm run lint && npm test && npm run build",
     "test": "jest",
     "test:e2e": "playwright test",

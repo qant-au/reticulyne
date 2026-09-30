@@ -193,6 +193,56 @@ export const reroutedPath = (
   return meta.get(view)?.paths.get(connectorId);
 };
 
+/**
+ * How far a collapsed group's box reaches from its tile's centre, in tiles,
+ * along each axis. It is drawn across most of the neighbouring tiles too
+ * (Groups), so a press anywhere on it must find it, not only on its centre
+ * tile (sweep 2026-09-30: off-centre clicks selected nothing).
+ */
+export const COLLAPSED_BOX_REACH = 0.95;
+
+/**
+ * The collapsed group whose box is under `point`, a position in tile units
+ * (pointerTilePosition), if any.
+ */
+export const collapsedBoxAt = (
+  view: View,
+  point: Coords
+): CollapsedBox | null => {
+  return (
+    collapsedBoxes(view).find((b) => {
+      return (
+        Math.abs(point.x - b.tile.x) <= COLLAPSED_BOX_REACH &&
+        Math.abs(point.y - b.tile.y) <= COLLAPSED_BOX_REACH
+      );
+    }) ?? null
+  );
+};
+
+/**
+ * True when an end of this connector is docked on a node hidden in a
+ * collapsed group, so it is drawn to the group's box. Its anchors as drawn
+ * point that end at the box's tile: dragging an anchor, or adding a
+ * waypoint (which writes the drawn anchors back), would re-point it at a
+ * bare tile and detach the connector from the group.
+ */
+export const isDockedOnCollapsedBox = (
+  view: View,
+  connectorId: string
+): boolean => {
+  const connector = view.connectors?.find((c) => {
+    return c.id === connectorId;
+  });
+  return (connector?.anchors ?? []).some((a) => {
+    const itemId = a.ref.item;
+    if (itemId === undefined) return false;
+    const parent = view.items.find((i) => {
+      return i.id === itemId;
+    })?.parentGroupId;
+    return parent !== undefined && isInCollapsedGroup(view, parent);
+  });
+};
+
 /** The collapsed group whose box is on `tile`, if any. */
 export const collapsedBoxAtTile = (
   view: View,

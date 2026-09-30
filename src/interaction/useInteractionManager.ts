@@ -15,8 +15,9 @@ import {
   clickTarget,
   hasLocked,
   isLocked,
-  collapsedBoxAtTile,
-  groupMembers
+  collapsedBoxAt,
+  groupMembers,
+  pointerTilePosition
 } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
@@ -296,6 +297,30 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       const itemAtTile = getItemAtTile({ tile, scene: sceneRef.current });
       e.preventDefault();
 
+      // lw-062: double-clicking a collapsed group's box expands it, with
+      // its members selected. Anywhere on the box, and over a connector
+      // drawn to it; only a node shown on those tiles comes first.
+      const box =
+        itemAtTile?.type === 'ITEM'
+          ? null
+          : collapsedBoxAt(
+              sceneRef.current.visibleView,
+              pointerTilePosition({
+                mouse: liveUiState.mouse.position.screen,
+                zoom: liveUiState.zoom,
+                scroll: liveUiState.scroll,
+                rendererSize,
+                projection: sceneRef.current.projection
+              })
+            );
+      if (box) {
+        sceneRef.current.updateGroup(box.groupId, { collapsed: undefined });
+        uiStateActions.setSelection(
+          groupMembers(sceneRef.current.currentView, box.groupId)
+        );
+        return;
+      }
+
       // lw-069: a locked item is neither selected nor built on.
       if (itemAtTile && isLocked(sceneRef.current.currentView, itemAtTile)) {
         return;
@@ -317,17 +342,6 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         return;
       }
 
-      // lw-062: double-clicking a collapsed group's box expands it, with
-      // its members selected.
-      const box = collapsedBoxAtTile(sceneRef.current.visibleView, tile);
-      if (box) {
-        sceneRef.current.updateGroup(box.groupId, { collapsed: undefined });
-        uiStateActions.setSelection(
-          groupMembers(sceneRef.current.currentView, box.groupId)
-        );
-        return;
-      }
-
       uiStateActions.setItemControls({ type: 'ADD_ITEM', tile });
       uiStateActions.setMode({
         type: 'PLACE_ICON',
@@ -335,7 +349,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         id: null
       });
     },
-    [uiStateActions]
+    [uiStateActions, rendererSize]
   );
 
   const onContextMenu = useCallback(

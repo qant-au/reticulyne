@@ -61,6 +61,16 @@ const fractionalTile = ({
   };
 };
 
+/**
+ * The pointer's position in tile units, not rounded to a tile: a tile's
+ * centre is at its whole coordinates, as getTilePosition draws it. For
+ * hit-testing something drawn across part of a tile, or more than one.
+ */
+export const pointerTilePosition = (args: ScreenToIso): Coords => {
+  const { fx, fy } = fractionalTile(args);
+  return { x: fx - 0.5, y: fy + 0.5 };
+};
+
 // converts a mouse position to a tile position
 export const screenToIso = (args: ScreenToIso) => {
   const { fx, fy } = fractionalTile(args);

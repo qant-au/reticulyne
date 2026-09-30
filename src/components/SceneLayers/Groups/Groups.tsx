@@ -6,6 +6,7 @@ import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import {
   collapsedBoxes,
+  COLLAPSED_BOX_REACH,
   getTilePosition,
   groupAndDescendants,
   groupBounds,
@@ -17,8 +18,9 @@ import {
 import type { Coords } from 'src/types';
 
 const PAD = 0.4;
-// lw-062: a collapsed group's box is a little less than one tile.
-const BOX = 0.45;
+// lw-062: a collapsed group's box, drawn COLLAPSED_BOX_REACH from its
+// tile's centre (the area spans whole tiles, so less the half tile).
+const BOX = COLLAPSED_BOX_REACH - 0.5;
 
 // each group as a faint area under its members, labelled with
 // its name. Outermost groups are drawn first so nested ones sit on top.

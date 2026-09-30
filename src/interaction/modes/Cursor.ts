@@ -21,8 +21,10 @@ import {
   getPortAtPointer,
   endRef,
   isLocked,
-  collapsedBoxAtTile,
-  collapsedGroupMembers
+  collapsedBoxAt,
+  collapsedGroupMembers,
+  isDockedOnCollapsedBox,
+  pointerTilePosition
 } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
 
@@ -137,9 +139,23 @@ const mousedown: ModeActionsAction = ({
 
   // lw-062: a collapsed group's box stands for its members. A click selects
   // them all, and a press on one of them makes a drag move the whole group.
-  const box = itemAtTile
-    ? null
-    : collapsedBoxAtTile(scene.visibleView, uiState.mouse.position.tile);
+  // Anywhere on the box, and over whatever else is on those tiles bar a
+  // node: a connector from outside is drawn to the box's centre, and a
+  // press there grabbed its end and pinned it to a bare tile instead of
+  // moving the group (sweep 2026-09-30).
+  const box =
+    itemAtTile?.type === 'ITEM'
+      ? null
+      : collapsedBoxAt(
+          scene.visibleView,
+          pointerTilePosition({
+            mouse: uiState.mouse.position.screen,
+            zoom: uiState.zoom,
+            scroll: uiState.scroll,
+            rendererSize,
+            projection: scene.projection
+          })
+        );
   const boxRefs = box
     ? collapsedGroupMembers(scene.currentView, box.groupId)
     : [];
@@ -293,6 +309,10 @@ export const Cursor: ModeActions = {
     }
 
     if (item.type === 'CONNECTOR' && uiState.mouse.mousedown) {
+      // lw-062: a connector drawn to a collapsed group's box is left as it
+      // is until the group is expanded; see isDockedOnCollapsedBox.
+      if (isDockedOnCollapsedBox(scene.currentView, item.id)) return;
+
       const anchor = getAnchor(item.id, uiState.mouse.mousedown.tile, scene);
 
       item = {

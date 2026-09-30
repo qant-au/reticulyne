@@ -197,6 +197,22 @@ export const useScene = () => {
     }
   }, [model.actions, scene.actions, historyActions, keepViewShown]);
 
+  // lw-089: put the diagram back as it was when a gesture began (Esc
+  // during a drag). No undo step: the gesture is forgotten, not undone.
+  const restoreState = useCallback(
+    (origin: State) => {
+      historyActions.discardSince(origin);
+      historyActions.setIsApplying(true);
+      try {
+        model.actions.set(origin.model);
+        scene.actions.set(origin.scene);
+      } finally {
+        historyActions.setIsApplying(false);
+      }
+    },
+    [model.actions, scene.actions, historyActions]
+  );
+
   // lw-050: draw the current view isometrically or flat. Undoable, and
   // saved on the view; 'iso' is stored as no kind at all.
   const setViewKind = useCallback(
@@ -268,6 +284,8 @@ export const useScene = () => {
     floors: model.views,
     connections: model.connections ?? EMPTY_CONNECTIONS,
     undo,
-    redo
+    redo,
+    getState,
+    restoreState
   };
 };

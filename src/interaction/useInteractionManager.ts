@@ -32,6 +32,7 @@ import { PlaceIcon } from './modes/PlaceIcon';
 import { TextBox } from './modes/TextBox';
 import { interpretWheelEvent } from './wheelInput';
 import { PinchStart, startPinch, updatePinch } from './touchInput';
+import type { State as StoreState } from 'src/stores/reducers/types';
 
 const modes: { [k in string]: ModeActions } = {
   CURSOR: Cursor,
@@ -44,6 +45,11 @@ const modes: { [k in string]: ModeActions } = {
   PAN: Pan,
   PLACE_ICON: PlaceIcon,
   TEXTBOX: TextBox
+};
+
+// lw-089: the gestures Esc cancels, putting back what they moved.
+const isDragMode = (type: string) => {
+  return type === 'DRAG_ITEMS' || type === 'RECTANGLE.TRANSFORM';
 };
 
 // 1.6: how far the pointer may travel between press and release and still
@@ -113,6 +119,18 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
   const clickRef = useRef<{ at: Coords; item: ItemReference | null } | null>(
     null
   );
+
+  // lw-089: Esc cancels a drag. `origin` is the diagram at the press, before
+  // an Alt+drag made its copies; `selection` is what was selected just
+  // before the drag began, so the originals are selected again rather than
+  // copies that no longer exist. `swallowUp` keeps the release that ends a
+  // cancelled drag from reaching the cursor tool, which would clear the
+  // selection as a click on empty canvas.
+  const gestureRef = useRef<{
+    origin: StoreState | null;
+    selection: ItemReference[] | null;
+    swallowUp: boolean;
+  }>({ origin: null, selection: null, swallowUp: false });
 
   // two touch pointers are a pinch, handled here and never
   // passed to the mode handlers. The finger left down when a pinch ends is
@@ -218,6 +236,12 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       lastMouseRef.current = nextMouse;
       uiStateActions.setMouse(nextMouse);
 
+      const gesture = gestureRef.current;
+      if (e.type === 'pointerdown') {
+        gesture.origin = sceneRef.current.getState();
+        gesture.selection = null;
+      }
+
       const baseState: State = {
         model: modelRef.current,
         scene: sceneRef.current,
@@ -249,8 +273,21 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         }
       }
 
-      modeFunction(baseState);
       reducerTypeRef.current = liveUiState.mode.type;
+      if (e.type === 'pointerup' && gesture.swallowUp) {
+        gesture.swallowUp = false;
+        clickRef.current = null;
+        return;
+      }
+
+      const selectionBefore = uiStateActions.get().selection;
+      modeFunction(baseState);
+      if (
+        !isDragMode(liveUiState.mode.type) &&
+        isDragMode(uiStateActions.get().mode.type)
+      ) {
+        gesture.selection = selectionBefore;
+      }
 
       // 1.6: onNodeClick / onConnectorClick. A click is a press and release
       // on the same spot with the select or pan tool, so the end of a drag
@@ -504,6 +541,39 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     rendererEl,
     enableGlobalDragHandlers
   ]);
+
+  // lw-089: Esc during a drag puts everything the drag moved back, and the
+  // drag leaves no undo step. Captured on the window so it runs before the
+  // keyboard shortcuts' Esc, which would clear the selection as well.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      const live = uiStateActions.get();
+      const gesture = gestureRef.current;
+      if (!isDragMode(live.mode.type) || !gesture.origin) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      sceneRef.current.restoreState(gesture.origin);
+      if (gesture.selection) uiStateActions.setSelection(gesture.selection);
+      uiStateActions.setMode({
+        type: 'CURSOR',
+        showCursor: true,
+        mousedownItem: null
+      });
+      // The button is still held: without its press the cursor tool
+      // treats further movement as a hover, not a marquee.
+      if (lastMouseRef.current) {
+        lastMouseRef.current = { ...lastMouseRef.current, mousedown: null };
+        uiStateActions.setMouse(lastMouseRef.current);
+      }
+      gestureRef.current = { origin: null, selection: null, swallowUp: true };
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown, true);
+    };
+  }, [uiStateActions]);
 
   const setInteractionsElement = useCallback((element: HTMLElement) => {
     rendererRef.current = element;

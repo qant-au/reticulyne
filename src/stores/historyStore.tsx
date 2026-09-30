@@ -86,6 +86,12 @@ export interface HistoryStore {
     redo: (current: State) => State | null;
     canUndo: () => boolean;
     canRedo: () => boolean;
+    /**
+     * lw-089: forgets what a cancelled gesture recorded, so restoring
+     * `origin` (the state when it began) leaves no undo step behind. A
+     * burst that began before the gesture is kept, ending at `origin`.
+     */
+    discardSince: (origin: State) => void;
     /** Wipes both stacks. Called on diagram load / clear. */
     clear: () => void;
     /** Lets useScene flip the recursion guard around an apply. */
@@ -195,6 +201,25 @@ const { Provider, useStore } = createContextualStore<HistoryStore>(() => {
         },
         canRedo: () => {
           return get().future.length > 0;
+        },
+        discardSince: (origin) => {
+          const { past, pendingPrior } = get();
+          // A slow drag can commit part of itself mid-gesture: that entry's
+          // prior is the gesture's starting state, by reference.
+          const at = past.findIndex((s) => {
+            return s.model === origin.model;
+          });
+          if (at !== -1) set({ past: past.slice(0, at) });
+          if (pendingPrior === null) return;
+          if (at !== -1 || pendingPrior.model === origin.model) {
+            const { commitTimer } = get();
+            if (commitTimer !== null) clearTimeout(commitTimer);
+            set({ pendingPrior: null, pendingNext: null, commitTimer: null });
+            return;
+          }
+          // The burst predates the gesture: it now ends where the gesture
+          // began, and commits on its own timer as before.
+          set({ pendingNext: origin });
         },
         clear: () => {
           const { commitTimer } = get();

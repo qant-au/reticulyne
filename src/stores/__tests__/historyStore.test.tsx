@@ -38,6 +38,7 @@ type Captured = {
     redo: (current: State) => State | null;
     canUndo: () => boolean;
     canRedo: () => boolean;
+    discardSince: (origin: State) => void;
     clear: () => void;
     setIsApplying: (v: boolean) => void;
   };
@@ -69,6 +70,27 @@ const setup = (): { current: Captured } => {
   if (ref.current === null) throw new Error('harness did not capture');
   return ref as { current: Captured };
 };
+
+describe('historyStore discardSince (lw-089)', () => {
+  test('a burst from before the gesture still commits, ending at the origin', () => {
+    jest.useFakeTimers();
+    const s = setup();
+    const origin = makeState('after-edit');
+    act(() => {
+      // An edit, then a drag begun inside the same debounce window.
+      s.current.actions.recordPriorState(makeState('before-edit'), origin);
+      s.current.actions.recordPriorState(origin, makeState('dragged'));
+      s.current.actions.discardSince(origin);
+    });
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+    expect(s.current.past).toHaveLength(1);
+    expect((s.current.past[0].model as unknown as { tag: string }).tag).toBe(
+      'before-edit'
+    );
+  });
+});
 
 describe('historyStore', () => {
   describe('recordPriorState + debounce', () => {

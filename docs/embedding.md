@@ -107,7 +107,7 @@ All props are optional. The component renders a fully-functional editor with sen
 | `⇧ ↑↓←→` | Nudge ×5 |
 | `Enter` | Edit the selected object: focus its text or the first field of its panel |
 | `⌘/Ctrl ]` / `[` | Bring forward / send backward (`⇧`, or `⌘ ⌥` on macOS, for front / back) |
-| `Esc` | Deselect |
+| `Esc` | Deselect; during a drag, cancel it and put back what it moved |
 | `Alt I` | Toggle item highlighting (dims all items except the selected one) |
 | `Alt ↑` / `Alt ↓` | Show the floor above / below |
 | `Alt ⇧ D` | Toggle light / dark |
@@ -205,7 +205,7 @@ The bindings are the **shared linework keymap**, the same one [Axonometra](https
 | Drag on empty canvas | Marquee select everything the band touches |
 | `Shift` + drag | Add the marquee's contents to the existing selection |
 | `Ctrl/Cmd + A` | Select every item, text box, connector and rectangle on the view |
-| `Esc` | Deselect (works in any editor mode) |
+| `Esc` | Deselect (works in any editor mode); during a drag or a rectangle resize, cancel it: everything moves back and no undo step is left |
 | `Delete` / `Backspace` | Delete every selected item |
 | `↑` `↓` `←` `→` | Nudge the whole selection by one tile (+`Shift` for 5 tiles) |
 | Drag a selected item | Move the whole selection, preserving its internal spacing |

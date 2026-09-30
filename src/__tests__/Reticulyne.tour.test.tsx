@@ -328,6 +328,50 @@ describe('tour (lw-064)', () => {
     expect(screen.getByRole('button', { name: 'Start tour' })).toBeTruthy();
   });
 
+  test('keyboard focus follows the tour instead of falling to the page', () => {
+    const api = mount({ editorMode: 'EXPLORABLE_READONLY', tour: STEPS });
+    const clickFocused = (name: string) => {
+      const button = screen.getByRole('button', { name });
+      act(() => {
+        button.focus();
+      });
+      fireEvent.click(button);
+    };
+    clickFocused('Start tour');
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'Next' })
+    );
+    act(() => {
+      api().goToTourStep(2);
+    });
+    clickFocused('Finish');
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'Start tour' })
+    );
+    clickFocused('Start tour');
+    clickFocused('End tour');
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'Start tour' })
+    );
+    clickFocused('Start tour');
+    press('Escape');
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'Start tour' })
+    );
+  });
+
+  test('a tour the host starts does not take focus', () => {
+    const api = mount({ editorMode: 'EXPLORABLE_READONLY' });
+    act(() => {
+      api().startTour(STEPS);
+    });
+    expect(document.activeElement).toBe(document.body);
+    act(() => {
+      api().endTour();
+    });
+    expect(document.activeElement).toBe(document.body);
+  });
+
   test('no tour prop, no button', () => {
     mount({ editorMode: 'EXPLORABLE_READONLY' });
     expect(screen.queryByRole('button', { name: 'Start tour' })).toBeNull();

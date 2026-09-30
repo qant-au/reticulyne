@@ -63,6 +63,10 @@ export const useKeyboardPlacement = () => {
       uiStateActions.announce(
         `Added ${object?.name ?? 'an item'}. Arrow keys move it, Enter names it.`
       );
+      // From the icon panel the focused icon goes as the panel turns into
+      // the node's, which dropped focus to the page; the canvas is where
+      // the arrow keys and Enter just announced work.
+      uiStateActions.get().rendererEl?.focus();
       return id;
     },
     [createModelItem, createViewItem, currentView, centreTile, uiStateActions]

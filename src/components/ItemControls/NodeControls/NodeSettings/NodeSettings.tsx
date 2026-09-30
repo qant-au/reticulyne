@@ -7,6 +7,7 @@ import { DeleteButton } from '../../components/DeleteButton';
 import { LayerSection } from '../../components/LayerSection';
 import { FloorLinksSection } from '../../components/FloorLinksSection';
 import { FloorPlanSection } from '../../components/FloorPlanSection';
+import { PropsPortsSection } from '../../components/PropsPortsSection';
 import { PanelSection } from 'src/vendor/accurona-ui';
 
 export type NodeUpdates = {
@@ -66,6 +67,7 @@ export const NodeSettings = ({
           />
         </PanelSection>
       )}
+      <PropsPortsSection itemId={node.id} />
       <LayerSection targets={[{ type: 'ITEM', id: node.id }]} />
       <FloorLinksSection itemId={node.id} />
       <FloorPlanSection itemId={node.id} />

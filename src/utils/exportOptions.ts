@@ -275,6 +275,39 @@ const fetchAsDataUri = async (src: string): Promise<string> => {
   });
 };
 
+// The transform from an element's own box to its scene layer's: each box
+// on the way up (the offset-parent chain, which is how the scene places
+// its boxes) moved by its offset and its CSS transform about its origin.
+// null when the chain does not reach the layer.
+export const transformWithinLayer = (
+  node: HTMLElement,
+  layer: HTMLElement
+): DOMMatrix | null => {
+  let m = new DOMMatrix();
+  let cur: HTMLElement | null = node;
+  while (cur && cur !== layer) {
+    const style = window.getComputedStyle(cur);
+    let own = new DOMMatrix();
+    if (style.transform && style.transform !== 'none') {
+      const [ox = 0, oy = 0] = style.transformOrigin.split(' ').map((v) => {
+        return parseFloat(v) || 0;
+      });
+      own = new DOMMatrix()
+        .translate(ox, oy)
+        .multiply(new DOMMatrix(style.transform))
+        .translate(-ox, -oy);
+    }
+    m = new DOMMatrix()
+      .translate(cur.offsetLeft, cur.offsetTop)
+      .multiply(own)
+      .multiply(m);
+    const parent = cur.offsetParent as HTMLElement | null;
+    if (!parent || (parent !== layer && !layer.contains(parent))) return null;
+    cur = parent;
+  }
+  return cur === layer ? m : null;
+};
+
 /**
  * Export the rendered scene as a true-flat SVG by walking the live DOM
  * and lifting scene SVG elements into a root <svg>. Icons are inlined as
@@ -290,6 +323,9 @@ export const exportAsVectorSvg = async (
   bgColor: string,
   title?: string
 ): Promise<void> => {
+  // Icons are placed from their laid-out size: an unloaded lazy one has
+  // none.
+  await waitForImages(el);
   const ns = 'http://www.w3.org/2000/svg';
   const w = el.offsetWidth;
   const h = el.offsetHeight;
@@ -375,25 +411,44 @@ export const exportAsVectorSvg = async (
     root.appendChild(g);
   });
 
-  // Icons: <img> elements — convert to <image href="data:...">
+  // Icons: <img> elements, as <image href="data:...">. Each is drawn in
+  // its own box with every CSS transform between it and its scene layer,
+  // so a flat icon keeps the iso projection the editor gives it. Placed by
+  // bounding box, as they were, a projected icon came out as the upright
+  // square around its diamond (sweep 2026-09-30, E07). An icon outside a
+  // scene layer falls back to its bounding box.
   const containerRect = el.getBoundingClientRect();
   const imgPromises = Array.from(
     el.querySelectorAll<HTMLImageElement>('img')
   ).map(async (imgEl) => {
     try {
-      const rect = imgEl.getBoundingClientRect();
       const dataUri = await fetchAsDataUri(imgEl.src);
       const imageEl = document.createElementNS(ns, 'image');
-      imageEl.setAttribute('x', String(rect.left - containerRect.left));
-      imageEl.setAttribute('y', String(rect.top - containerRect.top));
-      imageEl.setAttribute('width', String(rect.width));
-      imageEl.setAttribute('height', String(rect.height));
       imageEl.setAttribute('href', dataUri);
       imageEl.setAttributeNS(
         'http://www.w3.org/1999/xlink',
         'xlink:href',
         dataUri
       );
+      const layer = imgEl.closest<HTMLElement>('[data-scene-layer]');
+      const local = layer ? transformWithinLayer(imgEl, layer) : null;
+      if (local) {
+        imageEl.setAttribute('width', String(imgEl.offsetWidth));
+        imageEl.setAttribute('height', String(imgEl.offsetHeight));
+        const g = document.createElementNS(ns, 'g');
+        g.setAttribute(
+          'transform',
+          `${layerTransform(imgEl)} matrix(${local.a} ${local.b} ${local.c} ${local.d} ${local.e} ${local.f})`
+        );
+        g.appendChild(imageEl);
+        root.appendChild(g);
+        return;
+      }
+      const rect = imgEl.getBoundingClientRect();
+      imageEl.setAttribute('x', String(rect.left - containerRect.left));
+      imageEl.setAttribute('y', String(rect.top - containerRect.top));
+      imageEl.setAttribute('width', String(rect.width));
+      imageEl.setAttribute('height', String(rect.height));
       root.appendChild(imageEl);
     } catch {
       // Skip icons that cannot be fetched.
@@ -418,6 +473,7 @@ export const exportAsUniversalSvg = async (
   bgColor: string,
   title?: string
 ): Promise<void> => {
+  await waitForImages(el);
   const { style } = el;
   const prevBg = style.background;
   style.background = bgColor;

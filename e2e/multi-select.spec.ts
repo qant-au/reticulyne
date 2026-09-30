@@ -143,11 +143,14 @@ test.describe('1.4 — multi-select', () => {
     const first = await selectedCount(page);
     expect(first).toBeGreaterThan(0);
 
-    // A second band over a different region, with Shift held.
+    // A second band over a different region, with Shift held. It starts
+    // right of the multi-select inspector the first band opened (x 300 to
+    // 660 here) and on empty canvas: a press on the inspector is the
+    // inspector's own, and a press on a connector drags the connector.
     await marquee(
       page,
-      { x: CANVAS.left + 320, y: CANVAS.top + 310 },
-      { x: CANVAS.right - 100, y: CANVAS.bottom - 40 },
+      { x: CANVAS.right - 400, y: CANVAS.top + 30 },
+      { x: CANVAS.right - 140, y: CANVAS.top + 230 },
       { shift: true }
     );
 

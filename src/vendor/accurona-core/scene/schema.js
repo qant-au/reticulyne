@@ -263,7 +263,8 @@ export const groupSchema = z.strictObject({
     id: idSchema,
     name: name.optional(),
     color: hex.optional(),
-    group: idSchema.optional()
+    group: idSchema.optional(),
+    collapsed: z.boolean().optional()
 });
 export const diagramViewSchema = z.strictObject({
     ...viewBase,

@@ -49,9 +49,8 @@ const scene = {
 
 const load = async (page: Page) => {
   await page.addInitScript((s) => {
-    (
-      window as unknown as { __RETICULYNE_E2E__: unknown }
-    ).__RETICULYNE_E2E__ = { initialData: s };
+    (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
+      { initialData: s };
   }, scene);
   await page.goto('/');
   await expect(page.getByText('Switch', { exact: true }).first()).toBeVisible();
@@ -86,14 +85,15 @@ test.describe('Layers panel', () => {
     await expect(names.nth(1)).toBeFocused();
     await names.nth(1).fill('Scratch');
     await names.nth(1).press('Enter');
-    await expect(panel.getByRole('button', { name: 'Delete Scratch' })).toBeVisible();
+    await expect(
+      panel.getByRole('button', { name: 'Delete Scratch' })
+    ).toBeVisible();
 
     await expect(canvasLabel(page, 'Camera')).toBeVisible();
     await panel.getByRole('button', { name: 'Hide Cameras' }).click();
-    await expect(panel.getByRole('button', { name: 'Show Cameras' })).toHaveAttribute(
-      'aria-pressed',
-      'false'
-    );
+    await expect(
+      panel.getByRole('button', { name: 'Show Cameras' })
+    ).toHaveAttribute('aria-pressed', 'false');
     await expect(canvasLabel(page, 'Camera')).toHaveCount(0);
     await panel.getByRole('button', { name: 'Show Cameras' }).click();
     await expect(canvasLabel(page, 'Camera')).toBeVisible();
@@ -105,7 +105,7 @@ test.describe('Layers panel', () => {
   });
 
   // Sweep 2026-09-30: Base and Redacted sat 7px right of the other names.
-  test('every row's name starts at the same x', async ({ page }) => {
+  test("every row's name starts at the same x", async ({ page }) => {
     await load(page);
     await page.getByRole('button', { name: 'Layers', exact: true }).click();
     const panel = page.getByRole('dialog', { name: 'Layers' });
@@ -138,7 +138,9 @@ test.describe('Layers panel', () => {
     await load(page);
     await page.getByRole('button', { name: 'Layers', exact: true }).click();
     const panel = page.getByRole('dialog', { name: 'Layers' });
-    await expect(panel).toContainText('left out of exports unless you include it');
+    await expect(panel).toContainText(
+      'left out of exports unless you include it'
+    );
     await expect(panel).not.toContainText('Nothing is on it yet');
   });
 });

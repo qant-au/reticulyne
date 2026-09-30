@@ -1,13 +1,25 @@
-import { decrementZoom, incrementZoom } from '../projection';
+import { decrementZoom, incrementZoom, zoomLadder } from '../projection';
 import { MAX_ZOOM, MIN_ZOOM } from 'src/config';
 
-// Sweep 2026-09-30: from Fit's 64%, Zoom in went to 80% and Zoom out then
-// to 60%, not back to 64%: each step was rounded to a tenth.
+// Sweep 2026-09-30: from Fit's 64%, Zoom in went 64 -> 84 -> 100 and Zoom
+// out then 100 -> 80 -> 60, never back to 64%. In and out now step through
+// one ladder that keeps the level the zoom was set to.
 describe('zoom steps', () => {
-  test('zoom out retraces zoom in from an off-step zoom', () => {
-    expect(incrementZoom(0.64)).toBe(0.84);
-    expect(decrementZoom(incrementZoom(0.64))).toBe(0.64);
-    expect(incrementZoom(decrementZoom(0.64))).toBe(0.64);
+  test('in then out returns exactly to an off-ladder level, across the clamp', () => {
+    const fit = 0.64;
+    const in1 = incrementZoom(fit, fit);
+    const in2 = incrementZoom(in1, fit);
+    expect([in1, in2]).toEqual([0.8, 1]);
+    const out1 = decrementZoom(in2, fit);
+    const out2 = decrementZoom(out1, fit);
+    expect([out1, out2]).toEqual([0.8, 0.64]);
+    expect(decrementZoom(out2, fit)).toBe(0.6);
+    expect(incrementZoom(0.6, fit)).toBe(0.64);
+  });
+
+  test('without an anchor the current level is kept on the ladder', () => {
+    expect(incrementZoom(0.64)).toBe(0.8);
+    expect(decrementZoom(0.64)).toBe(0.6);
   });
 
   test('steps from a whole step stay on whole steps', () => {
@@ -20,6 +32,7 @@ describe('zoom steps', () => {
     let z = 0.2;
     for (let i = 0; i < 4; i += 1) z = incrementZoom(z);
     expect(z).toBe(1);
+    expect(zoomLadder()).toEqual([0.2, 0.4, 0.6, 0.8, 1]);
   });
 
   test('clamped at either end', () => {

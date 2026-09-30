@@ -303,6 +303,9 @@ export interface UiState {
   selection: Selection;
   contextMenu: ContextMenu | null;
   zoom: number;
+  // The level the zoom was last set to other than by a zoom step (Fit,
+  // wheel, host); kept on the zoom-step ladder so out retraces in.
+  zoomAnchor: number | null;
   scroll: Scroll;
   mouse: Mouse;
   rendererEl: HTMLDivElement | null;

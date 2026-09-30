@@ -136,3 +136,28 @@ test('Ctrl+wheel zooms about the pointer, not the screen centre', async ({
   expect(Math.abs(after.x + after.width / 2 - at.x)).toBeLessThan(40);
   expect(Math.abs(after.y + after.height - (box.y + box.height))).toBeLessThan(40);
 });
+
+// Sweep 2026-09-30: from Fit's level zoom in went 64 -> 84 -> 100 and zoom
+// out came back 100 -> 80 -> 60. In and out now share one ladder.
+test('zoom out retraces zoom in from the Fit level', async ({ page }) => {
+  await page.setViewportSize({ width: 640, height: 480 });
+  await load(page);
+  await page.getByRole('button', { name: 'Fit to view (F)' }).click();
+  const readout = page.getByText(/^\d+%$/);
+  await expect(readout).not.toHaveText('100%');
+  const fit = (await readout.textContent())!;
+  expect(['20%', '40%', '60%', '80%']).not.toContain(fit);
+  const zoomIn = page.getByRole('button', { name: 'Zoom in (+)' });
+  const zoomOut = page.getByRole('button', { name: 'Zoom out (-)' });
+  const seen: string[] = [];
+  while (await zoomIn.isEnabled()) {
+    await zoomIn.click();
+    seen.push((await readout.textContent())!);
+  }
+  for (let i = seen.length - 2; i >= 0; i -= 1) {
+    await zoomOut.click();
+    await expect(readout).toHaveText(seen[i]);
+  }
+  await zoomOut.click();
+  await expect(readout).toHaveText(fit);
+});

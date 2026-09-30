@@ -15,6 +15,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
   return createStore<UiStateStore>((set, get) => {
     return {
       zoom: INITIAL_UI_STATE.zoom,
+      zoomAnchor: null,
       scroll: INITIAL_UI_STATE.scroll,
       view: '',
       mainMenuOptions: [],
@@ -95,7 +96,8 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
             itemControls: null,
             selection: [],
             editingGroupId: null,
-            zoom: 1
+            zoom: 1,
+            zoomAnchor: null
           });
         },
         setMode: (mode) => {
@@ -107,16 +109,18 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         setIsMainMenuOpen: (isMainMenuOpen) => {
           set({ isMainMenuOpen, itemControls: null, selection: [] });
         },
+        // A step keeps the level the zoom was last SET to on the ladder,
+        // so zoom out retraces zoom in from Fit's level exactly.
         incrementZoom: () => {
-          const { zoom } = get();
-          set({ zoom: incrementZoom(zoom) });
+          const { zoom, zoomAnchor } = get();
+          set({ zoom: incrementZoom(zoom, zoomAnchor ?? zoom) });
         },
         decrementZoom: () => {
-          const { zoom } = get();
-          set({ zoom: decrementZoom(zoom) });
+          const { zoom, zoomAnchor } = get();
+          set({ zoom: decrementZoom(zoom, zoomAnchor ?? zoom) });
         },
         setZoom: (zoom) => {
-          set({ zoom });
+          set({ zoom, zoomAnchor: zoom });
         },
         setScroll: ({ position, offset }) => {
           set({ scroll: { position, offset: offset ?? get().scroll.offset } });

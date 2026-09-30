@@ -26,13 +26,17 @@ export const Icon = ({ icon, onClick, onMouseDown }: Props) => {
         spacing={1}
       >
         <Box sx={{ width: SIZE, height: SIZE, overflow: 'hidden' }}>
-          <Box
-            component="img"
-            draggable={false}
-            src={icon.url}
-            alt={`Icon ${icon.name}`}
-            sx={{ width: SIZE, height: SIZE }}
-          />
+          {/* A floor-plan object with no drawing has no url: an empty
+              square, not a broken image. */}
+          {icon.url && (
+            <Box
+              component="img"
+              draggable={false}
+              src={icon.url}
+              alt={`Icon ${icon.name}`}
+              sx={{ width: SIZE, height: SIZE }}
+            />
+          )}
         </Box>
         <Typography
           variant="body2"

@@ -281,10 +281,21 @@ export const DiagramShell = ({
     };
   }, [bundledIcons, colors]);
 
+  // The e2e hook's diagram opens as an imported one does: with the bundled
+  // icons put back, and checked first. Unchecked, one the editor refused
+  // (say, naming an icon it does not carry) left a blank white page.
+  const [initialOk] = useState(() => {
+    return !initialData || store.open(initialData) !== null;
+  });
   const [current, setCurrent] = useState<Current>(() => {
-    if (initialData) {
-      return { id: generateId(), data: initialData, stored: false };
+    if (initialData && initialOk) {
+      return {
+        id: generateId(),
+        data: store.withBundledIcons(initialData),
+        stored: false
+      };
     }
+    if (initialData) return blank();
     const last = store.getCurrent();
     // load() validates: one the editor would refuse (saved by an older
     // build that let a field run past the schema) gave a blank page on
@@ -297,6 +308,9 @@ export const DiagramShell = ({
   });
   const [title, setTitle] = useState(current.data.title ?? 'Untitled');
   const [error, setError] = useState<string | null>(() => {
+    if (!initialOk) {
+      return 'That diagram is not valid, so a new one was started.';
+    }
     const last = initialData ? null : store.getCurrent();
     return last && current.id !== last
       ? 'The last diagram could not be opened; a new one was started.'

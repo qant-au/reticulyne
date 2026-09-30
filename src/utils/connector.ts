@@ -8,6 +8,7 @@
 // `origin + tile` (its inverse).
 
 import {
+  AnchorSide,
   Coords,
   Connector,
   ConnectorAnchor,
@@ -50,6 +51,26 @@ export const getAnchorTile = (anchor: ConnectorAnchor, view: View): Coords => {
   }
 
   throw new Error('Could not get anchor tile.');
+};
+
+// lw-061: the neighbouring tile each side of a node faces.
+export const ANCHOR_SIDE_OFFSETS: Record<AnchorSide, Coords> = {
+  '+X': { x: 1, y: 0 },
+  '-X': { x: -1, y: 0 },
+  '+Y': { x: 0, y: 1 },
+  '-Y': { x: 0, y: -1 }
+};
+
+// The tile an end with a side steps onto first, or null. A side only
+// means something on an end that references a node.
+const sideStep = (anchor: ConnectorAnchor, tile: Coords): Coords | null => {
+  if (!anchor.ref.item || !anchor.ref.side) return null;
+  return CoordsUtils.add(tile, ANCHOR_SIDE_OFFSETS[anchor.ref.side]);
+};
+
+// An end on a node, on the given side of it when one was aimed at.
+export const endRef = (item: string, side?: AnchorSide) => {
+  return side ? { item, side } : { item };
 };
 
 interface NormalisePositionFromOrigin {
@@ -197,14 +218,31 @@ export const getConnectorPath = ({
       if (i === 0) return acc;
 
       const prev = positionsNormalisedFromSearchArea[i - 1];
+      // lw-061: an end with a side leaves (or arrives) through that edge
+      // of its node, so the route starts from the tile beyond it and the
+      // node's own tile is routed around. A step onto the other end is
+      // no step: two ends facing each other are already adjacent.
+      const exit = sideStep(anchors[i - 1], prev);
+      const entry = sideStep(anchors[i], position);
+      const useExit = exit !== null && !CoordsUtils.isEqual(exit, position);
+      const useEntry = entry !== null && !CoordsUtils.isEqual(entry, prev);
       const path = findPath({
-        from: prev,
-        to: position,
+        from: useExit ? exit : prev,
+        to: useEntry ? entry : position,
         gridSize: searchAreaSize,
-        obstacles
+        obstacles: [
+          ...obstacles,
+          ...(useExit ? [prev] : []),
+          ...(useEntry ? [position] : [])
+        ]
       });
 
-      return [...acc, ...path];
+      return [
+        ...acc,
+        ...(useExit ? [prev] : []),
+        ...path,
+        ...(useEntry ? [position] : [])
+      ];
     },
     []
   );

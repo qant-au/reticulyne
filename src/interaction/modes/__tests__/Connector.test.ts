@@ -4,6 +4,7 @@
 import { Connector } from '../Connector';
 import { makeState, type SceneShape } from './_helpers';
 import type { ViewItem } from 'src/types';
+import { PORT_SIDES, getPortScreenPositions } from 'src/utils';
 
 const sceneWithItemAt = (
   tile: { x: number; y: number },
@@ -67,6 +68,31 @@ describe('Connector mode', () => {
         id: created.id
       })
     );
+  });
+
+  test('mousedown on a port anchors the start to that side of the node (lw-061)', () => {
+    const view = {
+      zoom: 1,
+      scroll: { position: { x: 0, y: 0 }, offset: { x: 0, y: 0 } },
+      rendererSize: { width: 1000, height: 1000 }
+    };
+    getPortScreenPositions({ x: 0, y: 0 }, view).forEach((screen, i) => {
+      const state = makeState({
+        mode: { type: 'CONNECTOR', showCursor: true, id: null },
+        mouse: { position: { screen, tile: { x: 0, y: 0 } } },
+        scene: sceneWithItemAt({ x: 0, y: 0 })
+      });
+
+      Connector.mousedown?.(state);
+
+      const created = (state.scene.createConnector as jest.Mock).mock
+        .calls[0][0];
+      expect(created.anchors[0].ref).toEqual({
+        item: 'node1',
+        side: PORT_SIDES[i]
+      });
+      expect(created.anchors[1].ref).toEqual({ item: 'node1' });
+    });
   });
 
   test('mousedown on empty tile creates a connector anchored to that tile on both ends', () => {

@@ -38,6 +38,11 @@ export const connectorGlyphOptions = [
   'star'
 ] as const;
 
+// lw-061: the edge of an item's tile a connector end leaves by, named by
+// the grid direction it faces (as in the Accurona scene format). Only
+// meaningful with `item`; absent, the end docks on the tile's centre.
+export const anchorSideOptions = ['+X', '-X', '+Y', '-Y'] as const;
+
 export const anchorSchema = z
   .object({
     id,
@@ -45,7 +50,8 @@ export const anchorSchema = z
       .object({
         item: id,
         anchor: id,
-        tile: coords
+        tile: coords,
+        side: z.enum(anchorSideOptions)
       })
       .partial()
       .strict()

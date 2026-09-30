@@ -5,9 +5,11 @@ import {
   getItemByIdOrThrow,
   hasMovedTile,
   setWindowCursor,
-  getNodeAtPointerPort
+  getPortAtPointer,
+  endRef
 } from 'src/utils';
 import {
+  AnchorSide,
   ModeActions,
   Connector as ConnectorI,
   State,
@@ -16,13 +18,15 @@ import {
 
 // 2.5: what the pointer is aiming at. A node's port counts as the node
 // even when the pointer sits on the neighbouring tile, so releasing on a
-// target's port connects rather than cancelling.
+// target's port connects rather than cancelling. lw-061: aiming at a port
+// also names its side, so the end snaps to that edge of the node.
 const targetAtPointer = ({
   uiState,
   scene,
   rendererSize
-}: Pick<State, 'uiState' | 'scene' | 'rendererSize'>): ItemReference | null => {
-  const portNode = getNodeAtPointerPort({
+}: Pick<State, 'uiState' | 'scene' | 'rendererSize'>):
+  (ItemReference & { side?: AnchorSide }) | null => {
+  const port = getPortAtPointer({
     mouse: uiState.mouse,
     zoom: uiState.zoom,
     scroll: uiState.scroll,
@@ -30,7 +34,7 @@ const targetAtPointer = ({
     nodes: scene.items,
     projection: scene.projection
   });
-  if (portNode) return { type: 'ITEM', id: portNode.id };
+  if (port) return { type: 'ITEM', id: port.node.id, side: port.side };
   return getItemAtTile({ tile: uiState.mouse.position.tile, scene });
 };
 
@@ -58,13 +62,16 @@ export const Connector: ModeActions = {
     const end = connector.value.anchors[1];
     const aimingAtNode = itemAtTile?.type === 'ITEM';
     const unchanged = aimingAtNode
-      ? end?.ref.item === itemAtTile.id
+      ? end?.ref.item === itemAtTile.id && end?.ref.side === itemAtTile.side
       : !end?.ref.item && !hasMovedTile(uiState.mouse);
     if (unchanged) return;
 
     if (itemAtTile?.type === 'ITEM') {
       const newConnector = produce(connector.value, (draft) => {
-        draft.anchors[1] = { id: generateId(), ref: { item: itemAtTile.id } };
+        draft.anchors[1] = {
+          id: generateId(),
+          ref: endRef(itemAtTile.id, itemAtTile.side)
+        };
       });
 
       scene.updateConnector(uiState.mode.id, newConnector);
@@ -93,7 +100,7 @@ export const Connector: ModeActions = {
 
     if (itemAtTile && itemAtTile.type === 'ITEM') {
       newConnector.anchors = [
-        { id: generateId(), ref: { item: itemAtTile.id } },
+        { id: generateId(), ref: endRef(itemAtTile.id, itemAtTile.side) },
         { id: generateId(), ref: { item: itemAtTile.id } }
       ];
     } else {
@@ -126,6 +133,7 @@ export const Connector: ModeActions = {
     const target = targetAtPointer({ uiState, scene, rendererSize });
     const endNode =
       target?.type === 'ITEM' ? target.id : (lastAnchor.ref.item ?? null);
+    const endSide = target?.type === 'ITEM' ? target.side : lastAnchor.ref.side;
     const connects =
       Boolean(firstAnchor.ref.item) &&
       endNode !== null &&
@@ -134,9 +142,12 @@ export const Connector: ModeActions = {
     if (!connects) {
       scene.deleteConnector(uiState.mode.id);
     } else {
-      if (lastAnchor.ref.item !== endNode) {
+      if (lastAnchor.ref.item !== endNode || lastAnchor.ref.side !== endSide) {
         const anchors = [...connector.value.anchors];
-        anchors[lastIndex] = { id: generateId(), ref: { item: endNode } };
+        anchors[lastIndex] = {
+          id: generateId(),
+          ref: endRef(endNode, endSide)
+        };
         scene.updateConnector(uiState.mode.id, { anchors });
       }
       uiState.actions.setItemControls({

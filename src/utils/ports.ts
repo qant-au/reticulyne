@@ -1,4 +1,4 @@
-import type { Coords, Projection, Scroll, Size } from 'src/types';
+import type { AnchorSide, Coords, Projection, Scroll, Size } from 'src/types';
 import { getTilePosition } from './coordinates';
 
 // a node's four ports sit on the midpoints of its
@@ -12,6 +12,10 @@ const EDGES = [
   ['BOTTOM', 'LEFT'],
   ['LEFT', 'TOP']
 ] as const;
+
+// lw-061: the grid direction each of those edges faces, in the same
+// order. The TOP-RIGHT edge is the one towards the tile at x + 1.
+export const PORT_SIDES: readonly AnchorSide[] = ['+X', '-Y', '-X', '+Y'];
 
 interface View {
   zoom: number;
@@ -59,23 +63,33 @@ export const getPortRadius = (view: View) => {
 };
 
 /**
- * The node whose port is under `screen`, if any. A port is on a shared
- * edge, so the pointer can be over the neighbouring tile: the caller
- * passes every node near the pointer, not just the one on its tile.
+ * The node whose port is under `screen`, and which side that port is on,
+ * if any. A port is on a shared edge, so the pointer can be over the
+ * neighbouring tile: the caller passes every node near the pointer, not
+ * just the one on its tile.
  */
+export const getPortAt = <T extends { id: string; tile: Coords }>(
+  screen: Coords,
+  nodes: T[],
+  view: View
+): { node: T; side: AnchorSide } | null => {
+  const r = getPortRadius(view);
+  for (const node of nodes) {
+    const index = getPortScreenPositions(node.tile, view).findIndex((p) => {
+      return Math.hypot(p.x - screen.x, p.y - screen.y) <= r;
+    });
+    if (index !== -1) return { node, side: PORT_SIDES[index] };
+  }
+  return null;
+};
+
+/** The node whose port is under `screen`, if any. */
 export const getNodeAtPort = <T extends { id: string; tile: Coords }>(
   screen: Coords,
   nodes: T[],
   view: View
 ): T | null => {
-  const r = getPortRadius(view);
-  for (const node of nodes) {
-    const hit = getPortScreenPositions(node.tile, view).some((p) => {
-      return Math.hypot(p.x - screen.x, p.y - screen.y) <= r;
-    });
-    if (hit) return node;
-  }
-  return null;
+  return getPortAt(screen, nodes, view)?.node ?? null;
 };
 
 /** Nodes on `tile` or on one of its four edge neighbours. */
@@ -88,24 +102,34 @@ export const nodesNearTile = <T extends { tile: Coords }>(
   });
 };
 
-/**
- * For interaction modes: the node whose port is under the pointer, using
- * the handler state's own mouse, zoom, scroll and renderer size.
- */
-export const getNodeAtPointerPort = <
-  T extends { id: string; tile: Coords }
->(state: {
+interface PointerState<T> {
   mouse: { position: { screen: Coords; tile: Coords } };
   zoom: number;
   scroll: Scroll;
   rendererSize: Size;
   nodes: T[];
   projection?: Projection;
-}): T | null => {
+}
+
+/**
+ * For interaction modes: the node whose port is under the pointer, and
+ * the port's side, using the handler state's own mouse, zoom, scroll and
+ * renderer size.
+ */
+export const getPortAtPointer = <T extends { id: string; tile: Coords }>(
+  state: PointerState<T>
+): { node: T; side: AnchorSide } | null => {
   const { mouse, zoom, scroll, rendererSize, nodes, projection } = state;
-  return getNodeAtPort(
+  return getPortAt(
     mouse.position.screen,
     nodesNearTile(mouse.position.tile, nodes),
     { zoom, scroll, rendererSize, projection }
   );
+};
+
+/** As getPortAtPointer, the node only. */
+export const getNodeAtPointerPort = <T extends { id: string; tile: Coords }>(
+  state: PointerState<T>
+): T | null => {
+  return getPortAtPointer(state)?.node ?? null;
 };

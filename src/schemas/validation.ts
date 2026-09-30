@@ -123,7 +123,9 @@ export const validateConnectorAnchor = (
 ): Issue[] => {
   const issues: Issue[] = [];
 
-  if (Object.keys(anchor.ref).length !== 1) {
+  // lw-061: `side` qualifies an item reference rather than being one.
+  const { side, ...target } = anchor.ref;
+  if (Object.keys(target).length !== 1) {
     issues.push({
       type: 'INVALID_ANCHOR_REF',
       params: {
@@ -133,6 +135,19 @@ export const validateConnectorAnchor = (
       },
       message:
         'Connector includes an anchor that references more than one item.  An anchor can only reference one item.'
+    });
+  }
+
+  if (side !== undefined && !anchor.ref.item) {
+    issues.push({
+      type: 'INVALID_ANCHOR_REF',
+      params: {
+        anchor: anchor.id,
+        view: ctx.view.id,
+        connector: ctx.connector.id
+      },
+      message:
+        'Connector includes an anchor with a side that does not reference an item.  A side names an edge of an item.'
     });
   }
 

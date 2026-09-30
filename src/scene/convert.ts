@@ -65,8 +65,12 @@ const utcDate = (date: string | undefined) => {
 
 const anchorToScene = (anchor: ConnectorAnchor): SceneAnchor => {
   const { ref } = anchor;
-  if (ref.item !== undefined)
-    return { id: anchor.id, ref: { object: ref.item } };
+  if (ref.item !== undefined) {
+    return {
+      id: anchor.id,
+      ref: defined({ object: ref.item, side: ref.side })
+    };
+  }
   if (ref.anchor !== undefined) {
     return { id: anchor.id, ref: { anchor: ref.anchor } };
   }
@@ -310,7 +314,12 @@ export const leanIcons = (scene: Scene): Scene => {
 
 const anchorFromScene = (anchor: SceneAnchor): ConnectorAnchor => {
   const { ref } = anchor;
-  if ('object' in ref) return { id: anchor.id, ref: { item: ref.object } };
+  if ('object' in ref) {
+    return {
+      id: anchor.id,
+      ref: defined({ item: ref.object, side: ref.side })
+    };
+  }
   return { id: anchor.id, ref: { ...ref } };
 };
 

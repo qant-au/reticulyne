@@ -79,7 +79,21 @@ export const ToolbarSlots = ({
             maxHeight: rendererSize.height - appPadding.y * 6
           }}
         >
-          <ItemControlsManager />
+          {/* BUG15-50: a press in the inspector is the panel's own, not
+              the canvas's. The interaction manager records every press on
+              the window as the pointer's press, so dragging the Label
+              height slider looked like a drag from empty canvas: it began
+              a marquee under the panel, which cleared the selection and
+              closed the inspector. Stopping the press here keeps the
+              marquee code as it is (a check there on where the press
+              landed was reverted in b0ec40e). */}
+          <Box
+            onPointerDown={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <ItemControlsManager />
+          </Box>
         </Surface>
       )}
 

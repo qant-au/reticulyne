@@ -104,3 +104,40 @@ test('the inspector scrolls with a visible scrollbar', () => {
   });
   expect(hidden).toBe(false);
 });
+
+// BUG15-50 (sweep 2026-09-30, E50): a drag on the inspector's Label height
+// slider was recorded as a press on the canvas, began a marquee under the
+// panel and closed the inspector.
+test('a drag that starts in the inspector does not start a marquee', () => {
+  act(() => {
+    render(
+      <Reticulyne initialData={diagram}>
+        <Probe />
+      </Reticulyne>
+    );
+  });
+  act(() => {
+    ui!.actions.setSelection([{ type: 'ITEM', id: 'a' }]);
+    ui!.actions.setItemControls({ type: 'ITEM', id: 'a' });
+  });
+  const slider = screen.getByRole('slider');
+  const at = (type: string, target: EventTarget, x: number) => {
+    act(() => {
+      target.dispatchEvent(
+        new MouseEvent(type, {
+          bubbles: true,
+          clientX: x,
+          clientY: 300,
+          button: 0
+        })
+      );
+    });
+  };
+  at('pointerdown', slider, 100);
+  at('pointermove', window, 300);
+  at('pointermove', window, 600);
+  expect(ui!.mode.type).not.toBe('MARQUEE');
+  at('pointerup', slider, 600);
+  expect(ui!.itemControls).toEqual({ type: 'ITEM', id: 'a' });
+  expect(screen.getByText('Edit object')).toBeTruthy();
+});

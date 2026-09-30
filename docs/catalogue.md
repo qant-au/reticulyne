@@ -1,14 +1,15 @@
 # Catalogue
 
-> **Status: the data, the schema and the palette are built; the topology warnings are not.**
+> **Status: the data, the schema, the palette, port attachment and the topology warnings are built.**
 > The registries, the schema and the rules below are in `src/catalogue/` and exported from the
 > package (`CATALOGUE`, `validateCatalogue`, `expandPorts`, `itemToSceneObject`,
-> `accuronaIcons`, `catalogueItemIcon`). The icon library panel has a **Catalogue** section, one
+> `accuronaIcons`, `catalogueItemIcon`, `pickPorts`, `topologyWarnings`). The icon library panel has a **Catalogue** section, one
 > fold per medium family (see [The palette](#the-palette)); placing an item creates the object
 > described in [How an item lands in a scene](#how-an-item-lands-in-a-scene), and the editor's
 > model item carries the object's `element`, `props`, `ports` and `links` so a save writes them
-> back. Connectors do not attach to those ports yet: a node's four "ports" on the canvas are
-> still tile-edge hotspots used only for connecting by drag.
+> back. A connector drawn between two items with ports draws a model connection attached to a
+> port on each (see [Attaching a connector](#attaching-a-connector)); a node's four "ports" on the
+> canvas are still the tile-edge hotspots used for connecting by drag.
 >
 > An item with an Accurona twin draws with the element's isometric view: `accuronaIcons()`
 > returns those drawings as icons (collection `Accurona`, ids `accurona-<element id>`), and
@@ -214,6 +215,22 @@ with many ends. It is the set of connections of one medium that touch each other
 
 The editor reports broken rules as warnings. It never refuses to draw: a diagram in progress is
 allowed to be incomplete.
+
+### Attaching a connector
+
+Drawing a connector between two items that both have ports creates the connection it draws
+(the connector's `connection`). `pickPorts` chooses the ports: the first medium both items have,
+power last, and on it the first port on each side with room left (a wireless client pairs with a
+hub). When every shared port is taken it still attaches, to a free port where a side has one, and
+the overuse is a warning. Items with no medium in common get a connector and no connection. The
+connector's inspector shows the two ports and lets either be changed; the medium follows the port.
+Moving an end to another item lets go of the connection and attaches afresh, and deleting the last
+connector that draws a connection deletes it.
+
+`topologyWarnings(items, connections)` checks the rules below and returns each broken one with
+the connections and items it is about. The inspector lists the warnings about the selected
+connector or object under **Topology**. A connection without ports (drawn by an earlier version, or
+between items with no ports) is not checked.
 
 ### Point-to-point
 

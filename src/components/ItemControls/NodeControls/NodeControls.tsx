@@ -10,6 +10,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { Icons } from '../IconSelectionControls/Icons';
 import { NodeSettings } from './NodeSettings/NodeSettings';
+import { TopologyWarnings } from '../components/TopologySection';
 import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 interface Props {
@@ -83,6 +84,7 @@ export const NodeControls = ({ id }: Props) => {
           </Stack>
         </PanelSection>
       </Box>
+      {mode === 'SETTINGS' && <TopologyWarnings itemId={viewItem.id} />}
       {mode === 'SETTINGS' && (
         <NodeSettings
           key={viewItem.id}

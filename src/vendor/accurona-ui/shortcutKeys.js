@@ -1,19 +1,37 @@
 // A key or pointer action: a symbol, a digit, or a capitalised word
 // ("Shift", "F10", "Right-click"), or "Arrow keys".
 const isKeyName = (word) => /^([^a-z\s]|[A-Z0-9][\w-]*)$/.test(word);
-// One +-joined part: a key, a key then words about it ("Drag on empty
-// canvas"), or words alone ("the hand tool").
+// One +-joined part: a key, keys with words about them ("Drag on empty
+// canvas", "I then Enter"), or words alone ("the hand tool"). Every key
+// name in it is a key; the words between them are text.
 const readPart = (part) => {
-    const space = part.indexOf(' ');
-    const head = space === -1 ? part : part.slice(0, space);
-    if (!isKeyName(head))
+    const words = part.split(' ');
+    if (!isKeyName(words[0]))
         return [{ text: part }];
-    const tail = space === -1 ? '' : part.slice(space + 1);
-    if (tail.startsWith('keys') && head === 'Arrow') {
-        const rest = tail.slice('keys'.length).trim();
-        return rest ? [{ key: 'Arrow keys' }, { text: rest }] : [{ key: 'Arrow keys' }];
+    const pieces = [];
+    let text = [];
+    const flush = () => {
+        if (text.length > 0)
+            pieces.push({ text: text.join(' ') });
+        text = [];
+    };
+    for (let i = 0; i < words.length; i += 1) {
+        const word = words[i];
+        if (word === 'Arrow' && words[i + 1] === 'keys') {
+            flush();
+            pieces.push({ key: 'Arrow keys' });
+            i += 1;
+        }
+        else if (isKeyName(word)) {
+            flush();
+            pieces.push({ key: word });
+        }
+        else {
+            text.push(word);
+        }
     }
-    return tail ? [{ key: head }, { text: tail }] : [{ key: head }];
+    flush();
+    return pieces;
 };
 export const shortcutKeys = (entry) => {
     if (/[;]/.test(entry) || /,\s/.test(entry))

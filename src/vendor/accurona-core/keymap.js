@@ -78,8 +78,8 @@ export const SHARED_BINDINGS = [
     gesture('click', 'Select', 'Click'),
     gesture('shift-click', 'Add to or remove from the selection', '{shift} + Click'),
     gesture('marquee', 'Select an area', 'Drag on empty canvas'),
-    gesture('space-pan', 'Pan', 'Space + Drag | the hand tool'),
-    gesture('wheel-pan', 'Pan', 'Wheel | {shift} + Wheel sideways'),
+    gesture('space-pan', 'Pan by dragging', 'Space + Drag | the hand tool'),
+    gesture('wheel-pan', 'Pan with the wheel', 'Wheel | {shift} + Wheel sideways'),
     gesture('wheel-zoom', 'Zoom', '{mod} + Wheel | Pinch'),
     gesture('alt-drag', 'Drag a copy', '{alt} + Drag', true),
     gesture('context-menu', 'Context menu', 'Right-click')
@@ -121,7 +121,7 @@ export const RETICULYNE_BINDINGS = [
     },
     // Right-click opens an object's menu; on empty canvas it does nothing.
     gesture('context-menu', "Open an object's menu", 'Right-click an object'),
-    gesture('add-on-tile', 'Add an item on an empty tile', 'Double-click an empty tile | the add-item tool, then Enter', true),
+    gesture('add-on-tile', 'Add an item on an empty tile', 'Double-click an empty tile | I then Enter', true),
     gesture('enter-group', 'Work inside a group', 'Double-click the group'),
     gesture('connect', 'Connect two items', "Drag from a port | Connect to, in the item's menu", true)
 ];

@@ -101,6 +101,14 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   const unprojectedBounds = useMemo(() => {
     return getUnprojectedBounds();
   }, [getUnprojectedBounds]);
+  // The preview's box, and the loader's while it renders: the diagram's
+  // width and aspect, never wider than the dialog.
+  const previewSize = useMemo(() => {
+    return {
+      width: unprojectedBounds.width,
+      aspectRatio: `${unprojectedBounds.width} / ${unprojectedBounds.height}`
+    };
+  }, [unprojectedBounds]);
 
   useEffect(() => {
     uiStateActions.setMode({
@@ -220,15 +228,17 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                 />
               </Box>
             </Box>
+            {/* The preview's own size, so the dialog does not jump when the
+                preview replaces it (it moved 36px, sweep 2026-09-30). */}
             <Box
+              data-testid="export-image-loading"
               sx={{
                 position: 'relative',
-                top: 0,
-                left: 0,
-                width: 500,
-                height: 300,
+                alignSelf: 'center',
+                maxWidth: '100%',
                 bgcolor: 'background.paper'
               }}
+              style={previewSize}
             >
               <Loader size={2} />
             </Box>
@@ -246,9 +256,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
               sx={{
                 maxWidth: '100%'
               }}
-              style={{
-                width: unprojectedBounds.width
-              }}
+              style={previewSize}
               src={imageData}
               alt="preview"
             />
@@ -310,21 +318,23 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
               )}
             </Box>
           </Box>
-          {imageData && (
-            <Stack
-              sx={{
-                alignItems: 'flex-end',
-                width: '100%'
-              }}
-            >
-              <Stack direction="row" spacing={2}>
-                <Button variant="text" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button onClick={downloadFile}>Download as PNG</Button>
-              </Stack>
+          {/* Always there, so the dialog keeps its height; Download waits
+              for the preview. */}
+          <Stack
+            sx={{
+              alignItems: 'flex-end',
+              width: '100%'
+            }}
+          >
+            <Stack direction="row" spacing={2}>
+              <Button variant="text" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button onClick={downloadFile} disabled={!imageData}>
+                Download as PNG
+              </Button>
             </Stack>
-          )}
+          </Stack>
         </Stack>
 
         {exportError && <Alert severity="error">Could not export image</Alert>}

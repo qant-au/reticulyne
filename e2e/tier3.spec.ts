@@ -226,3 +226,21 @@ test('a nudge onto a tile another node holds is refused', async ({ page }) => {
   expect(tiles.a).toEqual({ x: 0, y: 0 });
   expect(tiles.b).toEqual({ x: 1, y: 0 });
 });
+
+// BUG15-50 (sweep 2026-09-30, E50): the drag began a marquee under the
+// panel, which closed the inspector; the label height stayed 80.
+test('dragging the label-height slider keeps the inspector open', async ({
+  page
+}) => {
+  const c = await load(page, [{ id: 'a', tile: { x: 0, y: 0 } }]);
+  await page.mouse.click(c.x, c.y);
+  const slider = page.getByRole('slider').first();
+  const before = await slider.getAttribute('aria-valuenow');
+  const box = (await slider.boundingBox())!;
+  await page.mouse.move(box.x + 4, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 120, box.y + box.height / 2, { steps: 10 });
+  await page.mouse.up();
+  await expect(page.getByRole('textbox').first()).toHaveValue('Node a');
+  await expect(slider).not.toHaveAttribute('aria-valuenow', before ?? '');
+});

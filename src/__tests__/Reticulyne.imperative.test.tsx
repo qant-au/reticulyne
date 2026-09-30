@@ -9,6 +9,7 @@ import { useHistoryStore } from 'src/stores/historyStore';
 import { model as fixtureModel } from 'src/fixtures/model';
 import { getTilePosition } from 'src/utils';
 import { MAX_ZOOM } from 'src/config';
+import { PATCH_FADE_ATTR, PATCH_FADE_MS } from 'src/hooks/usePatchApplier';
 import type { InitialData, UiStateActions } from 'src/types';
 import { validateScene, type Scene } from 'src/vendor/accurona-core';
 
@@ -204,6 +205,41 @@ describe('applyPatch (1.5)', () => {
     });
     expect(api().getNode('node1')?.name).toBe('Node1');
     warnSpy.mockRestore();
+  });
+
+  test('opens a colour-fade window on the renderer, then closes it', () => {
+    const api = mount();
+    const el = api().ui.get().rendererEl!;
+    jest.useFakeTimers();
+    try {
+      act(() => {
+        api().applyPatch({ connectors: { gone: { color: 'x' } } });
+      });
+      // nothing changed, so nothing to fade
+      expect(el.hasAttribute(PATCH_FADE_ATTR)).toBe(false);
+
+      act(() => {
+        api().applyPatch({
+          rectangles: { rectangle1: { colorValue: '#ff0000' } }
+        });
+      });
+      expect(el.hasAttribute(PATCH_FADE_ATTR)).toBe(true);
+      act(() => {
+        jest.advanceTimersByTime(PATCH_FADE_MS);
+        // a second patch mid-fade keeps the window open
+        api().applyPatch({
+          rectangles: { rectangle1: { colorValue: '#00ff00' } }
+        });
+        jest.advanceTimersByTime(PATCH_FADE_MS);
+      });
+      expect(el.hasAttribute(PATCH_FADE_ATTR)).toBe(true);
+      act(() => {
+        jest.advanceTimersByTime(PATCH_FADE_MS);
+      });
+      expect(el.hasAttribute(PATCH_FADE_ATTR)).toBe(false);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   test('works read-only, where live dashboards run', () => {

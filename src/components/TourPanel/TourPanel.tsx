@@ -117,7 +117,10 @@ export const TourPanel = () => {
     <Surface
       sx={{
         ...placement,
-        width: 'min(480px, calc(100% - 32px))'
+        width: 'min(480px, calc(100% - 32px))',
+        // A narrow host left it about 120px wide, the narration clipped and
+        // Previous cut off.
+        minWidth: 'min(280px, calc(100vw - 32px))'
       }}
     >
       <Box

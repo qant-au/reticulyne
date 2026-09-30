@@ -53,6 +53,14 @@ export const Examples = () => {
   });
 
   const narrow = useMediaQuery('(max-width: 599.95px)');
+  // A window narrowed to a phone's width closes the rail too, as loading
+  // at that width does: left open it takes 260px and leaves the example
+  // (and its tour panel) about 130.
+  const [wasNarrow, setWasNarrow] = useState(narrow);
+  if (narrow !== wasNarrow) {
+    setWasNarrow(narrow);
+    if (narrow) setIsSidebarExpanded(false);
+  }
 
   const Example = useMemo(() => {
     return examples[currentExample].component;

@@ -45,3 +45,20 @@ test('Debug tools keeps its panel to half the canvas, above the title bar', asyn
   expect(panel!.x + panel!.width).toBeLessThanOrEqual(390);
   expect(panel!.y + panel!.height).toBeLessThanOrEqual(title!.y);
 });
+
+test('narrowed to a phone, the rail closes and the tour panel keeps a usable width', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(BASE);
+  await page.getByTestId('sidebar-item-2').click(); // Read-only mode
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByTestId('sidebar-expand')).toBeVisible();
+  await page.getByRole('button', { name: 'Start tour' }).click();
+  const panel = await page.getByTestId('tour-panel').boundingBox();
+  expect(panel).not.toBeNull();
+  expect(panel!.width).toBeGreaterThanOrEqual(280);
+  expect(panel!.x).toBeGreaterThanOrEqual(0);
+  expect(panel!.x + panel!.width).toBeLessThanOrEqual(390);
+  await expect(page.getByRole('button', { name: 'Previous' })).toBeInViewport();
+});

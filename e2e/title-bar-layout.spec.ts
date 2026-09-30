@@ -274,7 +274,20 @@ test.describe('on a touch phone', () => {
     await expect(pill.locator('[aria-hidden]')).toHaveText('Unsaved');
     await expect(pill).toContainText('Unsaved changes');
     await pill.tap();
-    await expect(page.getByRole('tooltip')).toHaveText('Unsaved changes');
+    const tip = page.getByRole('tooltip');
+    await expect(tip).toHaveText('Unsaved changes');
+    // Round 5: it was added at opacity 0 and gone ~200 ms later. A second
+    // on, it is still there and fully shown.
+    await page.waitForTimeout(1000);
+    await expect(tip).toBeVisible();
+    expect(
+      await tip.evaluate((t) => {
+        return Number(getComputedStyle(t.firstElementChild ?? t).opacity);
+      })
+    ).toBe(1);
+    // A tap elsewhere closes it.
+    await page.touchscreen.tap(195, 420);
+    await expect(tip).toHaveCount(0);
   });
 });
 

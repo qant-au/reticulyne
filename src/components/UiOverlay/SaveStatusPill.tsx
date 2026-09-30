@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, Button, Tooltip, Typography } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
@@ -16,6 +16,9 @@ const ago = (ms: number) => {
   if (m < 60) return `${m} min ago`;
   return `${Math.round(m / 60)} h ago`;
 };
+
+// How long a tapped tooltip stays open unless the user taps elsewhere.
+export const TIP_PIN_MS = 5000;
 
 // `compact` (the title bar on a phone) says the same in fewer words, so the
 // status stays on one line: "Unsaved changes" wrapped to two and kept its
@@ -36,9 +39,31 @@ export const SaveStatusPill = ({ compact = false }: { compact?: boolean }) => {
   const [now, setNow] = useState(() => {
     return Date.now();
   });
-  // Opened by a tap (its click) as well as a hover: MUI's own touch
-  // opening waits for a press, and a quick tap ended it first.
-  const [tipOpen, setTipOpen] = useState(false);
+  // Opened by a hover, or pinned by a tap (its click): MUI's own touch
+  // opening waits for a press, and a quick tap ended it first. A pinned tip
+  // ignores MUI's closes - on a touch screen the larger tooltip landed
+  // under the tapped point, the emulated mouse "left" the pill and closed
+  // it before it faded in - and stays until a tap elsewhere or TIP_PIN_MS.
+  const [tipHover, setTipHover] = useState(false);
+  const [tipPinned, setTipPinned] = useState(false);
+  const pillRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!tipPinned) return undefined;
+    const unpin = () => {
+      setTipPinned(false);
+      setTipHover(false);
+    };
+    const timer = setTimeout(unpin, TIP_PIN_MS);
+    const onPointerDown = (e: PointerEvent) => {
+      if (!pillRef.current?.contains(e.target as Node)) unpin();
+    };
+    document.addEventListener('pointerdown', onPointerDown, true);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('pointerdown', onPointerDown, true);
+    };
+  }, [tipPinned]);
 
   // Keep "Saved N s ago" honest without re-rendering on every frame.
   useEffect(() => {
@@ -84,12 +109,12 @@ export const SaveStatusPill = ({ compact = false }: { compact?: boolean }) => {
       role="status"
       aria-live="polite"
       data-testid="save-status"
+      ref={pillRef}
       onClick={
         more
           ? () => {
-              setTipOpen((open) => {
-                return !open;
-              });
+              if (tipPinned) setTipHover(false);
+              setTipPinned(!tipPinned);
             }
           : undefined
       }
@@ -141,14 +166,14 @@ export const SaveStatusPill = ({ compact = false }: { compact?: boolean }) => {
     <Tooltip
       title={more}
       describeChild
-      open={tipOpen}
+      open={tipPinned || tipHover}
       onOpen={() => {
-        setTipOpen(true);
+        setTipHover(true);
       }}
       onClose={() => {
-        setTipOpen(false);
+        setTipHover(false);
       }}
-      leaveTouchDelay={3000}
+      disableInteractive
       placement="top"
     >
       {pill}

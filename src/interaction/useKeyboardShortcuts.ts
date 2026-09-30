@@ -2,7 +2,12 @@ import { useEffect, useRef } from 'react';
 import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
-import { getItemByIdOrThrow, generateId, connectorsFirst } from 'src/utils';
+import {
+  getItemByIdOrThrow,
+  generateId,
+  connectorsFirst,
+  isLocked
+} from 'src/utils';
 import { TEXTBOX_DEFAULTS } from 'src/config';
 import { useThemeToggle } from 'src/hooks/useThemeToggle';
 import type { ItemReference } from 'src/types';
@@ -17,7 +22,8 @@ const SHIFT_MULTIPLIER = 5;
 
 // Reticulyne's bindings from the shared keymap. Rows the spec marks "where
 // built" that Reticulyne has not built stay unbound: Q (keep tool), align,
-// lock, and Ctrl/Cmd+Enter (there is no point-editing mode for connectors).
+// and Ctrl/Cmd+Enter (there is no point-editing mode for connectors). Lock
+// is bound since lw-069.
 export const KEYMAP = keymapFor('reticulyne', {
   omit: [
     'keep-tool',
@@ -25,8 +31,7 @@ export const KEYMAP = keymapFor('reticulyne', {
     'align-left',
     'align-right',
     'align-top',
-    'align-bottom',
-    'lock'
+    'align-bottom'
   ]
 });
 
@@ -127,6 +132,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     paste,
     groupSelection,
     ungroupSelection,
+    setItemsLocked,
     undo,
     redo,
     currentView,
@@ -398,20 +404,24 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         // Connector anchors are excluded for the same reason the marquee
         // excludes them: they are sub-parts, not top-level items. Selecting
         // is editing here: the selection drives the edit panels. What a
-        // hidden layer holds is not selected (lw-052).
+        // hidden layer holds is not selected (lw-052), nor anything locked
+        // (lw-069).
         case 'select-all': {
           if (!isEditable) return;
+          const open = (entry: { locked?: boolean }) => {
+            return !entry.locked;
+          };
           const all: ItemReference[] = [
-            ...(visibleView.items ?? []).map((i) => {
+            ...(visibleView.items ?? []).filter(open).map((i) => {
               return { type: 'ITEM' as const, id: i.id };
             }),
-            ...(visibleView.textBoxes ?? []).map((t) => {
+            ...(visibleView.textBoxes ?? []).filter(open).map((t) => {
               return { type: 'TEXTBOX' as const, id: t.id };
             }),
-            ...(visibleView.connectors ?? []).map((c) => {
+            ...(visibleView.connectors ?? []).filter(open).map((c) => {
               return { type: 'CONNECTOR' as const, id: c.id };
             }),
-            ...(visibleView.rectangles ?? []).map((r) => {
+            ...(visibleView.rectangles ?? []).filter(open).map((r) => {
               return { type: 'RECTANGLE' as const, id: r.id };
             })
           ];
@@ -568,6 +578,27 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           done();
           return;
 
+        // === Lock (lw-069, Excalidraw's Ctrl/Cmd+Shift+L) ===
+        // Locks the selection, or unlocks it when all of it is locked.
+        // As in Excalidraw, locking deselects: a locked item cannot be
+        // selected on the canvas, and is unlocked from its context menu.
+        case 'lock': {
+          const lockable = selection.filter((ref) => {
+            return ref.type !== 'CONNECTOR_ANCHOR';
+          });
+          if (lockable.length === 0) return;
+          const allLocked = lockable.every((ref) => {
+            return isLocked(currentView, ref);
+          });
+          setItemsLocked(lockable, !allLocked);
+          if (!allLocked) {
+            uiStateActions.setSelection([]);
+            uiStateActions.setItemControls(null);
+          }
+          done();
+          return;
+        }
+
         // === Duplicate (Ctrl/Cmd+D) ===
         // Ctrl+D in browsers opens the bookmark dialog — preventDefault
         // is essential. As in Excalidraw it copies the whole selection
@@ -679,6 +710,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     editingGroupId,
     groupSelection,
     ungroupSelection,
+    setItemsLocked,
     dialog,
     uiStateActions,
     deleteViewItem,

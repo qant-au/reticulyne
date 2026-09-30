@@ -14,6 +14,7 @@ import { useSceneShapes } from './scene/useSceneShapes';
 import { useSceneClipboard } from './scene/useSceneClipboard';
 import { useSceneGroups } from './scene/useSceneGroups';
 import { useSceneLayers } from './scene/useSceneLayers';
+import { useSceneLock } from './scene/useSceneLock';
 import { useSceneFloors } from './scene/useSceneFloors';
 import { useView } from './useView';
 import {
@@ -216,6 +217,7 @@ export const useScene = () => {
     currentView
   });
   const layerOps = useSceneLayers({ getState, setState, currentViewId });
+  const lockOps = useSceneLock({ getState, setState, currentViewId });
   const floorOps = useSceneFloors({
     getState,
     setState,
@@ -247,6 +249,7 @@ export const useScene = () => {
     ...clipboardOps,
     ...groupOps,
     ...layerOps,
+    ...lockOps,
     ...floorOps,
     // lw-052: the diagram's layers; the base layer is never listed.
     layers: model.layers ?? EMPTY_LAYERS,

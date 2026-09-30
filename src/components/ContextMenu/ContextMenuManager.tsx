@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { getTilePosition, CoordsUtils } from 'src/utils';
+import { getTilePosition, CoordsUtils, isLocked } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
 import { ContextMenu } from 'src/vendor/accurona-ui';
+import type { ContextMenuItem } from 'src/vendor/accurona-ui';
 
 interface Props {
   anchorEl?: HTMLElement;
@@ -29,6 +30,86 @@ export const ContextMenuManager = ({ anchorEl }: Props) => {
     return null;
   }
 
+  const { item } = contextMenu;
+  const close = (action: () => void) => {
+    return () => {
+      action();
+      onClose();
+    };
+  };
+
+  // lw-069: a locked item offers only Unlock; the empty canvas offers
+  // Unlock all (it opens only when something is locked).
+  const items: ContextMenuItem[] = !item
+    ? [
+        {
+          label: 'Unlock all',
+          onClick: close(() => {
+            scene.setItemsLocked('all', false);
+          })
+        }
+      ]
+    : isLocked(scene.currentView, item)
+      ? [
+          {
+            label: 'Unlock',
+            onClick: close(() => {
+              scene.setItemsLocked([item], false);
+            })
+          }
+        ]
+      : [
+          ...(item.type === 'ITEM' ||
+          item.type === 'TEXTBOX' ||
+          item.type === 'RECTANGLE'
+            ? [
+                {
+                  label: 'Duplicate',
+                  onClick: close(() => {
+                    scene.duplicateItem(item);
+                  })
+                }
+              ]
+            : []),
+          // Nodes are depth-sorted, so they get no layer order.
+          ...(item.type !== 'ITEM'
+            ? [
+                {
+                  label: 'Send backward',
+                  onClick: close(() => {
+                    scene.changeLayerOrder('SEND_BACKWARD', item);
+                  })
+                },
+                {
+                  label: 'Bring forward',
+                  onClick: close(() => {
+                    scene.changeLayerOrder('BRING_FORWARD', item);
+                  })
+                },
+                {
+                  label: 'Send to back',
+                  onClick: close(() => {
+                    scene.changeLayerOrder('SEND_TO_BACK', item);
+                  })
+                },
+                {
+                  label: 'Bring to front',
+                  onClick: close(() => {
+                    scene.changeLayerOrder('BRING_TO_FRONT', item);
+                  })
+                }
+              ]
+            : []),
+          {
+            label: 'Lock',
+            onClick: close(() => {
+              scene.setItemsLocked([item], true);
+              uiStateActions.setSelection([]);
+              uiStateActions.setItemControls(null);
+            })
+          }
+        ];
+
   return (
     <ContextMenu
       anchorEl={anchorEl}
@@ -40,49 +121,7 @@ export const ContextMenuManager = ({ anchorEl }: Props) => {
         }),
         zoom
       )}
-      items={[
-        ...(contextMenu.item.type === 'ITEM' ||
-        contextMenu.item.type === 'TEXTBOX' ||
-        contextMenu.item.type === 'RECTANGLE'
-          ? [
-              {
-                label: 'Duplicate',
-                onClick: () => {
-                  scene.duplicateItem(contextMenu.item);
-                  onClose();
-                }
-              }
-            ]
-          : []),
-        {
-          label: 'Send backward',
-          onClick: () => {
-            scene.changeLayerOrder('SEND_BACKWARD', contextMenu.item);
-            onClose();
-          }
-        },
-        {
-          label: 'Bring forward',
-          onClick: () => {
-            scene.changeLayerOrder('BRING_FORWARD', contextMenu.item);
-            onClose();
-          }
-        },
-        {
-          label: 'Send to back',
-          onClick: () => {
-            scene.changeLayerOrder('SEND_TO_BACK', contextMenu.item);
-            onClose();
-          }
-        },
-        {
-          label: 'Bring to front',
-          onClick: () => {
-            scene.changeLayerOrder('BRING_TO_FRONT', contextMenu.item);
-            onClose();
-          }
-        }
-      ]}
+      items={items}
     />
   );
 };

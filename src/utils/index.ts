@@ -22,4 +22,5 @@ export * from './search';
 export * from './iconUpload';
 export * from './groups';
 export * from './layers';
+export * from './lock';
 export * from './floors';

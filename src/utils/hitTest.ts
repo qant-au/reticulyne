@@ -28,14 +28,21 @@ export const hasMovedTile = (mouse: Mouse) => {
 interface GetItemAtTile {
   tile: Coords;
   scene: ReturnType<typeof useScene>;
+  // lw-069: pass over locked things, as a click on the canvas does.
+  skipLocked?: boolean;
 }
 
 export const getItemAtTile = ({
   tile,
-  scene
+  scene,
+  skipLocked = false
 }: GetItemAtTile): ItemReference | null => {
+  const open = (entry: { locked?: boolean }) => {
+    return !skipLocked || !entry.locked;
+  };
+
   const viewItem = scene.items.find((item) => {
-    return CoordsUtils.isEqual(item.tile, tile);
+    return open(item) && CoordsUtils.isEqual(item.tile, tile);
   });
 
   if (viewItem) {
@@ -46,6 +53,7 @@ export const getItemAtTile = ({
   }
 
   const textBox = scene.textBoxes.find((tb) => {
+    if (!open(tb)) return false;
     const textBoxTo = getTextBoxEndTile(tb, tb.size);
     const textBoxBounds = getBoundingBox([
       tb.tile,
@@ -69,6 +77,7 @@ export const getItemAtTile = ({
   }
 
   const connector = scene.connectors.find((con) => {
+    if (!open(con)) return false;
     return con.path.tiles.find((pathTile) => {
       const globalPathTile = connectorPathTileToGlobal(
         pathTile,
@@ -86,8 +95,8 @@ export const getItemAtTile = ({
     };
   }
 
-  const rectangle = scene.rectangles.find(({ from, to }) => {
-    return isWithinBounds(tile, [from, to]);
+  const rectangle = scene.rectangles.find(({ from, to, locked }) => {
+    return open({ locked }) && isWithinBounds(tile, [from, to]);
   });
 
   if (rectangle) {
@@ -117,7 +126,8 @@ interface GetItemsInBounds {
  * rectangles nearly unselectable.
  *
  * CONNECTOR_ANCHOR is never returned — anchors are sub-parts of a connector
- * and are only ever selected by dragging one directly.
+ * and are only ever selected by dragging one directly. Nor is anything
+ * locked (lw-069).
  */
 export const getItemsInBounds = ({
   from,
@@ -128,12 +138,13 @@ export const getItemsInBounds = ({
   const found: ItemReference[] = [];
 
   scene.items.forEach((item) => {
-    if (isWithinBounds(item.tile, bounds)) {
+    if (!item.locked && isWithinBounds(item.tile, bounds)) {
       found.push({ type: 'ITEM', id: item.id });
     }
   });
 
   scene.textBoxes.forEach((tb) => {
+    if (tb.locked) return;
     const textBoxTo = getTextBoxEndTile(tb, tb.size);
     const textBoxBounds = getBoundingBox([
       tb.tile,
@@ -152,6 +163,7 @@ export const getItemsInBounds = ({
   });
 
   scene.connectors.forEach((con) => {
+    if (con.locked) return;
     const touches = con.path.tiles.some((pathTile) => {
       return isWithinBounds(
         connectorPathTileToGlobal(pathTile, con.path.rectangle.from),
@@ -164,8 +176,8 @@ export const getItemsInBounds = ({
     }
   });
 
-  scene.rectangles.forEach(({ id, from: rFrom, to: rTo }) => {
-    if (doBoundsIntersect(bounds, getBoundingBox([rFrom, rTo]))) {
+  scene.rectangles.forEach(({ id, from: rFrom, to: rTo, locked }) => {
+    if (!locked && doBoundsIntersect(bounds, getBoundingBox([rFrom, rTo]))) {
       found.push({ type: 'RECTANGLE', id });
     }
   });

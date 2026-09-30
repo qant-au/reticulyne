@@ -86,7 +86,8 @@ const connectorToScene = (c: Connector): SceneConnector => {
     animated: c.animated,
     animationRate: c.animationRate,
     animationFlow: c.animationFlow,
-    layer: c.layerId
+    layer: c.layerId,
+    locked: c.locked
   });
 };
 
@@ -106,7 +107,8 @@ const viewToScene = (view: View): DiagramView => {
             tile: item.tile,
             labelHeight: item.labelHeight,
             group: item.parentGroupId,
-            layer: item.layerId
+            layer: item.layerId,
+            locked: item.locked
           });
         })
       : undefined,
@@ -122,7 +124,8 @@ const viewToScene = (view: View): DiagramView => {
         transparency: r.transparency,
         zIndex: r.zIndex,
         group: r.parentGroupId,
-        layer: r.layerId
+        layer: r.layerId,
+        locked: r.locked
       });
     }),
     textBoxes: view.textBoxes?.map((t: TextBox) => {
@@ -133,7 +136,8 @@ const viewToScene = (view: View): DiagramView => {
         fontSize: t.fontSize,
         orientation: t.orientation,
         group: t.parentGroupId,
-        layer: t.layerId
+        layer: t.layerId,
+        locked: t.locked
       });
     }),
     groups: view.groups?.map((g: Group) => {
@@ -324,7 +328,8 @@ const viewFromScene = (view: DiagramView): View => {
         tile: p.tile,
         labelHeight: p.labelHeight,
         parentGroupId: p.group,
-        layerId: p.layer
+        layerId: p.layer,
+        locked: p.locked
       });
     }),
     connectors: view.connectors?.map((c) => {
@@ -340,7 +345,8 @@ const viewFromScene = (view: DiagramView): View => {
         animationRate: c.animationRate,
         animationFlow: c.animationFlow,
         anchors: c.anchors.map(anchorFromScene),
-        layerId: c.layer
+        layerId: c.layer,
+        locked: c.locked
       });
     }),
     rectangles: view.rectangles?.map((r) => {
@@ -354,7 +360,8 @@ const viewFromScene = (view: DiagramView): View => {
         from: r.from,
         to: r.to,
         parentGroupId: r.group,
-        layerId: r.layer
+        layerId: r.layer,
+        locked: r.locked
       });
     }),
     textBoxes: view.textBoxes?.map((t) => {
@@ -365,7 +372,8 @@ const viewFromScene = (view: DiagramView): View => {
         fontSize: t.fontSize,
         orientation: t.orientation,
         parentGroupId: t.group,
-        layerId: t.layer
+        layerId: t.layer,
+        locked: t.locked
       });
     }),
     groups: view.groups?.map((g) => {

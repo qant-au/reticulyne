@@ -9,7 +9,13 @@ import {
   Mouse,
   ItemReference
 } from 'src/types';
-import { getMouse, getItemAtTile, clickTarget } from 'src/utils';
+import {
+  getMouse,
+  getItemAtTile,
+  clickTarget,
+  hasLocked,
+  isLocked
+} from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
 import { Cursor } from './modes/Cursor';
@@ -288,6 +294,11 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       const itemAtTile = getItemAtTile({ tile, scene: sceneRef.current });
       e.preventDefault();
 
+      // lw-069: a locked item is neither selected nor built on.
+      if (itemAtTile && isLocked(sceneRef.current.currentView, itemAtTile)) {
+        return;
+      }
+
       if (itemAtTile) {
         // 1.7: double-clicking a group member enters the group and selects
         // the next level down; outside groups it selects the item.
@@ -325,14 +336,19 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         scene: liveScene
       });
 
-      // 1.3: every kind with a layer order gets the menu. Nodes do not:
-      // they are depth-sorted, so its layer actions could not move them.
-      // Every entry in the menu edits the diagram, so read-only modes get none.
+      // 1.3: every kind with a layer order gets the menu, and since lw-069
+      // nodes too (for Lock; they are depth-sorted, so they get no layer
+      // actions), and the empty canvas when something is locked (Unlock
+      // all). A locked item is found here, unlike on a click, so it can be
+      // unlocked. Every entry in the menu edits the diagram, so read-only
+      // modes get none.
       if (
         liveUiState.editorMode === 'EDITABLE' &&
-        (itemAtTile?.type === 'RECTANGLE' ||
+        (itemAtTile?.type === 'ITEM' ||
+          itemAtTile?.type === 'RECTANGLE' ||
           itemAtTile?.type === 'TEXTBOX' ||
-          itemAtTile?.type === 'CONNECTOR')
+          itemAtTile?.type === 'CONNECTOR' ||
+          (!itemAtTile && hasLocked(liveScene.visibleView)))
       ) {
         uiStateActions.setContextMenu({
           item: itemAtTile,

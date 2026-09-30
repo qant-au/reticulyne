@@ -256,7 +256,8 @@ export type IconCollectionStateWithIcons = IconCollectionState & {
 };
 
 export interface ContextMenu {
-  item: ItemReference;
+  // null: the empty canvas (lw-069, for Unlock all).
+  item: ItemReference | null;
   tile: Coords;
 }
 

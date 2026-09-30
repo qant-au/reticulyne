@@ -12,6 +12,7 @@ export const rectangleSchema = z
     from: coords,
     to: coords,
     parentGroupId: id.optional(),
-    layerId: id.optional()
+    layerId: id.optional(),
+    locked: z.boolean().optional()
   })
   .strict();

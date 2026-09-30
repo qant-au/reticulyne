@@ -18,7 +18,8 @@ import {
   CoordsUtils,
   getAnchorTile,
   connectorPathTileToGlobal,
-  getNodeAtPointerPort
+  getNodeAtPointerPort,
+  isLocked
 } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
 
@@ -124,9 +125,11 @@ const mousedown: ModeActionsAction = ({
     }
   }
 
+  // lw-069: a click passes over locked things to whatever is below.
   const itemAtTile = getItemAtTile({
     tile: uiState.mouse.position.tile,
-    scene
+    scene,
+    skipLocked: true
   });
 
   if (itemAtTile) {
@@ -139,12 +142,19 @@ const mousedown: ModeActionsAction = ({
     // 1.7: a click on a grouped item selects its group (the next level
     // down while a group is being edited). Leaving the edited group by
     // clicking outside it happens here too.
-    const target =
+    const clicked =
       itemAtTile.type === 'ITEM' ||
       itemAtTile.type === 'RECTANGLE' ||
       itemAtTile.type === 'TEXTBOX'
         ? clickTarget(scene.currentView, itemAtTile, uiState.editingGroupId)
         : null;
+    // A group's locked members are not selected with it (lw-069).
+    const target = clicked && {
+      ...clicked,
+      refs: clicked.refs.filter((ref) => {
+        return !isLocked(scene.currentView, ref);
+      })
+    };
     if (target && target.editingGroupId !== uiState.editingGroupId) {
       uiState.actions.setEditingGroupId(target.editingGroupId);
     }

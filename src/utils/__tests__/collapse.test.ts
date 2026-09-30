@@ -3,6 +3,8 @@ import * as reducers from 'src/stores/reducers';
 import type { Model, View } from 'src/types';
 import type { State } from 'src/stores/reducers/types';
 import {
+  clipPathAtCollapsedBoxes,
+  COLLAPSED_BOX_REACH,
   collapsedBoxAtTile,
   collapsedBoxes,
   collapsedGroupMembers,
@@ -197,5 +199,50 @@ describe('collapsing a group', () => {
       state()
     );
     expect(next.model.views[0].groups?.[0].collapsed).toBe(true);
+  });
+});
+
+// Sweep 2026-09-30: a connector docked on a collapsed box ran on past its
+// arrowhead at the box's edge to the box's centre.
+describe('clipPathAtCollapsedBoxes', () => {
+  const box = { groupId: 'g', tile: { x: 0, y: 0 }, count: 2 };
+  test('an end on a box stops at the box edge', () => {
+    const route = [
+      { x: 3, y: 0 },
+      { x: 2, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: 0 }
+    ];
+    const clipped = clipPathAtCollapsedBoxes(route, [box]);
+    expect(clipped.slice(0, 3)).toEqual(route.slice(0, 3));
+    expect(clipped[3].x).toBeCloseTo(COLLAPSED_BOX_REACH);
+    expect(clipped[3].y).toBe(0);
+    expect(route).toHaveLength(4);
+  });
+
+  test('a diagonal approach and a start on a box are clipped too', () => {
+    const clipped = clipPathAtCollapsedBoxes(
+      [
+        { x: 0, y: 0 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 }
+      ],
+      [box]
+    );
+    expect(clipped).toHaveLength(3);
+    expect(clipped[0].x).toBeCloseTo(COLLAPSED_BOX_REACH);
+    expect(clipped[0].y).toBeCloseTo(COLLAPSED_BOX_REACH);
+    expect(clipped.slice(1)).toEqual([
+      { x: 1, y: 1 },
+      { x: 2, y: 1 }
+    ]);
+  });
+
+  test('a route with no end on a box is unchanged', () => {
+    const route = [
+      { x: 5, y: 5 },
+      { x: 6, y: 5 }
+    ];
+    expect(clipPathAtCollapsedBoxes(route, [box])).toEqual(route);
   });
 });

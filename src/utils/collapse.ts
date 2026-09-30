@@ -264,3 +264,43 @@ export const collapsedGroupMembers = (
     return !isLocked(view, ref);
   });
 };
+
+/**
+ * A connector docked on a collapsed box, drawn only up to the box's edge.
+ * `tiles` is its route in world tiles; an end on a box's tile is cut where
+ * the route enters the box, so the line stops at the edge with its arrow
+ * instead of running on inside to the box's centre (sweep 2026-09-30). The
+ * cut end is a fractional tile on the box's edge.
+ */
+export const clipPathAtCollapsedBoxes = (
+  tiles: Coords[],
+  boxes: CollapsedBox[]
+): Coords[] => {
+  if (tiles.length < 2 || boxes.length === 0) return tiles;
+  const clipEnd = (route: Coords[]): Coords[] => {
+    const end = route[route.length - 1];
+    const box = boxes.find((b) => {
+      return b.tile.x === end.x && b.tile.y === end.y;
+    });
+    if (!box) return route;
+    const reach = (p: Coords) => {
+      return Math.max(Math.abs(p.x - box.tile.x), Math.abs(p.y - box.tile.y));
+    };
+    let i = route.length - 1;
+    while (i > 0 && reach(route[i - 1]) <= COLLAPSED_BOX_REACH) i -= 1;
+    // Every point inside: leave it, there is no edge to stop at.
+    if (i === 0) return route;
+    const outside = route[i - 1];
+    const inside = route[i];
+    const from = reach(outside);
+    const t = (from - COLLAPSED_BOX_REACH) / (from - reach(inside));
+    return [
+      ...route.slice(0, i),
+      {
+        x: outside.x + (inside.x - outside.x) * t,
+        y: outside.y + (inside.y - outside.y) * t
+      }
+    ];
+  };
+  return clipEnd([...clipEnd(tiles)].reverse()).reverse();
+};

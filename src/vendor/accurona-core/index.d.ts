@@ -4,4 +4,5 @@ export { checkReferences, type ReferenceIssue } from './scene/references.js';
 export { emptyScene, isSceneDocument, parseJson, parseScene, serializeScene, validateScene, type SceneResult } from './scene/parse.js';
 export { mergeScene, type PreserveFields, type SceneUpdate } from './scene/merge.js';
 export { hasRedacted, redactScene } from './scene/redact.js';
+export { diagramLocations, objectPlaces, placedOnlyElsewhere, type DiagramLocation, type ObjectPlace } from './scene/crossover.js';
 export { AXONOMETRA_BINDINGS, AXONOMETRA_WALK_KEYS, DIFFERENCES, RETICULYNE_BINDINGS, SHARED_BINDINGS, formatBinding, formatChord, isTypingTarget, keymapFor, matchChord, resolveAction, shortcutHint, shortcutSections, type Binding, type Chord, type Difference, type KeyLike, type KeymapOptions, type KeymapSection, type KeymapTool, type ResolveOptions, type ShortcutRow, type ShortcutSection } from './keymap.js';

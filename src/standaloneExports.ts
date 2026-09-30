@@ -92,4 +92,4 @@ export type {
   TopologyItem,
   TopologyWarning
 } from 'src/catalogue';
-export { legacyModelToScene } from 'src/scene/legacy';
+export { legacyModelToScene, type LegacyModelOptions } from 'src/scene/legacy';

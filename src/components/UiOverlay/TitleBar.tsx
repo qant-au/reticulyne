@@ -174,7 +174,7 @@ export const TitleBar = ({
             {title}
           </Typography>
           <ChevronRight sx={{ flexShrink: 0 }} />
-          <FloorSwitcher />
+          <FloorSwitcher roomKey={`${title}|${right - left}`} />
           <SaveStatusPill compact={narrow} />
         </Stack>
       </Surface>

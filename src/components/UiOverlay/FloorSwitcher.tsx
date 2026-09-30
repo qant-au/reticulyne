@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
   ButtonBase,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -64,16 +65,32 @@ const FloorName = ({
 };
 
 // In the title bar the diagram's title gives way first (TitleBar), then the
-// floors: of those, only the shown floor's name, with an ellipsis. The
-// others keep theirs and scroll. A name this short never truncates: a
-// minimum wider than the name itself would leave a gap beside it.
+// floors: the floors not shown first, each with an ellipsis, down to a
+// letter or two; only then the shown floor's name, which keeps a few
+// letters. The other floors kept their names and scrolled, so on a phone
+// they ran on to the options button, cut with no ellipsis ("First flo",
+// "Lab" a sliver), while the shown floor read "Gr..." (sweep 2026-09-30,
+// round 4). A shrink factor far above the shown floor's is what orders it.
+// Scrolling is left for more floors than even that fits. A shown name this
+// short never truncates: a minimum wider than the name itself would leave
+// a gap beside it.
 const nameShrink = (name: string) => {
   return name.length <= 4
     ? { flexShrink: 0 }
     : { flexShrink: 1, minWidth: '3.5em' };
 };
+const otherShrink = (name: string) => {
+  return name.length <= 2
+    ? { flexShrink: 0 }
+    : { flexShrink: 10000, minWidth: '2.75em' };
+};
 
-export const FloorSwitcher = () => {
+export const FloorSwitcher = ({
+  roomKey = ''
+}: {
+  /** Changes when the room the title bar has changes (its width, the title). */
+  roomKey?: string;
+}) => {
   const {
     floors,
     currentView,
@@ -122,6 +139,35 @@ export const FloorSwitcher = () => {
     );
   }, [floors, opened]);
 
+  // When the tabs do not fit even with every name cut to a letter or two
+  // (a phone with three floors and the save status), they collapse: the
+  // shown floor's tab, and the other floors in the options menu with Add a
+  // floor and Show other floors. Scrolling cut the last tab visible
+  // mid-name, under the buttons (sweep 2026-09-30, round 4). Measured
+  // before paint; anything that changes the room tries the tabs again.
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const saveKey = useUiStateStore((state) => {
+    return state.saveStatus.state + ':' + String(state.saveStatus.isDirty);
+  });
+  const fitKey = [
+    roomKey,
+    saveKey,
+    editable,
+    currentView.id,
+    ...floors.map((f) => {
+      return f.id + ':' + f.name;
+    })
+  ].join('|');
+  // The room the tabs did not fit in; collapsed while the room is the same.
+  const [collapsedFor, setCollapsedFor] = useState<string | null>(null);
+  const collapsed = collapsedFor === fitKey;
+  useLayoutEffect(() => {
+    const el = scrollerRef.current;
+    if (!collapsed && el && el.scrollWidth > el.clientWidth + 1) {
+      setCollapsedFor(fitKey);
+    }
+  }, [collapsed, fitKey]);
+
   // One floor, and nothing to add: just its name, as before floors.
   if (floors.length === 1 && !editable) {
     return (
@@ -142,12 +188,23 @@ export const FloorSwitcher = () => {
     return f.id === currentView.id;
   });
 
+  const shownFloors = collapsed
+    ? floors.filter((f) => {
+        return f.id === currentView.id;
+      })
+    : floors;
+  const hasMenu = editable || (collapsed && floors.length > 1);
+  const closeMenu = () => {
+    setMenu(null);
+  };
+
   return (
     <Stack
       direction="row"
       role="tablist"
       aria-label="Floors"
       data-testid="floor-switcher"
+      data-collapsed={collapsed || undefined}
       sx={{
         alignItems: 'center',
         minWidth: 0,
@@ -155,11 +212,12 @@ export const FloorSwitcher = () => {
       }}
     >
       <Stack
+        ref={scrollerRef}
         direction="row"
         spacing={0.5}
         sx={{ alignItems: 'center', minWidth: 0, overflowX: 'auto' }}
       >
-        {floors.map((floor) => {
+        {shownFloors.map((floor) => {
           const active = floor.id === currentView.id;
           if (renaming === floor.id) {
             return (
@@ -197,9 +255,13 @@ export const FloorSwitcher = () => {
                 px: 1,
                 py: 0.25,
                 borderRadius: 1,
-                // Only the shown floor's name gives way, with an ellipsis,
-                // once the title has; the others keep theirs and scroll.
-                ...(active ? nameShrink(floor.name) : { flexShrink: 0 }),
+                // Collapsed, the one tab left gives way to the end, with
+                // an ellipsis, rather than overflow its space.
+                ...(collapsed
+                  ? { flexShrink: 1, minWidth: 0 }
+                  : active
+                    ? nameShrink(floor.name)
+                    : otherShrink(floor.name)),
                 fontWeight: 600,
                 typography: 'body2',
                 color: active ? 'text.primary' : 'text.secondary',
@@ -221,9 +283,9 @@ export const FloorSwitcher = () => {
           );
         })}
       </Stack>
-      {editable && (
+      {hasMenu && (
         <>
-          <Tooltip title="Floor options">
+          <Tooltip title={collapsed ? 'Floors' : 'Floor options'}>
             <IconButton
               size="small"
               aria-label="Floor options"
@@ -238,9 +300,7 @@ export const FloorSwitcher = () => {
           <Menu
             anchorEl={menu}
             open={!!menu}
-            onClose={() => {
-              setMenu(null);
-            }}
+            onClose={closeMenu}
             slotProps={{
               // As the Diagrams menu: closing, its invisible backdrop let
               // no click through until the fade ended.
@@ -254,59 +314,106 @@ export const FloorSwitcher = () => {
               }
             }}
           >
-            <MenuItem
-              onClick={() => {
-                setMenu(null);
-                setRenameOnClose(true);
-              }}
-            >
-              Rename floor
-            </MenuItem>
-            <MenuItem
-              disabled={index >= floors.length - 1}
-              onClick={() => {
-                setMenu(null);
-                moveFloor(currentView.id, 1);
-              }}
-            >
-              Move up a floor
-            </MenuItem>
-            <MenuItem
-              disabled={index <= 0}
-              onClick={() => {
-                setMenu(null);
-                moveFloor(currentView.id, -1);
-              }}
-            >
-              Move down a floor
-            </MenuItem>
-            <MenuItem
-              disabled={floors.length <= 1}
-              onClick={() => {
-                setMenu(null);
-                deleteFloor(currentView.id);
-              }}
-            >
-              Delete floor
-            </MenuItem>
-          </Menu>
-          <Tooltip title="Add a floor">
-            <span>
-              <IconButton
-                size="small"
-                aria-label="Add a floor"
+            {collapsed &&
+              [...floors].reverse().map((floor) => {
+                return (
+                  <MenuItem
+                    key={floor.id}
+                    selected={floor.id === currentView.id}
+                    onClick={() => {
+                      closeMenu();
+                      showFloor(floor.id);
+                    }}
+                  >
+                    {floor.name}
+                  </MenuItem>
+                );
+              })}
+            {collapsed && floors.length > 1 && (
+              <MenuItem
+                onClick={() => {
+                  closeMenu();
+                  uiStateActions.setShowOtherFloors(!showOtherFloors);
+                }}
+              >
+                {showOtherFloors ? 'Hide other floors' : 'Show other floors'}
+              </MenuItem>
+            )}
+            {collapsed && editable && <Divider />}
+            {editable && (
+              <MenuItem
+                onClick={() => {
+                  closeMenu();
+                  setRenameOnClose(true);
+                }}
+              >
+                Rename floor
+              </MenuItem>
+            )}
+            {editable && (
+              <MenuItem
+                disabled={index >= floors.length - 1}
+                onClick={() => {
+                  closeMenu();
+                  moveFloor(currentView.id, 1);
+                }}
+              >
+                Move up a floor
+              </MenuItem>
+            )}
+            {editable && (
+              <MenuItem
+                disabled={index <= 0}
+                onClick={() => {
+                  closeMenu();
+                  moveFloor(currentView.id, -1);
+                }}
+              >
+                Move down a floor
+              </MenuItem>
+            )}
+            {editable && (
+              <MenuItem
+                disabled={floors.length <= 1}
+                onClick={() => {
+                  closeMenu();
+                  deleteFloor(currentView.id);
+                }}
+              >
+                Delete floor
+              </MenuItem>
+            )}
+            {collapsed && editable && (
+              <MenuItem
                 disabled={floors.length >= SCHEMA_LIMITS.VIEWS}
                 onClick={() => {
+                  closeMenu();
                   addFloor(`Floor ${floors.length + 1}`);
                 }}
               >
-                <AddIcon fontSize="small" />
-              </IconButton>
-            </span>
-          </Tooltip>
+                Add a floor
+              </MenuItem>
+            )}
+          </Menu>
         </>
       )}
-      {floors.length > 1 && (
+      {editable && !collapsed && (
+        <Tooltip title="Add a floor">
+          <span>
+            <IconButton
+              size="small"
+              aria-label="Add a floor"
+              disabled={floors.length >= SCHEMA_LIMITS.VIEWS}
+              onClick={() => {
+                addFloor(`Floor ${floors.length + 1}`);
+              }}
+            >
+              <AddIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+      )}
+      {floors.length > 1 && !collapsed && (
         <Box>
           <Tooltip
             title={showOtherFloors ? 'Hide other floors' : 'Show other floors'}

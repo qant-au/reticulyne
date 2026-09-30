@@ -80,7 +80,7 @@ export const SHARED_BINDINGS = [
     gesture('marquee', 'Select an area', 'Drag on empty canvas'),
     gesture('space-pan', 'Pan', 'Space + drag, or the hand tool'),
     gesture('wheel-pan', 'Pan', 'Mouse wheel; Shift + wheel pans sideways'),
-    gesture('wheel-zoom', 'Zoom', 'Ctrl/Cmd + wheel, trackpad pinch, touch pinch'),
+    gesture('wheel-zoom', 'Zoom', '{mod} + wheel, trackpad pinch, touch pinch'),
     gesture('alt-drag', 'Drag a copy', 'Alt + drag', true),
     gesture('context-menu', 'Context menu', 'Right-click')
 ];
@@ -92,7 +92,9 @@ export const RETICULYNE_BINDINGS = [
     { action: 'text', label: 'Text', section: 'Tools', chords: [k('t'), c('Digit8')], editing: true },
     { action: 'add-item', label: 'Add item', section: 'Tools', chords: [k('i'), c('Digit9')], editing: true },
     { action: 'select', label: 'Select', section: 'Tools', chords: [k('s')], editing: false },
-    { action: 'fit-all', label: 'Fit everything', section: 'View', chords: [k('f')], editing: false },
+    // Named as on Reticulyne's toolbar ("Pan (H)", "Fit to view (F)").
+    { action: 'hand', label: 'Pan', section: 'Tools', chords: [], editing: false },
+    { action: 'fit-all', label: 'Fit to view', section: 'View', chords: [k('f')], editing: false },
     { action: 'zoom-in', label: 'Zoom in', section: 'View', chords: [k('=', { shift: 'any' }), k('+', { shift: 'any' })], editing: false },
     { action: 'zoom-out', label: 'Zoom out', section: 'View', chords: [k('-', { shift: 'any' }), k('_', { shift: 'any' })], editing: false },
     { action: 'toggle-highlight', label: 'Toggle item highlighting', section: 'View', chords: [c('KeyI', { alt: true })], editing: false },
@@ -106,7 +108,7 @@ export const RETICULYNE_BINDINGS = [
         section: 'View',
         chords: ARROWS.map((key) => mod(key)),
         editing: false,
-        keysLabel: 'Ctrl/Cmd + arrow keys'
+        keysLabel: '{mod} + arrow keys'
     },
     { action: 'next-object', label: 'Select the next object', section: 'Edit', chords: [k('Tab')], editing: false },
     { action: 'previous-object', label: 'Select the previous object', section: 'Edit', chords: [k('Tab', { shift: true })], editing: false },
@@ -204,7 +206,8 @@ export const DIFFERENCES = {
 };
 // The full binding list for one tool: the shared set, less what the tool
 // leaves out, with its own rows added. A tool row whose action is shared adds
-// its chords to the shared row.
+// its chords to the shared row, and its label replaces the shared one, so the
+// `?` dialog uses the names on that tool's own toolbar.
 export const keymapFor = (tool, options = {}) => {
     const own = tool === 'reticulyne' ? RETICULYNE_BINDINGS : AXONOMETRA_BINDINGS;
     const skip = new Set([...DIVERGENT[tool], ...(options.omit ?? [])]);
@@ -214,8 +217,10 @@ export const keymapFor = (tool, options = {}) => {
     }));
     for (const binding of own) {
         const shared = result.find((b) => b.action === binding.action);
-        if (shared)
+        if (shared) {
             shared.chords.push(...binding.chords);
+            shared.label = binding.label;
+        }
         else
             result.push({ ...binding, chords: [...binding.chords] });
     }
@@ -325,9 +330,10 @@ export const formatChord = (chord, platform = isMacLike() ? 'mac' : 'other') => 
     return parts.join(mac ? ' ' : ' + ');
 };
 // Every way to trigger a binding, for the `?` dialog.
-export const formatBinding = (binding, platform) => {
-    if (binding.keysLabel)
-        return [binding.keysLabel];
+export const formatBinding = (binding, platform = isMacLike() ? 'mac' : 'other') => {
+    if (binding.keysLabel) {
+        return [binding.keysLabel.split('{mod}').join(platform === 'mac' ? '⌘' : 'Ctrl')];
+    }
     const seen = new Set();
     for (const chord of binding.chords) {
         // `_` and `+` are the shifted forms of `-` and `=`; listing both is noise.

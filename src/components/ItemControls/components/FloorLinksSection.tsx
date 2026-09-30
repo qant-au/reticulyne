@@ -149,6 +149,8 @@ export const FloorLinksSection = ({ itemId }: { itemId: string }) => {
         <Button
           size="small"
           variant="outlined"
+          // The description editor has a Link button too, in the same panel.
+          aria-label="Link to floor item"
           disabled={!targetId}
           onClick={() => {
             connectItems(itemId, targetId);

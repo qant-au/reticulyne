@@ -93,3 +93,82 @@ test('pointer rows are keys, alternatives stay together, differences use row nam
   await expect(differences).not.toContainText('Ctrl/Cmd');
   await expect(differences).not.toContainText('{');
 });
+
+// Sweep 2026-09-30, round 3: a wrapped row ended its first line with "or"
+// and the label sat between the lines; two pointer rows were both "Pan";
+// "the add-item tool, then Enter" was plain text; and at 390 the
+// differences were three 80-100px columns.
+for (const [width, height] of [
+  [1440, 900],
+  [390, 844]
+] as const) {
+  test(`\`or\` starts the line of its alternative, labels are distinct, at ${width}`, async ({
+    page
+  }) => {
+    await openDialog(page, width, height);
+    const dialog = page.getByTestId('keyboard-shortcuts');
+    const dangling = await dialog.getByRole('row').evaluateAll((rows) => {
+      const bad: string[] = [];
+      for (const r of rows) {
+        const cells = r.querySelectorAll('td');
+        if (cells.length < 2) continue;
+        const ors = [...cells[1].querySelectorAll('span')].filter((s) => {
+          return s.children.length === 0 && s.textContent === 'or';
+        });
+        for (const or of ors) {
+          // What follows "or" in reading order must share its line.
+          const all = [...cells[1].querySelectorAll('kbd, span')].filter((e) => {
+            return e.children.length === 0;
+          });
+          const next = all[all.indexOf(or) + 1];
+          const a = or.getBoundingClientRect();
+          const b = next?.getBoundingClientRect();
+          if (!b || Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) > 6) {
+            bad.push(cells[0].textContent ?? '');
+          }
+        }
+        // The label is level with the first line of its keys.
+        const first = cells[1].querySelector('kbd, span span');
+        if (first && getComputedStyle(cells[0]).display === 'table-cell') {
+          const l = cells[0].getBoundingClientRect();
+          const k = first.getBoundingClientRect();
+          if (Math.abs(l.top - k.top) > 12) bad.push('label: ' + cells[0].textContent);
+        }
+      }
+      return bad;
+    });
+    expect(dangling).toEqual([]);
+
+    const pointer = dialog.getByRole('region', { name: 'Pointer and touch' });
+    const labels = await pointer.getByRole('row').evaluateAll((rows) => {
+      return rows.map((r) => {
+        return r.querySelector('td')?.textContent ?? '';
+      });
+    });
+    expect(new Set(labels).size).toBe(labels.length);
+    await expect(row(page, 'Pan by dragging')).toBeVisible();
+    await expect(row(page, 'Pan with the wheel')).toBeVisible();
+
+    const addRow = row(page, 'Add an item on an empty tile');
+    await expect(addRow.locator('kbd', { hasText: /^I$/ })).toHaveCount(1);
+    await expect(addRow.locator('kbd', { hasText: /^Enter$/ })).toHaveCount(1);
+    await expect(addRow).not.toContainText('add-item tool');
+
+    const cellWidths = await page
+      .getByTestId('excalidraw-differences')
+      .locator('tbody tr')
+      .first()
+      .locator('td')
+      .evaluateAll((tds) => {
+        return tds.map((td) => {
+          return td.getBoundingClientRect().width;
+        });
+      });
+    if (width < 600) {
+      // Stacked: every column runs the dialog's width.
+      for (const w of cellWidths) expect(w).toBeGreaterThan(250);
+    } else {
+      expect(cellWidths).toHaveLength(3);
+    }
+  });
+}

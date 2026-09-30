@@ -72,7 +72,11 @@ export const Node = ({ node, order, isDimmed }: Props) => {
           </Box>
         )}
         {NodeIndicator && (
-          <Box data-testid="node-indicator-slot" sx={{ position: 'absolute' }}>
+          <Box
+            data-testid="node-indicator-slot"
+            data-host-indicator=""
+            sx={{ position: 'absolute' }}
+          >
             {NodeIndicator({ item: modelItem, view: node })}
           </Box>
         )}

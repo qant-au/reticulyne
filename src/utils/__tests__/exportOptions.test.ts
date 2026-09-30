@@ -22,8 +22,29 @@ import {
   exportAsUniversalSvg,
   exportAsVectorSvg,
   filenameForTitle,
+  leaveOutHostIndicators,
   waitForImages
 } from '../exportOptions';
+
+// Host indicators are live host state, never drawn into an export: the
+// PDF captures the live canvas, so the capture filters their slots out.
+describe('host indicators in exports', () => {
+  test('the filter drops an indicator slot and keeps everything else', () => {
+    const slot = document.createElement('div');
+    slot.setAttribute('data-host-indicator', '');
+    expect(leaveOutHostIndicators(slot)).toBe(false);
+    expect(leaveOutHostIndicators(document.createElement('div'))).toBe(true);
+  });
+
+  test('the PNG/PDF capture passes the filter to html-to-image', async () => {
+    const { toPng } = jest.requireMock('html-to-image') as {
+      toPng: jest.Mock;
+    };
+    toPng.mockClear();
+    await exportAsImage(document.createElement('div') as HTMLDivElement);
+    expect(toPng.mock.calls[0][1].filter).toBe(leaveOutHostIndicators);
+  });
+});
 
 // Stub html-to-image so exportAsImage resolves to a known PNG data URL
 // without hitting jsdom's missing canvas APIs.

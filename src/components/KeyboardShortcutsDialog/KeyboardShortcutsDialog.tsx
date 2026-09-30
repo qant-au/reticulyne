@@ -1,6 +1,10 @@
 import { useMemo } from 'react';
 import { KeyboardShortcutsDialog as SharedDialog } from 'src/vendor/accurona-ui';
-import { DIFFERENCES, shortcutSections } from 'src/vendor/accurona-core';
+import {
+  DIFFERENCES,
+  formatDifferences,
+  shortcutSections
+} from 'src/vendor/accurona-core';
 import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 
 interface Props {
@@ -21,7 +25,7 @@ export const KeyboardShortcutsDialog = ({ onClose }: Props) => {
       onClose={onClose}
       title="Keyboard Shortcuts"
       sections={sections}
-      differences={DIFFERENCES.reticulyne}
+      differences={formatDifferences(DIFFERENCES.reticulyne)}
     />
   );
 };

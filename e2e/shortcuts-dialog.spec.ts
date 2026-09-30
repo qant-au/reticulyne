@@ -47,3 +47,49 @@ test('at phone width every key is inside the dialog', async ({ page }) => {
     expect(box.x + box.width).toBeLessThanOrEqual(dialog!.x + dialog!.width);
   }
 });
+
+// Sweep 2026-09-30: pointer rows mixed chips and text, and glyphs and
+// words; Bring to front's second way wrapped onto a line starting "or";
+// the differences said "fit everything" and "Ctrl/Cmd"; and the
+// right-click row claimed a context menu empty canvas does not have.
+test('pointer rows are keys, alternatives stay together, differences use row names', async ({
+  page
+}) => {
+  await openDialog(page, 1440, 900);
+  for (const [label, count] of [
+    ['Add to or remove from the selection', 2],
+    ['Drag a copy', 2],
+    ['Pan the view', 2],
+    ['Select an area', 1]
+  ] as const) {
+    await expect(row(page, label).locator('kbd'), label).toHaveCount(count);
+  }
+  await expect(row(page, 'Drag a copy')).not.toContainText('Alt + drag');
+  await expect(row(page, "Open an object's menu")).toContainText(
+    /Right-click\s*an object/
+  );
+  await expect(
+    page.getByTestId('keyboard-shortcuts').getByRole('cell', {
+      name: 'Context menu',
+      exact: true
+    })
+  ).toHaveCount(0);
+
+  for (const label of ['Bring to front', 'Send to back']) {
+    const tops = await row(page, label)
+      .locator('kbd')
+      .evaluateAll((kbds) => {
+        return kbds.map((k) => {
+          return Math.round(k.getBoundingClientRect().top);
+        });
+      });
+    expect(tops.length, label).toBeGreaterThan(3);
+    expect(Math.max(...tops) - Math.min(...tops), label).toBeLessThanOrEqual(2);
+  }
+
+  const differences = page.getByTestId('excalidraw-differences');
+  await expect(differences).toContainText('Fit to view');
+  await expect(differences).not.toContainText('fit everything');
+  await expect(differences).not.toContainText('Ctrl/Cmd');
+  await expect(differences).not.toContainText('{');
+});

@@ -51,6 +51,8 @@ export interface ResolveOptions {
 }
 export declare const resolveAction: (event: KeyLike, bindings: readonly Binding[], options?: ResolveOptions) => string | null;
 export declare const formatChord: (chord: Chord, platform?: "mac" | "other") => string;
+export declare const formatKeyNames: (text: string, platform?: "mac" | "other") => string;
+export declare const formatDifferences: (differences: readonly Difference[], platform?: "mac" | "other") => Difference[];
 export declare const formatBinding: (binding: Binding, platform?: "mac" | "other") => string[];
 export declare const shortcutHint: (bindings: readonly Binding[], action: string, platform?: "mac" | "other") => string | undefined;
 export interface ShortcutRow {

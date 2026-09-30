@@ -5,4 +5,4 @@ export { emptyScene, isSceneDocument, parseJson, parseScene, serializeScene, val
 export { mergeScene } from './scene/merge.js';
 export { hasRedacted, redactScene } from './scene/redact.js';
 export { diagramLocations, floorsOf, objectPlaces, placedOnlyElsewhere } from './scene/crossover.js';
-export { AXONOMETRA_BINDINGS, AXONOMETRA_WALK_KEYS, DIFFERENCES, RETICULYNE_BINDINGS, SHARED_BINDINGS, formatBinding, formatChord, isTypingTarget, keymapFor, matchChord, resolveAction, shortcutHint, shortcutSections } from './keymap.js';
+export { AXONOMETRA_BINDINGS, AXONOMETRA_WALK_KEYS, DIFFERENCES, RETICULYNE_BINDINGS, SHARED_BINDINGS, formatBinding, formatChord, formatDifferences, formatKeyNames, isTypingTarget, keymapFor, matchChord, resolveAction, shortcutHint, shortcutSections } from './keymap.js';

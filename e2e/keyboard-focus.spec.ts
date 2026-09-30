@@ -130,6 +130,10 @@ test('the canvas hint writes the pan keys as the shortcuts dialog does', async (
   const keys = (
     (await row.getByRole('cell').nth(1).textContent()) ?? ''
   ).trim();
-  expect(keys).toMatch(/arrow keys$/);
-  expect(hint).toContain(`${keys} pan.`);
+  // The cell draws each key as a key, so its text has no spaces round +.
+  expect(keys).toMatch(/Arrow keys$/);
+  const squash = (text: string) => {
+    return text.replace(/\s/g, '');
+  };
+  expect(squash(hint)).toContain(`${squash(keys)}pan.`);
 });

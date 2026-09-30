@@ -158,7 +158,7 @@ describe('keyboard access', () => {
       /Tab and Shift\+Tab move between objects/
     );
     // The pan keys as the ? dialog writes them (this is not a Mac).
-    expect(hint?.textContent).toMatch('Ctrl + arrow keys pan.');
+    expect(hint?.textContent).toMatch('Ctrl + Arrow keys pan.');
   });
 
   test('Tab walks every object, then lets focus leave the canvas', () => {

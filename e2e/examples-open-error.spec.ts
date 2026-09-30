@@ -24,12 +24,17 @@ const openWith = async (page: Page, name: string, text: string) => {
 
 test('Open with a file that is not JSON says so', async ({ page }) => {
   await openWith(page, 'invalid.json', 'not json {');
-  await expect(page.getByRole('alert')).toContainText('not valid JSON');
+  // The same wording as the editor build's: the file is named.
+  await expect(page.getByRole('alert')).toHaveText(
+    '“invalid.json” is not a diagram file (it is not valid JSON).'
+  );
 });
 
 test('Open with JSON that is not a diagram says so', async ({ page }) => {
   await openWith(page, 'other.json', '{"hello":"world"}');
-  await expect(page.getByRole('alert')).toContainText('not a valid diagram');
+  await expect(page.getByRole('alert')).toHaveText(
+    '“other.json” is not a valid diagram.'
+  );
   // The diagram that was open stays open.
   await expect(
     page.getByText('Airport management software system', { exact: true })

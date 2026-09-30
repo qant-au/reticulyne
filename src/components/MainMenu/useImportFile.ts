@@ -8,7 +8,7 @@
 // closed *after* the file picker click resolves so the user can dismiss
 // the menu without dismissing the OS file-picker.
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import type { ZodIssue } from 'zod';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
@@ -66,9 +66,21 @@ export const useImportFile = () => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
-  const onValidationError = useUiStateStore((state) => {
+  const hostOnValidationError = useUiStateStore((state) => {
     return state.onValidationError;
   });
+  // The host hears the opened file's name with the issues, so its message
+  // can name the file as the editor build's does ('“x.json” is not ...').
+  const fileNameRef = useRef<string | undefined>(undefined);
+  const reportWithFileName = useCallback(
+    (issues: ZodIssue[]) => {
+      hostOnValidationError?.(issues, { fileName: fileNameRef.current });
+    },
+    [hostOnValidationError]
+  );
+  const onValidationError = hostOnValidationError
+    ? reportWithFileName
+    : undefined;
   // The host's onValidationError hears a file that parses but is not a
   // diagram too: without it that went to the console only.
   const { load } = useInitialDataManager({ onValidationError });
@@ -85,6 +97,7 @@ export const useImportFile = () => {
         return;
       }
 
+      fileNameRef.current = file.name;
       const fileReader = new FileReader();
 
       fileReader.onload = (e) => {

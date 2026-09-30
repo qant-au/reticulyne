@@ -28,6 +28,14 @@ export type IconUploadHandler = (
   file: File
 ) => Promise<{ url: string; name?: string }>;
 
+// A validation failure's issues, and, when the user opened a file through
+// Main menu > Open, that file's name, so a message can name it as the
+// editor build does.
+export type ValidationErrorHandler = (
+  issues: ZodIssue[],
+  context?: { fileName?: string }
+) => void;
+
 // A Reticulyne model, the file format before the scene format. Still read
 // (as `initialData`, by `loadModel` and by Open), converted to a scene on
 // load, and never written. `title` is optional on input (1.2): the schema
@@ -140,7 +148,7 @@ export interface ReticulyneProps {
    * error-reporting pipeline (Sentry, Datadog, etc.) if you care
    * about validation regressions reaching production.
    */
-  onValidationError?: (issues: ZodIssue[]) => void;
+  onValidationError?: ValidationErrorHandler;
   /**
    * Invoked when the user clicks the "Save" menu entry, and by
    * auto-save. Receives the diagram as a scene (the file format): the

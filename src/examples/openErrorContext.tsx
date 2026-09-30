@@ -13,10 +13,11 @@ import {
 } from 'react';
 import { Alert } from '@mui/material';
 import type { ZodIssue } from 'zod';
+import type { ValidationErrorHandler } from 'src/types';
 
 interface OpenErrorContextValue {
   error: string | null;
-  onValidationError: (issues: ZodIssue[]) => void;
+  onValidationError: ValidationErrorHandler;
   clear: () => void;
 }
 
@@ -25,6 +26,21 @@ const OpenErrorContext = createContext<OpenErrorContextValue>({
   onValidationError: () => {},
   clear: () => {}
 });
+
+/**
+ * The same wording as the editor build's (DiagramShell): the file is named
+ * when Open said which it was.
+ */
+export const openErrorMessage = (issues: ZodIssue[], fileName?: string) => {
+  // useImportFile reports a file that does not parse with this issue.
+  const notJson = issues.some((issue) => {
+    return issue.message === 'Imported file is not valid JSON';
+  });
+  const file = fileName ? `“${fileName}”` : 'That file';
+  return notJson
+    ? `${file} is not a diagram file (it is not valid JSON).`
+    : `${file} is not a valid diagram.`;
+};
 
 /** The onValidationError each example hands its <Reticulyne>. */
 export const useExamplesValidationError = () => {
@@ -37,17 +53,12 @@ export const ExamplesOpenErrorProvider = ({
   children: ReactNode;
 }) => {
   const [error, setError] = useState<string | null>(null);
-  const onValidationError = useCallback((issues: ZodIssue[]) => {
-    // useImportFile reports a file that does not parse with this issue.
-    const notJson = issues.some((issue) => {
-      return issue.message === 'Imported file is not valid JSON';
-    });
-    setError(
-      notJson
-        ? 'That file is not a diagram file (it is not valid JSON).'
-        : 'That file is not a valid diagram.'
-    );
-  }, []);
+  const onValidationError = useCallback(
+    (issues: ZodIssue[], context?: { fileName?: string }) => {
+      setError(openErrorMessage(issues, context?.fileName));
+    },
+    []
+  );
   const clear = useCallback(() => {
     setError(null);
   }, []);

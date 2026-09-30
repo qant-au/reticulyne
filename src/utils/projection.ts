@@ -71,18 +71,47 @@ export const getTranslateCSS = (translate: Coords = { x: 0, y: 0 }) => {
   return `translate(${translate.x}px, ${translate.y}px)`;
 };
 
-// A zoom step is ZOOM_INCREMENT from where the zoom is, rounded to whole
-// percent only to shed floating-point noise, so zooming out retraces
-// zooming in: 64% -> 84% -> 64%. Rounding to a tenth made that 64% -> 80%
-// -> 60% (sweep 2026-09-30). Only the clamp at either end breaks a retrace.
+// Zoom in and out step through ONE ladder: the whole ZOOM_INCREMENT rungs
+// from MIN_ZOOM to MAX_ZOOM, plus the level the zoom was last set to by
+// anything other than a step (Fit, the wheel, a host). So from Fit's 64%
+// in goes 64 -> 80 -> 100 and out retraces 100 -> 80 -> 64 exactly. Adding
+// ZOOM_INCREMENT to the zoom instead made that 64 -> 84 -> 100 in and
+// 100 -> 80 -> 60 out, because the clamp at 100 lost the offset (sweep
+// 2026-09-30).
 const toPercent = (zoom: number) => {
   return Math.round(zoom * 100) / 100;
 };
 
-export const incrementZoom = (zoom: number) => {
-  return toPercent(clamp(zoom + ZOOM_INCREMENT, MIN_ZOOM, MAX_ZOOM));
+export const zoomLadder = (anchor?: number | null): number[] => {
+  const rungs: number[] = [];
+  for (let z = MIN_ZOOM; z <= MAX_ZOOM + 1e-9; z += ZOOM_INCREMENT) {
+    rungs.push(toPercent(z));
+  }
+  if (anchor !== undefined && anchor !== null) {
+    const a = toPercent(clamp(anchor, MIN_ZOOM, MAX_ZOOM));
+    if (!rungs.includes(a)) rungs.push(a);
+  }
+  return rungs.sort((a, b) => {
+    return a - b;
+  });
 };
 
-export const decrementZoom = (zoom: number) => {
-  return toPercent(clamp(zoom - ZOOM_INCREMENT, MIN_ZOOM, MAX_ZOOM));
+// `anchor` is the off-ladder level to keep on the ladder; when omitted the
+// current zoom is kept, so a step from anywhere can be retraced.
+export const incrementZoom = (zoom: number, anchor?: number | null) => {
+  const z = toPercent(zoom);
+  const next = zoomLadder(anchor ?? z).find((rung) => {
+    return rung > z;
+  });
+  return next ?? toPercent(clamp(z, MIN_ZOOM, MAX_ZOOM));
+};
+
+export const decrementZoom = (zoom: number, anchor?: number | null) => {
+  const z = toPercent(zoom);
+  const lower = zoomLadder(anchor ?? z).filter((rung) => {
+    return rung < z;
+  });
+  return lower.length > 0
+    ? lower[lower.length - 1]
+    : toPercent(clamp(z, MIN_ZOOM, MAX_ZOOM));
 };

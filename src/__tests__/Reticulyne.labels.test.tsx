@@ -8,7 +8,8 @@ import type { InitialData } from 'src/types';
 // Sweep 2026-09-30: node names were drawn over. A node's own icon covered
 // the bottom of its name ("Se_ver", "Sw_tch"), and a cross-floor riser ran
 // through names. Names now draw in their own layer, above every icon and
-// riser and below the riser's clickable marker.
+// riser and below the riser's clickable marker; and a name lets the pointer
+// through to the ports it sits over.
 
 beforeAll(() => {
   if (!Element.prototype.scrollTo) {
@@ -86,4 +87,19 @@ test('names draw above icons and risers, and below the stub marker', () => {
   expect(layerOf(name)).toBeGreaterThan(layerOf(img));
   expect(layerOf(name)).toBeGreaterThan(layerOf(riser));
   expect(layerOf(marker)).toBeGreaterThan(layerOf(name));
+});
+
+test('a name lets the pointer through to the ports beneath it', () => {
+  act(() => {
+    render(<Reticulyne initialData={building} />);
+  });
+  const name = screen.getByText('Core switch');
+  // The label's outer box, above the paper background that catches a press.
+  let el: HTMLElement | null = name;
+  let through = false;
+  while (el && !el.hasAttribute('data-scene-layer')) {
+    if (getComputedStyle(el).pointerEvents === 'none') through = true;
+    el = el.parentElement;
+  }
+  expect(through).toBe(true);
 });

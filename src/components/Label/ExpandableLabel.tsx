@@ -77,7 +77,9 @@ export const ExpandableLabel = ({
             position: 'absolute',
             bottom: 0,
             right: 0,
-            m: 0.5
+            m: 0.5,
+            // A node's name lets the pointer through; its button must not.
+            pointerEvents: 'auto'
           }}
           isExpanded={isExpanded}
           onClick={() => {

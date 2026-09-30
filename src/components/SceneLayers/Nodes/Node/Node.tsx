@@ -112,8 +112,12 @@ export const NodeLabel = ({ node, order, isDimmed }: Props) => {
           top: position.y
         }}
       >
+        {/* A name lets the pointer through: it sits over the node's upper
+            ports, and a press on it reached no port and started a marquee
+            (sweep 2026-09-30). The description (it can hold links) and the
+            expand button still take the pointer. */}
         <Box
-          sx={{ position: 'absolute' }}
+          sx={{ position: 'absolute', pointerEvents: 'none' }}
           style={{ bottom: getProjectedTileSize(projection).height / 2 }}
         >
           <ExpandableLabel
@@ -135,7 +139,9 @@ export const NodeLabel = ({ node, order, isDimmed }: Props) => {
                 </Typography>
               )}
               {!isEmptyMarkdown(modelItem.description) && (
-                <MarkdownEditor value={modelItem.description} readOnly />
+                <Box sx={{ pointerEvents: 'auto' }}>
+                  <MarkdownEditor value={modelItem.description} readOnly />
+                </Box>
               )}
             </Stack>
           </ExpandableLabel>

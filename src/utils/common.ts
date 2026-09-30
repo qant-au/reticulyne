@@ -15,10 +15,6 @@ export const getRandom = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-export const roundToOneDecimalPlace = (num: number) => {
-  return Math.round(num * 10) / 10;
-};
-
 interface GetColorVariantOpts {
   alpha?: number;
   grade?: number;

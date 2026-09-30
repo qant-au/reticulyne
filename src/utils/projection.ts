@@ -10,7 +10,7 @@
 
 import { produce } from 'immer';
 import { Coords, Projection, ProjectionOrientationEnum } from 'src/types';
-import { clamp, roundToOneDecimalPlace } from './common';
+import { clamp } from './common';
 import {
   ZOOM_INCREMENT,
   MAX_ZOOM,
@@ -71,12 +71,18 @@ export const getTranslateCSS = (translate: Coords = { x: 0, y: 0 }) => {
   return `translate(${translate.x}px, ${translate.y}px)`;
 };
 
+// A zoom step is ZOOM_INCREMENT from where the zoom is, rounded to whole
+// percent only to shed floating-point noise, so zooming out retraces
+// zooming in: 64% -> 84% -> 64%. Rounding to a tenth made that 64% -> 80%
+// -> 60% (sweep 2026-09-30). Only the clamp at either end breaks a retrace.
+const toPercent = (zoom: number) => {
+  return Math.round(zoom * 100) / 100;
+};
+
 export const incrementZoom = (zoom: number) => {
-  const newZoom = clamp(zoom + ZOOM_INCREMENT, MIN_ZOOM, MAX_ZOOM);
-  return roundToOneDecimalPlace(newZoom);
+  return toPercent(clamp(zoom + ZOOM_INCREMENT, MIN_ZOOM, MAX_ZOOM));
 };
 
 export const decrementZoom = (zoom: number) => {
-  const newZoom = clamp(zoom - ZOOM_INCREMENT, MIN_ZOOM, MAX_ZOOM);
-  return roundToOneDecimalPlace(newZoom);
+  return toPercent(clamp(zoom - ZOOM_INCREMENT, MIN_ZOOM, MAX_ZOOM));
 };

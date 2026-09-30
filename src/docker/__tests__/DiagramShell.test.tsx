@@ -1,7 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import { act, cleanup, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen
+} from '@testing-library/react';
 import { INITIAL_DATA } from 'src/config';
 import { legacyModelToScene } from 'src/scene';
 import type { Scene } from 'src/vendor/accurona-core';
@@ -112,4 +118,23 @@ test('a hooked diagram naming an unknown icon says so instead of a blank page', 
   expect(
     screen.getByRole('application', { name: 'Diagram canvas' })
   ).toBeTruthy();
+});
+
+// Sweep 2026-09-30 (E38): closing, the Diagrams menu kept its invisible
+// backdrop over the page until its fade ended, and took the next click.
+test('a closing Diagrams menu lets the pointer through', () => {
+  mount(naming('server'));
+  act(() => {
+    fireEvent.click(screen.getByRole('button', { name: 'Diagrams' }));
+  });
+  const menu = screen.getByRole('menu');
+  const root = menu.closest('.MuiPopover-root') as HTMLElement;
+  expect(getComputedStyle(root).pointerEvents).not.toBe('none');
+  act(() => {
+    fireEvent.keyDown(menu, { key: 'Escape' });
+  });
+  // Still mounted while it fades, but no longer catching clicks.
+  const closing = document.querySelector('.MuiPopover-root') as HTMLElement;
+  expect(closing).not.toBeNull();
+  expect(getComputedStyle(closing).pointerEvents).toBe('none');
 });

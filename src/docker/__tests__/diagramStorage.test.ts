@@ -72,6 +72,40 @@ test('reads a diagram an older build stored as a Reticulyne model', () => {
   ).toEqual(['server', 'a_b', 'mine']);
 });
 
+test('withBundledIcons puts the bundled icons back and changes nothing else', () => {
+  const store = createDiagramStorage(localStorage, bundled);
+  const own = scene('Mine');
+  const back = store.withBundledIcons({ ...own, icons: [uploaded] });
+  expect(back.objects).toBe(own.objects);
+  expect(
+    back.icons?.map((icon) => {
+      return icon.id;
+    })
+  ).toEqual(['server', 'a_b', 'mine']);
+  // A legacy model is left a model, not converted.
+  const legacy = store.withBundledIcons({ ...model('Old'), icons: [uploaded] });
+  expect('format' in legacy).toBe(false);
+  expect(
+    legacy.icons.map((icon) => {
+      return icon.id;
+    })
+  ).toEqual(['server', 'a&b', 'mine']);
+});
+
+test('a scene naming a bundled icon it does not carry opens; an unknown one does not', () => {
+  const store = createDiagramStorage(localStorage, bundled);
+  const base = scene('Refs');
+  const naming = (icon: string): Scene => {
+    return {
+      ...base,
+      icons: [],
+      objects: [{ id: 'a', name: 'A', icon }]
+    };
+  };
+  expect(store.open(naming('server'))).not.toBeNull();
+  expect(store.open(naming('no-such-icon'))).toBeNull();
+});
+
 test('an invalid stored diagram reads as null', () => {
   localStorage.setItem(
     'reticulyne.diagram.bad',

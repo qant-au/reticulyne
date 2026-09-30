@@ -88,20 +88,20 @@ export const createDiagramStorage = (
   };
 
   /**
-   * A parsed diagram file (a scene, or a legacy model) with the bundled
-   * icons put back, as a validated scene; null when it is neither.
+   * A diagram (a scene, or a legacy model) with the bundled icons put back,
+   * unvalidated and otherwise as it was. Its own icons win over a bundled
+   * one with the same id.
    */
-  const open = (value: unknown, id?: string): Scene | null => {
-    if (!isObject(value)) return null;
+  const withBundledIcons = <T>(value: T): T => {
+    if (!isObject(value)) return value;
     const own = (Array.isArray(value.icons) ? value.icons : []) as Icon[];
-    let data: unknown;
     if (isSceneDocument(value)) {
       const ownIds = new Set(
         own.map((icon) => {
           return icon.id;
         })
       );
-      data = {
+      return {
         ...value,
         icons: [
           ...bundled.filter((icon) => {
@@ -109,20 +109,27 @@ export const createDiagramStorage = (
           }),
           ...own
         ]
-      };
-    } else {
-      data = {
-        ...value,
-        icons: [
-          ...bundledIcons,
-          ...own.filter((icon) => {
-            return !rawBundledIds.has(icon?.id);
-          })
-        ]
-      };
+      } as T;
     }
+    return {
+      ...value,
+      icons: [
+        ...bundledIcons,
+        ...own.filter((icon) => {
+          return !rawBundledIds.has(icon?.id);
+        })
+      ]
+    } as T;
+  };
+
+  /**
+   * A parsed diagram file (a scene, or a legacy model) with the bundled
+   * icons put back, as a validated scene; null when it is neither.
+   */
+  const open = (value: unknown, id?: string): Scene | null => {
+    if (!isObject(value)) return null;
     const result = readScene(
-      data,
+      withBundledIcons(value),
       id === undefined ? undefined : sceneSafeId(id)
     );
     return result.ok ? result.scene : null;
@@ -130,6 +137,7 @@ export const createDiagramStorage = (
 
   return {
     open,
+    withBundledIcons,
 
     /** Saved diagrams, most recently saved first. */
     list(): DiagramEntry[] {

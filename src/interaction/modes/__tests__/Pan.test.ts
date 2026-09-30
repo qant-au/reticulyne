@@ -17,6 +17,19 @@ describe('Pan mode', () => {
     expect(document.body.style.cursor).toBe('grab');
   });
 
+  test('lw-087: read-only keeps the default cursor at rest', () => {
+    const state = makeState({
+      editorMode: 'EXPLORABLE_READONLY',
+      mode: { type: 'PAN', showCursor: false }
+    });
+    Pan.entry?.(state);
+    expect(document.body.style.cursor).toBe('default');
+    Pan.mousedown?.({ ...state, isRendererInteraction: true });
+    expect(document.body.style.cursor).toBe('grabbing');
+    Pan.mouseup?.(state);
+    expect(document.body.style.cursor).toBe('default');
+  });
+
   test('exit restores the window cursor to "default"', () => {
     const state = makeState({
       mode: { type: 'PAN', showCursor: false }

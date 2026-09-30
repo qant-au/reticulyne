@@ -92,6 +92,24 @@ describe('Cursor mode', () => {
       });
     });
 
+    test('lw-087: read-only never promotes a press on an item to a drag', () => {
+      const state = makeState({
+        editorMode: 'EXPLORABLE_READONLY',
+        mode: {
+          type: 'CURSOR',
+          showCursor: true,
+          mousedownItem: { type: 'ITEM', id: 'node1' }
+        },
+        mouse: {
+          delta: { screen: { x: 1, y: 1 }, tile: { x: 1, y: 0 } }
+        }
+      });
+
+      Cursor.mousemove?.(state);
+
+      expect(state.uiState.actions.setMode).not.toHaveBeenCalled();
+    });
+
     test('mousemove with no tile delta does not transition (still mousing over the same tile)', () => {
       const state = makeState({
         mode: {

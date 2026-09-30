@@ -14,6 +14,10 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Read-only mode looks, and stays, read-only.** In `EXPLORABLE_READONLY`, pressing `V` for the select tool and dragging moved nodes and marked the diagram unsaved; a drag there now does nothing. The hover tile no longer follows the pointer, and the cursor is the default arrow at rest (a grabbing hand only while panning) instead of the hand tool's open hand.
+
 ## [0.5.0] - 2026-10-01
 
 ### Changed (breaking)

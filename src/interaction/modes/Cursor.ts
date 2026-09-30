@@ -289,6 +289,8 @@ export const Cursor: ModeActions = {
   },
   mousemove: ({ scene, uiState, modifiers }) => {
     if (uiState.mode.type !== 'CURSOR' || !hasMovedTile(uiState.mouse)) return;
+    // lw-087: read-only can select but never drag: a drag moved nodes.
+    if (uiState.editorMode !== 'EDITABLE') return;
 
     let item = uiState.mode.mousedownItem;
 
@@ -296,7 +298,7 @@ export const Cursor: ModeActions = {
     // => start a marquee. Guarded on `mouse.mousedown` so a plain hover
     // (no button) never opens a band.
     if (!item) {
-      if (uiState.editorMode !== 'EDITABLE' || !uiState.mouse.mousedown) return;
+      if (!uiState.mouse.mousedown) return;
 
       uiState.actions.setMode({
         type: 'MARQUEE',
@@ -335,11 +337,7 @@ export const Cursor: ModeActions = {
     // copy, as in Excalidraw. The copies are made in place at the start of
     // the drag (one undo step; connectors are not copied) and become the
     // selection. Anchors are sub-parts and are never copied.
-    if (
-      modifiers.alt &&
-      item.type !== 'CONNECTOR_ANCHOR' &&
-      uiState.editorMode === 'EDITABLE'
-    ) {
+    if (modifiers.alt && item.type !== 'CONNECTOR_ANCHOR') {
       const copies = scene.duplicateInPlace(dragging);
       if (copies.length > 0) {
         uiState.actions.setSelection(copies);

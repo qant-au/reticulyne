@@ -5,7 +5,7 @@ import { useSceneStore } from 'src/stores/sceneStore';
 import { useHistoryStore } from 'src/stores/historyStore';
 import type { State } from 'src/stores/reducers/types';
 import * as reducers from 'src/stores/reducers';
-import type { Layer, Projection } from 'src/types';
+import type { Connection, Layer, Model, Projection } from 'src/types';
 import { filterViewByLayers, getItemByIdOrThrow } from 'src/utils';
 import { useLayerFilter } from './sceneLists';
 import { useSceneItems } from './scene/useSceneItems';
@@ -14,6 +14,8 @@ import { useSceneShapes } from './scene/useSceneShapes';
 import { useSceneClipboard } from './scene/useSceneClipboard';
 import { useSceneGroups } from './scene/useSceneGroups';
 import { useSceneLayers } from './scene/useSceneLayers';
+import { useSceneFloors } from './scene/useSceneFloors';
+import { useView } from './useView';
 import {
   CONNECTOR_DEFAULTS,
   RECTANGLE_DEFAULTS,
@@ -21,6 +23,7 @@ import {
 } from 'src/config';
 
 const EMPTY_LAYERS: Layer[] = [];
+const EMPTY_CONNECTIONS: Connection[] = [];
 
 // QUA-13: useScene owns every store subscription and the setState /
 // undo / redo chokepoint; the domain operations live in ./scene/*.
@@ -35,6 +38,9 @@ export const useScene = () => {
 
   const currentViewId = useUiStateStore((state) => {
     return state.view;
+  });
+  const uiStateActions = useUiStateStore((state) => {
+    return state.actions;
   });
 
   const currentView = useMemo(() => {
@@ -127,6 +133,24 @@ export const useScene = () => {
     [model.actions, scene.actions, historyIsApplying, historyActions]
   );
 
+  // lw-053: an undo or redo can take away the floor on show (one added,
+  // then undone). Show the lowest floor instead of drawing one that is gone.
+  const { changeView } = useView();
+  const keepViewShown = useCallback(
+    (restored: Model) => {
+      if (
+        restored.views.some((v) => {
+          return v.id === currentViewId;
+        })
+      ) {
+        return;
+      }
+      uiStateActions.clearSelection();
+      changeView(restored.views[0].id, restored);
+    },
+    [currentViewId, uiStateActions, changeView]
+  );
+
   const undo = useCallback(() => {
     const current: State = {
       model: model.actions.get(),
@@ -138,10 +162,11 @@ export const useScene = () => {
     try {
       model.actions.set(priorState.model);
       scene.actions.set(priorState.scene);
+      keepViewShown(priorState.model);
     } finally {
       historyActions.setIsApplying(false);
     }
-  }, [model.actions, scene.actions, historyActions]);
+  }, [model.actions, scene.actions, historyActions, keepViewShown]);
 
   const redo = useCallback(() => {
     const current: State = {
@@ -154,10 +179,11 @@ export const useScene = () => {
     try {
       model.actions.set(nextState.model);
       scene.actions.set(nextState.scene);
+      keepViewShown(nextState.model);
     } finally {
       historyActions.setIsApplying(false);
     }
-  }, [model.actions, scene.actions, historyActions]);
+  }, [model.actions, scene.actions, historyActions, keepViewShown]);
 
   // lw-050: draw the current view isometrically or flat. Undoable, and
   // saved on the view; 'iso' is stored as no kind at all.
@@ -190,6 +216,12 @@ export const useScene = () => {
     currentView
   });
   const layerOps = useSceneLayers({ getState, setState, currentViewId });
+  const floorOps = useSceneFloors({
+    getState,
+    setState,
+    currentViewId,
+    currentView
+  });
   const clipboardOps = useSceneClipboard({
     getState,
     setState,
@@ -215,8 +247,12 @@ export const useScene = () => {
     ...clipboardOps,
     ...groupOps,
     ...layerOps,
+    ...floorOps,
     // lw-052: the diagram's layers; the base layer is never listed.
     layers: model.layers ?? EMPTY_LAYERS,
+    // lw-053: the floors are the views, lowest first.
+    floors: model.views,
+    connections: model.connections ?? EMPTY_CONNECTIONS,
     undo,
     redo
   };

@@ -126,6 +126,22 @@ export const normaliseLegacyModel = (
           : {})
       };
     }),
+    // lw-053: a connection's ends follow the items.
+    ...(model.connections
+      ? {
+          connections: (() => {
+            const connectionId = idMap(ids(model.connections));
+            return model.connections.map((c) => {
+              return {
+                ...c,
+                id: connectionId(c.id),
+                from: itemId(c.from),
+                to: itemId(c.to)
+              };
+            });
+          })()
+        }
+      : {}),
     icons: icons.map((icon) => {
       return { ...icon, id: iconId(icon.id) };
     }),

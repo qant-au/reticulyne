@@ -62,6 +62,7 @@ export const modelFromModelStore = (modelStore: ModelStore): Model => {
     icons: modelStore.icons,
     items: modelStore.items,
     views: modelStore.views,
-    layers: modelStore.layers
+    layers: modelStore.layers,
+    connections: modelStore.connections
   };
 };

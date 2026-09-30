@@ -5,6 +5,7 @@ import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy
 import { useModelItem } from 'src/hooks/useModelItem';
 import { DeleteButton } from '../../components/DeleteButton';
 import { LayerSection } from '../../components/LayerSection';
+import { FloorLinksSection } from '../../components/FloorLinksSection';
 import { PanelSection } from 'src/vendor/accurona-ui';
 
 export type NodeUpdates = {
@@ -65,6 +66,7 @@ export const NodeSettings = ({
         </PanelSection>
       )}
       <LayerSection targets={[{ type: 'ITEM', id: node.id }]} />
+      <FloorLinksSection itemId={node.id} />
       <PanelSection>
         <Box>
           <DeleteButton onClick={onDeleted} />

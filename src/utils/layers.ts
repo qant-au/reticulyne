@@ -129,11 +129,25 @@ export const modelForExport = <T extends Model>(
       });
     })
   );
+  const items = model.items.filter((item) => {
+    return !placedBefore.has(item.id) || placed.has(item.id);
+  });
+  // lw-053: and the connections to them, so a stub does not name them.
+  const kept = new Set(
+    items.map((item) => {
+      return item.id;
+    })
+  );
   return {
     ...model,
     views,
-    items: model.items.filter((item) => {
-      return !placedBefore.has(item.id) || placed.has(item.id);
-    })
+    items,
+    ...(model.connections
+      ? {
+          connections: model.connections.filter((c) => {
+            return kept.has(c.from) && kept.has(c.to);
+          })
+        }
+      : {})
   };
 };

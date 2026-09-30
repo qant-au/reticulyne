@@ -18,7 +18,6 @@ import { useCallback, useMemo } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { getEditorModeMapping } from 'src/utils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { ToolbarSlots } from './ToolbarSlots';
@@ -68,7 +67,6 @@ export const UiOverlay = () => {
     return state.rendererEl;
   });
 
-  const { currentView } = useScene();
   const title = useModelStore((state) => {
     return state.title;
   });
@@ -105,7 +103,6 @@ export const UiOverlay = () => {
           appPadding={appPadding}
           rendererSize={rendererSize}
           title={title}
-          currentViewName={currentView.name ?? ''}
         />
         <DebugPanel
           visible={enableDebugTools}

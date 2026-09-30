@@ -13,6 +13,8 @@ import { Connectors } from 'src/components/SceneLayers/Connectors/Connectors';
 import { ConnectorLabels } from 'src/components/SceneLayers/ConnectorLabels/ConnectorLabels';
 import { ConnectorIndicators } from 'src/components/SceneLayers/ConnectorIndicators/ConnectorIndicators';
 import { TextBoxes } from 'src/components/SceneLayers/TextBoxes/TextBoxes';
+import { OtherFloors } from 'src/components/SceneLayers/OtherFloors/OtherFloors';
+import { FloorStubs } from 'src/components/SceneLayers/FloorStubs/FloorStubs';
 import { SizeIndicator } from 'src/components/DebugUtils/SizeIndicator';
 import { SceneLayer } from 'src/components/SceneLayer/SceneLayer';
 import { TransformControlsManager } from 'src/components/TransformControlsManager/TransformControlsManager';
@@ -89,6 +91,10 @@ export const Renderer = ({
         }
       }}
     >
+      {/* lw-053: the other floors, faint, beneath everything on this one */}
+      <SceneLayer>
+        <OtherFloors />
+      </SceneLayer>
       <SceneLayer>
         <Groups />
       </SceneLayer>
@@ -141,6 +147,10 @@ export const Renderer = ({
       />
       <SceneLayer>
         <Nodes />
+      </SceneLayer>
+      {/* lw-053: above the nodes, so a stub's marker can be clicked */}
+      <SceneLayer>
+        <FloorStubs />
       </SceneLayer>
       {/* 2.1: above the nodes, or their icons hide the ports. */}
       <SceneLayer>

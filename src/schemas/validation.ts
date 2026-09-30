@@ -101,6 +101,12 @@ type IssueType =
       params: {
         layer: string;
       };
+    }
+  | {
+      type: 'INVALID_CONNECTION';
+      params: {
+        connection: string;
+      };
     };
 
 type Issue = IssueType & {
@@ -422,6 +428,30 @@ export const validateModel = (model: Model): Issue[] => {
         message:
           'Invalid layer.  An item names a layer that is not in the model.'
       });
+    });
+  });
+
+  // lw-053: a connection joins two different items of the model, and its
+  // id is unique among connections.
+  const itemIds = new Set(
+    model.items.map((item) => {
+      return item.id;
+    })
+  );
+  const connectionIds = new Set<string>();
+  (model.connections ?? []).forEach((connection) => {
+    const { id, from, to } = connection;
+    let message: string | undefined;
+    if (connectionIds.has(id)) message = 'Two connections share an id.';
+    else if (!itemIds.has(from) || !itemIds.has(to)) {
+      message = 'A connection names an item that is not in the model.';
+    } else if (from === to) message = 'A connection joins an item to itself.';
+    connectionIds.add(id);
+    if (!message) return;
+    issues.push({
+      type: 'INVALID_CONNECTION',
+      params: { connection: id },
+      message: `Invalid connection.  ${message}`
     });
   });
 

@@ -2,6 +2,7 @@ import {
   emptyScene,
   mergeScene,
   type Anchor as SceneAnchor,
+  type Connection as SceneConnection,
   type Connector as SceneConnector,
   type DiagramView,
   type Scene,
@@ -9,6 +10,7 @@ import {
   type SceneUpdate
 } from 'src/vendor/accurona-core';
 import type {
+  Connection,
   Connector,
   ConnectorAnchor,
   Group,
@@ -188,6 +190,59 @@ const endObject = (anchor: SceneAnchor | undefined) => {
 };
 
 /**
+ * The scene's connections with the model's in place of Reticulyne's own
+ * (lw-053). A connection between two of the model's items is Reticulyne's:
+ * it is replaced by the model's copy, or dropped when the model no longer
+ * has it. Any other connection (to an object on a plan, say) is kept. The
+ * fields Reticulyne does not edit (ports, kind, props, links) are kept
+ * from the opened scene while the ends are unchanged.
+ */
+const mergeConnections = (
+  scene: Scene,
+  model: Model
+): SceneConnection[] | undefined => {
+  const itemIds = new Set(
+    model.items.map((item) => {
+      return item.id;
+    })
+  );
+  const objectIds = new Set(
+    scene.objects.map((object) => {
+      return object.id;
+    })
+  );
+  const edited = new Map(
+    (model.connections ?? [])
+      .filter((c) => {
+        return objectIds.has(c.from) && objectIds.has(c.to);
+      })
+      .map((c) => {
+        return [c.id, c];
+      })
+  );
+  const toScene = (c: Connection, opened?: SceneConnection) => {
+    const sameEnds =
+      opened !== undefined && opened.from === c.from && opened.to === c.to;
+    const kept: Partial<SceneConnection> = sameEnds ? { ...opened } : {};
+    delete kept.description;
+    return defined({ ...kept, ...c }) as SceneConnection;
+  };
+  const written = new Set<string>();
+  const merged = (scene.connections ?? []).flatMap((c) => {
+    const ours = itemIds.has(c.from) && itemIds.has(c.to);
+    if (!ours) return [c];
+    const next = edited.get(c.id);
+    if (!next) return [];
+    written.add(c.id);
+    return [toScene(next, c)];
+  });
+  edited.forEach((c, id) => {
+    if (!written.has(id)) merged.push(toScene(c));
+  });
+  return merged.length || scene.connections ? merged : undefined;
+};
+
+/**
  * The scene to save: the model merged into the scene it was opened from.
  * A connector keeps the connection it draws only while its ends still
  * match that connection's objects; moving an end in Reticulyne detaches it.
@@ -195,6 +250,9 @@ const endObject = (anchor: SceneAnchor | undefined) => {
 export const sceneFromModel = (model: Model, context: SceneContext): Scene => {
   const scene = mergeScene(context.opened, modelToSceneUpdate(model, context));
   if (scene.description === undefined) delete scene.description;
+  const merged = mergeConnections(scene, model);
+  if (merged) scene.connections = merged;
+  else delete scene.connections;
   const connections = new Map(
     (scene.connections ?? []).map((c) => {
       return [c.id, c];
@@ -205,16 +263,14 @@ export const sceneFromModel = (model: Model, context: SceneContext): Scene => {
     return {
       ...view,
       connectors: view.connectors.map((c) => {
-        const conn =
-          c.connection === undefined
-            ? undefined
-            : connections.get(c.connection);
-        if (!conn) return c;
+        if (c.connection === undefined) return c;
+        const conn = connections.get(c.connection);
         const a = endObject(c.anchors[0]);
         const b = endObject(c.anchors[c.anchors.length - 1]);
         const matches =
-          (a === conn.from && b === conn.to) ||
-          (a === conn.to && b === conn.from);
+          conn !== undefined &&
+          ((a === conn.from && b === conn.to) ||
+            (a === conn.to && b === conn.from));
         if (matches) return c;
         const detached = { ...c };
         delete detached.connection;
@@ -355,6 +411,20 @@ export const sceneToModel = (
         icon: o.icon
       });
     });
+  // lw-053: the connections between two of those items, whatever views
+  // they are on. The rest stay in the scene and are kept on save.
+  const connections: Connection[] | undefined = scene.connections
+    ?.filter((c) => {
+      return placed.has(c.from) && placed.has(c.to) && c.from !== c.to;
+    })
+    .map((c) => {
+      return defined({
+        id: c.id,
+        from: c.from,
+        to: c.to,
+        description: c.description
+      });
+    });
   const model: Model = defined({
     title: scene.title ?? 'Untitled',
     description: scene.description,
@@ -362,7 +432,8 @@ export const sceneToModel = (
     views: diagramViews.map(viewFromScene),
     icons: scene.icons ?? [],
     colors: scene.colors ?? [],
-    layers: scene.layers
+    layers: scene.layers,
+    connections: connections?.length ? connections : undefined
   });
   return {
     model,

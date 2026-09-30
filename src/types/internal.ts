@@ -344,6 +344,8 @@ export interface UiState {
   // lw-052: the Redacted layer is left off the canvas, only while the
   // PDF export captures it.
   hideRedacted: boolean;
+  // lw-053: the other floors drawn faintly behind the one on show.
+  showOtherFloors: boolean;
   // 2.14: what "New from template" offers.
   templates: DiagramTemplate[];
   // 2.3: where saving stands. See src/utils/save.ts.
@@ -417,6 +419,7 @@ export interface UiStateActions {
   setTemplates: (templates: DiagramTemplate[]) => void;
   setEditingGroupId: (id: string | null) => void;
   setHideRedacted: (hideRedacted: boolean) => void;
+  setShowOtherFloors: (showOtherFloors: boolean) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;
   /** Read at call time, for async code that must not use a stale render. */
   getSaveStatus: () => SaveStatus;

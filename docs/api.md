@@ -109,7 +109,7 @@ scene: `onSave`, Export as JSON, `getScene()` and the Docker editor's saved diag
 - **Saving** merges the edited diagram back into the scene that was opened, so plan
   views, objects no diagram view places, connections, object `props`, `ports` and
   `links`, layers and the `connection` a connector draws all survive. A view saves as
-  the kind it is drawn as now; a view added in Reticulyne is `iso`. A connector whose
+  the kind it is drawn as now; a view added in Reticulyne is drawn as the view on show was. A connector whose
   end is moved to another object stops drawing its connection.
 - **Isometric or flat.** A view's kind is its `kind`: `'iso'` (also when absent) or
   `'schematic'`, on the scene view and on the Reticulyne `View`. Both draw the same tile
@@ -150,9 +150,16 @@ type Model = {
   icons: Icons;
   colors: Colors;
   items: ModelItems;
-  views: Views;
+  views: Views; // floor order, lowest first
+  layers?: Layer[];
+  connections?: Connection[]; // { id, from, to, description? }
 };
 ```
+
+A connection joins two different items of `items`, whatever views they are placed in;
+one whose items are on different views is drawn on each as a transition stub. It is
+the scene format's `connections` entry, less the ports, kind, props and links, which
+are kept from the opened scene on save while the ends are unchanged.
 
 A view may also carry `groups: { id, name?, color?, parentGroupId? }[]` (1.7); nodes,
 rectangles, text boxes and groups join one through `parentGroupId`. See

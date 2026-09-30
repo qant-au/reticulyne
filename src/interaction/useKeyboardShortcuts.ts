@@ -130,7 +130,8 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     undo,
     redo,
     currentView,
-    visibleView
+    visibleView,
+    showAdjacentFloor
   } = useScene();
   const { fitToView, fitToSelection } = useDiagramUtils();
   const toggleTheme = useThemeToggle();
@@ -351,6 +352,15 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           uiStateActions.setDialog(
             dialog === 'KEYBOARD_SHORTCUTS' ? null : 'KEYBOARD_SHORTCUTS'
           );
+          done();
+          return;
+
+        // lw-053: Alt+Up / Alt+Down show the floor above or below.
+        // Navigation, so read-only too, but not in a NON_INTERACTIVE render.
+        case 'floor-up':
+        case 'floor-down':
+          if (editorMode === 'NON_INTERACTIVE') return;
+          showAdjacentFloor(action === 'floor-up' ? 1 : -1);
           done();
           return;
 
@@ -690,6 +700,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     fitToSelection,
     currentView,
     visibleView,
+    showAdjacentFloor,
     toggleTheme
   ]);
 };

@@ -15,6 +15,7 @@ import {
   rectangleSchema,
   groupSchema,
   layerSchema,
+  connectionSchema,
   connectorStyleOptions,
   connectorDirectionOptions,
   connectorGlyphOptions,
@@ -47,6 +48,7 @@ export type TextBox = z.infer<typeof textBoxSchema>;
 export type Group = z.infer<typeof groupSchema>;
 export type Rectangle = z.infer<typeof rectangleSchema>;
 export type Layer = z.infer<typeof layerSchema>;
+export type Connection = z.infer<typeof connectionSchema>;
 
 // `ModelStore` (the zustand store shape) lives in `./internal` (QUA-03)
 // so it stays off the published public surface — `standaloneExports.ts`

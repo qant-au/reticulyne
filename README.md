@@ -22,6 +22,10 @@ possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELO
   flat, Visio-style schematic. The toolbar switches the current view between the two;
   nothing moves, because both draw the same tiles. The flat view draws catalogue items
   with their 2D symbols.
+- **Floors.** A diagram's views are its floors, switched from the title bar or with
+  `Alt` + `Up` / `Down`. The other floors are drawn faintly above and below the one on
+  show, and a link between items on different floors is drawn on each as a stub that
+  names the other floor and takes you there.
 - **Bring your own icons.** Icon collections are plain `Icon[]` arrays
   ([isopacks](docs/isopacks.md)). The component ships no icons of its own; the
   standalone editor comes with AWS, Azure, GCP and Kubernetes collections plus the

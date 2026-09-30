@@ -1,4 +1,6 @@
-// Bottom-center title strip — displays "<project title> > <view name>".
+// Bottom-center title strip — displays "<project title> > <floors>": the
+// view name, or (lw-053) the floor switcher when there is more than one
+// view or the diagram is editable.
 // Visible whenever the current editorMode includes 'VIEW_TITLE' in its
 // availableTools allowlist.
 //
@@ -8,6 +10,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import ChevronRight from '@mui/icons-material/ChevronRight';
 import type { Size } from 'src/types/common';
 import { SaveStatusPill } from './SaveStatusPill';
+import { FloorSwitcher } from './FloorSwitcher';
 import { Surface } from 'src/vendor/accurona-ui';
 
 interface AppPadding {
@@ -20,15 +23,13 @@ interface Props {
   appPadding: AppPadding;
   rendererSize: Size;
   title: string;
-  currentViewName: string;
 }
 
 export const TitleBar = ({
   visible,
   appPadding,
   rendererSize,
-  title,
-  currentViewName
+  title
 }: Props) => {
   if (!visible) return null;
 
@@ -77,14 +78,7 @@ export const TitleBar = ({
             {title}
           </Typography>
           <ChevronRight />
-          <Typography
-            sx={{
-              fontWeight: 600,
-              color: 'text.secondary'
-            }}
-          >
-            {currentViewName}
-          </Typography>
+          <FloorSwitcher />
           <SaveStatusPill />
         </Stack>
       </Surface>

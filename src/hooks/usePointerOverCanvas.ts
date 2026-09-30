@@ -6,6 +6,11 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 // and panels, so pointer-driven hints (the hover tile, node ports, the
 // tooltip) keyed on it alone showed on load, on whatever sat at the
 // origin, and through the panels.
+//
+// It counts once the pointer MOVES over the canvas, not on pointerover: a
+// canvas that appears under a still pointer (the examples rail closing on
+// a phone) gets a pointerover with no move, and the mouse state still at
+// 0,0 showed the tooltip of the node at the origin in the top-left corner.
 export const usePointerOverCanvas = () => {
   const rendererEl = useUiStateStore((state) => {
     return state.rendererEl;
@@ -20,10 +25,10 @@ export const usePointerOverCanvas = () => {
     const leave = () => {
       setOverCanvas(false);
     };
-    rendererEl.addEventListener('pointerover', enter);
+    rendererEl.addEventListener('pointermove', enter);
     rendererEl.addEventListener('pointerleave', leave);
     return () => {
-      rendererEl.removeEventListener('pointerover', enter);
+      rendererEl.removeEventListener('pointermove', enter);
       rendererEl.removeEventListener('pointerleave', leave);
     };
   }, [rendererEl]);

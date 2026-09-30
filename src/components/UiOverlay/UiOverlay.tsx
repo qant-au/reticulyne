@@ -116,6 +116,7 @@ export const UiOverlay = () => {
           appPadding={appPadding}
           spacing={spacing}
           rendererSize={rendererSize}
+          bottomRowWidth={bottomRowSize.width}
         />
         <HoverTooltip />
       </Box>

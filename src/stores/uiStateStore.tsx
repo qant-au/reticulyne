@@ -38,6 +38,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       enableAnimation: false,
       exportTheme: 'light' as const,
       exportBackgroundColor: undefined,
+      titleBarRaised: false,
       showTitleBar: undefined,
       showAlignmentGuides: true,
       searchOpen: false,
@@ -204,6 +205,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setExportBackgroundColor: (color) => {
           set({ exportBackgroundColor: color });
+        },
+        setTitleBarRaised: (titleBarRaised) => {
+          if (get().titleBarRaised !== titleBarRaised) set({ titleBarRaised });
         },
         setShowAlignmentGuides: (showAlignmentGuides) => {
           set({ showAlignmentGuides });

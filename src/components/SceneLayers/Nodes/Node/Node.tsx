@@ -96,6 +96,8 @@ export const NodeLabel = ({ node, order, isDimmed }: Props) => {
 
   return (
     <Box
+      // The tour reads where a node's label reaches, to keep it on screen.
+      data-node-label={node.id}
       sx={{
         position: 'absolute',
         zIndex: order

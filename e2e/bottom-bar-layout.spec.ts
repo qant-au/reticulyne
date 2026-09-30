@@ -91,3 +91,35 @@ for (const [width, height] of [
     expect(name.scroll).toBeLessThanOrEqual(name.client);
   });
 }
+
+// Sweep 2026-09-30: at 390 the Layers popover ran off the right edge
+// (x285-561), and the inspector ran on under the title bar.
+test('at phone width the Layers panel and the inspector stay clear', async ({
+  page
+}) => {
+  await open(page, 390, 844);
+  await page.getByRole('button', { name: 'Layers', exact: true }).click();
+  const layers = (await page
+    .getByRole('dialog', { name: 'Layers' })
+    .boundingBox())!;
+  expect(layers.x).toBeGreaterThanOrEqual(0);
+  expect(layers.x + layers.width).toBeLessThanOrEqual(390);
+  await page.keyboard.press('Escape');
+
+  const router = (await page
+    .getByText('Router', { exact: true })
+    .boundingBox())!;
+  await page.mouse.click(
+    router.x + router.width / 2,
+    router.y + router.height + 40
+  );
+  const inspector = (await page
+    .getByText('Edit object', { exact: true })
+    .locator('xpath=ancestor::div[contains(@class,"MuiPaper-root")][1]')
+    .boundingBox())!;
+  const title = (await page
+    .getByText(TITLE, { exact: true })
+    .locator('xpath=ancestor::div[contains(@class,"MuiPaper-root")][1]')
+    .boundingBox())!;
+  expect(inspector.y + inspector.height).toBeLessThan(title.y);
+});

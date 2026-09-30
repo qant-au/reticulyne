@@ -67,3 +67,27 @@ test('a long title stops short of the zoom row at full width', async ({
     expect(overlaps, `title covers ${name}`).toBe(false);
   }
 });
+
+// Sweep 2026-09-30: a long title cut the view chip to "M" with no
+// ellipsis. The title gives way first; the view keeps its name.
+for (const [width, height] of [
+  [1440, 900],
+  [390, 844]
+]) {
+  test(`at ${width}px a long title truncates and the view keeps its name`, async ({
+    page
+  }) => {
+    await open(page, width, height);
+    const measure = async (el: ReturnType<Page['getByText']>) => {
+      return el.evaluate((node) => {
+        return { scroll: node.scrollWidth, client: node.clientWidth };
+      });
+    };
+    const title = await measure(page.getByText(TITLE, { exact: true }));
+    expect(title.scroll).toBeGreaterThan(title.client);
+    const chip = page.getByRole('tab', { name: 'Main' });
+    await expect(chip).toBeVisible();
+    const name = await measure(chip.locator('span').first());
+    expect(name.scroll).toBeLessThanOrEqual(name.client);
+  });
+}

@@ -103,16 +103,22 @@ export const TitleBar = ({
         }}
       >
         <Stack direction="row" sx={{ alignItems: 'center', minWidth: 0 }}>
+          {/* The title gives way first, to a few letters and an ellipsis;
+              only then does the view's name shrink. Both shrank together,
+              and a long title cut the view chip to "M" with no ellipsis
+              (sweep 2026-09-30). */}
           <Typography
             noWrap
             sx={{
               fontWeight: 600,
-              color: 'text.secondary'
+              color: 'text.secondary',
+              flexShrink: 1,
+              minWidth: '3em'
             }}
           >
             {title}
           </Typography>
-          <ChevronRight />
+          <ChevronRight sx={{ flexShrink: 0 }} />
           <FloorSwitcher />
           <SaveStatusPill />
         </Stack>

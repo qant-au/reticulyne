@@ -37,6 +37,13 @@ export const accuronaIcons = (): Icon[] => {
   });
 };
 
+/** The icon of an Accurona element's isometric drawing, when there is one. */
+export const elementIcon = (element: string | undefined) => {
+  return element && element in ISO_DRAWINGS
+    ? `${ACCURONA_ICON_PREFIX}${element}`
+    : undefined;
+};
+
 /**
  * The icon an item draws with: its own `icon`, else its Accurona twin's
  * isometric view when that drawing is available, else none.
@@ -45,10 +52,7 @@ export const catalogueItemIcon = (
   item: Pick<CatalogueItem, 'icon' | 'links'>
 ): string | undefined => {
   if (item.icon) return item.icon;
-  const element = accuronaElement(item);
-  return element && element in ISO_DRAWINGS
-    ? `${ACCURONA_ICON_PREFIX}${element}`
-    : undefined;
+  return elementIcon(accuronaElement(item));
 };
 
 /** The icon collection the 2D schematic symbols are filed under. */

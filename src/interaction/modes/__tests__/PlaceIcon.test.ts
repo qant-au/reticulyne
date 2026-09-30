@@ -64,6 +64,35 @@ describe('PlaceIcon mode', () => {
     );
   });
 
+  test('mouseup placing a floor-plan object keeps its id and name, selects it and disarms (lw-055)', () => {
+    const state = makeState({
+      mode: {
+        type: 'PLACE_ICON',
+        showCursor: true,
+        id: 'accurona-wifi-ap',
+        object: { id: 'ap-1', name: 'AP east', icon: 'accurona-wifi-ap' }
+      },
+      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 3, y: 5 } } }
+    });
+
+    PlaceIcon.mouseup?.(state);
+
+    expect(state.scene.createModelItem).toHaveBeenCalledWith({
+      id: 'ap-1',
+      name: 'AP east',
+      icon: 'accurona-wifi-ap'
+    });
+    expect(state.scene.createViewItem).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'ap-1', tile: { x: 3, y: 5 } })
+    );
+    expect(state.uiState.actions.setSelection).toHaveBeenCalledWith([
+      { type: 'ITEM', id: 'ap-1' }
+    ]);
+    expect(lastModeChange(state)).toEqual(
+      expect.objectContaining({ type: 'CURSOR' })
+    );
+  });
+
   test('mouseup with no icon selected does not create anything', () => {
     const state = makeState({
       mode: { type: 'PLACE_ICON', showCursor: true, id: null }

@@ -201,6 +201,11 @@ export interface PlaceIconMode {
   type: 'PLACE_ICON';
   showCursor: boolean;
   id: string | null;
+  /**
+   * lw-055: placing a scene object another editor placed (a device on the
+   * floor plan). The item keeps the object's id, so the two are linked.
+   */
+  object?: { id: string; name: string; icon?: string };
 }
 
 export interface ConnectorMode {

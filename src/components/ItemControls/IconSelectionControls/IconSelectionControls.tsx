@@ -4,13 +4,14 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { Icon } from 'src/types';
 import { useScene } from 'src/hooks/useScene';
 import { generateId } from 'src/utils';
-import { VIEW_ITEM_DEFAULTS } from 'src/config';
+import { DEFAULT_ICON, VIEW_ITEM_DEFAULTS } from 'src/config';
 import { Searchbox } from 'src/components/ItemControls/IconSelectionControls/Searchbox';
 import { useIconFiltering } from 'src/hooks/useIconFiltering';
 import { useIconCategories } from 'src/hooks/useIconCategories';
 import { Icons } from './Icons';
 import { IconGrid } from './IconGrid';
 import { UploadIconButton } from './UploadIconButton';
+import { FloorPlanObjects, type FloorPlanObject } from './FloorPlanObjects';
 import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 interface Props {
@@ -78,6 +79,49 @@ export const IconSelectionControls = ({
     ]
   );
 
+  // lw-055: a device from the floor plan is placed like an icon, but as
+  // the object it already is.
+  const onFloorPlanObject = useCallback(
+    (object: FloorPlanObject) => {
+      if (mode.type !== 'PLACE_ICON' && !armFromAnyMode) return;
+
+      if (targetTile && !armFromAnyMode) {
+        createModelItem({
+          id: object.id,
+          name: object.name,
+          icon: object.icon
+        });
+        createViewItem({
+          ...VIEW_ITEM_DEFAULTS,
+          id: object.id,
+          tile: targetTile
+        });
+        uiStateActions.setMode({
+          type: 'CURSOR',
+          showCursor: true,
+          mousedownItem: null
+        });
+        uiStateActions.setSelection([{ type: 'ITEM', id: object.id }]);
+        return;
+      }
+
+      uiStateActions.setMode({
+        type: 'PLACE_ICON',
+        showCursor: true,
+        id: object.icon ?? DEFAULT_ICON.id,
+        object
+      });
+    },
+    [
+      mode,
+      uiStateActions,
+      targetTile,
+      createModelItem,
+      createViewItem,
+      armFromAnyMode
+    ]
+  );
+
   return (
     <Panel
       header={
@@ -95,6 +139,7 @@ export const IconSelectionControls = ({
         </>
       }
     >
+      {!filteredIcons && <FloorPlanObjects onMouseDown={onFloorPlanObject} />}
       {filteredIcons && (
         <PanelSection>
           {filteredIcons.length === 0 ? (

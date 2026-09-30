@@ -40,12 +40,15 @@ export const PlaceIcon: ModeActions = {
       // a UI control and got a stray icon on the canvas. Compare to
       // TextBox.mouseup which uses the same gate to delete the in-
       // progress textbox on out-of-renderer release.
-      const modelItemId = generateId();
+      const { object } = uiState.mode;
+      const modelItemId = object?.id ?? generateId();
 
       scene.createModelItem({
         id: modelItemId,
-        name: 'Untitled',
-        icon: uiState.mode.id
+        name: object?.name ?? 'Untitled',
+        // A floor-plan object's icon may be none (the default block); the
+        // mode's id is then only what the drag preview draws.
+        icon: object ? object.icon : uiState.mode.id
       });
 
       scene.createViewItem({
@@ -53,6 +56,18 @@ export const PlaceIcon: ModeActions = {
         id: modelItemId,
         tile: uiState.mouse.position.tile
       });
+
+      // lw-055: an object from the floor plan goes in once; back to the
+      // cursor with it selected.
+      if (object) {
+        uiState.actions.setMode({
+          type: 'CURSOR',
+          showCursor: true,
+          mousedownItem: null
+        });
+        uiState.actions.setSelection([{ type: 'ITEM', id: modelItemId }]);
+        return;
+      }
     }
 
     uiState.actions.setMode(

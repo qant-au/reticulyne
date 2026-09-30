@@ -29,8 +29,8 @@ npm install \
 
 | Peer | Range | Notes |
 |---|---|---|
-| `react` | `>=18` | Tested against React 19. |
-| `react-dom` | `>=18` | Tested against React 19. |
+| `react` | `>=19` | React 18 is not supported. |
+| `react-dom` | `>=19` | Same as `react`. |
 | `@mui/material` | `^9.0.0` | MUI v9 (`^5` for `@qant-au/reticulyne@2`). |
 | `@mui/icons-material` | `^9.0.0` | Same major as `@mui/material`. |
 | `@emotion/react` | `^11.14.0` | Required by MUI's CSS-in-JS engine. |

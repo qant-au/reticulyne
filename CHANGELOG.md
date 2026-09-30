@@ -14,8 +14,13 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **React 19 is required.** The `react` and `react-dom` peers are now `>=19`: the PNG and SVG export dialogs keep their export state with `useActionState`, which React 18 does not have. The PNG dialog's actions run in order, so a render still in flight when an option changes can no longer land after it.
+
 ### Added
 
+- **`useReticulyne().loadModel()` returns a promise.** It resolves `true` once the new diagram has rendered (at once if that diagram is already open), and `false` when the load is refused: outside `EDITABLE`, or invalid. It never rejects, so it can be awaited, or read with React's `use()` under `<Suspense>`, instead of watching the editor for the load.
 - **A flat 2D (Visio-style) view alongside the isometric one.** A view's `kind` is `'iso'` (the default) or `'schematic'`, as in the scene format, and buttons beside the zoom controls switch the current view between them, keeping the tile at the centre of the canvas in place. Both draw the same tiles, so nodes, connectors, rectangles, text boxes and groups keep their places. The flat view draws a square grid, and a node with an Accurona twin as that element's 2D schematic symbol (`schematicIconUrl`). A view switched in the editor saves as its new kind.
 - **Diagram layers, and a Redacted layer left out of exports.** Nodes, connectors, rectangles and text boxes take a `layerId`, and the model a `layers` list (`{ id, name, visible? }`), read from and saved to the scene format's `layers` and `layer`. A Layers button beside the zoom controls adds, renames, deletes and shows or hides layers; the inspector's Layer field moves an item or a selection. A hidden layer's items are not drawn, selected or exported. The reserved `redacted` layer is shown in the editor and left out of PNG, PDF, SVG and JSON exports unless the export ticks "Include redacted content"; a diagram with nothing on it exports as before. `useReticulyne()` gains `getLayers()` and `setLayerVisible(id, visible)`.
 - **Floors.** A floor is a view, and the views are in floor order, lowest first. The title bar's view name is now a floor switcher: a tab per floor, and `Alt` + `Up` / `Down` show the floor above or below, in every editor mode but `NON_INTERACTIVE`. An editable diagram adds a floor (drawn like the current one), renames one (double-click its tab) and moves or deletes one from the floor menu; each is one undo step. A read-only diagram with one view still shows just its name.
@@ -24,6 +29,7 @@ potentially breaking and read the release notes before upgrading.
 
 ### Fixed
 
+- An invalid `loadModel()` payload is reported to `onValidationError`, as documented. It only reached the console.
 - The `UPDATE_VIEW` reducer changed nothing: it reassigned the lookup's `value` instead of the view in the draft.
 
 ## [0.4.0] - 2026-09-30

@@ -179,7 +179,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `getScene()` | `() => Scene` | The diagram as a scene, the file format: what a save hands to `onSave`. Use this to persist the diagram. |
 | `getTitle()` | `() => string` | The diagram title. |
 | `setTitle(title)` | `(title: string) => void` | Rename the diagram. Gated on `editorMode === 'EDITABLE'`; schema-validated (over 100 characters goes to `onValidationError`); a blank title becomes `'Untitled'`. Not recorded in undo history. |
-| `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => void` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view; a legacy model's own `fitToView` / `view` still work. Gated on `editorMode === 'EDITABLE'`. |
+| `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => Promise<boolean>` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view; a legacy model's own `fitToView` / `view` still work. Gated on `editorMode === 'EDITABLE'`. Resolves `true` once the diagram has rendered, `false` if refused (wrong mode, or invalid); never rejects. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor). Allowed in every editor mode; clears the selection; warns and no-ops on an unknown id. |
 | `getLayers()` | `() => Layer[]` | The diagram's layers, `{ id, name, visible? }` (absent `visible` is shown). The base layer and the reserved Redacted layer are never listed. |

@@ -1,9 +1,11 @@
-import React, {
+import {
   useRef,
   useEffect,
   useMemo,
   useCallback,
-  useState
+  useState,
+  useActionState,
+  startTransition
 } from 'react';
 import {
   Box,
@@ -39,14 +41,40 @@ interface Props {
   onClose: () => void;
 }
 
+// The PNG, once rendered, or the failure to render it.
+interface ExportState {
+  imageData?: string;
+  error: boolean;
+}
+
+// Render the PNG from the hidden editor, or drop it because an option
+// changed. As actions they run in order, so a render still in flight
+// when an option changes cannot land after the reset.
+type ExportAction = { type: 'render'; el: HTMLDivElement } | { type: 'reset' };
+
+const exportReducer = async (
+  _prev: ExportState,
+  action: ExportAction
+): Promise<ExportState> => {
+  if (action.type === 'reset') return { error: false };
+  try {
+    return { imageData: await exportAsImage(action.el), error: false };
+  } catch (err) {
+    console.error('[reticulyne] image export failed:', err);
+    return { error: true };
+  }
+};
+
 export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const currentView = useUiStateStore((state) => {
     return state.view;
   });
-  const [imageData, setImageData] = React.useState<string>();
-  const [exportError, setExportError] = useState(false);
+  const [{ imageData, error: exportError }, dispatchExport] = useActionState(
+    exportReducer,
+    { error: false }
+  );
   const { getUnprojectedBounds } = useDiagramUtils();
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -88,25 +116,18 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
     debounceRef.current = setTimeout(() => {
       // Guard against the dialog unmounting during the 2s debounce:
       // containerRef.current goes to null and `toPng(null)` throws
-      // inside html-to-image. exportError would also setState on an
-      // unmounted tree.
-      if (!containerRef.current) return;
-      exportAsImage(containerRef.current)
-        .then((data) => {
-          return setImageData(data);
-        })
-        .catch((err) => {
-          console.error('[reticulyne] image export failed:', err);
-          setExportError(true);
-        });
+      // inside html-to-image.
+      const el = containerRef.current;
+      if (!el) return;
+      startTransition(() => {
+        dispatchExport({ type: 'render', el });
+      });
     }, 2000);
-  }, []);
+  }, [dispatchExport]);
 
   // Clear the pending debounced export on unmount so the timer can't
   // fire after the dialog closes. Without this, closing the dialog
-  // within 2s of the last onModelUpdated leaked the timer (and would
-  // have called setImageData on an unmounted React tree if the
-  // exportAsImage step hadn't been gated above).
+  // within 2s of the last onModelUpdated leaked the timer.
   useEffect(() => {
     return () => {
       clearTimeout(debounceRef.current);
@@ -142,10 +163,11 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
 
   useEffect(() => {
     // Invalidate the cached PNG when an input that affects it changes;
-    // the user must re-run the async generate step to repopulate it.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setImageData(undefined);
-  }, [showGrid, backgroundColor, transparent, includeRedacted]);
+    // the hidden editor remounts and renders it again.
+    startTransition(() => {
+      dispatchExport({ type: 'reset' });
+    });
+  }, [dispatchExport, showGrid, backgroundColor, transparent, includeRedacted]);
 
   return (
     <AppDialog open onClose={onClose} title="Export as image" maxWidth="sm">

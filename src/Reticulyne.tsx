@@ -365,7 +365,33 @@ const useReticulyne = () => {
     onValidationErrorRef.current = onValidationError;
   }, [onValidationError]);
 
-  const initialDataManager = useInitialDataManager();
+  // The host's onValidationError reaches a rejected loadModel too, as the
+  // prop documents; without it the failure only reached the console.
+  const initialDataManager = useInitialDataManager({ onValidationError });
+
+  // lw-065: loadModel's promises wait for the render that shows the new
+  // diagram. A load bumps loadGeneration; the effect after that render
+  // settles them. Unmounting first settles them as well, so none hangs.
+  const loadGeneration = useUiStateStore((state) => {
+    return state.loadGeneration;
+  });
+  const pendingLoadsRef = useRef<((loaded: boolean) => void)[]>([]);
+  useEffect(() => {
+    const pending = pendingLoadsRef.current;
+    pendingLoadsRef.current = [];
+    pending.forEach((resolve) => {
+      resolve(true);
+    });
+  }, [loadGeneration]);
+  useEffect(() => {
+    const pendingLoads = pendingLoadsRef;
+    return () => {
+      pendingLoads.current.forEach((resolve) => {
+        resolve(true);
+      });
+      pendingLoads.current = [];
+    };
+  }, []);
 
   const Model = useMemo<ModelStore['actions']>(() => {
     const gatedSet: ModelStore['actions']['set'] = ((
@@ -445,7 +471,7 @@ const useReticulyne = () => {
   }, [ModelActions, uiStateActions]);
 
   const loadModel = useCallback(
-    (data: Scene | InitialData, options?: LoadHints): void => {
+    (data: Scene | InitialData, options?: LoadHints): Promise<boolean> => {
       if (editorModeRef.current !== 'EDITABLE') {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
@@ -453,9 +479,15 @@ const useReticulyne = () => {
               `Set editorMode="EDITABLE" to allow programmatic loads.`
           );
         }
-        return;
+        return Promise.resolve(false);
       }
-      initialDataManager.load(data, options);
+      const outcome = initialDataManager.load(data, options);
+      if (outcome === 'invalid') return Promise.resolve(false);
+      // Already open: nothing to wait for.
+      if (outcome === 'unchanged') return Promise.resolve(true);
+      return new Promise<boolean>((resolve) => {
+        pendingLoadsRef.current.push(resolve);
+      });
     },
     [initialDataManager]
   );
@@ -869,6 +901,12 @@ const useReticulyne = () => {
      * diagram to the screen or open a given view. No-op (warns in dev)
      * unless `editorMode` is `EDITABLE`; set `editorMode="EDITABLE"` before
      * calling to allow programmatic loads.
+     *
+     * Returns a promise that resolves `true` once the new diagram has
+     * rendered (at once if it is already the one open), or `false` if the
+     * load was refused: wrong editor mode, or invalid (the issues go to
+     * `onValidationError`). It never rejects, so it can be awaited, or read
+     * with React's `use()` under `<Suspense>`.
      */
     loadModel,
     /** The diagram title. */

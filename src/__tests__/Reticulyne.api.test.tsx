@@ -206,6 +206,52 @@ describe('loading a model from the host (DOC-03)', () => {
   });
 });
 
+describe('loadModel returns a promise (lw-065)', () => {
+  const replacement: InitialData = { ...twoViewModel, title: 'Replacement' };
+
+  test('resolves true once the new diagram has rendered', async () => {
+    const api = mount({ editorMode: 'EDITABLE' });
+    let result: Promise<boolean> = Promise.resolve(false);
+    await act(async () => {
+      result = api().loadModel(replacement);
+    });
+    await expect(result).resolves.toBe(true);
+    expect(api().getModel().title).toBe('Replacement');
+  });
+
+  test('resolves true at once when the diagram is already open', async () => {
+    const api = mount({ editorMode: 'EDITABLE' });
+    await act(async () => {
+      await api().loadModel(replacement);
+    });
+    await expect(api().loadModel(replacement)).resolves.toBe(true);
+  });
+
+  test('resolves false when refused outside EDITABLE', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const api = mount({ editorMode: 'EXPLORABLE_READONLY' });
+    await expect(api().loadModel(replacement)).resolves.toBe(false);
+    expect(api().getModel().title).toBe(twoViewModel.title);
+    warn.mockRestore();
+  });
+
+  test('resolves false on an invalid payload, reported to onValidationError', async () => {
+    const onValidationError = jest.fn();
+    const api = mount({ editorMode: 'EDITABLE', onValidationError });
+    const invalid = {
+      ...twoViewModel,
+      items: 'nope'
+    } as unknown as InitialData;
+    let result: Promise<boolean> = Promise.resolve(true);
+    await act(async () => {
+      result = api().loadModel(invalid);
+    });
+    await expect(result).resolves.toBe(false);
+    expect(onValidationError).toHaveBeenCalled();
+    expect(api().getModel().title).toBe(twoViewModel.title);
+  });
+});
+
 describe('diagram title (1.2)', () => {
   test('getTitle reads it; setTitle renames an editable diagram', () => {
     const api = mount({ editorMode: 'EDITABLE' });

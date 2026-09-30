@@ -36,6 +36,10 @@ interface UseInitialDataManagerOptions {
   iconCollections?: { allow?: string[]; deny?: string[] };
 }
 
+// What a load() call did: opened the diagram, found it already open (the
+// same reference as the last load), or refused it as invalid.
+export type LoadOutcome = 'loaded' | 'unchanged' | 'invalid';
+
 export const useInitialDataManager = ({
   onValidationError,
   iconCollections
@@ -98,8 +102,13 @@ export const useInitialDataManager = ({
   }, [iconCollections, iconCollectionsKey]);
 
   const load = useCallback(
-    (_initialData: Scene | InitialData, options: LoadHints = {}) => {
-      if (!_initialData || prevInitialData.current === _initialData) return;
+    (
+      _initialData: Scene | InitialData,
+      options: LoadHints = {}
+    ): LoadOutcome => {
+      if (!_initialData || prevInitialData.current === _initialData) {
+        return 'unchanged';
+      }
 
       // A scene, or a legacy model converted to one: either way the
       // editor opens a validated scene and remembers it, so a save can
@@ -122,7 +131,7 @@ export const useInitialDataManager = ({
             read.issues
           );
         }
-        return;
+        return 'invalid';
       }
 
       // Only after validation: a rejected load leaves the current diagram
@@ -234,6 +243,7 @@ export const useInitialDataManager = ({
       uiStateActions.setIconCategoriesState(categoriesState);
 
       setIsReady(true);
+      return 'loaded';
     },
     [changeView, model.actions, rendererEl, uiStateActions, historyActions]
   );

@@ -6,7 +6,12 @@ import { useHistoryStore } from 'src/stores/historyStore';
 import type { State } from 'src/stores/reducers/types';
 import * as reducers from 'src/stores/reducers';
 import type { Connection, Layer, Model, Projection } from 'src/types';
-import { filterViewByLayers, getItemByIdOrThrow } from 'src/utils';
+import {
+  filterViewByCollapsedGroups,
+  filterViewByLayers,
+  getItemByIdOrThrow,
+  reroutedPath
+} from 'src/utils';
 import { useLayerFilter } from './sceneLists';
 import { useSceneItems } from './scene/useSceneItems';
 import { useSceneConnectors } from './scene/useSceneConnectors';
@@ -50,7 +55,10 @@ export const useScene = () => {
 
   const leftOut = useLayerFilter();
   const visibleView = useMemo(() => {
-    return filterViewByLayers(currentView, leftOut);
+    // lw-062: and less the members of collapsed groups.
+    return filterViewByCollapsedGroups(
+      filterViewByLayers(currentView, leftOut)
+    );
   }, [currentView, leftOut]);
 
   const items = useMemo(() => {
@@ -65,13 +73,16 @@ export const useScene = () => {
     return (visibleView.connectors ?? []).map((connector) => {
       const sceneConnector = scene.connectors[connector.id];
 
+      const path = reroutedPath(visibleView, connector.id);
+
       return {
         ...CONNECTOR_DEFAULTS,
         ...connector,
-        ...sceneConnector
+        ...sceneConnector,
+        ...(path ? { path } : {})
       };
     });
-  }, [visibleView.connectors, scene.connectors]);
+  }, [visibleView, scene.connectors]);
 
   const rectangles = useMemo(() => {
     return (visibleView.rectangles ?? []).map((rectangle) => {

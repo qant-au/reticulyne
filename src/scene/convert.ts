@@ -149,7 +149,8 @@ const viewToScene = (view: View): DiagramView => {
         id: g.id,
         name: g.name,
         color: g.color,
-        group: g.parentGroupId
+        group: g.parentGroupId,
+        collapsed: g.collapsed
       });
     })
   });
@@ -390,7 +391,8 @@ const viewFromScene = (view: DiagramView): View => {
         id: g.id,
         name: g.name,
         color: g.color,
-        parentGroupId: g.group
+        parentGroupId: g.group,
+        collapsed: g.collapsed
       });
     })
   });

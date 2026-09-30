@@ -20,7 +20,9 @@ import {
   connectorPathTileToGlobal,
   getPortAtPointer,
   endRef,
-  isLocked
+  isLocked,
+  collapsedBoxAtTile,
+  collapsedGroupMembers
 } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
 
@@ -132,6 +134,44 @@ const mousedown: ModeActionsAction = ({
     scene,
     skipLocked: true
   });
+
+  // lw-062: a collapsed group's box stands for its members. A click selects
+  // them all, and a press on one of them makes a drag move the whole group.
+  const box = itemAtTile
+    ? null
+    : collapsedBoxAtTile(scene.visibleView, uiState.mouse.position.tile);
+  const boxRefs = box
+    ? collapsedGroupMembers(scene.currentView, box.groupId)
+    : [];
+  if (box && boxRefs.length > 0) {
+    uiState.actions.setMode(
+      produce(uiState.mode, (draft) => {
+        draft.mousedownItem = boxRefs[0];
+      })
+    );
+    if (uiState.editingGroupId) uiState.actions.setEditingGroupId(null);
+    const all = boxRefs.every((ref) => {
+      return isSelected(ref, uiState.selection);
+    });
+    if (modifiers.shift) {
+      uiState.actions.setSelection(
+        all
+          ? uiState.selection.filter((s) => {
+              return !isSelected(s, boxRefs);
+            })
+          : [
+              ...uiState.selection,
+              ...boxRefs.filter((ref) => {
+                return !isSelected(ref, uiState.selection);
+              })
+            ]
+      );
+      return;
+    }
+    // Already part of the selection: keep it, so a drag moves all of it.
+    if (!all) uiState.actions.setSelection(boxRefs);
+    return;
+  }
 
   if (itemAtTile) {
     uiState.actions.setMode(

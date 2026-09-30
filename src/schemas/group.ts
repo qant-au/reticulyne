@@ -12,6 +12,8 @@ export const groupSchema = z
     name: constrainedStrings.name.optional(),
     /** A faint backing fill behind the members. */
     color: hexColor.optional(),
-    parentGroupId: id.optional()
+    parentGroupId: id.optional(),
+    /** lw-062: drawn as one box in place of its members. */
+    collapsed: z.boolean().optional()
   })
   .strict();

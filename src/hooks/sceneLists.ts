@@ -14,10 +14,12 @@ import {
   TEXTBOX_DEFAULTS
 } from 'src/config';
 import {
+  filterViewByCollapsedGroups,
   filterViewByLayers,
   getItemByIdOrThrow,
   hiddenLayerIds,
-  REDACTED_LAYER_ID
+  REDACTED_LAYER_ID,
+  reroutedPath
 } from 'src/utils';
 import type { useScene } from 'src/hooks/useScene';
 import type { ViewItem } from 'src/types';
@@ -99,9 +101,11 @@ const useCurrentView = () => {
   });
   const leftOut = useLayerFilter();
   return useMemo(() => {
-    return filterViewByLayers(
-      getItemByIdOrThrow(views, currentViewId).value,
-      leftOut
+    return filterViewByCollapsedGroups(
+      filterViewByLayers(
+        getItemByIdOrThrow(views, currentViewId).value,
+        leftOut
+      )
     );
   }, [views, currentViewId, leftOut]);
 };
@@ -114,20 +118,27 @@ export const useSceneConnectorsList = (): ReturnType<
     return state.connectors;
   });
   const sources = currentView.connectors;
+  // lw-062: a connector re-docked on a collapsed group's box has its own path.
   const keysFor = useMemo(() => {
     return (c: NonNullable<typeof sources>[number]) => {
-      return [c, sceneConnectors[c.id]] as const;
+      return [
+        c,
+        sceneConnectors[c.id],
+        reroutedPath(currentView, c.id)
+      ] as const;
     };
-  }, [sceneConnectors]);
+  }, [sceneConnectors, currentView]);
   const build = useMemo(() => {
     return (c: NonNullable<typeof sources>[number]) => {
+      const path = reroutedPath(currentView, c.id);
       return {
         ...CONNECTOR_DEFAULTS,
         ...c,
-        ...sceneConnectors[c.id]
+        ...sceneConnectors[c.id],
+        ...(path ? { path } : {})
       };
     };
-  }, [sceneConnectors]);
+  }, [sceneConnectors, currentView]);
   return useStableMergedList(sources, keysFor, build);
 };
 

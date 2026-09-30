@@ -96,7 +96,10 @@ export const useSceneGroups = ({
   );
 
   const updateGroup = useCallback(
-    (id: string, updates: Partial<Pick<Group, 'name' | 'color'>>) => {
+    (
+      id: string,
+      updates: Partial<Pick<Group, 'name' | 'color' | 'collapsed'>>
+    ) => {
       setState(
         reducers.view({
           action: 'UPDATE_GROUP',

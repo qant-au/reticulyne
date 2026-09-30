@@ -95,7 +95,7 @@ const richScene = (): Scene => {
             layer: 'redacted'
           }
         ],
-        groups: [{ id: 'g1', name: 'Wing', color: '#112233' }]
+        groups: [{ id: 'g1', name: 'Wing', color: '#112233', collapsed: true }]
       },
       {
         id: 'iso',

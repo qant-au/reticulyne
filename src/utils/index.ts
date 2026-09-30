@@ -24,3 +24,4 @@ export * from './groups';
 export * from './layers';
 export * from './lock';
 export * from './floors';
+export * from './collapse';

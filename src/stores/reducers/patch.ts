@@ -57,7 +57,10 @@ export const diagramPatchSchema = z
       textBoxSchema.pick({ content: true, fontSize: true }).partial().strict()
     ),
     groups: byId(
-      groupSchema.pick({ name: true, color: true }).partial().strict()
+      groupSchema
+        .pick({ name: true, color: true, collapsed: true })
+        .partial()
+        .strict()
     )
   })
   .strict();

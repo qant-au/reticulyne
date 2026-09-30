@@ -256,18 +256,31 @@ Grouping groups nests them. Connectors are never members: they follow the
 items they join. A copy of a grouped item is not in the group. Deleting the
 last member removes the group; undoing an ungroup restores the same group id.
 
+**Collapse** a selected group from the panel to draw it as one box, labelled
+with its name and how many things it holds, in place of its members. The box
+sits at the centre of the members' area; nothing else moves. A connector from
+outside to a member docks on the box, and one between two members of the group
+is hidden until it is expanded. Clicking the box selects the group, so it can
+be dragged, copied or deleted as one; the marquee and `Ctrl/Cmd + A` take it
+too. **Expand** in the panel, or double-click the box, draws the members
+again. A group inside a collapsed group is hidden with it. Each collapse or
+expand is one undo step, and the state is saved with the diagram, so an image
+or PDF export draws the group as it is shown.
+
 | Key | Action |
 |---|---|
 | `Ctrl/Cmd + G` | Group the selection |
 | `Ctrl/Cmd + Shift + G` | Ungroup the selected group |
 | `Double-click` a member | Work inside its group (`Esc` leaves) |
+| `Double-click` a collapsed group | Expand it |
 
-In the data, a group is `{ id, name?, color?, parentGroupId? }` in a view's
+In the data, a group is `{ id, name?, color?, parentGroupId?, collapsed? }` in a view's
 `groups` array, and membership is `parentGroupId` on each view item, rectangle,
 text box or group, so "the members of G" is a filter rather than a list to keep
 in sync. `parentGroupId` must name a group on the same view and nesting may not
 loop; either failure is a validation error. A host can rename or recolour a
-group live with `applyPatch({ groups: { [id]: { name, color } } })`.
+group, or collapse and expand it, live with
+`applyPatch({ groups: { [id]: { name, color, collapsed } } })`.
 
 **Arrange.** With two or more items selected, the panel's Arrange row lines
 them up along the tile axes: **Align X / Y** puts every item on the active
@@ -549,7 +562,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `Connector.get(id)` | `(id: string) => Connector \| undefined` | Returns the connector (defaults merged) for the given id, or `undefined` if no view contains it. |
 | `Connector.update(id, patch)` | `(id, patch) => void` | Mutate `color` / `width` / `style` / `direction` / `glyph` / `animated` from the host. **Bypasses the undo stack** so a live-data poller doesn't fill Ctrl+Z. Gated on `editorMode !== 'NON_INTERACTIVE'` — warns and no-ops otherwise. |
 | `Connector.pulse(id, opts?)` | `(id, { durationMs?, glyph? }?) => void` | Fire a one-shot signal pulse — the chosen glyph travels the connector once over `durationMs` (default 1500). Runtime-only: writes to the scene-store overlay, never persisted to the model, never recorded in history. Each call supersedes any pulse already in-flight on that connector. |
-| `applyPatch(patch, opts?)` | `(patch: DiagramPatch, { pushToUndo? }?) => void` | Live update by id: node `name` / `description` / `icon` / `tile`; connector, rectangle and text-box styling; group `name` / `color`. Never touches the selection, zoom or pan. Ids that no longer exist are skipped. During a drag, a marquee or a connector or rectangle being drawn, the patch waits and lands when the gesture ends. Validated first (a bad patch goes to `onValidationError`, nothing changes). Not on the undo stack unless `pushToUndo: true`. Refused in `NON_INTERACTIVE`. |
+| `applyPatch(patch, opts?)` | `(patch: DiagramPatch, { pushToUndo? }?) => void` | Live update by id: node `name` / `description` / `icon` / `tile`; connector, rectangle and text-box styling; group `name` / `color` / `collapsed`. Never touches the selection, zoom or pan. Ids that no longer exist are skipped. During a drag, a marquee or a connector or rectangle being drawn, the patch waits and lands when the gesture ends. Validated first (a bad patch goes to `onValidationError`, nothing changes). Not on the undo stack unless `pushToUndo: true`. Refused in `NON_INTERACTIVE`. |
 | `updateNode(id, patch, opts?)` | `(id, NodePatch, opts?) => void` | `applyPatch` for one node. |
 | `setConnectorRate(id, rate, opts?)` | `(id, rate: number) => void` | Connector animation rate, 0 (stopped) to 1. Shows only with `enableAnimation`. |
 | `getNode(id)` | `(id) => NodeInfo \| undefined` | `{ id, name, description?, icon?, tile }`, a copy; `tile` is `null` when the node is not on the current view. |

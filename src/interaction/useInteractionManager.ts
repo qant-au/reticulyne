@@ -14,7 +14,9 @@ import {
   getItemAtTile,
   clickTarget,
   hasLocked,
-  isLocked
+  isLocked,
+  collapsedBoxAtTile,
+  groupMembers
 } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
@@ -312,6 +314,17 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
           return;
         }
         uiStateActions.setSelection([itemAtTile]);
+        return;
+      }
+
+      // lw-062: double-clicking a collapsed group's box expands it, with
+      // its members selected.
+      const box = collapsedBoxAtTile(sceneRef.current.visibleView, tile);
+      if (box) {
+        sceneRef.current.updateGroup(box.groupId, { collapsed: undefined });
+        uiStateActions.setSelection(
+          groupMembers(sceneRef.current.currentView, box.groupId)
+        );
         return;
       }
 

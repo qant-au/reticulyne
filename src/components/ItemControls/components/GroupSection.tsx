@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Stack, TextField, Typography } from '@mui/material';
 import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { groupMatchingSelection } from 'src/utils';
+import { groupChain, groupMatchingSelection } from 'src/utils';
 import type { ItemReference } from 'src/types';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 import { PanelSection } from 'src/vendor/accurona-ui';
@@ -44,6 +44,12 @@ export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
     useScene();
   const editorMode = useUiStateStore((state) => {
     return state.editorMode;
+  });
+  const editingGroupId = useUiStateStore((state) => {
+    return state.editingGroupId;
+  });
+  const setEditingGroupId = useUiStateStore((state) => {
+    return state.actions.setEditingGroupId;
   });
   const groupId = groupMatchingSelection(currentView, selection);
   const group = currentView.groups?.find((g) => {
@@ -100,8 +106,29 @@ export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
             });
           }}
         />
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => {
+            // lw-062: collapsing the group being worked inside leaves it.
+            if (
+              !group.collapsed &&
+              editingGroupId &&
+              groupChain(currentView, editingGroupId).includes(group.id)
+            ) {
+              setEditingGroupId(null);
+            }
+            updateGroup(group.id, {
+              collapsed: group.collapsed ? undefined : true
+            });
+          }}
+        >
+          {group.collapsed ? 'Expand' : 'Collapse'}
+        </Button>
         <Typography variant="caption" sx={{ color: 'text.disabled' }}>
-          Double-click a member to work inside the group.
+          {group.collapsed
+            ? 'Double-click the box to expand it.'
+            : 'Double-click a member to work inside the group.'}
         </Typography>
         <Button
           variant="outlined"

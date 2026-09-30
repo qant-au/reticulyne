@@ -6,7 +6,9 @@ import {
   getItemByIdOrThrow,
   generateId,
   connectorsFirst,
-  isLocked
+  isLocked,
+  collapsedBoxes,
+  collapsedGroupMembers
 } from 'src/utils';
 import { TEXTBOX_DEFAULTS } from 'src/config';
 import { useThemeToggle } from 'src/hooks/useThemeToggle';
@@ -423,6 +425,10 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
             }),
             ...(visibleView.rectangles ?? []).filter(open).map((r) => {
               return { type: 'RECTANGLE' as const, id: r.id };
+            }),
+            // lw-062: and what the collapsed groups stand for.
+            ...collapsedBoxes(visibleView).flatMap((box) => {
+              return collapsedGroupMembers(currentView, box.groupId);
             })
           ];
           uiStateActions.setSelection(all);

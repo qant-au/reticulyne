@@ -13,6 +13,7 @@ import { CoordsUtils } from './CoordsUtils';
 import { getBoundingBox, isWithinBounds, doBoundsIntersect } from './geometry';
 import { connectorPathTileToGlobal } from './connector';
 import { getTextBoxEndTile } from './textBox';
+import { collapsedBoxes, collapsedGroupMembers } from './collapse';
 // Type-only import — useScene is a React hook in src/hooks, but we
 // only need its return-type shape to describe the data we read off
 // the scene. The import is erased at compile time, so there's no
@@ -180,6 +181,12 @@ export const getItemsInBounds = ({
     if (!locked && doBoundsIntersect(bounds, getBoundingBox([rFrom, rTo]))) {
       found.push({ type: 'RECTANGLE', id });
     }
+  });
+
+  // lw-062: a collapsed group's box catches the members it stands for.
+  collapsedBoxes(scene.visibleView).forEach((box) => {
+    if (!isWithinBounds(box.tile, bounds)) return;
+    found.push(...collapsedGroupMembers(scene.currentView, box.groupId));
   });
 
   return found;

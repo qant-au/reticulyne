@@ -12,6 +12,7 @@ import type { Size } from 'src/types/common';
 import { SaveStatusPill } from './SaveStatusPill';
 import { FloorSwitcher } from './FloorSwitcher';
 import { Surface } from 'src/vendor/accurona-ui';
+import { MIN_CANVAS_WIDTH as MINI_MAP_MIN_WIDTH } from 'src/components/MiniMap/MiniMap';
 
 interface AppPadding {
   x: number;
@@ -23,20 +24,42 @@ interface Props {
   appPadding: AppPadding;
   rendererSize: Size;
   title: string;
+  // The zoom row's measured width; 0 before it is measured.
+  bottomRowWidth?: number;
 }
+
+const GAP = 16;
+// The mini-map: 200px wide, 16px in from the right.
+const MINI_MAP_RESERVE = 16 + 200 + GAP;
+// Narrower than this between the zoom row and the mini-map, the title
+// moves up a row.
+const MIN_TITLE_WIDTH = 240;
 
 export const TitleBar = ({
   visible,
   appPadding,
   rendererSize,
-  title
+  title,
+  bottomRowWidth = 0
 }: Props) => {
   if (!visible) return null;
 
-  // Between the zoom controls and the mini-map it needs about 500px of
-  // canvas to itself. Narrower (a phone), it covered the zoom row, so it
-  // moves up a row and spans the width, the title truncating.
-  const narrow = rendererSize.width < 800;
+  // Centred on the bottom row, clear of the zoom row on the left and the
+  // mini-map on the right: the same reserve both sides. The zoom row is
+  // measured, since it grows with what the editor offers; a fixed 300px
+  // let a long title cover Layers and ? (BUG15-34). With too little room
+  // left (a phone), it moves up a row and spans the width, clear of the
+  // mini-map where that shows, the title truncating.
+  const reserve = Math.max(
+    300,
+    appPadding.x + bottomRowWidth + GAP,
+    MINI_MAP_RESERVE
+  );
+  const narrow =
+    rendererSize.width < MINI_MAP_MIN_WIDTH ||
+    rendererSize.width - reserve * 2 < MIN_TITLE_WIDTH;
+  const rightReserve =
+    rendererSize.width >= MINI_MAP_MIN_WIDTH ? MINI_MAP_RESERVE : appPadding.x;
 
   return (
     <Box
@@ -44,17 +67,16 @@ export const TitleBar = ({
         position: 'absolute',
         display: 'flex',
         justifyContent: 'center',
-        transform: 'translateX(-50%)',
         pointerEvents: 'none'
       }}
       style={{
-        left: rendererSize.width / 2,
+        left: narrow ? appPadding.x : reserve,
         top: narrow
           ? rendererSize.height - appPadding.y * 3 - 8
           : rendererSize.height - appPadding.y * 2,
         width: narrow
-          ? rendererSize.width - appPadding.x * 2
-          : rendererSize.width - 600,
+          ? rendererSize.width - appPadding.x - rightReserve
+          : rendererSize.width - reserve * 2,
         height: appPadding.y
       }}
     >

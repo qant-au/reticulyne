@@ -14,7 +14,7 @@
 // Split out under QUA4-10. EDITOR_MODE_MAPPING + getEditorModeMapping
 // have moved to src/utils/editorModeMapping.ts.
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { getEditorModeMapping } from 'src/utils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -72,6 +72,10 @@ export const UiOverlay = () => {
     return state.title;
   });
   const { size: rendererSize } = useResizeObserver(rendererEl);
+  // The zoom row grows with what the editor offers (the 2D toggle, Layers,
+  // ?), so the title bar measures it rather than reserving a fixed width.
+  const [bottomRow, setBottomRow] = useState<HTMLDivElement | null>(null);
+  const { size: bottomRowSize } = useResizeObserver(bottomRow);
 
   const availableTools = useMemo(() => {
     return getEditorModeMapping(editorMode);
@@ -98,12 +102,14 @@ export const UiOverlay = () => {
           spacing={spacing}
           rendererSize={rendererSize}
           itemControls={itemControls}
+          bottomRowRef={setBottomRow}
         />
         <TitleBar
           visible={showTitleBar ?? availableTools.includes('VIEW_TITLE')}
           appPadding={appPadding}
           rendererSize={rendererSize}
           title={title}
+          bottomRowWidth={bottomRowSize.width}
         />
         <DebugPanel
           visible={enableDebugTools}

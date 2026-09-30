@@ -10,7 +10,9 @@ import { Surface, ToolButton } from 'src/vendor/accurona-ui';
 import { ViewKindToggle } from './ViewKindToggle';
 import { LayersButton } from './LayersButton';
 
-export const ZoomControls = () => {
+// `compact` (a phone) leaves out the zoom percentage: with it, the row ran
+// past the right edge and the Layers and ? buttons were cut off.
+export const ZoomControls = ({ compact = false }: { compact?: boolean }) => {
   const uiStateStoreActions = useUiStateStore((state) => {
     return state.actions;
   });
@@ -35,24 +37,28 @@ export const ZoomControls = () => {
             disabled={zoom <= MIN_ZOOM}
           />
           <Divider orientation="vertical" flexItem />
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              minWidth: toPx(60)
-            }}
-          >
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'text.secondary'
-              }}
-            >
-              {Math.round(zoom * 100)}%
-            </Typography>
-          </Box>
-          <Divider orientation="vertical" flexItem />
+          {!compact && (
+            <>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minWidth: toPx(60)
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
+                  {Math.round(zoom * 100)}%
+                </Typography>
+              </Box>
+              <Divider orientation="vertical" flexItem />
+            </>
+          )}
           <ToolButton
             name="Zoom in (+)"
             icon={<ZoomInIcon />}

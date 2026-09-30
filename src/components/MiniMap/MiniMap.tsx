@@ -15,7 +15,7 @@ const W = 200;
 const H = 150;
 // The width below which the title bar moves up a row (TitleBar.tsx); at
 // 720 the map covered that raised title between 720 and 800.
-const MIN_CANVAS_WIDTH = 800;
+export const MIN_CANVAS_WIDTH = 800;
 const PAD = 60;
 
 // Where on the map a pointer is, held to the map: a drag that runs off

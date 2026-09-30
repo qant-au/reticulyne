@@ -67,7 +67,7 @@ export const VIEW_DEFAULTS: Required<
 };
 
 export const VIEW_ITEM_DEFAULTS: Required<
-  Omit<ViewItem, 'id' | 'tile' | 'parentGroupId'>
+  Omit<ViewItem, 'id' | 'tile' | 'parentGroupId' | 'layerId'>
 > = {
   labelHeight: 80
 };
@@ -77,7 +77,10 @@ export const VIEW_ITEM_DEFAULTS: Required<
 // back to pre-FEA7 behaviour (full-speed loop, direction-derived flow)
 // so older diagrams are byte-identical to today.
 export const CONNECTOR_DEFAULTS: Required<
-  Omit<Connector, 'id' | 'color' | 'animationRate' | 'animationFlow'>
+  Omit<
+    Connector,
+    'id' | 'color' | 'animationRate' | 'animationFlow' | 'layerId'
+  >
 > = {
   width: 10,
   description: '',
@@ -93,7 +96,7 @@ export const CONNECTOR_DEFAULTS: Required<
 export const CONNECTOR_SEARCH_OFFSET = { x: 1, y: 1 };
 
 export const TEXTBOX_DEFAULTS: Required<
-  Omit<TextBox, 'id' | 'tile' | 'parentGroupId'>
+  Omit<TextBox, 'id' | 'tile' | 'parentGroupId' | 'layerId'>
 > = {
   orientation: 'X',
   fontSize: 0.6,
@@ -115,6 +118,7 @@ export const RECTANGLE_DEFAULTS: Required<
     | 'outlineColor'
     | 'transparency'
     | 'zIndex'
+    | 'layerId'
   >
 > = {};
 

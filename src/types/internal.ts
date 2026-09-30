@@ -341,6 +341,9 @@ export interface UiState {
   focusTextBoxId: string | null;
   // 1.7: the group entered by double-click; clicks select inside it.
   editingGroupId: string | null;
+  // lw-052: the Redacted layer is left off the canvas, only while the
+  // PDF export captures it.
+  hideRedacted: boolean;
   // 2.14: what "New from template" offers.
   templates: DiagramTemplate[];
   // 2.3: where saving stands. See src/utils/save.ts.
@@ -413,6 +416,7 @@ export interface UiStateActions {
   setFocusTextBoxId: (id: string | null) => void;
   setTemplates: (templates: DiagramTemplate[]) => void;
   setEditingGroupId: (id: string | null) => void;
+  setHideRedacted: (hideRedacted: boolean) => void;
   setSaveStatus: (patch: Partial<SaveStatus>) => void;
   /** Read at call time, for async code that must not use a stale render. */
   getSaveStatus: () => SaveStatus;

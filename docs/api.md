@@ -175,6 +175,8 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => void` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view; a legacy model's own `fitToView` / `view` still work. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor). Allowed in every editor mode; clears the selection; warns and no-ops on an unknown id. |
+| `getLayers()` | `() => Layer[]` | The diagram's layers, `{ id, name, visible? }` (absent `visible` is shown). The base layer and the reserved Redacted layer are never listed. |
+| `setLayerVisible(layerId, visible)` | `(layerId: string, visible: boolean) => void` | Show or hide a layer, so one diagram serves several audiences. Allowed in every editor mode; saved with the diagram; not recorded in undo; warns and does nothing for an unknown id. |
 | `setZoom(z)` | `(z: number) => void` | Set absolute zoom, clamped to 0.2 to 1. |
 | `incrementZoom()` | `() => void` | Step zoom up by `ZOOM_INCREMENT` (0.2). |
 | `decrementZoom()` | `() => void` | Step zoom down by `ZOOM_INCREMENT`. |

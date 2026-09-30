@@ -7,6 +7,7 @@ import type {
   Rectangle
 } from 'src/types';
 import { getAllAnchors, getItemByIdOrThrow } from 'src/utils';
+import { REDACTED_LAYER_ID } from './layer';
 
 type IssueType =
   | {
@@ -85,6 +86,20 @@ type IssueType =
       params: {
         group: string;
         view: string;
+      };
+    }
+  | {
+      type: 'INVALID_LAYER_REF';
+      params: {
+        member: string;
+        layer: string;
+        view: string;
+      };
+    }
+  | {
+      type: 'INVALID_LAYERS';
+      params: {
+        layer: string;
       };
     };
 
@@ -368,6 +383,46 @@ export const validateModel = (model: Model): Issue[] => {
 
   model.views.forEach((view) => {
     issues.push(...validateView(view, { model }));
+  });
+
+  // lw-052: layer ids are unique, 'redacted' is never listed, and every
+  // layerId names a listed layer or 'redacted'.
+  const layerIds = new Set<string>();
+  (model.layers ?? []).forEach((layer) => {
+    if (layer.id === REDACTED_LAYER_ID || layerIds.has(layer.id)) {
+      issues.push({
+        type: 'INVALID_LAYERS',
+        params: { layer: layer.id },
+        message:
+          layer.id === REDACTED_LAYER_ID
+            ? 'Invalid layers.  "redacted" is reserved and never listed.'
+            : 'Invalid layers.  Two layers share an id.'
+      });
+    }
+    layerIds.add(layer.id);
+  });
+  model.views.forEach((view) => {
+    [
+      ...view.items,
+      ...(view.connectors ?? []),
+      ...(view.rectangles ?? []),
+      ...(view.textBoxes ?? [])
+    ].forEach((member) => {
+      const { layerId } = member;
+      if (
+        layerId === undefined ||
+        layerId === REDACTED_LAYER_ID ||
+        layerIds.has(layerId)
+      ) {
+        return;
+      }
+      issues.push({
+        type: 'INVALID_LAYER_REF',
+        params: { member: member.id, layer: layerId, view: view.id },
+        message:
+          'Invalid layer.  An item names a layer that is not in the model.'
+      });
+    });
   });
 
   return issues;

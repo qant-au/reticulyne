@@ -6,6 +6,7 @@ import {
 } from 'src/vendor/accurona-core';
 import type { Model } from 'src/types/model';
 import { generateId } from 'src/utils/common';
+import { REDACTED_LAYER_ID } from 'src/schemas/layer';
 import { sceneFromModel } from './convert';
 
 // Reading a Reticulyne model (the file format before the scene format).
@@ -94,8 +95,27 @@ export const normaliseLegacyModel = (
     return id !== undefined && colorIds.has(id) ? colorId(id) : undefined;
   };
 
+  // lw-052: 'redacted' is reserved, so it is never remapped; a layerId
+  // naming no listed layer is dropped (the item goes to the base layer).
+  const layers = (model.layers ?? []).filter((layer) => {
+    return layer.id !== REDACTED_LAYER_ID;
+  });
+  const layerMap = idMap(ids(layers));
+  const layerIds = new Set(ids(layers));
+  const layer = (id: string | undefined) => {
+    if (id === REDACTED_LAYER_ID) return id;
+    return id !== undefined && layerIds.has(id) ? layerMap(id) : undefined;
+  };
+
   const next: Model = {
     ...model,
+    ...(model.layers
+      ? {
+          layers: layers.map((l) => {
+            return { ...l, id: layerMap(l.id) };
+          })
+        }
+      : {}),
     items: model.items.map((item) => {
       const { icon, ...rest } = item;
       return {
@@ -140,7 +160,8 @@ export const normaliseLegacyModel = (
             ...item,
             id: itemId(item.id),
             labelHeight: clamp(item.labelHeight, -1000, 1000),
-            parentGroupId: group(item.parentGroupId)
+            parentGroupId: group(item.parentGroupId),
+            layerId: layer(item.layerId)
           });
         }),
         connectors: view.connectors?.map((c) => {
@@ -149,6 +170,7 @@ export const normaliseLegacyModel = (
             id: connectorId(c.id),
             color: colour(c.color),
             width: clamp(c.width, 0, 1000),
+            layerId: layer(c.layerId),
             anchors: c.anchors.map((a) => {
               const { ref } = a;
               return {
@@ -168,7 +190,8 @@ export const normaliseLegacyModel = (
             ...r,
             id: rectangleId(r.id),
             color: colour(r.color),
-            parentGroupId: group(r.parentGroupId)
+            parentGroupId: group(r.parentGroupId),
+            layerId: layer(r.layerId)
           });
         }),
         textBoxes: view.textBoxes?.map((t) => {
@@ -176,7 +199,8 @@ export const normaliseLegacyModel = (
             ...t,
             id: textBoxId(t.id),
             fontSize: clamp(t.fontSize, 0, 1000),
-            parentGroupId: group(t.parentGroupId)
+            parentGroupId: group(t.parentGroupId),
+            layerId: layer(t.layerId)
           });
         }),
         groups: view.groups?.map((g) => {

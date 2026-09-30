@@ -22,6 +22,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
+import { LayerSection } from '../components/LayerSection';
 import { Panel, PanelSection } from 'src/vendor/accurona-ui';
 
 // User-facing labels for the connector-direction dropdown (FEA4-02).
@@ -327,6 +328,7 @@ export const ConnectorControls = ({ id }: Props) => {
           </Box>
         </Box>
       )}
+      <LayerSection targets={[{ type: 'CONNECTOR', id }]} />
       <LayerOrderSection targets={[{ type: 'CONNECTOR', id }]} />
       <PanelSection>
         <Box>

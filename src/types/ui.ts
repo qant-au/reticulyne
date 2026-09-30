@@ -17,6 +17,9 @@ export type AnchorPosition = keyof typeof AnchorPositionOptions;
 export const DialogTypeEnum = {
   EXPORT_IMAGE: 'EXPORT_IMAGE',
   EXPORT_SVG: 'EXPORT_SVG',
+  // lw-052: the Redacted opt-in for the two exports with no dialog.
+  EXPORT_JSON: 'EXPORT_JSON',
+  EXPORT_PDF: 'EXPORT_PDF',
   KEYBOARD_SHORTCUTS: 'KEYBOARD_SHORTCUTS',
   RENAME_DIAGRAM: 'RENAME_DIAGRAM',
   NEW_FROM_TEMPLATE: 'NEW_FROM_TEMPLATE'

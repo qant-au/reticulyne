@@ -4,6 +4,7 @@ import {
   Button,
   Stack,
   Alert,
+  Checkbox,
   FormControlLabel,
   Typography
 } from '@mui/material';
@@ -12,6 +13,8 @@ import { useModelStore } from 'src/stores/modelStore';
 import {
   exportAsVectorSvg,
   exportAsUniversalSvg,
+  hasRedactedContent,
+  modelForExport,
   modelFromModelStore
 } from 'src/utils';
 import { ModelStore } from 'src/types';
@@ -47,6 +50,16 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
       return modelFromModelStore(state);
     })
   );
+
+  // lw-052: hidden layers are left out, and the Redacted layer unless
+  // the export includes it.
+  const [includeRedacted, setIncludeRedacted] = useState(false);
+  const hasRedacted = useMemo(() => {
+    return hasRedactedContent(model);
+  }, [model]);
+  const exportModel = useMemo(() => {
+    return modelForExport(model, { includeRedacted });
+  }, [model, includeRedacted]);
 
   const unprojectedBounds = useMemo(() => {
     return getUnprojectedBounds();
@@ -135,7 +148,7 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
               editorMode="NON_INTERACTIVE"
               onModelUpdated={onModelReady}
               initialData={{
-                ...model,
+                ...exportModel,
                 fitToView: true,
                 view: currentView
               }}
@@ -176,6 +189,20 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
                     />
                   }
                 />
+                {hasRedacted && (
+                  <FormControlLabel
+                    label="Include redacted content"
+                    control={
+                      <Checkbox
+                        size="small"
+                        checked={includeRedacted}
+                        onChange={(event) => {
+                          setIncludeRedacted(event.target.checked);
+                        }}
+                      />
+                    }
+                  />
+                )}
                 {!transparent && (
                   <FormControlLabel
                     label="Background color"

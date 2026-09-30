@@ -53,6 +53,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       focusTextBoxId: null,
       templates: TEMPLATES,
       editingGroupId: null,
+      hideRedacted: false,
       saveStatus: {
         state: 'idle',
         isDirty: false,
@@ -222,6 +223,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setEditingGroupId: (editingGroupId) => {
           set({ editingGroupId });
+        },
+        setHideRedacted: (hideRedacted) => {
+          set({ hideRedacted });
         },
         setTemplates: (templates) => {
           set({ templates });

@@ -13,7 +13,12 @@ import {
   RECTANGLE_DEFAULTS,
   TEXTBOX_DEFAULTS
 } from 'src/config';
-import { getItemByIdOrThrow } from 'src/utils';
+import {
+  filterViewByLayers,
+  getItemByIdOrThrow,
+  hiddenLayerIds,
+  REDACTED_LAYER_ID
+} from 'src/utils';
 import type { useScene } from 'src/hooks/useScene';
 import type { ViewItem } from 'src/types';
 
@@ -69,6 +74,22 @@ const useStableMergedList = <S extends { id: string }, T>(
   }, [sources, keysFor, build, cache]);
 };
 
+// lw-052: what is drawn is the current view less its hidden layers
+// (and the Redacted layer while a PDF export hides it).
+export const useLayerFilter = (): Set<string> => {
+  const layers = useModelStore((state) => {
+    return state.layers;
+  });
+  const hideRedacted = useUiStateStore((state) => {
+    return state.hideRedacted;
+  });
+  return useMemo(() => {
+    const leftOut = hiddenLayerIds(layers);
+    if (hideRedacted) leftOut.add(REDACTED_LAYER_ID);
+    return leftOut;
+  }, [layers, hideRedacted]);
+};
+
 const useCurrentView = () => {
   const views = useModelStore((state) => {
     return state.views;
@@ -76,9 +97,13 @@ const useCurrentView = () => {
   const currentViewId = useUiStateStore((state) => {
     return state.view;
   });
+  const leftOut = useLayerFilter();
   return useMemo(() => {
-    return getItemByIdOrThrow(views, currentViewId).value;
-  }, [views, currentViewId]);
+    return filterViewByLayers(
+      getItemByIdOrThrow(views, currentViewId).value,
+      leftOut
+    );
+  }, [views, currentViewId, leftOut]);
 };
 
 export const useSceneConnectorsList = (): ReturnType<

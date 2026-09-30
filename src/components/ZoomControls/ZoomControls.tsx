@@ -8,6 +8,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { Surface, ToolButton } from 'src/vendor/accurona-ui';
 import { ViewKindToggle } from './ViewKindToggle';
+import { LayersButton } from './LayersButton';
 
 export const ZoomControls = () => {
   const uiStateStoreActions = useUiStateStore((state) => {
@@ -17,8 +18,8 @@ export const ZoomControls = () => {
     return state.zoom;
   });
   const { fitToView } = useDiagramUtils();
-  // Switching the drawing changes the saved view, so only an editable
-  // diagram offers it.
+  // Switching the drawing, and the layers (lw-052), change the saved
+  // diagram, so only an editable one offers them.
   const editable = useUiStateStore((state) => {
     return state.editorMode === 'EDITABLE';
   });
@@ -68,6 +69,7 @@ export const ZoomControls = () => {
         />
       </Surface>
       {editable && <ViewKindToggle />}
+      {editable && <LayersButton />}
     </Stack>
   );
 };

@@ -6,6 +6,7 @@ import { viewsSchema } from './views';
 import { validateModel } from './validation';
 import { iconsSchema } from './icons';
 import { colorsSchema } from './colors';
+import { layersSchema } from './layer';
 
 const modelObjectSchema = z
   .object({
@@ -16,7 +17,9 @@ const modelObjectSchema = z
     items: modelItemsSchema,
     views: viewsSchema,
     icons: iconsSchema,
-    colors: colorsSchema
+    colors: colorsSchema,
+    // lw-052: absent is no layers but the base one.
+    layers: layersSchema.optional()
   })
   .strict();
 

@@ -21,6 +21,8 @@ import {
   downloadFile as downloadFileUtil,
   base64ToBlob,
   filenameForTitle,
+  hasRedactedContent,
+  modelForExport,
   modelFromModelStore
 } from 'src/utils';
 import { ModelStore } from 'src/types';
@@ -57,6 +59,16 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
       return modelFromModelStore(state);
     })
   );
+
+  // lw-052: hidden layers are left out, and the Redacted layer unless
+  // the export includes it.
+  const [includeRedacted, setIncludeRedacted] = useState(false);
+  const hasRedacted = useMemo(() => {
+    return hasRedactedContent(model);
+  }, [model]);
+  const exportModel = useMemo(() => {
+    return modelForExport(model, { includeRedacted });
+  }, [model, includeRedacted]);
 
   const unprojectedBounds = useMemo(() => {
     return getUnprojectedBounds();
@@ -133,7 +145,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
     // the user must re-run the async generate step to repopulate it.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setImageData(undefined);
-  }, [showGrid, backgroundColor, transparent]);
+  }, [showGrid, backgroundColor, transparent, includeRedacted]);
 
   return (
     <AppDialog open onClose={onClose} title="Export as image" maxWidth="sm">
@@ -173,7 +185,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                   editorMode="NON_INTERACTIVE"
                   onModelUpdated={exportImage}
                   initialData={{
-                    ...model,
+                    ...exportModel,
                     fitToView: true,
                     view: currentView
                   }}
@@ -249,6 +261,20 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                   />
                 }
               />
+              {hasRedacted && (
+                <FormControlLabel
+                  label="Include redacted content"
+                  control={
+                    <Checkbox
+                      size="small"
+                      checked={includeRedacted}
+                      onChange={(event) => {
+                        setIncludeRedacted(event.target.checked);
+                      }}
+                    />
+                  }
+                />
+              )}
               {!transparent && (
                 <FormControlLabel
                   label="Background color"

@@ -5,18 +5,22 @@ import { useSceneStore } from 'src/stores/sceneStore';
 import { useHistoryStore } from 'src/stores/historyStore';
 import type { State } from 'src/stores/reducers/types';
 import * as reducers from 'src/stores/reducers';
-import type { Projection } from 'src/types';
-import { getItemByIdOrThrow } from 'src/utils';
+import type { Layer, Projection } from 'src/types';
+import { filterViewByLayers, getItemByIdOrThrow } from 'src/utils';
+import { useLayerFilter } from './sceneLists';
 import { useSceneItems } from './scene/useSceneItems';
 import { useSceneConnectors } from './scene/useSceneConnectors';
 import { useSceneShapes } from './scene/useSceneShapes';
 import { useSceneClipboard } from './scene/useSceneClipboard';
 import { useSceneGroups } from './scene/useSceneGroups';
+import { useSceneLayers } from './scene/useSceneLayers';
 import {
   CONNECTOR_DEFAULTS,
   RECTANGLE_DEFAULTS,
   TEXTBOX_DEFAULTS
 } from 'src/config';
+
+const EMPTY_LAYERS: Layer[] = [];
 
 // QUA-13: useScene owns every store subscription and the setState /
 // undo / redo chokepoint; the domain operations live in ./scene/*.
@@ -37,16 +41,21 @@ export const useScene = () => {
     return getItemByIdOrThrow(model.views, currentViewId).value;
   }, [currentViewId, model.views]);
 
+  const leftOut = useLayerFilter();
+  const visibleView = useMemo(() => {
+    return filterViewByLayers(currentView, leftOut);
+  }, [currentView, leftOut]);
+
   const items = useMemo(() => {
-    return currentView.items ?? [];
-  }, [currentView.items]);
+    return visibleView.items ?? [];
+  }, [visibleView.items]);
 
   const colors = useMemo(() => {
     return model.colors;
   }, [model.colors]);
 
   const connectors = useMemo(() => {
-    return (currentView.connectors ?? []).map((connector) => {
+    return (visibleView.connectors ?? []).map((connector) => {
       const sceneConnector = scene.connectors[connector.id];
 
       return {
@@ -55,19 +64,19 @@ export const useScene = () => {
         ...sceneConnector
       };
     });
-  }, [currentView.connectors, scene.connectors]);
+  }, [visibleView.connectors, scene.connectors]);
 
   const rectangles = useMemo(() => {
-    return (currentView.rectangles ?? []).map((rectangle) => {
+    return (visibleView.rectangles ?? []).map((rectangle) => {
       return {
         ...RECTANGLE_DEFAULTS,
         ...rectangle
       };
     });
-  }, [currentView.rectangles]);
+  }, [visibleView.rectangles]);
 
   const textBoxes = useMemo(() => {
-    return (currentView.textBoxes ?? []).map((textBox) => {
+    return (visibleView.textBoxes ?? []).map((textBox) => {
       const sceneTextBox = scene.textBoxes[textBox.id];
 
       return {
@@ -76,7 +85,7 @@ export const useScene = () => {
         ...sceneTextBox
       };
     });
-  }, [currentView.textBoxes, scene.textBoxes]);
+  }, [visibleView.textBoxes, scene.textBoxes]);
 
   const getState = useCallback(() => {
     return {
@@ -180,6 +189,7 @@ export const useScene = () => {
     currentViewId,
     currentView
   });
+  const layerOps = useSceneLayers({ getState, setState, currentViewId });
   const clipboardOps = useSceneClipboard({
     getState,
     setState,
@@ -194,6 +204,8 @@ export const useScene = () => {
     rectangles,
     textBoxes,
     currentView,
+    // lw-052: the current view as drawn, less its hidden layers.
+    visibleView,
     // How the current view is drawn (lw-050): isometric or flat.
     projection: currentView.kind ?? 'iso',
     setViewKind,
@@ -202,6 +214,9 @@ export const useScene = () => {
     ...shapeOps,
     ...clipboardOps,
     ...groupOps,
+    ...layerOps,
+    // lw-052: the diagram's layers; the base layer is never listed.
+    layers: model.layers ?? EMPTY_LAYERS,
     undo,
     redo
   };

@@ -129,7 +129,8 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     ungroupSelection,
     undo,
     redo,
-    currentView
+    currentView,
+    visibleView
   } = useScene();
   const { fitToView, fitToSelection } = useDiagramUtils();
   const toggleTheme = useThemeToggle();
@@ -386,20 +387,21 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         // === Select all — UXA-07 ===
         // Connector anchors are excluded for the same reason the marquee
         // excludes them: they are sub-parts, not top-level items. Selecting
-        // is editing here: the selection drives the edit panels.
+        // is editing here: the selection drives the edit panels. What a
+        // hidden layer holds is not selected (lw-052).
         case 'select-all': {
           if (!isEditable) return;
           const all: ItemReference[] = [
-            ...(currentView.items ?? []).map((i) => {
+            ...(visibleView.items ?? []).map((i) => {
               return { type: 'ITEM' as const, id: i.id };
             }),
-            ...(currentView.textBoxes ?? []).map((t) => {
+            ...(visibleView.textBoxes ?? []).map((t) => {
               return { type: 'TEXTBOX' as const, id: t.id };
             }),
-            ...(currentView.connectors ?? []).map((c) => {
+            ...(visibleView.connectors ?? []).map((c) => {
               return { type: 'CONNECTOR' as const, id: c.id };
             }),
-            ...(currentView.rectangles ?? []).map((r) => {
+            ...(visibleView.rectangles ?? []).map((r) => {
               return { type: 'RECTANGLE' as const, id: r.id };
             })
           ];
@@ -687,6 +689,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     fitToView,
     fitToSelection,
     currentView,
+    visibleView,
     toggleTheme
   ]);
 };

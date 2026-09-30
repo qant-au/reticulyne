@@ -283,12 +283,49 @@ describe('scene -> model -> scene', () => {
     const update = modelToSceneUpdate(model, context);
     expect(update.viewKinds).toEqual(['iso', 'schematic']);
     expect(update.objectFields).toEqual(['name', 'description', 'icon']);
-    expect(update.preserve).toEqual({
-      placement: ['layer'],
-      connector: ['connection', 'layer'],
-      rectangle: ['layer'],
-      textBox: ['layer']
+    // lw-052: layers are Reticulyne's now, so only connection is kept.
+    expect(update.preserve).toEqual({ connector: ['connection'] });
+    expect(update.set?.layers).toEqual([{ id: 'notes', name: 'Notes' }]);
+  });
+
+  test('layers are read into the model and written back', () => {
+    const { model, context } = sceneToModel(richScene());
+    expect(model.layers).toEqual([{ id: 'notes', name: 'Notes' }]);
+    const net = model.views.find((v) => {
+      return v.id === 'net';
+    })!;
+    expect(net.items[0].layerId).toBe('notes');
+    expect(net.connectors?.[0].layerId).toBe('notes');
+    expect(net.rectangles?.[0].layerId).toBe('notes');
+    expect(net.textBoxes?.[0].layerId).toBe('redacted');
+    expect(modelSchema.safeParse(model).success).toBe(true);
+
+    const hidden = {
+      ...model,
+      layers: [{ id: 'notes', name: 'Notes', visible: false }],
+      views: model.views.map((v) => {
+        if (v.id !== 'net') return v;
+        return {
+          ...v,
+          textBoxes: v.textBoxes?.map((t) => {
+            const rest = { ...t };
+            delete rest.layerId;
+            return rest;
+          })
+        };
+      })
+    };
+    const saved = sceneFromModel(hidden, context);
+    expectValid(saved);
+    expect(saved.layers).toEqual([
+      { id: 'notes', name: 'Notes', visible: false }
+    ]);
+    const view = saved.views!.find((v) => {
+      return v.id === 'net';
     });
+    expect(
+      view && view.kind !== 'plan' && view.textBoxes?.[0]
+    ).not.toHaveProperty('layer');
   });
 });
 

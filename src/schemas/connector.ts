@@ -74,6 +74,7 @@ export const connectorSchema = z
     // Undefined falls back to the legacy "reverse iff direction ===
     // END_TO_START" rule.
     animationFlow: z.enum(connectorAnimationFlowOptions).optional(),
-    anchors: z.array(anchorSchema).max(SCHEMA_LIMITS.ANCHORS)
+    anchors: z.array(anchorSchema).max(SCHEMA_LIMITS.ANCHORS),
+    layerId: id.optional()
   })
   .strict();

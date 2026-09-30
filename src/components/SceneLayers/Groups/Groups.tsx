@@ -14,7 +14,8 @@ const PAD = 0.4;
 // The group being edited (double-click) gets a stronger outline.
 export const Groups = () => {
   const theme = useTheme();
-  const { currentView } = useScene();
+  // lw-052: a group is drawn around the members that are shown.
+  const { visibleView: currentView } = useScene();
   const editingGroupId = useUiStateStore((state) => {
     return state.editingGroupId;
   });

@@ -10,6 +10,7 @@ import type {
   Connector as ConnectorType,
   DiagramPatch,
   InitialData,
+  Layer,
   NodeInfo,
   NodePatch,
   ReticulyneProps,
@@ -481,6 +482,40 @@ const useReticulyne = () => {
     [ModelActions, changeView, uiStateActions]
   );
 
+  // lw-052: diagram layers. Showing or hiding one is how a host serves one
+  // diagram to several audiences, so, like setView, it is allowed in every
+  // editor mode. It is saved with the diagram and not recorded in undo.
+  const getLayers = useCallback((): Layer[] => {
+    return (ModelActions.get().layers ?? []).map((layer) => {
+      return { ...layer };
+    });
+  }, [ModelActions]);
+  const setLayerVisible = useCallback(
+    (layerId: string, visible: boolean): void => {
+      const layers = ModelActions.get().layers ?? [];
+      if (
+        !layers.some((layer) => {
+          return layer.id === layerId;
+        })
+      ) {
+        console.warn(
+          `[reticulyne] setLayerVisible: no layer with id "${layerId}".`
+        );
+        return;
+      }
+      ModelActions.set({
+        layers: layers.map((layer) => {
+          if (layer.id !== layerId) return layer;
+          // Visible is the default, and is stored as nothing.
+          const next = { ...layer, visible: false };
+          if (visible) delete (next as Partial<Layer>).visible;
+          return next;
+        })
+      });
+    },
+    [ModelActions]
+  );
+
   // 1.2: the diagram title. setTitle goes through the gated Model.set, so
   // it is EDITABLE-only and schema-validated like every other model write
   // (over 100 characters is refused through onValidationError). A blank
@@ -853,6 +888,14 @@ const useReticulyne = () => {
      * editor mode; clears the selection; warns and no-ops on an unknown id.
      */
     setView,
+    /** lw-052: the diagram's layers (the base layer is never listed). */
+    getLayers,
+    /**
+     * lw-052: show or hide a layer by id. Allowed in every editor mode;
+     * saved with the diagram; not recorded in undo; warns and no-ops on
+     * an unknown id. The Redacted layer is not listed and cannot be hidden.
+     */
+    setLayerVisible,
     /** Set the zoom level directly (clamped to the editor's min/max). */
     setZoom,
     /** Step the zoom level up by one increment. */

@@ -6,6 +6,7 @@ import { ItemReference } from 'src/types';
 import { connectorsFirst } from 'src/utils';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
+import { LayerSection } from '../components/LayerSection';
 import { ArrangeSection } from '../components/ArrangeSection';
 import { GroupSection } from '../components/GroupSection';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
@@ -136,6 +137,7 @@ export const MultiSelectControls = () => {
         </PanelSection>
       )}
       <GroupSection selection={selection} />
+      <LayerSection targets={selection} />
       <ArrangeSection selection={selection} />
       <LayerOrderSection
         targets={orderable}

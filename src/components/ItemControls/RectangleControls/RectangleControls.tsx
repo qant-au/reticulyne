@@ -7,6 +7,7 @@ import { useColor } from 'src/hooks/useColor';
 import { HexField } from './HexField';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
+import { LayerSection } from '../components/LayerSection';
 import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 const inlineSectionLabel = {
@@ -79,6 +80,7 @@ export const RectangleControls = ({ id }: Props) => {
           }}
         />
       </Box>
+      <LayerSection targets={[{ type: 'RECTANGLE', id }]} />
       <LayerOrderSection targets={[{ type: 'RECTANGLE', id }]} />
       <PanelSection>
         <Box>

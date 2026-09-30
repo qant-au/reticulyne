@@ -26,8 +26,8 @@ import { CUSTOM_ICON_COLLECTION } from 'src/utils/iconUpload';
 // The editor works on its own Model. A scene is what it opens and saves:
 // on load the scene's iso and schematic views become Reticulyne views, and
 // on save the model is merged back into the scene that was opened, so plan
-// views, connections, object props, ports and links, layers and anything
-// else Reticulyne does not show survive the round trip.
+// views, connections, object props, ports and links, and anything else
+// Reticulyne does not show survive the round trip.
 
 export type DiagramKind = DiagramView['kind'];
 
@@ -83,7 +83,8 @@ const connectorToScene = (c: Connector): SceneConnector => {
     glyph: c.glyph,
     animated: c.animated,
     animationRate: c.animationRate,
-    animationFlow: c.animationFlow
+    animationFlow: c.animationFlow,
+    layer: c.layerId
   });
 };
 
@@ -102,7 +103,8 @@ const viewToScene = (view: View): DiagramView => {
             object: item.id,
             tile: item.tile,
             labelHeight: item.labelHeight,
-            group: item.parentGroupId
+            group: item.parentGroupId,
+            layer: item.layerId
           });
         })
       : undefined,
@@ -117,7 +119,8 @@ const viewToScene = (view: View): DiagramView => {
         outlineColor: r.outlineColor,
         transparency: r.transparency,
         zIndex: r.zIndex,
-        group: r.parentGroupId
+        group: r.parentGroupId,
+        layer: r.layerId
       });
     }),
     textBoxes: view.textBoxes?.map((t: TextBox) => {
@@ -127,7 +130,8 @@ const viewToScene = (view: View): DiagramView => {
         content: t.content,
         fontSize: t.fontSize,
         orientation: t.orientation,
-        group: t.parentGroupId
+        group: t.parentGroupId,
+        layer: t.layerId
       });
     }),
     groups: view.groups?.map((g: Group) => {
@@ -162,10 +166,7 @@ export const modelToSceneUpdate = (
     objects: model.items.map(itemToObject),
     objectFields: ['name', 'description', 'icon'],
     preserve: {
-      placement: ['layer'],
-      connector: ['connection', 'layer'],
-      rectangle: ['layer'],
-      textBox: ['layer']
+      connector: ['connection']
     },
     set: {
       title: model.title,
@@ -173,7 +174,11 @@ export const modelToSceneUpdate = (
       // An empty list is left out when the opened scene had none, so a
       // scene without icons or colours saves without them.
       ...(model.icons.length || opened.icons ? { icons: model.icons } : {}),
-      ...(model.colors.length || opened.colors ? { colors: model.colors } : {})
+      ...(model.colors.length || opened.colors ? { colors: model.colors } : {}),
+      // lw-052: likewise for layers.
+      ...(model.layers?.length || opened.layers
+        ? { layers: model.layers ?? [] }
+        : {})
     }
   };
 };
@@ -262,7 +267,8 @@ const viewFromScene = (view: DiagramView): View => {
         id: p.object,
         tile: p.tile,
         labelHeight: p.labelHeight,
-        parentGroupId: p.group
+        parentGroupId: p.group,
+        layerId: p.layer
       });
     }),
     connectors: view.connectors?.map((c) => {
@@ -277,7 +283,8 @@ const viewFromScene = (view: DiagramView): View => {
         animated: c.animated,
         animationRate: c.animationRate,
         animationFlow: c.animationFlow,
-        anchors: c.anchors.map(anchorFromScene)
+        anchors: c.anchors.map(anchorFromScene),
+        layerId: c.layer
       });
     }),
     rectangles: view.rectangles?.map((r) => {
@@ -290,7 +297,8 @@ const viewFromScene = (view: DiagramView): View => {
         zIndex: r.zIndex,
         from: r.from,
         to: r.to,
-        parentGroupId: r.group
+        parentGroupId: r.group,
+        layerId: r.layer
       });
     }),
     textBoxes: view.textBoxes?.map((t) => {
@@ -300,7 +308,8 @@ const viewFromScene = (view: DiagramView): View => {
         content: t.content,
         fontSize: t.fontSize,
         orientation: t.orientation,
-        parentGroupId: t.group
+        parentGroupId: t.group,
+        layerId: t.layer
       });
     }),
     groups: view.groups?.map((g) => {
@@ -352,7 +361,8 @@ export const sceneToModel = (
     items,
     views: diagramViews.map(viewFromScene),
     icons: scene.icons ?? [],
-    colors: scene.colors ?? []
+    colors: scene.colors ?? [],
+    layers: scene.layers
   });
   return {
     model,

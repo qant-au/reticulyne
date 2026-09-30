@@ -32,6 +32,13 @@ const ExportSvgDialog = lazy(() => {
     return { default: m.ExportSvgDialog };
   });
 });
+const RedactedExportDialog = lazy(() => {
+  return import('src/components/RedactedExportDialog/RedactedExportDialog').then(
+    (m) => {
+      return { default: m.RedactedExportDialog };
+    }
+  );
+});
 const KeyboardShortcutsDialog = lazy(() => {
   return import('src/components/KeyboardShortcutsDialog/KeyboardShortcutsDialog').then(
     (m) => {
@@ -71,6 +78,12 @@ export const DialogLayer = ({
           <ExportImageDialog onClose={onCloseDialog} />
         )}
         {dialog === 'EXPORT_SVG' && <ExportSvgDialog onClose={onCloseDialog} />}
+        {dialog === 'EXPORT_JSON' && (
+          <RedactedExportDialog format="JSON" onClose={onCloseDialog} />
+        )}
+        {dialog === 'EXPORT_PDF' && (
+          <RedactedExportDialog format="PDF" onClose={onCloseDialog} />
+        )}
         {dialog === 'RENAME_DIAGRAM' && (
           <RenameDiagramDialog onClose={onCloseDialog} />
         )}

@@ -65,7 +65,6 @@ export const ToolbarSlots = ({
         <Surface
           sx={{
             position: 'absolute',
-            width: '360px',
             // A visible scrollbar when the content is taller than the
             // panel: it was hidden, so the bottom of the inspector (the
             // Redacted layer caption, Delete) looked cut off with nothing
@@ -75,6 +74,11 @@ export const ToolbarSlots = ({
           }}
           style={{
             left: appPadding.x,
+            // 360px, narrowed on a phone so it stops a padding short of
+            // the right edge; at 390px it ran 9px off (sweep 2026-09-30).
+            width: rendererSize.width
+              ? Math.min(360, rendererSize.width - appPadding.x * 2)
+              : 360,
             top: appPadding.y * 2 + spacing(2),
             maxHeight: rendererSize.height - appPadding.y * 6
           }}

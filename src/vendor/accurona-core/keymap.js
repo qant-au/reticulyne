@@ -96,6 +96,8 @@ export const RETICULYNE_BINDINGS = [
     { action: 'zoom-in', label: 'Zoom in', section: 'View', chords: [k('=', { shift: 'any' }), k('+', { shift: 'any' })], editing: false },
     { action: 'zoom-out', label: 'Zoom out', section: 'View', chords: [k('-', { shift: 'any' }), k('_', { shift: 'any' })], editing: false },
     { action: 'toggle-highlight', label: 'Toggle item highlighting', section: 'View', chords: [c('KeyI', { alt: true })], editing: false },
+    { action: 'floor-up', label: 'Show the floor above', section: 'View', chords: [k('ArrowUp', { alt: true })], editing: false },
+    { action: 'floor-down', label: 'Show the floor below', section: 'View', chords: [k('ArrowDown', { alt: true })], editing: false },
     gesture('add-on-tile', 'Add an item on an empty tile', 'Double-click', true),
     gesture('enter-group', 'Work inside a group', 'Double-click the group; Esc leaves it'),
     gesture('connect', 'Connect two items', 'Drag from a port', true)
@@ -135,7 +137,7 @@ const DIFFERENCES_SHARED = [
         why: 'Isometric items are not symmetric, and a floor plan object is rotated, not mirrored.'
     },
     { excalidraw: 'Tab, Shift + Tab', action: 'change shape type', here: 'unbound', why: 'No free-form shapes.' },
-    { excalidraw: 'Ctrl/Cmd + arrow, Alt + arrow', action: 'create and walk a flowchart', here: 'unbound', why: 'Flowcharting.' },
+    { excalidraw: 'Ctrl/Cmd + arrow, Alt + arrow', action: 'create and walk a flowchart', here: 'Reticulyne: Alt + Up / Down change floor; the rest unbound', why: 'Flowcharting.' },
     { excalidraw: 'Ctrl/Cmd + K', action: 'link', here: 'unbound', why: 'No links on the canvas yet.' },
     { excalidraw: 'Ctrl/Cmd + Alt + C / V', action: 'copy and paste styles', here: 'unbound', why: 'No style clipboard.' },
     {

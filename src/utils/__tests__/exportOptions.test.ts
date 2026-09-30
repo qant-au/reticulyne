@@ -18,6 +18,7 @@ import {
   DOWNLOAD_REVOKE_DELAY_MS,
   downloadFile,
   exportAsPdf,
+  exportAsImage,
   filenameForTitle
 } from '../exportOptions';
 
@@ -168,6 +169,26 @@ describe('exportAsPdf (FEA4-04)', () => {
 
     expect(output).toHaveBeenCalledWith('blob');
     expect(clicked.at(-1)?.download).toMatch(/^reticulyne-export-.*\.pdf$/);
+  });
+});
+
+describe('exportAsImage', () => {
+  // Sweep 2026-09-30: one image that would not load (an <img src="">)
+  // made html-to-image reject the whole capture with a DOM Event, so
+  // Export as PDF did nothing. A broken image is left out instead.
+  test('leaves an image that will not load out, rather than failing', async () => {
+    const { toPng } = jest.requireMock('html-to-image') as {
+      toPng: jest.Mock;
+    };
+    toPng.mockClear();
+    await exportAsImage(document.createElement('div') as HTMLDivElement);
+    const options = toPng.mock.calls[0][1] as {
+      onImageErrorHandler?: (e: Event) => unknown;
+    };
+    expect(typeof options.onImageErrorHandler).toBe('function');
+    expect(() => {
+      return options.onImageErrorHandler?.(new Event('error'));
+    }).not.toThrow();
   });
 });
 

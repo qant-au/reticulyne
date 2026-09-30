@@ -38,6 +38,18 @@ describe('useIcon', () => {
     expect(result.current.icon).toBe(DEFAULT_ICON);
   });
 
+  test('draws no image for an item with no icon', () => {
+    // An <img src=""> loads the page itself as an image: a broken image
+    // on the canvas, and the rejection that broke Export as PDF.
+    const { result } = renderHook(
+      () => {
+        return useIcon(undefined);
+      },
+      { wrapper: Wrapper }
+    );
+    expect(result.current.iconComponent).toBeNull();
+  });
+
   test('returns the matching icon when present', () => {
     const { result } = renderHook(
       () => {

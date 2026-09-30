@@ -106,7 +106,12 @@ export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
 
   const imageData = await toPng(el, {
     ...size,
-    cacheBust: true
+    cacheBust: true,
+    // An image that will not load (a missing icon, an empty src) is left
+    // out of the picture. Without this html-to-image rejects the whole
+    // capture with the image's DOM error Event, and the export silently
+    // did nothing (sweep 2026-09-30, Export as PDF).
+    onImageErrorHandler: () => {}
   });
 
   return imageData;

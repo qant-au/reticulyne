@@ -69,6 +69,12 @@ export const useExportPdf = () => {
       uiStateActions.setDialog('EXPORT_PDF');
       return;
     }
-    await download(true);
+    // A menu click has nowhere to send a rejection, so a failed capture
+    // was an unhandled one and nothing else: say what went wrong.
+    try {
+      await download(true);
+    } catch (err) {
+      console.error('[reticulyne] PDF export failed:', err);
+    }
   }, [views, uiStateActions, download]);
 };

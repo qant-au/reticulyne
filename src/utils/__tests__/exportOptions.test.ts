@@ -19,7 +19,8 @@ import {
   downloadFile,
   exportAsPdf,
   exportAsImage,
-  filenameForTitle
+  filenameForTitle,
+  waitForImages
 } from '../exportOptions';
 
 // Stub html-to-image so exportAsImage resolves to a known PNG data URL
@@ -173,22 +174,86 @@ describe('exportAsPdf (FEA4-04)', () => {
 });
 
 describe('exportAsImage', () => {
-  // Sweep 2026-09-30: one image that would not load (an <img src="">)
-  // made html-to-image reject the whole capture with a DOM Event, so
-  // Export as PDF did nothing. A broken image is left out instead.
-  test('leaves an image that will not load out, rather than failing', async () => {
+  const imgWith = (decode: () => Promise<void>) => {
+    const img = document.createElement('img');
+    img.setAttribute('src', 'data:image/svg+xml,%3Csvg%3E%3C/svg%3E');
+    img.setAttribute('loading', 'lazy');
+    Object.defineProperty(img, 'decode', { value: jest.fn(decode) });
+    return img;
+  };
+
+  // Sweep 2026-09-30 (A14): node icons are loading="lazy", and the export
+  // dialog renders its editor off screen, so the lazy icons never loaded
+  // and the PNG drew labels with no icons.
+  test('waits for every image, lazy ones made eager, before capturing', async () => {
     const { toPng } = jest.requireMock('html-to-image') as {
       toPng: jest.Mock;
     };
     toPng.mockClear();
-    await exportAsImage(document.createElement('div') as HTMLDivElement);
-    const options = toPng.mock.calls[0][1] as {
-      onImageErrorHandler?: (e: Event) => unknown;
+    const el = document.createElement('div');
+    let resolveDecode: () => void = () => {};
+    const img = imgWith(() => {
+      return new Promise<void>((resolve) => {
+        resolveDecode = resolve;
+      });
+    });
+    el.appendChild(img);
+    const pending = exportAsImage(el as HTMLDivElement);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(img.getAttribute('loading')).toBe('eager');
+    expect(toPng).not.toHaveBeenCalled();
+    resolveDecode();
+    await expect(pending).resolves.toBe('data:image/png;base64,FAKEPNG');
+    expect(toPng).toHaveBeenCalledTimes(1);
+  });
+
+  test('fails with an Error, never drops an icon, when one will not load', async () => {
+    const { toPng } = jest.requireMock('html-to-image') as {
+      toPng: jest.Mock;
     };
-    expect(typeof options.onImageErrorHandler).toBe('function');
-    expect(() => {
-      return options.onImageErrorHandler?.(new Event('error'));
-    }).not.toThrow();
+    toPng.mockClear();
+    const el = document.createElement('div');
+    el.appendChild(
+      imgWith(() => {
+        return Promise.reject(new Error('EncodingError'));
+      })
+    );
+    await expect(exportAsImage(el as HTMLDivElement)).rejects.toThrow(
+      /did not load for the export/
+    );
+    expect(toPng).not.toHaveBeenCalled();
+  });
+
+  test('an image that times out fails the export', async () => {
+    const el = document.createElement('div');
+    el.appendChild(
+      imgWith(() => {
+        return new Promise<void>(() => {});
+      })
+    );
+    await expect(waitForImages(el, 10)).rejects.toThrow(/1 image/);
+  });
+
+  // html-to-image rejects with a bare DOM Event for an image it cannot
+  // embed (sweep 2026-09-30, Export as PDF); the export turns that into an
+  // Error that says so instead of an empty rejection or a silent gap.
+  test('an image html-to-image cannot draw fails with a real Error', async () => {
+    const { toPng } = jest.requireMock('html-to-image') as {
+      toPng: jest.Mock;
+    };
+    toPng.mockImplementationOnce(
+      async (
+        _el: unknown,
+        opts: { onImageErrorHandler: (e: Event) => void }
+      ) => {
+        opts.onImageErrorHandler(new Event('error'));
+        return 'data:image/png;base64,FAKEPNG';
+      }
+    );
+    await expect(
+      exportAsImage(document.createElement('div') as HTMLDivElement)
+    ).rejects.toThrow(/could not be drawn/);
   });
 });
 

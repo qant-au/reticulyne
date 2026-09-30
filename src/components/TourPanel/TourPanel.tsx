@@ -49,10 +49,32 @@ export const TourPanel = () => {
   const startRef = useRef<HTMLButtonElement>(null);
   const running = tourState !== null;
   const stepIndex = tourState?.index;
+  // Escape ends the tour from wherever focus is (the canvas, the page),
+  // and focus returns to Start tour, as it does from End tour. Noted in the
+  // capture phase, before the shortcut handler ends the tour.
+  const endedByEscape = useRef(false);
   useEffect(() => {
+    if (!running) return undefined;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') endedByEscape.current = true;
+    };
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true);
+    };
+  }, [running]);
+  useEffect(() => {
+    const byEscape = endedByEscape.current && !running;
+    endedByEscape.current = false;
+    if (byEscape && startRef.current) {
+      startRef.current.focus();
+      return;
+    }
     if (!hadFocus.current) return;
-    const active = document.activeElement;
-    if (active && active !== document.body) return;
+    // A button that has just disabled itself (Previous at step 1) still
+    // holds focus here; the browser drops it to the page a moment later.
+    const active = document.activeElement as HTMLButtonElement | null;
+    if (active && active !== document.body && !active.disabled) return;
     const target = running
       ? nextRef.current
       : (startRef.current ?? uiStateActions.get().rendererEl);
@@ -63,6 +85,12 @@ export const TourPanel = () => {
       hadFocus.current = true;
     },
     onBlur: (e: FocusEvent<HTMLElement>) => {
+      // Previous disabling itself at step 1 blurs it to nothing: focus was
+      // lost, not moved away, so it still goes on to Next.
+      const lost = e.target as HTMLButtonElement;
+      if (e.relatedTarget === null && (lost.disabled || !lost.isConnected)) {
+        return;
+      }
       if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
         hadFocus.current = false;
       }

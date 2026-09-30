@@ -50,6 +50,28 @@ test('Finish, End tour and Escape return focus to Start tour', async ({
   await expect(start).toBeFocused();
 });
 
+// Sweep 2026-09-30, round 4: Previous disabling itself at step 1 dropped
+// focus to <body>, and Escape from there left it on <body>.
+test('Previous at step 2 hands focus to Next; Escape from anywhere returns to Start tour', async ({
+  page
+}) => {
+  await openReadonly(page);
+  const start = page.getByRole('button', { name: 'Start tour' });
+  await startFromKeyboard(page);
+  await page.getByRole('button', { name: 'Next' }).click();
+  await expect(page.getByText(/^Step 2 of/)).toBeVisible();
+  await page.getByRole('button', { name: 'Previous' }).click();
+  await expect(page.getByRole('button', { name: 'Previous' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Next' })).toBeFocused();
+
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement | null)?.blur();
+  });
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('tour-panel')).toHaveCount(0);
+  await expect(start).toBeFocused();
+});
+
 // Sweep 2026-09-30: Start tour sat after the canvas in the DOM, and Tab
 // walks the canvas's objects, so reaching it took 74 presses.
 test('Tab reaches Start tour before the canvas', async ({ page }) => {

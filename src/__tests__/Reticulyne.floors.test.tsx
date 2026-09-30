@@ -213,6 +213,32 @@ describe('floor switcher', () => {
     expect(probe.floors()).toEqual(['l1', 'ground']);
   });
 
+  test('Floor options > Rename floor opens the name field, as double-click does', async () => {
+    const probe = mount();
+    // A real click focuses the button, and the menu hands focus back to it
+    // on close - which is what blurred the field shut (sweep 2026-09-30).
+    const options = screen.getByRole('button', { name: 'Floor options' });
+    act(() => {
+      options.focus();
+      fireEvent.click(options);
+    });
+    act(() => {
+      fireEvent.click(screen.getByRole('menuitem', { name: 'Rename floor' }));
+    });
+    // The field waits for the menu to finish closing, so the focus the menu
+    // hands back to its button cannot blur it shut again.
+    const field = await screen.findByRole('textbox', { name: 'Floor name' });
+    expect(document.activeElement).toBe(field);
+    act(() => {
+      fireEvent.change(field, { target: { value: 'Basement' } });
+    });
+    act(() => {
+      fireEvent.keyDown(field, { key: 'Enter' });
+    });
+    expect(screen.getByTestId('floor-tab-ground').textContent).toBe('Basement');
+    expect(probe.floors()).toEqual(['ground', 'l1']);
+  });
+
   test('a read-only diagram cannot add, rename or delete floors', () => {
     mount({ editorMode: 'EXPLORABLE_READONLY' });
     expect(screen.getByTestId('floor-switcher')).toBeTruthy();

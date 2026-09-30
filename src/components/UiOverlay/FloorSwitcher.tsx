@@ -84,6 +84,10 @@ export const FloorSwitcher = () => {
   });
   const [renaming, setRenaming] = useState<string | null>(null);
   const [menu, setMenu] = useState<HTMLElement | null>(null);
+  // Rename floor waits for the menu to finish closing: the menu hands focus
+  // back to its button as it closes, which would blur the name field shut
+  // the moment it opened.
+  const [renameOnClose, setRenameOnClose] = useState(false);
   const opened = useUiStateStore((state) => {
     return state.sceneContext.opened;
   });
@@ -205,11 +209,20 @@ export const FloorSwitcher = () => {
             onClose={() => {
               setMenu(null);
             }}
+            slotProps={{
+              transition: {
+                onExited: () => {
+                  if (!renameOnClose) return;
+                  setRenameOnClose(false);
+                  setRenaming(currentView.id);
+                }
+              }
+            }}
           >
             <MenuItem
               onClick={() => {
                 setMenu(null);
-                setRenaming(currentView.id);
+                setRenameOnClose(true);
               }}
             >
               Rename floor

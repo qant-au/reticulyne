@@ -174,6 +174,74 @@ const rename = async (page: Page, title: string) => {
   await page.getByLabel('Title').press('Enter');
 };
 
+// At 390 the floor tabs ran on under the options, + and eye buttons ("Lab"
+// a sliver, "First flo" with no ellipsis) while the shown floor read "Gr...".
+test('at 390 the floor tabs stay in their own space, cut only with an ellipsis, the shown one last', async ({
+  page
+}) => {
+  await open(page, 390, 844, {
+    title: 'Sweep B building',
+    views: [
+      { id: 'g', name: 'Ground net' },
+      { id: 'f', name: 'First floor' },
+      { id: 'l', name: 'Lab' }
+    ],
+    save: true
+  });
+  await rename(page, 'Sweep B building two');
+  await expect(page.getByTestId('save-status')).toBeVisible();
+  const r = await page.getByTestId('floor-switcher').evaluate((sw) => {
+    const scroller = sw.firstElementChild as HTMLElement;
+    const s = scroller.getBoundingClientRect();
+    const buttons = [...sw.querySelectorAll('button')].filter((b) => {
+      return !scroller.contains(b);
+    });
+    const firstButton = Math.min(
+      ...buttons.map((b) => {
+        return b.getBoundingClientRect().left;
+      })
+    );
+    const tabs = [...scroller.querySelectorAll('[role="tab"]')].map((t) => {
+      const b = t.getBoundingClientRect();
+      const span = t.querySelector('span')!;
+      return {
+        active: t.getAttribute('aria-selected') === 'true',
+        left: b.left,
+        right: b.right,
+        cut: span.scrollWidth > span.clientWidth,
+        ellipsis: getComputedStyle(span).textOverflow === 'ellipsis'
+      };
+    });
+    return { s: { left: s.left, right: s.right }, firstButton, tabs };
+  });
+  expect(r.tabs.length).toBeGreaterThan(0);
+  for (const t of r.tabs) {
+    // Wholly inside the tab list, and the list clear of the buttons.
+    expect(t.left).toBeGreaterThanOrEqual(r.s.left - 1);
+    expect(t.right).toBeLessThanOrEqual(r.s.right + 1);
+    if (t.cut) expect(t.ellipsis).toBe(true);
+  }
+  expect(r.s.right).toBeLessThanOrEqual(r.firstButton + 1);
+  const active = r.tabs.find((t) => {
+    return t.active;
+  })!;
+  if (active.cut) {
+    for (const t of r.tabs) expect(t.cut).toBe(true);
+  }
+  // Every floor is still one tap or two away.
+  if (r.tabs.length < 3) {
+    await page.getByRole('button', { name: 'Floor options' }).click();
+    for (const name of ['Ground net', 'First floor', 'Lab']) {
+      await expect(page.getByRole('menuitem', { name })).toBeVisible();
+    }
+    await page.getByRole('menuitem', { name: 'Lab' }).click();
+    await expect(page.getByRole('tab', { name: 'Lab' })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    );
+  }
+});
+
 // At 390 the bar stopped at 276px (x57-333) under a zoom row spanning
 // x41-363, the title cut with ~30px unused.
 test('at 390 a long title uses the width of the row below', async ({ page }) => {

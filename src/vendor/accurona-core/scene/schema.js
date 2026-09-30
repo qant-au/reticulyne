@@ -189,10 +189,17 @@ export const diagramPlacementSchema = z.strictObject({
     layer: idSchema.optional(),
     locked: z.boolean().optional()
 });
+// The edge of an object's tile a connector end leaves by, named by the
+// grid direction that edge faces, so it means the same in the iso and
+// the flat view. Absent, the end docks on the tile's centre.
+export const ANCHOR_SIDES = ['+X', '-X', '+Y', '-Y'];
 export const anchorSchema = z.strictObject({
     id: idSchema,
     ref: z.union([
-        z.strictObject({ object: idSchema }),
+        z.strictObject({
+            object: idSchema,
+            side: z.enum(ANCHOR_SIDES).optional()
+        }),
         z.strictObject({ anchor: idSchema }),
         z.strictObject({ tile: tileSchema })
     ])

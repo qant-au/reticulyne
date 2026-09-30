@@ -6,7 +6,7 @@ import { useKeyboardShortcuts } from 'src/interaction/useKeyboardShortcuts';
 import { useSpacePan } from 'src/interaction/useSpacePan';
 import { Grid } from 'src/components/Grid/Grid';
 import { Cursor } from 'src/components/Cursor/Cursor';
-import { Nodes } from 'src/components/SceneLayers/Nodes/Nodes';
+import { Nodes, NodeLabels } from 'src/components/SceneLayers/Nodes/Nodes';
 import { Rectangles } from 'src/components/SceneLayers/Rectangles/Rectangles';
 import { Groups } from 'src/components/SceneLayers/Groups/Groups';
 import { Connectors } from 'src/components/SceneLayers/Connectors/Connectors';
@@ -175,9 +175,18 @@ export const Renderer = ({
       <SceneLayer>
         <Nodes />
       </SceneLayer>
-      {/* lw-053: above the nodes, so a stub's marker can be clicked */}
+      {/* lw-053: a stub's riser, above the nodes it leaves */}
       <SceneLayer>
-        <FloorStubs />
+        <FloorStubs part="riser" />
+      </SceneLayer>
+      {/* Node names above every icon and riser: a tall icon, or a riser,
+          drawn over a name hid it (sweep 2026-09-30). */}
+      <SceneLayer>
+        <NodeLabels />
+      </SceneLayer>
+      {/* lw-053: above the names, so a stub's marker can be clicked */}
+      <SceneLayer>
+        <FloorStubs part="marker" />
       </SceneLayer>
       {/* 2.1: above the nodes, or their icons hide the ports. */}
       <SceneLayer>

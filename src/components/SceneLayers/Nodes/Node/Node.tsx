@@ -16,29 +16,30 @@ interface Props {
   isDimmed?: boolean;
 }
 
-export const Node = ({ node, order, isDimmed }: Props) => {
-  const modelItem = useModelItem(node.id);
+// Where a node stands: an isometric node on its tile's bottom vertex, a
+// flat one centred on the tile.
+const useNodePosition = (node: ViewItem) => {
   const projection = useProjection();
-  const { iconComponent } = useIcon(modelItem?.icon, projection);
-  const NodeIndicator = useUiStateStore((state) => {
-    return state.nodeIndicatorComponent;
-  });
-
   const position = useMemo(() => {
-    // An isometric node stands on its tile's bottom vertex; a flat one is
-    // centred on the tile.
     return getTilePosition({
       tile: node.tile,
       origin: projection === 'schematic' ? 'CENTER' : 'BOTTOM',
       projection
     });
   }, [node.tile, projection]);
+  return { position, projection };
+};
 
-  const description = useMemo(() => {
-    if (!modelItem || isEmptyMarkdown(modelItem.description)) return null;
-
-    return modelItem.description;
-  }, [modelItem]);
+// The node's own layer (below its name): who it is, drawn as its icon, and
+// the host's indicator slot. Its name and description are NodeLabel, in a
+// layer above every node, so a tall icon never covers a name.
+export const Node = ({ node, order, isDimmed }: Props) => {
+  const modelItem = useModelItem(node.id);
+  const { position, projection } = useNodePosition(node);
+  const { iconComponent } = useIcon(modelItem?.icon, projection);
+  const NodeIndicator = useUiStateStore((state) => {
+    return state.nodeIndicatorComponent;
+  });
 
   if (!modelItem) return null;
 
@@ -60,36 +61,6 @@ export const Node = ({ node, order, isDimmed }: Props) => {
           top: position.y
         }}
       >
-        {(modelItem.name || description) && (
-          <Box
-            sx={{ position: 'absolute' }}
-            style={{ bottom: getProjectedTileSize(projection).height / 2 }}
-          >
-            <ExpandableLabel
-              maxWidth={250}
-              expandDirection="BOTTOM"
-              labelHeight={node.labelHeight ?? DEFAULT_LABEL_HEIGHT}
-            >
-              <Stack spacing={1}>
-                {modelItem.name && (
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      // Inherited, this was the page's black on the dark
-                      // theme's dark label background.
-                      color: 'text.primary'
-                    }}
-                  >
-                    {modelItem.name}
-                  </Typography>
-                )}
-                {!isEmptyMarkdown(modelItem.description) && (
-                  <MarkdownEditor value={modelItem.description} readOnly />
-                )}
-              </Stack>
-            </ExpandableLabel>
-          </Box>
-        )}
         {iconComponent && (
           <Box
             sx={{
@@ -105,6 +76,70 @@ export const Node = ({ node, order, isDimmed }: Props) => {
             {NodeIndicator({ item: modelItem, view: node })}
           </Box>
         )}
+      </Box>
+    </Box>
+  );
+};
+
+// A node's name and description, above the node where it always was.
+export const NodeLabel = ({ node, order, isDimmed }: Props) => {
+  const modelItem = useModelItem(node.id);
+  const { position, projection } = useNodePosition(node);
+
+  const description = useMemo(() => {
+    if (!modelItem || isEmptyMarkdown(modelItem.description)) return null;
+
+    return modelItem.description;
+  }, [modelItem]);
+
+  if (!modelItem || !(modelItem.name || description)) return null;
+
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        zIndex: order
+      }}
+      style={{
+        opacity: isDimmed ? 0.2 : 1,
+        transition: 'opacity 0.3s'
+      }}
+    >
+      <Box
+        sx={{ position: 'absolute' }}
+        style={{
+          left: position.x,
+          top: position.y
+        }}
+      >
+        <Box
+          sx={{ position: 'absolute' }}
+          style={{ bottom: getProjectedTileSize(projection).height / 2 }}
+        >
+          <ExpandableLabel
+            maxWidth={250}
+            expandDirection="BOTTOM"
+            labelHeight={node.labelHeight ?? DEFAULT_LABEL_HEIGHT}
+          >
+            <Stack spacing={1}>
+              {modelItem.name && (
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    // Inherited, this was the page's black on the dark
+                    // theme's dark label background.
+                    color: 'text.primary'
+                  }}
+                >
+                  {modelItem.name}
+                </Typography>
+              )}
+              {!isEmptyMarkdown(modelItem.description) && (
+                <MarkdownEditor value={modelItem.description} readOnly />
+              )}
+            </Stack>
+          </ExpandableLabel>
+        </Box>
       </Box>
     </Box>
   );

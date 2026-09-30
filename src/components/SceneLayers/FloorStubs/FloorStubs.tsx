@@ -24,14 +24,21 @@ import {
 // Stubs on one item stand side by side, this far apart.
 const SPREAD = 36;
 
+// A stub is drawn in two layers: the riser beneath the node labels, so it
+// never crosses a name (sweep 2026-09-30: it ran through "Core switch"),
+// and the marker above them, so it can always be clicked.
+export type StubPart = 'riser' | 'marker';
+
 const Stub = ({
   stub,
+  part,
   floorName,
   itemName,
   interactive,
   onFollow
 }: {
   stub: FloorStub;
+  part: StubPart;
   floorName: string;
   itemName: string;
   interactive: boolean;
@@ -47,47 +54,57 @@ const Stub = ({
   const Arrow = stub.direction === 'up' ? ArrowUpwardIcon : ArrowDownwardIcon;
   const label = `${floorName} · ${itemName || 'Untitled'}`;
 
+  if (part === 'riser') {
+    return (
+      <Box
+        data-testid={`floor-stub-riser-${stub.connectionId}-${stub.itemId}`}
+        sx={{ position: 'absolute', pointerEvents: 'none' }}
+      >
+        <Box
+          component="svg"
+          sx={{ position: 'absolute', overflow: 'visible' }}
+          style={{ left: x, top: y }}
+          width={1}
+          height={1}
+        >
+          <Box
+            component="line"
+            x1={0}
+            y1={0}
+            x2={0}
+            y2={rise}
+            strokeWidth={4}
+            strokeDasharray="8 6"
+            strokeLinecap="round"
+            sx={{
+              stroke: (theme) => {
+                return theme.palette.text.secondary;
+              }
+            }}
+          />
+          <Box
+            component="rect"
+            x={-7}
+            y={rise - 7}
+            width={14}
+            height={14}
+            transform={`rotate(45 0 ${rise})`}
+            sx={{
+              fill: (theme) => {
+                return theme.palette.primary.main;
+              }
+            }}
+          />
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box
       data-testid={`floor-stub-${stub.connectionId}-${stub.itemId}`}
       sx={{ position: 'absolute', pointerEvents: 'none' }}
     >
-      <Box
-        component="svg"
-        sx={{ position: 'absolute', overflow: 'visible' }}
-        style={{ left: x, top: y }}
-        width={1}
-        height={1}
-      >
-        <Box
-          component="line"
-          x1={0}
-          y1={0}
-          x2={0}
-          y2={rise}
-          strokeWidth={4}
-          strokeDasharray="8 6"
-          strokeLinecap="round"
-          sx={{
-            stroke: (theme) => {
-              return theme.palette.text.secondary;
-            }
-          }}
-        />
-        <Box
-          component="rect"
-          x={-7}
-          y={rise - 7}
-          width={14}
-          height={14}
-          transform={`rotate(45 0 ${rise})`}
-          sx={{
-            fill: (theme) => {
-              return theme.palette.primary.main;
-            }
-          }}
-        />
-      </Box>
       <Box
         role={interactive ? 'button' : undefined}
         tabIndex={interactive ? 0 : undefined}
@@ -142,7 +159,7 @@ const Stub = ({
   );
 };
 
-export const FloorStubs = memo(() => {
+export const FloorStubs = memo(({ part }: { part: StubPart }) => {
   const views = useModelStore((state) => {
     return state.views;
   });
@@ -217,6 +234,7 @@ export const FloorStubs = memo(() => {
           <Stub
             key={`${stub.connectionId}:${stub.itemId}`}
             stub={stub}
+            part={part}
             floorName={names.views.get(stub.remoteViewId) ?? ''}
             itemName={names.items.get(stub.remoteItemId) ?? ''}
             interactive={editorMode !== 'NON_INTERACTIVE'}

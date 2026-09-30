@@ -37,6 +37,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       enableDebugTools: false,
       enableAnimation: false,
       exportTheme: 'light' as const,
+      exportBackgroundColor: undefined,
       showTitleBar: undefined,
       showAlignmentGuides: true,
       searchOpen: false,
@@ -200,6 +201,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setExportTheme: (mode) => {
           set({ exportTheme: mode });
+        },
+        setExportBackgroundColor: (color) => {
+          set({ exportBackgroundColor: color });
         },
         setShowAlignmentGuides: (showAlignmentGuides) => {
           set({ showAlignmentGuides });

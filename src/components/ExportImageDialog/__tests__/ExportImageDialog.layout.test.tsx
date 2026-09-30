@@ -1,7 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import { render, cleanup, act, screen } from '@testing-library/react';
+import {
+  render,
+  cleanup,
+  act,
+  screen,
+  fireEvent
+} from '@testing-library/react';
 import { useEffect } from 'react';
 import Reticulyne from 'src/Reticulyne';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -97,4 +103,57 @@ test('while the preview renders, the loader has its size and the buttons are the
   expect(screen.getByRole('button', { name: 'Cancel' })).toBeTruthy();
   const download = screen.getByRole('button', { name: 'Download as PNG' });
   expect((download as HTMLButtonElement).disabled).toBe(true);
+});
+
+// Sweep 2026-09-30: an unlabelled colour input lay over the Background
+// colour button and took its clicks, and the chosen colour reset when the
+// dialog reopened.
+test('the Background color button opens a labelled picker and the colour survives a reopen', async () => {
+  act(() => {
+    render(
+      <Reticulyne initialData={diagram}>
+        <Probe />
+      </Reticulyne>
+    );
+  });
+  act(() => {
+    ui!.actions.setDialog('EXPORT_IMAGE');
+  });
+  const input = (await screen.findByLabelText('Background color', {
+    selector: 'input'
+  })) as HTMLInputElement;
+  expect(input.type).toBe('color');
+  expect(input.tabIndex).toBe(-1);
+  const button = screen.getByRole('button', { name: /^Background color #/ });
+  const clicked = jest.fn();
+  input.addEventListener('click', clicked);
+  act(() => {
+    fireEvent.click(button);
+  });
+  expect(clicked).toHaveBeenCalled();
+  act(() => {
+    fireEvent.change(input, { target: { value: '#ffe0e0' } });
+  });
+  expect(
+    screen.getByRole('button', { name: 'Background color #ffe0e0' })
+  ).toBeTruthy();
+
+  act(() => {
+    ui!.actions.setDialog(null);
+  });
+  act(() => {
+    ui!.actions.setDialog('EXPORT_SVG');
+  });
+  expect(
+    await screen.findByRole('button', { name: 'Background color #ffe0e0' })
+  ).toBeTruthy();
+  act(() => {
+    ui!.actions.setDialog(null);
+  });
+  act(() => {
+    ui!.actions.setDialog('EXPORT_IMAGE');
+  });
+  expect(
+    await screen.findByRole('button', { name: 'Background color #ffe0e0' })
+  ).toBeTruthy();
 });

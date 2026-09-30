@@ -4,10 +4,12 @@ import { Box, Button } from '@mui/material';
 export type Props = {
   hex: string;
   isActive?: boolean;
+  /** The accessible name; defaults to "Colour <hex>". */
+  label?: string;
   onClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
 };
 
-export const ColorSwatch = ({ hex, onClick, isActive }: Props) => {
+export const ColorSwatch = ({ hex, onClick, isActive, label }: Props) => {
   return (
     <Button
       onClick={onClick}
@@ -15,7 +17,7 @@ export const ColorSwatch = ({ hex, onClick, isActive }: Props) => {
       size="small"
       // Swatches were unnamed buttons, and the active one never looked
       // active: the old sx set transform to an object, which is not CSS.
-      aria-label={`Colour ${hex}`}
+      aria-label={label ?? `Colour ${hex}`}
       aria-pressed={isActive ?? false}
       sx={{ width: 40, height: 40, minWidth: 'auto' }}
     >

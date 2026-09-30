@@ -115,3 +115,32 @@ test('the PNG export can have a transparent background', async ({ page }) => {
   });
   expect(alpha).toBe(0);
 });
+
+// Sweep 2026-09-30: an unlabelled colour input lay over the Background
+// color button, which could not be clicked, and the colour reset on reopen.
+test('the Background color button is clickable, and the colour survives a reopen', async ({
+  page
+}) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle(/Reticulyne/);
+  const open = async () => {
+    await page.getByRole('button', { name: 'Main menu' }).click();
+    await page.getByRole('menuitem', { name: /Export as Image/i }).click();
+    return page.getByRole('dialog', { name: 'Export as image' });
+  };
+  let dialog = await open();
+  // A trial click fails if another element would receive it.
+  await dialog
+    .getByRole('button', { name: /^Background color #/ })
+    .click({ trial: true });
+  await dialog.getByLabel('Background color', { exact: true }).fill('#ffe0e0');
+  await expect(
+    dialog.getByRole('button', { name: 'Background color #ffe0e0' })
+  ).toBeVisible();
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(dialog).toBeHidden();
+  dialog = await open();
+  await expect(
+    dialog.getByRole('button', { name: 'Background color #ffe0e0' })
+  ).toBeVisible();
+});

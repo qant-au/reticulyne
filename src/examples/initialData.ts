@@ -1,4 +1,5 @@
 import { Colors, Icons, InitialData } from 'src/Reticulyne';
+import { accuronaIcons } from 'src/catalogue';
 import { flattenCollections } from 'src/vendor/isopacks/utils';
 import isoflowIsopack from 'src/vendor/isopacks/isoflow';
 import awsIsopack from 'src/vendor/isopacks/aws';
@@ -45,7 +46,9 @@ export const colors: Colors = [
   }
 ];
 
-export const icons: Icons = isopacks;
+// The isometric drawings of the Accurona elements catalogue items
+// cross-reference, so a placed item draws as its physical twin.
+export const icons: Icons = [...isopacks, ...accuronaIcons()];
 
 export const initialData: InitialData = {
   title: 'Airport management software system',

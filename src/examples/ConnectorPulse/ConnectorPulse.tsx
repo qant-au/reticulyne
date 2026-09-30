@@ -8,6 +8,7 @@ import Reticulyne, { useReticulyne } from 'src/Reticulyne';
 import { icons, colors } from '../initialData';
 import type { InitialData } from 'src/types';
 import { useExamplesThemeMode } from '../themeModeContext';
+import { useExamplesValidationError } from '../openErrorContext';
 
 const PULSE_CONNECTOR_ID = 'conn-pulse';
 
@@ -75,12 +76,14 @@ const PulseDriver = () => {
 
 export const ConnectorPulse = () => {
   const { themeMode } = useExamplesThemeMode();
+  const onValidationError = useExamplesValidationError();
   return (
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
       <Reticulyne
         initialData={pulseInitialData}
         editorMode="EXPLORABLE_READONLY"
         themeMode={themeMode}
+        onValidationError={onValidationError}
       >
         <PulseDriver />
       </Reticulyne>

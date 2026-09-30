@@ -13,6 +13,10 @@ import {
   ExamplesThemeModeProvider,
   useExamplesThemeMode
 } from './themeModeContext';
+import {
+  ExamplesOpenErrorAlert,
+  ExamplesOpenErrorProvider
+} from './openErrorContext';
 
 // The sidebar sits outside every example's <Reticulyne>, so it had no
 // theme of its own and stayed white on a dark diagram.
@@ -56,38 +60,41 @@ export const Examples = () => {
 
   return (
     <ExamplesThemeModeProvider>
-      <Box sx={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
-        <Box
-          sx={{
-            height: '100%',
-            marginLeft: isSidebarExpanded ? `${SIDEBAR_WIDTH}px` : 0,
-            width: isSidebarExpanded
-              ? `calc(100% - ${SIDEBAR_WIDTH}px)`
-              : '100%',
-            // Match the sidebar's 200ms ease-in-out so the diagram
-            // re-fits in lockstep with the rail sliding in/out.
-            transition: narrow
-              ? 'none'
-              : 'margin-left 200ms ease-in-out, width 200ms ease-in-out'
-          }}
-        >
-          {/* On a phone the example is keyed on the rail too: it fitted
+      <ExamplesOpenErrorProvider>
+        <Box sx={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+          <Box
+            sx={{
+              height: '100%',
+              marginLeft: isSidebarExpanded ? `${SIDEBAR_WIDTH}px` : 0,
+              width: isSidebarExpanded
+                ? `calc(100% - ${SIDEBAR_WIDTH}px)`
+                : '100%',
+              // Match the sidebar's 200ms ease-in-out so the diagram
+              // re-fits in lockstep with the rail sliding in/out.
+              transition: narrow
+                ? 'none'
+                : 'margin-left 200ms ease-in-out, width 200ms ease-in-out'
+            }}
+          >
+            {/* On a phone the example is keyed on the rail too: it fitted
               itself to the 130px left while the rail was open and kept
               that zoom after the rail closed. */}
-          {Example && (
-            <Example key={narrow ? String(isSidebarExpanded) : 'wide'} />
-          )}
+            {Example && (
+              <Example key={narrow ? String(isSidebarExpanded) : 'wide'} />
+            )}
+          </Box>
+          <SidebarTheme>
+            <ExamplesSidebar
+              examples={examples}
+              currentIndex={currentExample}
+              onSelect={setCurrentExample}
+              isExpanded={isSidebarExpanded}
+              onExpandedChange={setIsSidebarExpanded}
+            />
+            <ExamplesOpenErrorAlert />
+          </SidebarTheme>
         </Box>
-        <SidebarTheme>
-          <ExamplesSidebar
-            examples={examples}
-            currentIndex={currentExample}
-            onSelect={setCurrentExample}
-            isExpanded={isSidebarExpanded}
-            onExpandedChange={setIsSidebarExpanded}
-          />
-        </SidebarTheme>
-      </Box>
+      </ExamplesOpenErrorProvider>
     </ExamplesThemeModeProvider>
   );
 };

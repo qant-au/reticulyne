@@ -2,6 +2,7 @@ import Reticulyne from 'src/Reticulyne';
 import type { TourStep } from 'src/types';
 import { initialData } from '../initialData';
 import { useExamplesThemeMode } from '../themeModeContext';
+import { useExamplesValidationError } from '../openErrorContext';
 
 // lw-064: a short tour, offered by a Start tour button. The second and
 // third steps have no narration of their own, so they read the node's
@@ -18,11 +19,13 @@ const TOUR: TourStep[] = [
 
 export const ReadonlyMode = () => {
   const { themeMode } = useExamplesThemeMode();
+  const onValidationError = useExamplesValidationError();
   return (
     <Reticulyne
       initialData={{ ...initialData, fitToView: true }}
       editorMode="EXPLORABLE_READONLY"
       themeMode={themeMode}
+      onValidationError={onValidationError}
       tour={TOUR}
     />
   );

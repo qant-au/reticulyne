@@ -69,7 +69,9 @@ export const useImportFile = () => {
   const onValidationError = useUiStateStore((state) => {
     return state.onValidationError;
   });
-  const { load } = useInitialDataManager();
+  // The host's onValidationError hears a file that parses but is not a
+  // diagram too: without it that went to the console only.
+  const { load } = useInitialDataManager({ onValidationError });
 
   return useCallback(async () => {
     const fileInput = document.createElement('input');

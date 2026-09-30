@@ -9,3 +9,4 @@ export * from './textBox';
 export * from './group';
 export * from './layer';
 export * from './connection';
+export * from './tour';

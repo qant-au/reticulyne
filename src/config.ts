@@ -13,7 +13,6 @@ import {
 import { CoordsUtils } from 'src/utils';
 import { customVars } from './styles/theme';
 
-// TODO: This file could do with better organisation and convention for easier reading.
 export const UNPROJECTED_TILE_SIZE = 100;
 
 // Bounding-box ratio of a unit tile AFTER the isometric projection

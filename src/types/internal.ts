@@ -278,9 +278,7 @@ export interface ContextMenu {
 }
 
 // FEA5-04: clipboard contents. Snapshots the data needed to paste a
-// copy of the original later; connectors are deliberately excluded
-// for the same anchor-semantics reason that useScene.duplicateItem
-// skips them (see useScene.ts:328).
+// copy of the original later.
 export type ClipboardEntry =
   // The icon and colour an entry refers to travel with it, so a paste
   // into another diagram can add them there instead of leaving a

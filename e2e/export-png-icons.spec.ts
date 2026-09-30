@@ -30,29 +30,28 @@ const load = async (page: Page) => {
     { id: 'magenta', url: square('ff00ff') }
   ];
   await page.addInitScript((iconList) => {
-    (
-      window as unknown as { __RETICULYNE_E2E__: unknown }
-    ).__RETICULYNE_E2E__ = {
-      initialData: {
-        title: 'e2e icons',
-        icons: iconList.map((icon) => {
-          return { ...icon, name: icon.id, collection: 'test' };
-        }),
-        colors: [{ id: 'c', value: '#1f77b4' }],
-        items: iconList.map((icon) => {
-          return { id: icon.id, name: `Node ${icon.id}`, icon: icon.id };
-        }),
-        views: [
-          {
-            id: 'v',
-            name: 'Main',
-            items: iconList.map((icon, i) => {
-              return { id: icon.id, tile: { x: i * 4, y: -i * 3 } };
-            })
-          }
-        ]
-      }
-    };
+    (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
+      {
+        initialData: {
+          title: 'e2e icons',
+          icons: iconList.map((icon) => {
+            return { ...icon, name: icon.id, collection: 'test' };
+          }),
+          colors: [{ id: 'c', value: '#1f77b4' }],
+          items: iconList.map((icon) => {
+            return { id: icon.id, name: `Node ${icon.id}`, icon: icon.id };
+          }),
+          views: [
+            {
+              id: 'v',
+              name: 'Main',
+              items: iconList.map((icon, i) => {
+                return { id: icon.id, tile: { x: i * 4, y: -i * 3 } };
+              })
+            }
+          ]
+        }
+      };
   }, icons);
   await page.goto('/');
   await expect(page.getByText('Node red', { exact: true })).toBeVisible();
@@ -95,4 +94,64 @@ test('the PNG preview draws every icon, not only the first', async ({
   }, COLOURS);
 
   expect(found).toEqual(['blue', 'green', 'magenta', 'red']);
+});
+
+// Sweep 2026-09-30 (A14/A18): in the first preview of a session, and for
+// the icon Include redacted brings in, icons were drawn a whole icon
+// height below their nodes: an icon was placed by a size measured a frame
+// after it loaded, and the capture could come first. A later re-render
+// (after the sizes were known) drew them right, so a capture must match a
+// re-render of the same options. Real icons (a viewBox, no size) from
+// the sweep's fixture: plain squares did not show it.
+test('the first PNG preview matches a re-render: every icon on its node', async ({
+  page
+}) => {
+  const { readFile } = await import('node:fs/promises');
+  const scene = JSON.parse(
+    await readFile(`${__dirname}/fixtures/export-icons-scene.json`, 'utf8')
+  );
+  await page.addInitScript((s) => {
+    (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
+      { initialData: s };
+  }, scene);
+  await page.goto('/');
+  await expect(
+    page.getByText('Core Switch', { exact: true }).first()
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Export as Image' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Export as image' });
+  const preview = dialog.locator('img[src^="data:image/png"]');
+  // The preview's image once it is there and is not `previous`: a change
+  // of option re-renders it.
+  const capture = async (previous?: string) => {
+    let src = '';
+    await expect
+      .poll(
+        async () => {
+          src =
+            (await preview
+              .first()
+              .getAttribute('src')
+              .catch(() => null)) ?? '';
+          return src !== '' && src !== previous;
+        },
+        { timeout: 20000 }
+      )
+      .toBe(true);
+    return src;
+  };
+  const rerender = async (current: string) => {
+    const grid = dialog.getByLabel('Show grid');
+    await grid.check();
+    const withGrid = await capture(current);
+    await grid.uncheck();
+    return capture(withGrid);
+  };
+  const first = await capture();
+  expect(await rerender(first), 'first preview').toBe(first);
+
+  await dialog.getByLabel('Include redacted content').check();
+  const optIn = await capture(first);
+  expect(await rerender(optIn), 'Include redacted preview').toBe(optIn);
 });

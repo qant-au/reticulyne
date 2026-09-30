@@ -34,9 +34,9 @@ describe('Tests common utilities', () => {
 // git+https://...git, which no browser opens as a page.
 describe('repositoryWebUrl', () => {
   test('npm repository urls become the web page', () => {
-    expect(repositoryWebUrl('git+https://github.com/qant-au/reticulyne.git')).toBe(
-      'https://github.com/qant-au/reticulyne'
-    );
+    expect(
+      repositoryWebUrl('git+https://github.com/qant-au/reticulyne.git')
+    ).toBe('https://github.com/qant-au/reticulyne');
     expect(repositoryWebUrl('git://github.com/qant-au/reticulyne.git')).toBe(
       'https://github.com/qant-au/reticulyne'
     );

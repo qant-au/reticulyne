@@ -43,12 +43,12 @@ possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELO
 ## Getting started
 
 ```bash
-npm install @qant-au/reticulyne react react-dom \
+npm install @reticulyne/editor react react-dom \
   @mui/material @mui/icons-material @emotion/react @emotion/styled zustand
 ```
 
 ```tsx
-import Reticulyne from '@qant-au/reticulyne';
+import Reticulyne from '@reticulyne/editor';
 
 export function Diagram() {
   return (
@@ -59,9 +59,9 @@ export function Diagram() {
 }
 ```
 
-The package is not on a registry yet (a public npm release is planned): build it from
-source as described in [Installation](docs/installation.md). To run the editor on its own instead,
-see [Standalone Docker](docs/docker.md).
+It is on npm as [`@reticulyne/editor`](https://www.npmjs.com/package/@reticulyne/editor), with
+no token needed; see [Installation](docs/installation.md). To run the editor on its own
+instead, see [Standalone Docker](docs/docker.md).
 
 **Requirements:** React 18 or 19, MUI v9, Emotion and Zustand as peer dependencies.
 Supported browsers follow MUI v9: Chrome 117+, Edge 121+, Firefox 121+, Safari 17+.

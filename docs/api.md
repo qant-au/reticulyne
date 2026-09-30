@@ -1,6 +1,6 @@
 # API reference
 
-The contract every consumer of `@qant-au/reticulyne` can rely on: every prop, every callback,
+The contract every consumer of `@reticulyne/editor` can rely on: every prop, every callback,
 the `useReticulyne` imperative hook, and the supporting type shapes.
 
 For deeper notes on editor modes, container sizing, and the security model, see
@@ -9,8 +9,8 @@ For deeper notes on editor modes, container sizing, and the security model, see
 ## Imports
 
 ```tsx
-import Reticulyne, { useReticulyne } from '@qant-au/reticulyne';
-import type { ReticulyneProps, InitialData, Model, Scene } from '@qant-au/reticulyne';
+import Reticulyne, { useReticulyne } from '@reticulyne/editor';
+import type { ReticulyneProps, InitialData, Model, Scene } from '@reticulyne/editor';
 ```
 
 `Reticulyne` is the default React component. `useReticulyne` is the imperative hook (only
@@ -230,6 +230,6 @@ The package also re-exports from `src/standaloneExports.ts`:
 - Their union types, **type-only**: `MainMenuOptions`, `AnchorPosition`, `LayerOrderingAction`,
   `TileOrigin`, `ItemReferenceType`. Use `import type` for these.
 
-These can be imported either from the main entry (`@qant-au/reticulyne`) or from the standalone
-subpath (`@qant-au/reticulyne/standalone`). The standalone subpath omits the component itself
+These can be imported either from the main entry (`@reticulyne/editor`) or from the standalone
+subpath (`@reticulyne/editor/standalone`). The standalone subpath omits the component itself
 and is safe to import in Node environments (server-side validation, scripts).

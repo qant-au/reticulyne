@@ -45,7 +45,7 @@ const icons = collections.flatMap((c) =>
 ## Loading icons
 
 ```tsx
-import Reticulyne from '@qant-au/reticulyne';
+import Reticulyne from '@reticulyne/editor';
 import myIcons from './my-icons.json'; // [{ id, name, url, ... }]
 
 <Reticulyne initialData={{
@@ -78,7 +78,7 @@ These collections power the [standalone Docker editor](docker.md) and the in-rep
 not maintain or depend on a separate icon package.
 
 If you need the same cloud-provider icons in an application that embeds
-`@qant-au/reticulyne` as an npm dependency, supply your own `Icon[]` data
+`@reticulyne/editor` as an npm dependency, supply your own `Icon[]` data
 through the plugin interface below.
 
 ## Custom collections (plugin framework)

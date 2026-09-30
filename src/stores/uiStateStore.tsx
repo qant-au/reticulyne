@@ -54,6 +54,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       templates: TEMPLATES,
       editingGroupId: null,
       hideRedacted: false,
+      showOtherFloors: true,
       saveStatus: {
         state: 'idle',
         isDirty: false,
@@ -226,6 +227,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setHideRedacted: (hideRedacted) => {
           set({ hideRedacted });
+        },
+        setShowOtherFloors: (showOtherFloors) => {
+          set({ showOtherFloors });
         },
         setTemplates: (templates) => {
           set({ templates });

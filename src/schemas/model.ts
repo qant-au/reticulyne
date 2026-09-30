@@ -7,6 +7,7 @@ import { validateModel } from './validation';
 import { iconsSchema } from './icons';
 import { colorsSchema } from './colors';
 import { layersSchema } from './layer';
+import { connectionsSchema } from './connection';
 
 const modelObjectSchema = z
   .object({
@@ -19,7 +20,9 @@ const modelObjectSchema = z
     icons: iconsSchema,
     colors: colorsSchema,
     // rtl-017: absent is no layers but the base one.
-    layers: layersSchema.optional()
+    layers: layersSchema.optional(),
+    // rtl-018: absent is none.
+    connections: connectionsSchema.optional()
   })
   .strict();
 

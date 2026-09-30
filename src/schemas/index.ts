@@ -8,3 +8,4 @@ export * from './rectangle';
 export * from './textBox';
 export * from './group';
 export * from './layer';
+export * from './connection';

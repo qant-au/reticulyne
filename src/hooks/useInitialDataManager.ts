@@ -177,6 +177,7 @@ export const useInitialDataManager = ({
         version: undefined,
         description: undefined,
         layers: undefined,
+        connections: undefined,
         ...initialData
       });
       uiStateActions.setSceneContext(context);

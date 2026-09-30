@@ -107,6 +107,7 @@ All props are optional. The component renders a fully-functional editor with sen
 | `⌘/Ctrl ]` / `[` | Bring forward / send backward (`⇧`, or `⌘ ⌥` on macOS, for front / back) |
 | `Esc` | Deselect |
 | `Alt I` | Toggle item highlighting (dims all items except the selected one) |
+| `Alt ↑` / `Alt ↓` | Show the floor above / below |
 | `Alt ⇧ D` | Toggle light / dark |
 | `?` | Toggle keyboard shortcuts dialog |
 
@@ -289,7 +290,7 @@ Undo/redo covers all document mutations (items, view items, connectors, rectangl
 
 - The clipboard lives in editor session state — copied selections survive across model loads, undo/redo, and view changes, but **not** across page refreshes. There is no integration with the OS clipboard.
 - Connectors are not copyable/duplicatable. Their anchors reference other items by id; the right "what does paste mean for a connector whose anchored items aren't in the target context?" semantics is not locked in. PRs welcome.
-- All shortcuts respect `editorMode`. `EXPLORABLE_READONLY` drops every editing binding and keeps selecting, panning, zoom, fit, find, the theme toggle, `Alt+I`, `Esc` and `?`. `NON_INTERACTIVE` keeps only the ones that change the view, never a tool.
+- All shortcuts respect `editorMode`. `EXPLORABLE_READONLY` drops every editing binding and keeps selecting, panning, zoom, fit, find, the theme toggle, `Alt+I`, `Alt+Up` / `Alt+Down` (floors), `Esc` and `?`. `NON_INTERACTIVE` keeps only the ones that change the view, never a tool.
 - `Ctrl/Cmd` + arrow does nothing (it is Excalidraw's flowchart walk); only a bare or `Shift` arrow nudges.
 
 ## Controlling UI visibility
@@ -324,7 +325,7 @@ Available values (`MainMenuOptionsEnum`):
 
 ### Title bar — `showTitleBar`
 
-The bottom-centre strip shows `"Project title › View name"`. By default it follows the editor mode: visible in `EDITABLE` and `EXPLORABLE_READONLY`, hidden in `NON_INTERACTIVE`. Override it independently with `showTitleBar`:
+The bottom-centre strip shows `"Project title › "` and the [floor switcher](#floors-and-cross-floor-connections) (just the view name in a read-only diagram with one view). By default it follows the editor mode: visible in `EDITABLE` and `EXPLORABLE_READONLY`, hidden in `NON_INTERACTIVE`. Override it independently with `showTitleBar`:
 
 ```tsx
 // Always hide — regardless of editorMode
@@ -409,6 +410,33 @@ notes there, and the copy you send out leaves them behind. A diagram with nothin
 it exports exactly as before, with no extra question. The file the editor saves
 (`onSave`, the Docker image's own storage) is the working copy and always keeps it;
 `redactScene(scene)` in `@accurona/core` gives the redacted copy of any scene.
+
+### Floors and cross-floor connections
+
+A **floor** is a view, and the model's `views` are in floor order, lowest first. The
+title bar holds the **floor switcher**: a tab per floor, lowest on the left. Clicking a
+tab, or `Alt` + `Up` / `Alt` + `Down`, shows another floor, in `EDITABLE` and
+`EXPLORABLE_READONLY`. In an editable diagram **+** adds a floor above the others,
+drawn like the current one (isometric or flat), double-clicking a tab renames it, and
+the floor menu moves the current floor up or down or deletes it (the last floor
+stays). Each of those is one undo step; showing a floor is not.
+
+A **connection** joins two items whatever floors they are on: the model's
+`connections`, `{ id, from, to, description? }`, which are the scene format's
+`connections` between two of the diagram's items. When the two items are on
+different floors, each floor draws a **transition stub**: a dashed riser from the item,
+up when the other floor is above and down when it is below, ending at a marker that
+names the other floor and item. Clicking the marker shows that floor with the item
+selected. The node inspector's **Links to other floors** lists an item's links and
+adds (pick a floor, then an item on it) or removes them. A stub is not drawn while
+either item is on a hidden layer, and an export leaves out a connection to anything it
+leaves out (the Redacted layer, say), so a stub never names it.
+
+While an isometric floor is on show, the **other floors** are drawn faintly above and
+below it, a storey apart, so the building reads as a stack: enough to follow the
+topology, not enough to compete with the floor being edited. They cannot be clicked
+and are never exported; the eye button in the floor switcher hides them. That choice
+is the viewer's, not the diagram's, and is not saved.
 
 ### Host-managed save — `onSave` + `'ACTION.SAVE'`
 
@@ -504,7 +532,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `setTitle(title)` | `(title: string) => void` | Rename the diagram. Gated on `editorMode === 'EDITABLE'`; schema-validated (over 100 characters goes to `onValidationError`); a blank title becomes `'Untitled'`. Not recorded in undo history. |
 | `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => void` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
-| `setView(viewId)` | `(viewId: string) => void` | Show another view (floor) of the model. Allowed in every editor mode; clears the selection; warns and does nothing for an unknown id. The editor has no view-switcher UI of its own, so this is how a host offers one. |
+| `setView(viewId)` | `(viewId: string) => void` | Show another view (floor) of the model. Allowed in every editor mode; clears the selection; warns and does nothing for an unknown id. The title bar's floor switcher does the same for the user. |
 | `getLayers()` | `() => Layer[]` | The diagram's layers, `{ id, name, visible? }` (absent `visible` is shown). The base layer and the reserved Redacted layer are never listed. |
 | `setLayerVisible(layerId, visible)` | `(layerId: string, visible: boolean) => void` | Show or hide a layer, so one diagram serves several audiences. Allowed in every editor mode; saved with the diagram; not recorded in undo; warns and does nothing for an unknown id. |
 | `setZoom(z)` | `(z: number) => void` | Set absolute zoom, clamped to 0.2 to 1. |

@@ -15,6 +15,18 @@ export const getRandom = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
+// The repository's web page from package.json's repository.url, which npm
+// writes as git+https://github.com/owner/repo.git. Opened as it was, that
+// was not a web address and no tab opened (sweep 2026-09-30, E24).
+export const repositoryWebUrl = (url: string) => {
+  return url
+    .trim()
+    .replace(/^git\+/, '')
+    .replace(/^git:\/\//, 'https://')
+    .replace(/^git@([^:]+):/, 'https://$1/')
+    .replace(/\.git$/, '');
+};
+
 interface GetColorVariantOpts {
   alpha?: number;
   grade?: number;

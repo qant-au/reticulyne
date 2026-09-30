@@ -71,6 +71,15 @@ export const screenToIso = (args: ScreenToIso) => {
   };
 };
 
+// The point under the pointer in tile units, unrounded: a whole number at
+// a tile's centre. getTilePosition is linear, so feeding it this keeps a
+// point exactly where it was, which rounding to the tile (screenToIso)
+// does not: the view toggle moved everything by up to half a tile.
+export const screenToTilePoint = (args: ScreenToIso): Coords => {
+  const { fx, fy } = fractionalTile(args);
+  return { x: fx - 0.5, y: fy + 0.5 };
+};
+
 // The tile a dragged rectangle corner should snap to. A corner handle is
 // drawn on the tile's outer vertex, which is exactly a tile boundary, so
 // flooring the pointer's position (screenToIso) moved the corner a whole
@@ -161,6 +170,32 @@ export const isoToScreen = ({
     x: position.x + rendererSize.width / 2,
     y: position.y + rendererSize.height / 2
   };
+};
+
+// lw-050: the scroll that keeps the point at the centre of the canvas where
+// it is when the view switches from one projection to the other.
+export const scrollKeepingCentre = ({
+  zoom,
+  scroll,
+  rendererSize,
+  from,
+  to
+}: {
+  zoom: number;
+  scroll: Scroll;
+  rendererSize: Size;
+  from: Projection;
+  to: Projection;
+}): Coords => {
+  const centre = screenToTilePoint({
+    mouse: { x: rendererSize.width / 2, y: rendererSize.height / 2 },
+    zoom,
+    scroll,
+    rendererSize,
+    projection: from
+  });
+  const p = getTilePosition({ tile: centre, projection: to });
+  return { x: -p.x * zoom, y: -p.y * zoom };
 };
 
 interface GetMouse {

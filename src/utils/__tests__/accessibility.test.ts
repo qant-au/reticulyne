@@ -128,10 +128,25 @@ describe('helpers', () => {
     expect(plainText('x'.repeat(300), 10)).toHaveLength(10);
   });
 
-  test('freeTileNear skips tiles a node holds', () => {
+  test('freeTileNear skips tiles a node holds, and the tiles around them', () => {
     expect(freeTileNear(view, { x: 9, y: 9 })).toEqual({ x: 9, y: 9 });
     const free = freeTileNear(view, { x: 0, y: 0 });
-    expect(free).not.toEqual({ x: 0, y: 0 });
+    // A neighbour of a node would put the new label on top of its label.
+    for (const item of view.items) {
+      expect(
+        Math.max(Math.abs(free.x - item.tile.x), Math.abs(free.y - item.tile.y))
+      ).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  test('freeTileNear falls back to any free tile when none is clear', () => {
+    const items = [];
+    for (let x = -70; x <= 70; x += 2) {
+      for (let y = -70; y <= 70; y += 2) {
+        items.push({ id: `n${x},${y}`, tile: { x, y } });
+      }
+    }
+    const free = freeTileNear({ ...view, items }, { x: 0, y: 0 });
     expect(Math.max(Math.abs(free.x), Math.abs(free.y))).toBe(1);
   });
 });

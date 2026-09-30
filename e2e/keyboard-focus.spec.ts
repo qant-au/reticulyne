@@ -75,3 +75,36 @@ test('Enter on a text box reached with Tab puts focus in its text', async ({
   await page.keyboard.type('Edited');
   await expect(field).toHaveValue('Edited');
 });
+
+const placeTinyFromKeyboard = async (page: Page) => {
+  await page.getByRole('application').focus();
+  await page.keyboard.press('i');
+  await page.getByPlaceholder('Search icons').fill('Tiny');
+  await page
+    .getByAltText('Icon Tiny')
+    .locator('xpath=ancestor::button[1]')
+    .focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Untitled', { exact: true })).toBeVisible();
+};
+
+test('an icon placed from the keyboard keeps its label clear of the others', async ({
+  page
+}) => {
+  await openEditor(page);
+  await placeTinyFromKeyboard(page);
+  const added = await page.getByText('Untitled', { exact: true }).boundingBox();
+  for (const name of ['Router', 'Switch']) {
+    const other = await page
+      .getByText(name, { exact: true })
+      .first()
+      .boundingBox();
+    expect(added && other).toBeTruthy();
+    const overlaps =
+      added!.x < other!.x + other!.width &&
+      other!.x < added!.x + added!.width &&
+      added!.y < other!.y + other!.height &&
+      other!.y < added!.y + added!.height;
+    expect(overlaps, `Untitled label overlaps ${name}`).toBe(false);
+  }
+});

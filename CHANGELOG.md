@@ -19,6 +19,7 @@ potentially breaking and read the release notes before upgrading.
 ### Changed (breaking)
 
 - **The package is `@reticulyne/editor`, on the public npm registry**, installed with no token. It was `@qant-au/reticulyne` on GitHub Packages up to 0.3.0: change the dependency and the imports.
+- **An ES module build** (`dist/esm/`, the `import` condition) beside the CommonJS one. In an ESM bundler such as Vite, `import Reticulyne from` the CommonJS build gave the whole module object, not the component.
 - **The file format is now the [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md)**, shared with Axonometra: one JSON document of objects and the views that place them. Reticulyne draws its `iso` and `schematic` views and, on save, merges the edited diagram into the scene it opened, so plan views, unplaced objects, connections, object `props` / `ports` / `links`, layers and a connector's `connection` are kept.
   - `onSave` receives a validated `Scene`, not a `Model` (the Save entry, Retry and auto-save).
   - **Export as JSON** downloads a scene file (same file names).

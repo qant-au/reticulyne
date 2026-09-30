@@ -17,7 +17,12 @@ const report = JSON.parse(
 const files = (report[0]?.files ?? []).map((f) => f.path);
 
 const allowedTop = new Set(['dist', 'README.md', 'LICENSE', 'package.json']);
-const allowedInDist = [/\.js$/, /\.js\.map$/, /\.d\.ts$/, /\.js\.LICENSE\.txt$/];
+const allowedInDist = [
+  /\.m?js$/,
+  /\.m?js\.map$/,
+  /\.d\.ts$/,
+  /\.m?js\.LICENSE\.txt$/
+];
 
 const offenders = files.filter((p) => {
   if (!allowedTop.has(p.split('/')[0])) return true;

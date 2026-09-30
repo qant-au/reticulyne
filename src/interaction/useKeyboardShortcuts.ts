@@ -12,6 +12,8 @@ import {
 } from 'src/utils';
 import { TEXTBOX_DEFAULTS } from 'src/config';
 import { useThemeToggle } from 'src/hooks/useThemeToggle';
+import { useTour } from 'src/hooks/useTour';
+import { tourKeyAction } from './tourKeys';
 import type { ItemReference } from 'src/types';
 import {
   isTypingTarget,
@@ -143,6 +145,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
   } = useScene();
   const { fitToView, fitToSelection } = useDiagramUtils();
   const toggleTheme = useThemeToggle();
+  const tour = useTour();
 
   useEffect(() => {
     const isEditable = editorMode === 'EDITABLE';
@@ -259,6 +262,23 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
       if (uiStateActions.get().isMainMenuOpen) {
         if (e.key === 'Escape') uiStateActions.setIsMainMenuOpen(false);
         return;
+      }
+
+      // lw-064: while a tour runs, its keys come first: the arrows step it
+      // instead of nudging. Not in NON_INTERACTIVE, where the host drives.
+      const { tour: runningTour } = uiStateActions.get();
+      if (runningTour && editorMode !== 'NON_INTERACTIVE') {
+        const tourAction = tourKeyAction(e);
+        if (tourAction !== null) {
+          if (tourAction === 'next') tour.next();
+          else if (tourAction === 'previous') tour.previous();
+          else if (tourAction === 'first') tour.goTo(0);
+          else if (tourAction === 'last')
+            tour.goTo(runningTour.steps.length - 1);
+          else tour.end();
+          e.preventDefault();
+          return;
+        }
       }
 
       // The shared keymap (@accurona/core) decides which action a key is;
@@ -739,6 +759,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     currentView,
     visibleView,
     showAdjacentFloor,
-    toggleTheme
+    toggleTheme,
+    tour
   ]);
 };

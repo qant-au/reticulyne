@@ -67,6 +67,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       connectorIndicatorComponent: undefined,
       selectionDimEnabled: false,
       highlightedItemId: undefined,
+      tour: null,
+      tourSteps: undefined,
+      onTourStepChange: undefined,
       actions: {
         setView: (view) => {
           // Groups are per view, so the one being edited is left behind.
@@ -278,6 +281,15 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setHighlightedItemId: (highlightedItemId) => {
           set({ highlightedItemId });
+        },
+        setTour: (tour) => {
+          set({ tour });
+        },
+        setTourSteps: (tourSteps) => {
+          set({ tourSteps });
+        },
+        setOnTourStepChange: (onTourStepChange) => {
+          set({ onTourStepChange });
         },
         setRendererEl: (el) => {
           set({ rendererEl: el });

@@ -68,6 +68,8 @@ All props are optional. The component renders a fully-functional editor with sen
 | `nodeIndicatorComponent` | `(args: { item: ModelItem, view: ViewItem }) => ReactNode` | `undefined` | Per-node decorator (FEA5-07). Rendered inside every Node, positioned at the node's tile and receiving its `ModelItem` + `ViewItem`. Use it to overlay live indicators — status pips, gauges, badges, mini-charts — driven by host state that isn't part of the model. See [Live dashboards](#live-dashboards). |
 | `connectorIndicatorComponent` | `(args: { connector: Connector, view: View }) => ReactNode` | `undefined` | Per-connector decorator (FEA7-03). Rendered at every connector's midpoint as an absolutely-positioned overlay, receiving the connector's schema-level model and the parent `View`. Mirrors `nodeIndicatorComponent` for link-level telemetry — throughput, latency, error-rate, link-down — driven by host state that isn't part of the model. |
 | `highlightedItemId` | `string` | `undefined` | When set, the editor highlights the item with this ID and dims all others to `opacity: 0.2` with a CSS transition (FEA12-01). Drives focus from host-side navigation without touching interaction state. When omitted, the `Alt+I` keyboard shortcut controls dimming based on the current interactive selection instead. |
+| `tour` | `TourStep[]` | `undefined` | A presentation tour (lw-064). When set, a **Start tour** button shows in every mode but `NON_INTERACTIVE`. Each step is `{ nodeId, viewId?, zoom?, title?, narration? }`; see [Presentation tours](embedding.md#presentation-tours). |
+| `onTourStepChange` | `(state: TourState \| null) => void` | `undefined` | Called with `{ index, total, step }` each time the tour moves to a step, and with `null` when it ends. |
 | `themeMode` | `'light'` \| `'dark'` \| `'auto'` | `'auto'` | Controls the editor colour scheme. `'light'` and `'dark'` force the respective palette. `'auto'` (the default) mirrors the OS/browser `prefers-color-scheme` setting and switches live when the user changes their system preference. The user can flip light / dark for the session with `Alt+Shift+D` (as in Excalidraw); that overrides this prop until the page reloads. |
 | `exportTheme` | `'light'` \| `'dark'` | `'light'` | Controls the initial background colour in the export dialog (PNG / PDF). `'light'` seeds the dialog with the light-mode diagram background (`#f6faff`); `'dark'` seeds it with the dark-mode background (`#1a1d24`). The user can still change the background colour inside the dialog before downloading. |
 | `children` | `ReactNode` | `undefined` | Optional children rendered inside the Reticulyne provider tree. Intended use is a "driver" child component that calls [`useReticulyne()`](#imperative-api-usereticulyne) to drive the editor from outside — pulse connectors on a timer, update colours from a poller, etc. Driver components typically return `null`. |
@@ -459,6 +461,48 @@ topology, not enough to compete with the floor being edited. They cannot be clic
 and are never exported; the eye button in the floor switcher hides them. That choice
 is the viewer's, not the diagram's, and is not saved.
 
+### Presentation tours
+
+For read-only embeds, a tour walks a viewer through the diagram one node at a time
+(lw-064). Each step switches to the node's view if need be, centres on it (the canvas
+animates the move), highlights it as `highlightedItemId` does, and shows a narration
+panel above the title strip: the step count, the node's name, and its narration, with
+**Previous**, **Next** (**Finish** on the last step) and a close button.
+
+```tsx
+<Reticulyne
+  initialData={scene}
+  editorMode="EXPLORABLE_READONLY"
+  tour={[
+    { nodeId: 'edge-fw', narration: '<p>Traffic enters through the <strong>edge firewall</strong>.</p>' },
+    { nodeId: 'core-sw', title: 'Core switching', zoom: 0.6 },
+    { nodeId: 'db-1', viewId: 'floor-2' }
+  ]}
+  onTourStepChange={(state) => analytics.track('tour', state?.index ?? 'end')}
+/>
+```
+
+- **A step** is `{ nodeId, viewId?, zoom?, title?, narration? }`. With no `viewId` it is
+  shown on the view on show if that holds the node, or else the first view that does.
+  `zoom` defaults to 0.8 and is clamped. `title` defaults to the node's
+  name and `narration` to its description.
+- **Narration is rich text** in the node-description format, and is rendered through the
+  same schema-bound viewer (see [What's rendered as HTML](#whats-rendered-as-html)), so a
+  tour from an untrusted source cannot inject markup. Plain text works too.
+- **Keys.** While a tour runs, `→` / `↓` / `Page Down` step forward, `←` / `↑` /
+  `Page Up` step back, `Home` and `End` jump to the ends and `Escape` ends it. They win
+  over the editor's own bindings, so in `EDITABLE` the arrows step the tour rather than
+  nudge the selection. Space is left alone: holding it pans.
+- **Modes.** A tour runs in every editor mode. In `NON_INTERACTIVE` the panel shows the
+  narration without buttons, the keys are ignored, and the host steps it with
+  `nextTourStep()` and friends.
+- **Starting it from code.** `useReticulyne().startTour(steps?)` takes the same steps; with
+  none, and no `tour` prop, it walks every node on the view in reading order (top to
+  bottom, then left to right, as drawn). Steps whose node has been deleted are skipped.
+- **Ending it** (the close button, `Escape`, **Finish** or `endTour()`) restores whatever
+  `highlightedItemId` was before. Loading another diagram ends it too.
+- The tour is **viewer state**: it is not saved with the diagram and not on the undo stack.
+
 ### Host-managed save — `onSave` + `'ACTION.SAVE'`
 
 The default `'EXPORT.JSON'` menu entry downloads a `.json` scene file to the user's disk — useful for ad-hoc archival, but rarely what a host application wants. For a hosted editor whose state lives in the parent application, the natural save path is "hand the diagram back to the host" — register an `'ACTION.SAVE'` entry in `mainMenuOptions` and pass an `onSave` callback. It receives the diagram as a validated scene:
@@ -572,6 +616,11 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `fitToView()` | `() => void` | Zoom and pan so the whole current view fits. Allowed in every mode. |
 | `select(ids)` | `(ids: string \| string[]) => void` | Replace the selection with these nodes, connectors, rectangles or text boxes on the current view; unknown ids are skipped. `EDITABLE` only. |
 | `clearSelection()` | `() => void` | Clear the selection. |
+| `startTour(steps?)` | `(steps?: TourStep[]) => boolean` | Start a presentation tour (lw-064): these steps, else the `tour` prop's, else every node on the current view in reading order. Validated (a bad step goes to `onValidationError`); a step whose node is on no view is skipped. Returns `false` if nothing could be started. Allowed in every mode. |
+| `nextTourStep()` / `previousTourStep()` | `() => void` | Step the tour; does nothing past either end. |
+| `goToTourStep(index)` | `(index: number) => void` | Jump to a step (from 0); out of range does nothing. |
+| `endTour()` | `() => void` | End the tour and restore the highlight it replaced. |
+| `getTourState()` | `() => TourState \| null` | `{ index, total, step }`, or `null` when no tour is running. |
 
 The `Model` and `uiState` escape hatches were removed in 1.6 (breaking; see the CHANGELOG).
 Model writes go through `applyPatch`, `setTitle` or `loadModel`; view and selection through the

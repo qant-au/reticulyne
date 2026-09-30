@@ -25,7 +25,7 @@ import type {
   Group
 } from './model';
 import type { ItemReference, ConnectorPath } from './scene';
-import type { QueuedPatch } from './imperative';
+import type { QueuedPatch, TourState, TourStep } from './imperative';
 import type { Scene as SceneDocument } from 'src/vendor/accurona-core';
 import type { SceneContext } from 'src/scene/convert';
 import type { DiagramTemplate } from 'src/templates';
@@ -374,6 +374,18 @@ export interface UiState {
   // visual from outside without touching interaction state.
   selectionDimEnabled: boolean;
   highlightedItemId: string | undefined;
+  // lw-064: the tour running, if any. `hostHighlight` is what
+  // highlightedItemId was before it started, restored when it ends.
+  tour: ActiveTour | null;
+  // The steps offered by the `tour` prop; a Start tour button shows when set.
+  tourSteps: TourStep[] | undefined;
+  onTourStepChange: ((state: TourState | null) => void) | undefined;
+}
+
+export interface ActiveTour {
+  steps: TourStep[];
+  index: number;
+  hostHighlight: string | undefined;
 }
 
 export interface UiStateActions {
@@ -443,6 +455,11 @@ export interface UiStateActions {
   setSelectionDimEnabled: (enabled: boolean) => void;
   toggleSelectionDimEnabled: () => void;
   setHighlightedItemId: (id: string | undefined) => void;
+  setTour: (tour: ActiveTour | null) => void;
+  setTourSteps: (steps: TourStep[] | undefined) => void;
+  setOnTourStepChange: (
+    handler: ((state: TourState | null) => void) | undefined
+  ) => void;
 }
 
 export type UiStateStore = UiState & {

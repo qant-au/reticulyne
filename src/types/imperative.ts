@@ -81,6 +81,32 @@ export interface SelectedRef {
   id: string;
 }
 
+/**
+ * lw-064: one stop on a presentation tour. The tour centres on `nodeId`,
+ * on `viewId` if given, or else on the view on show when it holds the node,
+ * or else the first view that does.
+ */
+export interface TourStep {
+  nodeId: string;
+  viewId?: string;
+  /** Zoom for this stop, clamped. Defaults to 0.8. */
+  zoom?: number;
+  /** Heading on the narration panel. Defaults to the node's name. */
+  title?: string;
+  /**
+   * Narration, as rich text in the same format as a node description.
+   * Defaults to the node's description.
+   */
+  narration?: string;
+}
+
+/** Where a running tour stands. `index` counts from 0. */
+export interface TourState {
+  index: number;
+  total: number;
+  step: TourStep;
+}
+
 export interface QueuedPatch {
   patch: DiagramPatch;
   options: ApplyPatchOptions;

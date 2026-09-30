@@ -49,6 +49,8 @@ Every prop is optional.
 | `nodeIndicatorComponent` | `(args: { item: ModelItem, view: ViewItem }) => ReactNode` | `undefined` | Per-node decorator (FEA5-07). Rendered inside every Node at its tile, receiving the `ModelItem` + `ViewItem`. Use it to overlay live indicators — status pips, gauges, badges — driven by host state outside the model. |
 | `connectorIndicatorComponent` | `(args: { connector: Connector, view: View }) => ReactNode` | `undefined` | Per-connector decorator (FEA7-03). Rendered at every connector's midpoint, receiving the connector's schema-level model and the parent `View`. Mirrors `nodeIndicatorComponent` for link-level telemetry. |
 | `highlightedItemId` | `string` | `undefined` | When set, highlights the item with this ID and dims all others to `opacity: 0.2` with a CSS transition (FEA12-01). Drives focus from host-side navigation without touching interaction state. When omitted, the `Alt+I` keyboard shortcut controls dimming based on the current selection instead. |
+| `tour` | `TourStep[]` | `undefined` | A presentation tour (lw-064). When set, a **Start tour** button shows in every mode but `NON_INTERACTIVE`. Each step is `{ nodeId, viewId?, zoom?, title?, narration? }`; see [Presentation tours](embedding.md#presentation-tours). |
+| `onTourStepChange` | `(state: TourState \| null) => void` | `undefined` | Called with `{ index, total, step }` each time the tour moves to a step, and with `null` when it ends. |
 | `themeMode` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Controls the editor colour scheme. `'light'` / `'dark'` force the respective palette. `'auto'` (the default) mirrors the OS/browser `prefers-color-scheme` and switches live. **Breaking change (FEA9-01):** this previously defaulted to `'light'` — see the note below the table. |
 | `exportTheme` | `'light' \| 'dark'` | `'light'` | Controls the initial background colour in the export dialog (PNG / PDF). `'light'` seeds the light-mode background (`#f6faff`); `'dark'` seeds the dark-mode background (`#1a1d24`). The user can still change it inside the dialog. |
 | `children` | `ReactNode` | `undefined` | Children rendered inside the Reticulyne provider tree. Intended use is a "driver" child that calls `useReticulyne()` to drive the editor from outside — pulse connectors on a timer, update colours from a poller, etc. Driver components typically return `null`. |
@@ -201,6 +203,11 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `fitToView()` | `() => void` | Zoom and pan so the whole current view fits. Allowed in every mode. |
 | `select(ids)` | `(ids: string \| string[]) => void` | Replace the selection with these nodes, connectors, rectangles or text boxes on the current view; unknown ids are skipped. `EDITABLE` only. |
 | `clearSelection()` | `() => void` | Clear the selection. |
+| `startTour(steps?)` | `(steps?: TourStep[]) => boolean` | Start a presentation tour (lw-064): these steps, else the `tour` prop's, else every node on the current view in reading order. Validated (a bad step goes to `onValidationError`); a step whose node is on no view is skipped. Returns `false` if nothing could be started. Allowed in every mode. |
+| `nextTourStep()` / `previousTourStep()` | `() => void` | Step the tour; does nothing past either end. |
+| `goToTourStep(index)` | `(index: number) => void` | Jump to a step (from 0); out of range does nothing. |
+| `endTour()` | `() => void` | End the tour and restore the highlight it replaced. |
+| `getTourState()` | `() => TourState \| null` | `{ index, total, step }`, or `null` when no tour is running. |
 
 The `Model` and `uiState` escape hatches were removed in 1.6 (breaking; see the CHANGELOG).
 Model writes go through `applyPatch`, `setTitle` or `loadModel`; view and selection through the

@@ -3,7 +3,7 @@ import type { ZodIssue } from 'zod';
 import type { EditorModeEnum, MainMenuOptions } from './common';
 import type { Connector, Model, ModelItem, View, ViewItem } from './model';
 import type { RendererProps } from './rendererProps';
-import type { SelectedRef, Viewport } from './imperative';
+import type { SelectedRef, TourState, TourStep, Viewport } from './imperative';
 import type { DiagramTemplate } from 'src/templates';
 import type { Scene } from 'src/vendor/accurona-core';
 
@@ -260,6 +260,19 @@ export interface ReticulyneProps {
    * the current interactive selection instead.
    */
   highlightedItemId?: string;
+  /**
+   * lw-064: a presentation tour. When set, a Start tour button shows (in
+   * every mode but NON_INTERACTIVE); the tour centres on each step's node
+   * in turn, highlights it and shows its narration. The arrow keys step it
+   * and Escape ends it. `useReticulyne().startTour()` starts it from code;
+   * with no steps anywhere it walks every node on the view in reading order.
+   */
+  tour?: TourStep[];
+  /**
+   * lw-064: called with the tour's state each time it moves to a step, and
+   * with `null` when it ends.
+   */
+  onTourStepChange?: (state: TourState | null) => void;
   /**
    * Optional children rendered inside the Reticulyne provider tree.
    * The intended use is a "driver" component that calls

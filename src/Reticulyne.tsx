@@ -40,6 +40,7 @@ import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { useSaveController } from 'src/hooks/useSaveController';
 import { useView } from 'src/hooks/useView';
+import { useTour } from 'src/hooks/useTour';
 import { useHostEvents } from 'src/hooks/useHostEvents';
 import {
   isGestureActive,
@@ -83,6 +84,8 @@ const App = ({
   connectorIndicatorComponent,
   highlightedItemId,
   exportTheme = 'light',
+  tour,
+  onTourStepChange,
   children
 }: ReticulyneProps) => {
   const uiStateActions = useUiStateStore((state) => {
@@ -230,6 +233,15 @@ const App = ({
   useEffect(() => {
     uiStateActions.setExportTheme(exportTheme);
   }, [exportTheme, uiStateActions]);
+
+  // lw-064: the steps the Start tour button offers, and the step callback.
+  useEffect(() => {
+    uiStateActions.setTourSteps(tour);
+  }, [tour, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setOnTourStepChange(onTourStepChange);
+  }, [onTourStepChange, uiStateActions]);
 
   if (!initialDataManager.isReady) return null;
 
@@ -731,6 +743,9 @@ const useReticulyne = () => {
   );
   const clearSelection = uiStateActions.clearSelection;
 
+  // lw-064: presentation / tour mode. Navigation, so every editor mode.
+  const tour = useTour();
+
   // FEA5-07: imperative Connector namespace — gives a live-data host
   // (poller, websocket, simulation) direct control over connector
   // visuals without re-seeding the model or re-rendering the editor
@@ -994,7 +1009,25 @@ const useReticulyne = () => {
      */
     select,
     /** Clear the selection. */
-    clearSelection
+    clearSelection,
+
+    // --- lw-064: presentation / tour mode (every editor mode) ---
+    /**
+     * Start a tour: these steps, else the `tour` prop's, else every node
+     * on the view in reading order. Validated; steps whose node is on no
+     * view are skipped. Returns false if nothing could be started.
+     */
+    startTour: tour.start,
+    /** Step forward; does nothing on the last step. */
+    nextTourStep: tour.next,
+    /** Step back; does nothing on the first step. */
+    previousTourStep: tour.previous,
+    /** Jump to a step by index (from 0); out of range does nothing. */
+    goToTourStep: tour.goTo,
+    /** End the tour, restoring the highlight it replaced. */
+    endTour: tour.end,
+    /** Where the tour stands, or null when none is running. */
+    getTourState: tour.getState
   };
 };
 

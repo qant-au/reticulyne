@@ -312,6 +312,10 @@ export interface UiState {
   enableDebugTools: boolean;
   enableAnimation: boolean;
   exportTheme: 'light' | 'dark';
+  // The background colour last chosen in the PNG or SVG export dialog, kept
+  // for the session so reopening either dialog keeps it. Unset: the export
+  // theme's diagram background.
+  exportBackgroundColor: string | undefined;
   showTitleBar: boolean | undefined;
   // 2.9: alignment guides while dragging.
   showAlignmentGuides: boolean;
@@ -422,6 +426,7 @@ export interface UiStateActions {
   setEnableDebugTools: (enabled: boolean) => void;
   setEnableAnimation: (enabled: boolean) => void;
   setExportTheme: (mode: 'light' | 'dark') => void;
+  setExportBackgroundColor: (color: string) => void;
   setShowTitleBar: (show: boolean | undefined) => void;
   setShowAlignmentGuides: (show: boolean) => void;
   setSearchOpen: (open: boolean) => void;

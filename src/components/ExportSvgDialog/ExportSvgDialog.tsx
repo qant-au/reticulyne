@@ -85,10 +85,13 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
     });
   }, []);
 
-  const [backgroundColor, setBackgroundColor] = useState<string>(() => {
-    return createReticulyneTheme(exportTheme).customVars.customPalette
-      .diagramBg;
+  // Kept in the store, so reopening the dialog keeps the chosen colour.
+  const chosenBackgroundColor = useUiStateStore((state) => {
+    return state.exportBackgroundColor;
   });
+  const backgroundColor =
+    chosenBackgroundColor ??
+    createReticulyneTheme(exportTheme).customVars.customPalette.diagramBg;
   const [transparent, setTransparent] = useState(false);
 
   const effectiveBgColor = transparent ? 'transparent' : backgroundColor;
@@ -200,8 +203,9 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
                     label="Background color"
                     control={
                       <ColorPicker
+                        label="Background color"
                         value={backgroundColor}
-                        onChange={setBackgroundColor}
+                        onChange={uiStateActions.setExportBackgroundColor}
                       />
                     }
                   />

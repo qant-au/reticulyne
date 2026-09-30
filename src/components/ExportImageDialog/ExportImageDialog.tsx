@@ -158,12 +158,16 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
     setShowGrid(checked);
   };
 
-  const [backgroundColor, setBackgroundColor] = useState<string>(() => {
-    return createReticulyneTheme(exportTheme).customVars.customPalette
-      .diagramBg;
+  // Kept in the store, so reopening the dialog keeps the chosen colour
+  // (sweep 2026-09-30: it went back to the theme's each time).
+  const chosenBackgroundColor = useUiStateStore((state) => {
+    return state.exportBackgroundColor;
   });
+  const backgroundColor =
+    chosenBackgroundColor ??
+    createReticulyneTheme(exportTheme).customVars.customPalette.diagramBg;
   const handleBackgroundColorChange = (color: string) => {
-    setBackgroundColor(color);
+    uiStateActions.setExportBackgroundColor(color);
   };
   // As the SVG export offers: a PNG with no background, for placing
   // over a slide or a page.
@@ -310,6 +314,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                   label="Background color"
                   control={
                     <ColorPicker
+                      label="Background color"
                       value={backgroundColor}
                       onChange={handleBackgroundColorChange}
                     />

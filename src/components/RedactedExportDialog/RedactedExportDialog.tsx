@@ -51,7 +51,10 @@ export const RedactedExportDialog = ({
               // The PDF captures the canvas, so the dialog closes first.
               onClose();
               if (format === 'JSON') downloadJson(includeRedacted);
-              else void downloadPdf(includeRedacted);
+              else
+                downloadPdf(includeRedacted).catch((err: unknown) => {
+                  console.error('[reticulyne] PDF export failed:', err);
+                });
             }}
           >
             Download {format}

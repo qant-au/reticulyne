@@ -37,6 +37,11 @@ export const useIcon = (
       return <SchematicIcon key={url} url={url} />;
     }
 
+    // No drawing at all (an item with no icon): draw nothing rather than
+    // an <img src="">, which resolves to the page itself - a broken image
+    // that also broke every PDF and image capture of the canvas.
+    if (!icon.url) return null;
+
     if (!icon.isIsometric) {
       return <NonIsometricIcon icon={icon} />;
     }

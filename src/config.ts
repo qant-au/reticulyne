@@ -67,7 +67,7 @@ export const VIEW_DEFAULTS: Required<
 };
 
 export const VIEW_ITEM_DEFAULTS: Required<
-  Omit<ViewItem, 'id' | 'tile' | 'parentGroupId' | 'layerId'>
+  Omit<ViewItem, 'id' | 'tile' | 'parentGroupId' | 'layerId' | 'locked'>
 > = {
   labelHeight: 80
 };
@@ -79,7 +79,7 @@ export const VIEW_ITEM_DEFAULTS: Required<
 export const CONNECTOR_DEFAULTS: Required<
   Omit<
     Connector,
-    'id' | 'color' | 'animationRate' | 'animationFlow' | 'layerId'
+    'id' | 'color' | 'animationRate' | 'animationFlow' | 'layerId' | 'locked'
   >
 > = {
   width: 10,
@@ -96,7 +96,7 @@ export const CONNECTOR_DEFAULTS: Required<
 export const CONNECTOR_SEARCH_OFFSET = { x: 1, y: 1 };
 
 export const TEXTBOX_DEFAULTS: Required<
-  Omit<TextBox, 'id' | 'tile' | 'parentGroupId' | 'layerId'>
+  Omit<TextBox, 'id' | 'tile' | 'parentGroupId' | 'layerId' | 'locked'>
 > = {
   orientation: 'X',
   fontSize: 0.6,
@@ -119,6 +119,7 @@ export const RECTANGLE_DEFAULTS: Required<
     | 'transparency'
     | 'zIndex'
     | 'layerId'
+    | 'locked'
   >
 > = {};
 

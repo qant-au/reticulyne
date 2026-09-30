@@ -75,6 +75,7 @@ export const connectorSchema = z
     // END_TO_START" rule.
     animationFlow: z.enum(connectorAnimationFlowOptions).optional(),
     anchors: z.array(anchorSchema).max(SCHEMA_LIMITS.ANCHORS),
-    layerId: id.optional()
+    layerId: id.optional(),
+    locked: z.boolean().optional()
   })
   .strict();

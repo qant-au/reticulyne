@@ -223,6 +223,14 @@ right-click menu of a rectangle, connector or text box, and on the keyboard:
 | `Ctrl/Cmd + Shift + ]` (Mac also `Cmd + Opt + ]`) | Bring to front |
 | `Ctrl/Cmd + Shift + [` (Mac also `Cmd + Opt + [`) | Send to back |
 
+**Lock — `EDITABLE` mode only.** `Ctrl/Cmd + Shift + L`, or **Lock** in an
+item's right-click menu, locks the selection, as in Excalidraw; the same key
+unlocks it when all of it is locked. A locked item is drawn as usual but is
+not selectable on the canvas: a click passes over it to what is below, and the
+marquee and `Ctrl/Cmd + A` skip it. Locking deselects. Right-click a locked
+item for **Unlock**, or the empty canvas for **Unlock all**. The flag is
+`locked: true` on a view item, connector, rectangle or text box.
+
 **Clipboard — `EDITABLE` mode only.** Copy, cut and paste act on the **whole
 selection**. Connectors are not copied (their ends point at other items), so a
 cut leaves selected connectors in place. A paste keeps the copied items'

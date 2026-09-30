@@ -15,6 +15,7 @@ export const textBoxSchema = z
       ])
       .optional(),
     parentGroupId: id.optional(),
-    layerId: id.optional()
+    layerId: id.optional(),
+    locked: z.boolean().optional()
   })
   .strict();

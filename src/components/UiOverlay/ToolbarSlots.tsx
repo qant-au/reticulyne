@@ -60,10 +60,12 @@ export const ToolbarSlots = ({
           sx={{
             position: 'absolute',
             width: '360px',
-            overflowY: 'scroll',
-            '&::-webkit-scrollbar': {
-              display: 'none'
-            }
+            // A visible scrollbar when the content is taller than the
+            // panel: it was hidden, so the bottom of the inspector (the
+            // Redacted layer caption, Delete) looked cut off with nothing
+            // saying it scrolled (sweep 2026-09-30, A04/A13).
+            overflowY: 'auto',
+            scrollbarWidth: 'thin'
           }}
           style={{
             left: appPadding.x,

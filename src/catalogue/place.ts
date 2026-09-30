@@ -1,8 +1,11 @@
 import type { SceneObject } from 'src/vendor/accurona-core';
 import { ISO_DRAWINGS } from 'src/vendor/accurona-iso';
+import { SCHEMATIC_DRAWINGS } from 'src/vendor/accurona-schematic';
 import type { Icon } from 'src/types/model';
+import { ITEMS } from './items';
 import { MEDIA } from './media';
 import type { CatalogueItem, Medium } from './schema';
+import { ITEM_SYMBOLS } from './symbols';
 import { expandPorts } from './validate';
 
 /** The icon collection the Accurona isometric drawings are filed under. */
@@ -46,6 +49,47 @@ export const catalogueItemIcon = (
   return element && element in ISO_DRAWINGS
     ? `${ACCURONA_ICON_PREFIX}${element}`
     : undefined;
+};
+
+/** The icon collection the 2D schematic symbols are filed under. */
+export const SCHEMATIC_ICON_COLLECTION = 'Schematic';
+
+const SCHEMATIC_ICON_PREFIX = 'schematic-';
+
+/**
+ * An item's 2D schematic symbol (the flat, Visio-style view) as SVG: its
+ * Accurona twin's schematic, generated from the element's model, else the
+ * symbol drawn for it in symbols.ts, else none.
+ */
+export const catalogueItemSymbol = (
+  item: Pick<CatalogueItem, 'id' | 'links'>
+): string | undefined => {
+  const element = accuronaElement(item);
+  if (element && element in SCHEMATIC_DRAWINGS) {
+    return SCHEMATIC_DRAWINGS[element].svg;
+  }
+  return ITEM_SYMBOLS[item.id];
+};
+
+/**
+ * The schematic symbol of each item that has one, as a flat icon with the
+ * id `schematic-<item id>`, for a 2D view to draw the items with.
+ */
+export const schematicIcons = (items: CatalogueItem[] = ITEMS): Icon[] => {
+  return items.flatMap((item) => {
+    const svg = catalogueItemSymbol(item);
+    return svg
+      ? [
+          {
+            id: `${SCHEMATIC_ICON_PREFIX}${item.id}`,
+            name: item.name,
+            url: `data:image/svg+xml,${encodeURIComponent(svg)}`,
+            collection: SCHEMATIC_ICON_COLLECTION,
+            isIsometric: false
+          }
+        ]
+      : [];
+  });
 };
 
 /**

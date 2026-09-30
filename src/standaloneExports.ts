@@ -58,11 +58,14 @@ export {
   FAMILIES,
   FAMILY_NAMES,
   ACCURONA_ICON_COLLECTION,
+  SCHEMATIC_ICON_COLLECTION,
   accuronaElement,
   accuronaIcons,
   catalogueItemIcon,
+  catalogueItemSymbol,
   expandPorts,
   itemToSceneObject,
+  schematicIcons,
   validateCatalogue
 } from 'src/catalogue';
 export type {

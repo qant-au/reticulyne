@@ -85,14 +85,37 @@ export const TitleBar = ({
   const narrow = titleBarRaised(rendererSize.width, appPadding, bottomRowWidth);
   const rightReserve = rightReserveFor(rendererSize.width, appPadding);
   const left = narrow ? appPadding.x : reserve;
+  const right = rendererSize.width - rightReserve;
   const short = title.length <= SHORT_TITLE;
+
+  // Centred on the canvas, under the Diagrams button, whenever it fits;
+  // shifted only as far as it must be to keep clear of the zoom row and the
+  // mini-map. Centred in the room between them, it sat ~100px right of the
+  // canvas centre at 1440 (sweep 2026-09-30, round 4). Two spacers, each
+  // its distance from the centre to an edge, shrink by equal amounts (a
+  // shrink factor the inverse of the basis), so the bar's centre stays on
+  // the canvas centre until a spacer reaches 0; then the other takes the
+  // rest. On a phone, centred in the width it spans.
+  const centre = narrow ? (left + right) / 2 : rendererSize.width / 2;
+  const toLeft = Math.max(1, centre - left);
+  const toRight = Math.max(1, right - centre);
+  const spacer = (basis: number) => {
+    return (
+      <Box
+        aria-hidden
+        sx={{ minWidth: 0 }}
+        // Scaled up: shrink factors summing to under 1 take only that share
+        // of the overflow.
+        style={{ flex: `0 ${10000 / basis} ${basis}px` }}
+      />
+    );
+  };
 
   return (
     <Box
       sx={{
         position: 'absolute',
         display: 'flex',
-        justifyContent: 'center',
         pointerEvents: 'none'
       }}
       style={{
@@ -100,13 +123,15 @@ export const TitleBar = ({
         top: narrow
           ? rendererSize.height - appPadding.y * 3 - 8
           : rendererSize.height - appPadding.y * 2,
-        width: rendererSize.width - left - rightReserve,
+        width: right - left,
         height: appPadding.y
       }}
     >
+      {spacer(toLeft)}
       <Surface
         sx={{
           display: 'inline-flex',
+          flexShrink: 0,
           px: 2,
           alignItems: 'center',
           height: '100%',
@@ -143,6 +168,7 @@ export const TitleBar = ({
           <SaveStatusPill compact={narrow} />
         </Stack>
       </Surface>
+      {spacer(toRight)}
     </Box>
   );
 };

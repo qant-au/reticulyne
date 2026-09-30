@@ -7,6 +7,8 @@ import { Label, Props as LabelProps } from './Label';
 
 type Props = Omit<LabelProps, 'maxHeight'> & {
   onToggleExpand?: (isExpanded: boolean) => void;
+  /** Starts expanded. Remount (a new key) to apply a change. */
+  initialExpanded?: boolean;
 };
 
 const STANDARD_LABEL_HEIGHT = 80;
@@ -14,9 +16,10 @@ const STANDARD_LABEL_HEIGHT = 80;
 export const ExpandableLabel = ({
   children,
   onToggleExpand,
+  initialExpanded = false,
   ...rest
 }: Props) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(initialExpanded);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const { observe, size: contentSize } = useResizeObserver();
 

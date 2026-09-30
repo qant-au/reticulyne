@@ -85,6 +85,14 @@ export const Node = ({ node, order, isDimmed }: Props) => {
 export const NodeLabel = ({ node, order, isDimmed }: Props) => {
   const modelItem = useModelItem(node.id);
   const { position, projection } = useNodePosition(node);
+  // A tour step shows its node's description in full, as a click on Show
+  // more would; the label goes back to how it was when the step moves on.
+  // Keyed on it, so the step's expansion is the label's starting state and
+  // Show less still works during the step (sweep 2026-09-30, round 3: at
+  // 390 Step 1 left the description at two lines).
+  const isTourStep = useUiStateStore((state) => {
+    return state.tour?.steps[state.tour.index]?.nodeId === node.id;
+  });
 
   const description = useMemo(() => {
     if (!modelItem || isEmptyMarkdown(modelItem.description)) return null;
@@ -123,6 +131,8 @@ export const NodeLabel = ({ node, order, isDimmed }: Props) => {
           style={{ bottom: getProjectedTileSize(projection).height / 2 }}
         >
           <ExpandableLabel
+            key={isTourStep ? 'tour-step' : 'label'}
+            initialExpanded={isTourStep}
             maxWidth={250}
             expandDirection="BOTTOM"
             labelHeight={node.labelHeight ?? DEFAULT_LABEL_HEIGHT}

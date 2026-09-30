@@ -383,6 +383,35 @@ describe('tour (lw-064)', () => {
     expect(document.activeElement).toBe(document.body);
   });
 
+  // Sweep 2026-09-30, round 3: at 390 Step 1 left the node's description
+  // collapsed to two lines. A step shows its node's label expanded; the
+  // label collapses again when the step moves on.
+  test("a step shows its node's label expanded, and only for that step", () => {
+    const api = mount({ editorMode: 'EXPLORABLE_READONLY' });
+    const collapsed = (id: string) => {
+      const label = document.querySelector(`[data-node-label="${id}"]`);
+      if (!label) throw new Error(`no label for ${id}`);
+      return [...label.querySelectorAll<HTMLElement>('*')].some((el) => {
+        return el.style.maxHeight === '80px';
+      });
+    };
+    expect(collapsed('node2')).toBe(true);
+    act(() => {
+      api().startTour(STEPS);
+    });
+    expect(collapsed('node2')).toBe(false);
+    expect(collapsed('node1')).toBe(true);
+    act(() => {
+      api().nextTourStep();
+    });
+    expect(collapsed('node2')).toBe(true);
+    expect(collapsed('node1')).toBe(false);
+    act(() => {
+      api().endTour();
+    });
+    expect(collapsed('node1')).toBe(true);
+  });
+
   test('no tour prop, no button', () => {
     mount({ editorMode: 'EXPLORABLE_READONLY' });
     expect(screen.queryByRole('button', { name: 'Start tour' })).toBeNull();

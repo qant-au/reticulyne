@@ -71,7 +71,7 @@ It is on npm as [`@reticulyne/editor`](https://www.npmjs.com/package/@reticulyne
 no token needed; see [Installation](docs/installation.md). To run the editor on its own
 instead, see [Standalone Docker](docs/docker.md).
 
-**Requirements:** React 18 or 19, MUI v9, Emotion and Zustand as peer dependencies.
+**Requirements:** React 19, MUI v9, Emotion and Zustand as peer dependencies.
 Supported browsers follow MUI v9: Chrome 117+, Edge 121+, Firefox 121+, Safari 17+.
 
 ## Documentation

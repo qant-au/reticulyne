@@ -530,7 +530,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `getScene()` | `() => Scene` | The diagram as a scene, the file format: what a save hands to `onSave`. Use this to persist the diagram. |
 | `getTitle()` | `() => string` | The diagram title. |
 | `setTitle(title)` | `(title: string) => void` | Rename the diagram. Gated on `editorMode === 'EDITABLE'`; schema-validated (over 100 characters goes to `onValidationError`); a blank title becomes `'Untitled'`. Not recorded in undo history. |
-| `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => void` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view. Gated on `editorMode === 'EDITABLE'`. |
+| `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => Promise<boolean>` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view. Gated on `editorMode === 'EDITABLE'`. Resolves `true` once the diagram has rendered, `false` if refused (wrong mode, or invalid); never rejects. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor) of the model. Allowed in every editor mode; clears the selection; warns and does nothing for an unknown id. The title bar's floor switcher does the same for the user. |
 | `getLayers()` | `() => Layer[]` | The diagram's layers, `{ id, name, visible? }` (absent `visible` is shown). The base layer and the reserved Redacted layer are never listed. |
@@ -766,7 +766,7 @@ The "host updates bypass undo" rule is deliberate: a poller calling `Connector.u
 
 ## Peer dependencies
 
-The package declares `react` and `react-dom` as peers with the range `>=18` and is tested against React 19.
+The package declares `react` and `react-dom` as peers with the range `>=19`: the export dialogs use `useActionState`, which React 18 does not have.
 
 CSS is injected at runtime via Emotion (a Reticulyne dependency, not a peer). No stylesheet imports are required from the consumer side.
 

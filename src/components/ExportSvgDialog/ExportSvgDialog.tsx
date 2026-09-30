@@ -1,4 +1,12 @@
-import { useRef, useEffect, useMemo, useCallback, useState } from 'react';
+import {
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+  useState,
+  useActionState,
+  startTransition
+} from 'react';
 import {
   Box,
   Button,
@@ -36,8 +44,6 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
     return state.view;
   });
   const [isReady, setIsReady] = useState(false);
-  const [exportError, setExportError] = useState<string | null>(null);
-  const [isExporting, setIsExporting] = useState(false);
   const { getUnprojectedBounds } = useDiagramUtils();
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -87,43 +93,29 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
 
   const effectiveBgColor = transparent ? 'transparent' : backgroundColor;
 
-  const handleDownloadVector = useCallback(async () => {
-    if (!containerRef.current) return;
-    setIsExporting(true);
-    setExportError(null);
-    try {
-      await exportAsVectorSvg(
-        containerRef.current,
-        effectiveBgColor,
-        model.title
-      );
-    } catch (err) {
-      setExportError(
-        err instanceof Error ? err.message : 'Vector SVG export failed.'
-      );
-    } finally {
-      setIsExporting(false);
-    }
-  }, [effectiveBgColor, model.title]);
-
-  const handleDownloadUniversal = useCallback(async () => {
-    if (!containerRef.current) return;
-    setIsExporting(true);
-    setExportError(null);
-    try {
-      await exportAsUniversalSvg(
-        containerRef.current,
-        effectiveBgColor,
-        model.title
-      );
-    } catch (err) {
-      setExportError(
-        err instanceof Error ? err.message : 'Universal SVG export failed.'
-      );
-    } finally {
-      setIsExporting(false);
-    }
-  }, [effectiveBgColor, model.title]);
+  // A download is an action: its state is the last failure (null when it
+  // worked), and isPending holds the buttons while it runs.
+  const [exportError, downloadSvg, isExporting] = useActionState(
+    async (_prev: string | null, kind: 'vector' | 'universal') => {
+      if (!containerRef.current) return null;
+      try {
+        const exportSvg =
+          kind === 'vector' ? exportAsVectorSvg : exportAsUniversalSvg;
+        await exportSvg(containerRef.current, effectiveBgColor, model.title);
+        return null;
+      } catch (err) {
+        return err instanceof Error
+          ? err.message
+          : `${kind === 'vector' ? 'Vector' : 'Universal'} SVG export failed.`;
+      }
+    },
+    null
+  );
+  const handleDownload = (kind: 'vector' | 'universal') => {
+    startTransition(() => {
+      downloadSvg(kind);
+    });
+  };
 
   return (
     <AppDialog open onClose={onClose} title="Export as SVG" maxWidth="sm">
@@ -233,12 +225,19 @@ export const ExportSvgDialog = ({ onClose }: Props) => {
               </Button>
               <Button
                 variant="outlined"
-                onClick={handleDownloadVector}
+                onClick={() => {
+                  handleDownload('vector');
+                }}
                 disabled={isExporting}
               >
                 Download vector SVG
               </Button>
-              <Button onClick={handleDownloadUniversal} disabled={isExporting}>
+              <Button
+                onClick={() => {
+                  handleDownload('universal');
+                }}
+                disabled={isExporting}
+              >
                 Download universal SVG
               </Button>
             </Stack>

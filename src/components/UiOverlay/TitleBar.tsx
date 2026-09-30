@@ -35,6 +35,25 @@ const MINI_MAP_RESERVE = 16 + 200 + GAP;
 // moves up a row.
 const MIN_TITLE_WIDTH = 240;
 
+// How far in from each side the title keeps: clear of the zoom row on the
+// left and the mini-map on the right.
+const titleReserve = (appPadding: AppPadding, bottomRowWidth: number) => {
+  return Math.max(300, appPadding.x + bottomRowWidth + GAP, MINI_MAP_RESERVE);
+};
+
+/** Whether the title bar sits a row up, above the zoom row. */
+export const titleBarRaised = (
+  rendererWidth: number,
+  appPadding: AppPadding,
+  bottomRowWidth = 0
+) => {
+  return (
+    rendererWidth < MINI_MAP_MIN_WIDTH ||
+    rendererWidth - titleReserve(appPadding, bottomRowWidth) * 2 <
+      MIN_TITLE_WIDTH
+  );
+};
+
 export const TitleBar = ({
   visible,
   appPadding,
@@ -50,14 +69,8 @@ export const TitleBar = ({
   // let a long title cover Layers and ? (BUG15-34). With too little room
   // left (a phone), it moves up a row and spans the width, clear of the
   // mini-map where that shows, the title truncating.
-  const reserve = Math.max(
-    300,
-    appPadding.x + bottomRowWidth + GAP,
-    MINI_MAP_RESERVE
-  );
-  const narrow =
-    rendererSize.width < MINI_MAP_MIN_WIDTH ||
-    rendererSize.width - reserve * 2 < MIN_TITLE_WIDTH;
+  const reserve = titleReserve(appPadding, bottomRowWidth);
+  const narrow = titleBarRaised(rendererSize.width, appPadding, bottomRowWidth);
   const rightReserve =
     rendererSize.width >= MINI_MAP_MIN_WIDTH ? MINI_MAP_RESERVE : appPadding.x;
 

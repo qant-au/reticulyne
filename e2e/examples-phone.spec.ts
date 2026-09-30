@@ -27,3 +27,21 @@ test('picking an example shows no hover tooltip until the pointer moves (BUG15-0
   await page.waitForTimeout(1200);
   await expect(page.getByTestId('hover-tooltip')).toHaveCount(0);
 });
+
+test('Debug tools keeps its panel to half the canvas, above the title bar', async ({
+  page
+}) => {
+  await openPhone(page);
+  await pick(page, 1); // Debug tools
+  const panel = await page
+    .getByText('Mouse down', { exact: true })
+    .locator('xpath=ancestor::div[contains(@class,"MuiPaper-root")][1]')
+    .boundingBox();
+  const title = await page
+    .getByText('Airport management software system', { exact: true })
+    .boundingBox();
+  expect(panel && title).toBeTruthy();
+  expect(panel!.height).toBeLessThanOrEqual(844 / 2 + 1);
+  expect(panel!.x + panel!.width).toBeLessThanOrEqual(390);
+  expect(panel!.y + panel!.height).toBeLessThanOrEqual(title!.y);
+});

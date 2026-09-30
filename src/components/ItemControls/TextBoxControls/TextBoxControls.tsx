@@ -29,12 +29,22 @@ export const TextBoxControls = ({ id }: Props) => {
   });
   const textBox = useTextBox(id);
   const projection = useProjection();
-  // Only a text box just placed takes focus: selecting an existing one
-  // must leave Delete deleting the box, not its text.
-  const autoFocus = useUiStateStore((state) => {
+  // Only a text box just placed, or opened with Enter, takes focus:
+  // selecting an existing one must leave Delete deleting the box, not its
+  // text. An effect rather than autoFocus, which acts only on mount: Enter
+  // on a text box reached with Tab finds this panel already open.
+  const focusRequested = useUiStateStore((state) => {
     return state.focusTextBoxId === id;
   });
+  const inputRef = useRef<HTMLInputElement>(null);
   const { updateTextBox, deleteTextBox } = useScene();
+  const hasTextBox = Boolean(textBox);
+  useEffect(() => {
+    if (!focusRequested || !inputRef.current) return;
+    inputRef.current.focus();
+    inputRef.current.select();
+    uiStateActions.setFocusTextBoxId(null);
+  }, [focusRequested, hasTextBox, uiStateActions]);
 
   // A text box left empty is invisible but stayed in the diagram, and in
   // every export. As in Excalidraw, leaving it empty removes it.
@@ -62,16 +72,11 @@ export const TextBoxControls = ({ id }: Props) => {
         <TextField
           label="Text"
           slotProps={{ htmlInput: { maxLength: NAME_MAX } }}
-          autoFocus={autoFocus}
+          inputRef={inputRef}
           onKeyDown={(e) => {
             // Esc hands the keyboard back to the canvas; before, it did
             // nothing and the next tool key was typed into the text.
             if (e.key === 'Escape') (e.target as HTMLElement).blur();
-          }}
-          onFocus={(e) => {
-            if (!autoFocus) return;
-            e.target.select();
-            uiStateActions.setFocusTextBoxId(null);
           }}
           value={textBox.content}
           onChange={(e) => {

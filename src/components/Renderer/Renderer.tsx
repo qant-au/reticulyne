@@ -148,7 +148,8 @@ export const Renderer = ({
       >
         {isShowGrid && <Grid />}
       </Box>
-      {mode.showCursor && overCanvas && (
+      {/* rtl-037: the hover tile is a placement cue, so only when editable. */}
+      {mode.showCursor && overCanvas && editorMode === 'EDITABLE' && (
         <SceneLayer>
           <Cursor />
         </SceneLayer>

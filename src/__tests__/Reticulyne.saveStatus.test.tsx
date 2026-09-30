@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { render, cleanup, act } from '@testing-library/react';
 import Reticulyne, { useReticulyne } from '../Reticulyne';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -285,5 +285,54 @@ describe('save controller (2.3)', () => {
       await pending;
     });
     expect(api().status()).toMatchObject({ state: 'saved', isDirty: true });
+  });
+});
+
+describe('a save leaves the active tool alone', () => {
+  // A host that re-renders when a save lands, passing a fresh
+  // mainMenuOptions array each time, as the docker shell does.
+  const Host = ({ onReady }: { onReady: (api: Api) => void }) => {
+    const [saves, setSaves] = useState(0);
+    return (
+      <Reticulyne
+        editorMode="EDITABLE"
+        initialData={fixtureModel}
+        mainMenuOptions={['ACTION.SAVE']}
+        autoSaveDebounce={1000}
+        onSave={() => {
+          setSaves(saves + 1);
+        }}
+      >
+        <Probe onReady={onReady} />
+      </Reticulyne>
+    );
+  };
+
+  test('Pan stays on when an auto-save lands', async () => {
+    jest.useFakeTimers();
+    let captured: Api | null = null;
+    act(() => {
+      render(
+        <Host
+          onReady={(api) => {
+            captured = api;
+          }}
+        />
+      );
+    });
+    const api = () => {
+      return captured!;
+    };
+    act(() => {
+      api().setTitle('Edited');
+    });
+    act(() => {
+      api().ui.setMode({ type: 'PAN', showCursor: false });
+    });
+    await act(async () => {
+      jest.advanceTimersByTime(1500);
+    });
+    expect(api().status().state).toBe('saved');
+    expect(api().ui.get().mode.type).toBe('PAN');
   });
 });

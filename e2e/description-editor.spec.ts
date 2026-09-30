@@ -128,7 +128,10 @@ test('selecting a node mounts the editable editor and the bold toolbar works', a
 
   await editor.click();
   await page.keyboard.type('hello');
-  await editor.selectText(); // cross-platform select-all (Ctrl+A is not select-all on macOS)
+  // ProseMirror's own select-all: selectText() set the DOM selection, which
+  // ProseMirror reads on a later selectionchange, so Bold pressed straight
+  // after sometimes found an empty selection and bolded nothing.
+  await page.keyboard.press('ControlOrMeta+a');
   await boldBtn.click();
 
   await expect

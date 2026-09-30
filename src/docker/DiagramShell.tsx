@@ -178,7 +178,15 @@ const DiagramBar = ({
         anchorEl={anchor}
         open={anchor !== null}
         onClose={close}
-        slotProps={{ paper: { sx: { minWidth: 280, maxHeight: 440 } } }}
+        slotProps={{
+          paper: { sx: { minWidth: 280, maxHeight: 440 } },
+          // Closing, the menu keeps its invisible backdrop over the page
+          // until its fade ends, and a click in that time was swallowed:
+          // Esc, then T and a click on the canvas placed no text box, so
+          // the next letters typed went to the tools (sweep 2026-09-30,
+          // E38). Once it is closing, the pointer goes through.
+          root: { sx: { pointerEvents: anchor === null ? 'none' : undefined } }
+        }}
       >
         <MenuItem
           onClick={() => {

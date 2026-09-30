@@ -14,7 +14,9 @@ const rename = async (page: Page, title: string) => {
 const save = async (page: Page) => {
   await page.getByRole('button', { name: 'Main menu' }).click();
   await page.getByRole('menuitem', { name: 'Save' }).click();
-  await expect(page.getByText(/^Saved/)).toBeVisible();
+  // Scoped to the editor: a closing Diagrams menu (a portal) still holds
+  // "Saved in this browser only.", and the page is usable while it fades.
+  await expect(page.locator('#root').getByText(/^Saved/)).toBeVisible();
 };
 
 const diagrams = (page: Page) => {
@@ -272,4 +274,35 @@ test('a saved diagram the editor would refuse opens a new one, with a message', 
     page.getByText(/last diagram could not be opened/)
   ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Main menu' })).toBeVisible();
+});
+
+// Sweep 2026-09-30 (E38): straight after Esc closed the Diagrams menu, its
+// invisible backdrop was still over the page while it faded, and took the
+// click that should have placed a text box; the letters typed next went to
+// the tools instead. A click as the menu closes reaches the canvas.
+test('a click just after the Diagrams menu closes reaches the canvas', async ({
+  page
+}) => {
+  await page.goto('/');
+  await expect(page.getByRole('application')).toBeVisible();
+  const vp = page.viewportSize()!;
+  const at = { x: vp.width / 2 + 200, y: vp.height / 2 + 100 };
+  await diagrams(page).click();
+  await expect(page.getByRole('menu')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.mouse.move(at.x, at.y);
+  await page.keyboard.press('t');
+  await page.mouse.click(at.x, at.y);
+  const field = page.getByRole('textbox', { name: 'Text' });
+  await expect(field).toBeFocused();
+  await page.keyboard.type('Hi');
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('h');
+  await expect(page.getByRole('button', { name: 'Pan (H)' })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  await expect(
+    page.locator('#root').getByText('Hi', { exact: true }).first()
+  ).toBeVisible();
 });

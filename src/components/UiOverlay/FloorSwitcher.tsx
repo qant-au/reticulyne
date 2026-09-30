@@ -243,6 +243,9 @@ export const FloorSwitcher = () => {
               setMenu(null);
             }}
             slotProps={{
+              // As the Diagrams menu: closing, its invisible backdrop let
+              // no click through until the fade ended.
+              root: { sx: { pointerEvents: menu ? undefined : 'none' } },
               transition: {
                 onExited: () => {
                   if (!renameOnClose) return;

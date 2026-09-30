@@ -31,9 +31,11 @@ export const FloorPlanSection = ({ itemId }: { itemId: string }) => {
           return (
             <Typography key={place.viewId} variant="body2">
               {place.floorName ?? place.floorId} · {place.viewName}
+              {/* inherit, not body2: body2 is 0.75em, so nesting it shrank
+                  the position to three quarters of the line it sits in. */}
               <Typography
                 component="span"
-                variant="body2"
+                variant="inherit"
                 sx={{ color: 'text.secondary' }}
               >
                 {' '}

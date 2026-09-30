@@ -5,7 +5,9 @@ import { id, constrainedStrings, SCHEMA_LIMITS } from './common';
 // rtl-032: an object's element, props, ports and links ride on its model
 // item, so an item placed from the catalogue keeps what makes it that
 // device (its ports, its catalogue link, its Accurona twin) through a save.
-// They take the scene format's own shapes; the editor does not edit them.
+// They take the scene format's own shapes. rtl-034: props and ports are
+// edited as tables in the inspector (PropsPortsSection); element and links
+// are not edited.
 export const modelItemSchema = z
   .object({
     id,

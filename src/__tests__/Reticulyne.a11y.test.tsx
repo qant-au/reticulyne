@@ -389,6 +389,7 @@ describe('rtl-032: the catalogue palette', () => {
       'Wireless',
       'Serial and field bus',
       'Marine and vehicle',
+      'Building control',
       'Security and access',
       'Fire',
       'AV',

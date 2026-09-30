@@ -152,6 +152,63 @@ export const ITEMS: CatalogueItem[] = [
       { id: 'pc', name: 'PC', medium: 'ethernet-copper' }
     ]
   },
+  {
+    id: 'data-outlet',
+    name: 'Data outlet',
+    family: 'ethernet',
+    links: twin('data-outlet'),
+    ports: [
+      { id: 'jack', name: 'Jack', medium: 'ethernet-copper' },
+      {
+        id: 'cable',
+        name: 'Horizontal cable',
+        medium: 'ethernet-copper',
+        connector: 'terminal'
+      }
+    ]
+  },
+  {
+    id: 'floor-box',
+    name: 'Floor box',
+    family: 'ethernet',
+    links: twin('floor-box'),
+    ports: [
+      { id: 'data{1..2}', name: 'Data {n}', medium: 'ethernet-copper' },
+      {
+        id: 'cable{1..2}',
+        name: 'Horizontal cable {n}',
+        medium: 'ethernet-copper',
+        connector: 'terminal'
+      },
+      {
+        id: 'gpo{1..2}',
+        name: 'Power outlet {n}',
+        medium: 'power-ac',
+        capabilities: ['power-out']
+      },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'fibre-termination-cabinet',
+    name: 'Fibre termination cabinet',
+    family: 'ethernet',
+    links: twin('odf-panel'),
+    ports: [
+      {
+        id: 'front{1..24}',
+        name: 'Front {n}',
+        medium: 'ethernet-fibre',
+        connector: 'lc'
+      },
+      {
+        id: 'trunk{1..24}',
+        name: 'Trunk {n}',
+        medium: 'ethernet-fibre',
+        connector: 'lc'
+      }
+    ]
+  },
 
   // --- Wireless -------------------------------------------------------
   {
@@ -535,6 +592,47 @@ export const ITEMS: CatalogueItem[] = [
       { id: 'relay', name: 'Door relay', medium: 'dry-contact' }
     ]
   },
+  {
+    id: 'siren-strobe',
+    name: 'Siren and strobe',
+    family: 'security',
+    links: twin('siren-strobe'),
+    ports: [
+      { id: 'tamper', name: 'Tamper', medium: 'dry-contact', role: 'through' },
+      {
+        id: 'siren',
+        name: 'Siren feed',
+        medium: 'power-dc',
+        connector: 'terminal',
+        capabilities: ['power-in']
+      }
+    ]
+  },
+  {
+    id: 'turnstile',
+    name: 'Turnstile',
+    family: 'security',
+    links: twin('turnstile'),
+    ports: [
+      { id: 'open-in', name: 'Open (entry)', medium: 'dry-contact' },
+      { id: 'open-out', name: 'Open (exit)', medium: 'dry-contact' },
+      { id: 'fire', name: 'Fire release', medium: 'dry-contact' },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'speed-gate',
+    name: 'Speed gate lane',
+    family: 'security',
+    links: twin('speed-gate'),
+    ports: [
+      { id: 'open-in', name: 'Open (entry)', medium: 'dry-contact' },
+      { id: 'open-out', name: 'Open (exit)', medium: 'dry-contact' },
+      { id: 'fire', name: 'Fire release', medium: 'dry-contact' },
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
 
   // --- Fire -----------------------------------------------------------
   {
@@ -622,6 +720,16 @@ export const ITEMS: CatalogueItem[] = [
       }
     ]
   },
+  {
+    id: 'gas-suppression-cylinder',
+    name: 'Gas suppression cylinder',
+    family: 'fire',
+    links: twin('fire-suppression'),
+    ports: [
+      { id: 'release', name: 'Release', medium: 'dry-contact' },
+      { id: 'pressure', name: 'Low pressure', medium: 'dry-contact' }
+    ]
+  },
 
   // --- AV -------------------------------------------------------------
   {
@@ -659,6 +767,40 @@ export const ITEMS: CatalogueItem[] = [
     ports: [
       { id: 'hdmi', name: 'HDMI', medium: 'hdmi' },
       { id: 'dp', name: 'DisplayPort', medium: 'displayport' },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'monitor-ultrawide',
+    name: 'Monitor (ultrawide)',
+    family: 'av',
+    links: twin('monitor-34-ultrawide'),
+    ports: [
+      { id: 'hdmi', name: 'HDMI', medium: 'hdmi' },
+      { id: 'dp', name: 'DisplayPort', medium: 'displayport' },
+      { id: 'usb-c', name: 'USB-C', medium: 'usb', connector: 'usb-c' },
+      {
+        id: 'usb{1..2}',
+        name: 'USB hub {n}',
+        medium: 'usb',
+        connector: 'usb-a'
+      },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'kvm-console-cart',
+    name: 'KVM console cart',
+    family: 'av',
+    links: twin('kvm-console'),
+    ports: [
+      { id: 'hdmi', name: 'Video in', medium: 'hdmi' },
+      {
+        id: 'usb',
+        name: 'Keyboard and mouse',
+        medium: 'usb',
+        connector: 'usb-a'
+      },
       { ...acIn, connector: 'iec-c14' }
     ]
   },
@@ -706,6 +848,168 @@ export const ITEMS: CatalogueItem[] = [
         connector: 'iec-c13',
         capabilities: ['power-out']
       }
+    ]
+  },
+  {
+    id: 'ups-floor',
+    name: 'UPS (floor-standing, network managed)',
+    family: 'power',
+    links: twin('ups-large'),
+    ports: [
+      { id: 'mgmt', name: 'Network card', medium: 'ethernet-copper' },
+      {
+        id: 'bms',
+        name: 'BMS',
+        medium: 'rs-485',
+        role: 'through',
+        protocols: ['modbus-rtu']
+      },
+      { ...acIn, connector: 'terminal' },
+      {
+        id: 'out',
+        name: 'Output',
+        medium: 'power-ac',
+        connector: 'terminal',
+        capabilities: ['power-out']
+      }
+    ]
+  },
+  {
+    id: 'transfer-switch',
+    name: 'Transfer switch panel',
+    family: 'power',
+    links: twin('ats-panel'),
+    ports: [
+      {
+        id: 'mgmt',
+        name: 'Controller',
+        medium: 'ethernet-copper',
+        protocols: ['modbus-tcp']
+      },
+      { id: 'gen-start', name: 'Generator start', medium: 'dry-contact' },
+      {
+        id: 'mains',
+        name: 'Mains in',
+        medium: 'power-ac',
+        connector: 'terminal',
+        capabilities: ['power-in']
+      },
+      {
+        id: 'standby',
+        name: 'Standby in',
+        medium: 'power-ac',
+        connector: 'terminal',
+        capabilities: ['power-in']
+      },
+      {
+        id: 'load',
+        name: 'Load',
+        medium: 'power-ac',
+        connector: 'terminal',
+        capabilities: ['power-out']
+      }
+    ]
+  },
+  {
+    id: 'standby-generator',
+    name: 'Standby generator',
+    family: 'power',
+    links: twin('generator'),
+    ports: [
+      {
+        id: 'controller',
+        name: 'Controller',
+        medium: 'rs-485',
+        role: 'through',
+        protocols: ['modbus-rtu']
+      },
+      { id: 'remote-start', name: 'Remote start', medium: 'dry-contact' },
+      {
+        id: 'out',
+        name: 'Output',
+        medium: 'power-ac',
+        connector: 'terminal',
+        capabilities: ['power-out']
+      }
+    ]
+  },
+
+  // --- Building control -----------------------------------------------
+  {
+    id: 'crac-unit',
+    name: 'Precision air conditioner (CRAC)',
+    family: 'building',
+    links: twin('crac-unit'),
+    ports: [
+      {
+        id: 'eth1',
+        name: 'BMS (IP)',
+        medium: 'ethernet-copper',
+        protocols: ['bacnet-ip', 'modbus-tcp']
+      },
+      {
+        id: 'bms',
+        name: 'BMS (RS-485)',
+        medium: 'rs-485',
+        role: 'through',
+        protocols: ['modbus-rtu', 'bacnet-mstp']
+      },
+      { id: 'fire', name: 'Fire shutdown', medium: 'dry-contact' },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'in-row-cooler',
+    name: 'In-row cooler',
+    family: 'building',
+    links: twin('in-row-cooler'),
+    ports: [
+      {
+        id: 'eth1',
+        name: 'BMS (IP)',
+        medium: 'ethernet-copper',
+        protocols: ['bacnet-ip', 'modbus-tcp']
+      },
+      {
+        id: 'bms',
+        name: 'BMS (RS-485)',
+        medium: 'rs-485',
+        role: 'through',
+        protocols: ['modbus-rtu', 'bacnet-mstp']
+      },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'exit-sign',
+    name: 'Exit sign (DALI-2)',
+    family: 'building',
+    links: twin('exit-sign'),
+    ports: [
+      {
+        id: 'dali',
+        name: 'DALI',
+        medium: 'dali-2',
+        role: 'through',
+        protocols: ['dali-2']
+      },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'emergency-light',
+    name: 'Emergency light (DALI-2)',
+    family: 'building',
+    links: twin('emergency-light'),
+    ports: [
+      {
+        id: 'dali',
+        name: 'DALI',
+        medium: 'dali-2',
+        role: 'through',
+        protocols: ['dali-2']
+      },
+      { ...acIn, connector: 'terminal' }
     ]
   },
 

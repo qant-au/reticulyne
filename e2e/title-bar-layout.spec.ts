@@ -174,6 +174,21 @@ const rename = async (page: Page, title: string) => {
   await page.getByLabel('Title').press('Enter');
 };
 
+// At 390 the bar stopped at 276px (x57-333) under a zoom row spanning
+// x41-363, the title cut with ~30px unused.
+test('at 390 a long title uses the width of the row below', async ({ page }) => {
+  await open(page, 390, 844, {
+    title: 'Sweep diagram with a long enough title',
+    views: [{ id: 'v', name: 'Main' }]
+  });
+  const bar = await page.getByTestId('title-bar').evaluate((el) => {
+    const b = el.parentElement!.getBoundingClientRect();
+    return { left: b.left, right: b.right };
+  });
+  expect(bar.left).toBeLessThanOrEqual(41);
+  expect(bar.right).toBeGreaterThanOrEqual(358);
+});
+
 // The compact status carried its full wording only in a native title: a tap
 // showed nothing and assistive tech read the short word.
 test.describe('on a touch phone', () => {

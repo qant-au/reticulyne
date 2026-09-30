@@ -42,8 +42,8 @@ jobs:
     permissions:
       contents: read
 
-  # Publishes to npm once the metadata and the full gate pass. Needs an npm
-  # automation token in the NPM_TOKEN secret.
+  # Publishes to npm once the metadata and the full gate pass, through npm
+  # Trusted Publishing: no token, the package trusts this workflow on npmjs.com.
   publish:
     needs: [metadata, ci]
     runs-on: ubuntu-latest
@@ -62,6 +62,5 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: node scripts/check-pack-contents.mjs
+      - run: npm install -g npm@^11.5.1
       - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

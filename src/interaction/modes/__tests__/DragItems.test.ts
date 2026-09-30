@@ -102,6 +102,49 @@ describe('DragItems mode', () => {
       );
     });
 
+    // lw-062 (sweep 2026-09-30): dragging a collapsed group's box drags
+    // its members, which the visible items leave out. Looked up there,
+    // every move threw and the members stayed where they were.
+    test("moves a collapsed group's hidden members, found in the whole view", () => {
+      const state = makeState({
+        mode: {
+          type: 'DRAG_ITEMS',
+          showCursor: true,
+          items: [
+            { type: 'ITEM', id: 'm1' },
+            { type: 'ITEM', id: 'm2' }
+          ],
+          isInitialMovement: false
+        },
+        mouse: {
+          mousedown: { screen: { x: 0, y: 0 }, tile: { x: 0, y: 0 } },
+          position: { screen: { x: 0, y: 0 }, tile: { x: 1, y: 0 } },
+          delta: { screen: { x: 10, y: 0 }, tile: { x: 1, y: 0 } }
+        },
+        scene: {
+          items: [],
+          currentView: {
+            id: 'v',
+            name: 'V',
+            items: [
+              { id: 'm1', tile: { x: -2, y: 0 }, parentGroupId: 'g' },
+              { id: 'm2', tile: { x: -2, y: 2 }, parentGroupId: 'g' }
+            ]
+          }
+        } as unknown as Partial<SceneShape>
+      });
+
+      expect(() => {
+        return DragItems.mousemove?.(state);
+      }).not.toThrow();
+      expect(state.scene.updateViewItem).toHaveBeenCalledWith('m1', {
+        tile: { x: -1, y: 0 }
+      });
+      expect(state.scene.updateViewItem).toHaveBeenCalledWith('m2', {
+        tile: { x: -1, y: 2 }
+      });
+    });
+
     test('moves a RECTANGLE by the delta — both corners shift together', () => {
       const rect: Rectangle = {
         id: 'rect-1',

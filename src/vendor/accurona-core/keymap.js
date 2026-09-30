@@ -98,9 +98,28 @@ export const RETICULYNE_BINDINGS = [
     { action: 'toggle-highlight', label: 'Toggle item highlighting', section: 'View', chords: [c('KeyI', { alt: true })], editing: false },
     { action: 'floor-up', label: 'Show the floor above', section: 'View', chords: [k('ArrowUp', { alt: true })], editing: false },
     { action: 'floor-down', label: 'Show the floor below', section: 'View', chords: [k('ArrowDown', { alt: true })], editing: false },
-    gesture('add-on-tile', 'Add an item on an empty tile', 'Double-click', true),
+    // Keyboard access. Tab walks the objects only while the canvas has focus,
+    // and past the last one it lets focus leave, so it is never a trap.
+    {
+        action: 'pan',
+        label: 'Pan the view',
+        section: 'View',
+        chords: ARROWS.map((key) => mod(key)),
+        editing: false,
+        keysLabel: 'Ctrl/Cmd + arrow keys'
+    },
+    { action: 'next-object', label: 'Select the next object', section: 'Edit', chords: [k('Tab')], editing: false },
+    { action: 'previous-object', label: 'Select the previous object', section: 'Edit', chords: [k('Tab', { shift: true })], editing: false },
+    {
+        action: 'object-menu',
+        label: "Open the selected object's menu",
+        section: 'Edit',
+        chords: [k('F10', { shift: true }), k('ContextMenu', { shift: 'any' })],
+        editing: true
+    },
+    gesture('add-on-tile', 'Add an item on an empty tile', 'Double-click; or pick it with the add-item tool and press Enter', true),
     gesture('enter-group', 'Work inside a group', 'Double-click the group; Esc leaves it'),
-    gesture('connect', 'Connect two items', 'Drag from a port', true)
+    gesture('connect', 'Connect two items', "Drag from a port; or Connect to in the item's menu", true)
 ];
 export const AXONOMETRA_BINDINGS = [
     { action: 'wall', label: 'Wall', section: 'Tools', chords: [k('l'), c('Digit6')], editing: true },
@@ -136,8 +155,18 @@ const DIFFERENCES_SHARED = [
         here: 'unbound',
         why: 'Isometric items are not symmetric, and a floor plan object is rotated, not mirrored.'
     },
-    { excalidraw: 'Tab, Shift + Tab', action: 'change shape type', here: 'unbound', why: 'No free-form shapes.' },
-    { excalidraw: 'Ctrl/Cmd + arrow, Alt + arrow', action: 'create and walk a flowchart', here: 'Reticulyne: Alt + Up / Down change floor; the rest unbound', why: 'Flowcharting.' },
+    {
+        excalidraw: 'Tab, Shift + Tab',
+        action: 'change shape type',
+        here: 'Reticulyne: select the next / previous object; Axonometra: unbound',
+        why: 'No free-form shapes; the keyboard needs a way to reach each object.'
+    },
+    {
+        excalidraw: 'Ctrl/Cmd + arrow, Alt + arrow',
+        action: 'create and walk a flowchart',
+        here: 'Reticulyne: Ctrl/Cmd + arrow pans, Alt + Up / Down change floor; the rest unbound',
+        why: 'Flowcharting.'
+    },
     { excalidraw: 'Ctrl/Cmd + K', action: 'link', here: 'unbound', why: 'No links on the canvas yet.' },
     { excalidraw: 'Ctrl/Cmd + Alt + C / V', action: 'copy and paste styles', here: 'unbound', why: 'No style clipboard.' },
     {
@@ -264,7 +293,9 @@ const KEY_LABELS = {
     Escape: 'Esc',
     Delete: 'Delete',
     Backspace: 'Backspace',
-    Enter: 'Enter'
+    Enter: 'Enter',
+    Tab: 'Tab',
+    ContextMenu: 'Menu'
 };
 const keyName = (chord) => {
     if (chord.code !== undefined) {

@@ -1,17 +1,39 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Box, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { AppDialog } from './AppDialog.js';
-const Keys = ({ keys }) => (_jsx(Box, { component: "span", sx: { display: 'inline-flex', flexWrap: 'wrap', gap: 0.5, justifyContent: 'flex-end' }, children: keys.map((key) => (_jsx(Box, { component: "kbd", sx: {
-            fontFamily: 'inherit',
-            fontSize: '0.8125rem',
-            px: 0.75,
-            py: 0.125,
-            borderRadius: 1,
-            border: 1,
-            borderColor: 'divider',
-            bgcolor: 'action.hover',
-            whiteSpace: 'nowrap'
-        }, children: key }, key))) }));
+import { shortcutKeys } from './shortcutKeys.js';
+const Kbd = ({ children }) => (_jsx(Box, { component: "kbd", sx: {
+        fontFamily: 'inherit',
+        fontSize: '0.8125rem',
+        px: 0.75,
+        py: 0.125,
+        borderRadius: 1,
+        border: 1,
+        borderColor: 'divider',
+        bgcolor: 'action.hover',
+        whiteSpace: 'nowrap'
+    }, children: children }));
+const Joiner = ({ children }) => (_jsx(Box, { component: "span", sx: { color: 'text.secondary', fontSize: '0.75rem' }, children: children }));
+// Each entry is one way to trigger the action, so entries are separated by
+// "or"; the keys of one chord are joined by "+". Without that, "V 1 S" and
+// "⌘ ⇧ Z" were drawn alike and read as one combination (BUG15-14).
+const Keys = ({ keys }) => (_jsx(Box, { component: "span", sx: {
+        display: 'inline-flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 0.5,
+        justifyContent: { xs: 'flex-start', sm: 'flex-end' }
+    }, children: keys.map((entry, i) => {
+        const parsed = shortcutKeys(entry);
+        return (_jsxs(Box, { component: "span", sx: { display: 'inline-flex', alignItems: 'center', gap: 0.5 }, children: [i > 0 && _jsx(Joiner, { children: "or" }), parsed.kind === 'text' ? (_jsx(Box, { component: "span", sx: { color: 'text.secondary', fontSize: '0.8125rem' }, children: parsed.text })) : (parsed.keys.map((key, j) => (_jsxs(Box, { component: "span", sx: { display: 'inline-flex', alignItems: 'center', gap: 0.5 }, children: [j > 0 && _jsx(Joiner, { children: "+" }), _jsx(Kbd, { children: key })] }, `${key}-${j}`))))] }, entry));
+    }) }));
+// On a phone the keys go under their label rather than beside it, where
+// they were pushed off the dialog's right edge.
+const rowSx = { display: { xs: 'block', sm: 'table-row' }, borderBottom: { xs: 1, sm: 0 }, borderColor: 'divider', py: { xs: 0.75, sm: 0 } };
+const labelCellSx = { display: { xs: 'block', sm: 'table-cell' }, borderBottom: { xs: 0 }, p: { xs: 0 }, pb: { xs: 0.5 } };
+// Up to half the width beside the label, so a long phrase wraps instead of
+// squeezing the label to a word a line.
+const keysCellSx = { display: { xs: 'block', sm: 'table-cell' }, borderBottom: { xs: 0 }, p: { xs: 0 }, width: { sm: '50%' }, textAlign: { xs: 'left', sm: 'right' } };
 // The `?` dialog: every binding a tool has, from the shared keymap, and the
 // Excalidraw bindings it deliberately does not match.
-export const KeyboardShortcutsDialog = ({ open, onClose, sections, differences, title = 'Keyboard shortcuts' }) => (_jsx(AppDialog, { open: open, onClose: onClose, title: title, maxWidth: "md", children: _jsxs(Stack, { spacing: 3, "data-testid": "keyboard-shortcuts", children: [_jsx(Box, { sx: { display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }, children: sections.map((section) => (_jsxs(Box, { component: "section", "aria-label": section.title, children: [_jsx(Typography, { variant: "subtitle2", component: "h3", sx: { mb: 1 }, children: section.title }), _jsx(Table, { size: "small", children: _jsx(TableBody, { children: section.rows.map((row) => (_jsxs(TableRow, { children: [_jsx(TableCell, { sx: { pl: 0 }, children: row.label }), _jsx(TableCell, { align: "right", sx: { pr: 0 }, children: _jsx(Keys, { keys: row.keys }) })] }, `${row.label}:${row.keys.join()}`))) }) })] }, section.title))) }), differences && differences.length > 0 && (_jsxs(Box, { component: "section", "aria-label": "Differences from Excalidraw", "data-testid": "excalidraw-differences", children: [_jsx(Typography, { variant: "subtitle2", component: "h3", sx: { mb: 1 }, children: "Differences from Excalidraw" }), _jsxs(Table, { size: "small", children: [_jsx(TableHead, { children: _jsxs(TableRow, { children: [_jsx(TableCell, { sx: { pl: 0 }, children: "Excalidraw" }), _jsx(TableCell, { children: "Here" }), _jsx(TableCell, { sx: { pr: 0 }, children: "Why" })] }) }), _jsx(TableBody, { children: differences.map((d) => (_jsxs(TableRow, { children: [_jsxs(TableCell, { sx: { pl: 0 }, children: [d.excalidraw, " (", d.action, ")"] }), _jsx(TableCell, { children: d.here }), _jsx(TableCell, { sx: { pr: 0 }, children: d.why })] }, d.excalidraw + d.action))) })] })] }))] }) }));
+export const KeyboardShortcutsDialog = ({ open, onClose, sections, differences, title = 'Keyboard shortcuts' }) => (_jsx(AppDialog, { open: open, onClose: onClose, title: title, maxWidth: "md", children: _jsxs(Stack, { spacing: 3, "data-testid": "keyboard-shortcuts", children: [_jsx(Box, { sx: { display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }, children: sections.map((section) => (_jsxs(Box, { component: "section", "aria-label": section.title, children: [_jsx(Typography, { variant: "subtitle2", component: "h3", sx: { mb: 1 }, children: section.title }), _jsx(Table, { size: "small", children: _jsx(TableBody, { children: section.rows.map((row) => (_jsxs(TableRow, { sx: rowSx, children: [_jsx(TableCell, { sx: { pl: 0, ...labelCellSx }, children: row.label }), _jsx(TableCell, { align: "right", sx: { pr: 0, ...keysCellSx }, children: _jsx(Keys, { keys: row.keys }) })] }, `${row.label}:${row.keys.join()}`))) }) })] }, section.title))) }), differences && differences.length > 0 && (_jsxs(Box, { component: "section", "aria-label": "Differences from Excalidraw", "data-testid": "excalidraw-differences", children: [_jsx(Typography, { variant: "subtitle2", component: "h3", sx: { mb: 1 }, children: "Differences from Excalidraw" }), _jsxs(Table, { size: "small", children: [_jsx(TableHead, { children: _jsxs(TableRow, { children: [_jsx(TableCell, { sx: { pl: 0 }, children: "Excalidraw" }), _jsx(TableCell, { children: "Here" }), _jsx(TableCell, { sx: { pr: 0 }, children: "Why" })] }) }), _jsx(TableBody, { children: differences.map((d) => (_jsxs(TableRow, { children: [_jsxs(TableCell, { sx: { pl: 0 }, children: [d.excalidraw, " (", d.action, ")"] }), _jsx(TableCell, { children: d.here }), _jsx(TableCell, { sx: { pr: 0 }, children: d.why })] }, d.excalidraw + d.action))) })] })] }))] }) }));

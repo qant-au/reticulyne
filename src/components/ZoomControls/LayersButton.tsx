@@ -23,14 +23,26 @@ import { LAYERS_MAX } from 'src/schemas/layer';
 import { hasRedactedContent } from 'src/utils';
 import { Surface, ToolButton } from 'src/vendor/accurona-ui';
 
+// Each row's leading icon (or Base's blank) sits in this column.
+const ICON_COLUMN = {
+  width: 34,
+  flexShrink: 0,
+  display: 'flex',
+  justifyContent: 'center'
+} as const;
+
 // Keyed on the layer and its saved name, so it starts over when either
 // changes rather than syncing state in an effect.
 const NameField = ({
   initial,
-  onCommit
+  onCommit,
+  autoFocus = false,
+  onFocused
 }: {
   initial: string;
   onCommit: (value: string) => void;
+  autoFocus?: boolean;
+  onFocused?: () => void;
 }) => {
   const [name, setName] = useState(initial);
   const commit = () => {
@@ -43,6 +55,11 @@ const NameField = ({
       size="small"
       variant="standard"
       value={name}
+      autoFocus={autoFocus}
+      onFocus={(e) => {
+        if (autoFocus) e.target.select();
+        onFocused?.();
+      }}
       slotProps={{
         htmlInput: { maxLength: NAME_MAX, 'aria-label': 'Layer name' }
       }}
@@ -63,6 +80,11 @@ const NameField = ({
 // is always shown here and left out of every export unless it opts in.
 export const LayersButton = () => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  // The layer Add layer just made: its name field takes focus, selected,
+  // so the new layer can be named straight away (sweep 2026-09-30: focus
+  // stayed on nothing). Cleared once focused, so a rename that remounts
+  // the field does not pull focus back.
+  const [focusLayerId, setFocusLayerId] = useState<string | null>(null);
   const { layers, addLayer, updateLayer, deleteLayer } = useScene();
   const views = useModelStore((state) => {
     return state.views;
@@ -131,7 +153,7 @@ export const LayersButton = () => {
             <Stack spacing={1} data-testid="layers-panel">
               <Typography variant="subtitle2">Layers</Typography>
               <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                <Box sx={{ width: 34 }} />
+                <Box sx={ICON_COLUMN} />
                 <Typography variant="body2" sx={{ flex: 1 }}>
                   Base
                 </Typography>
@@ -151,28 +173,37 @@ export const LayersButton = () => {
                   >
                     {/* To the side, not below: below it covered the next row's name
                     field (sweep 2026-09-30). */}
-                    <Tooltip
-                      title={visible ? 'Hide layer' : 'Show layer'}
-                      placement="left"
-                    >
-                      <IconButton
-                        size="small"
-                        aria-label={`${visible ? 'Hide' : 'Show'} ${layer.name}`}
-                        aria-pressed={visible}
-                        onClick={() => {
-                          updateLayer(layer.id, { visible: !visible });
-                        }}
+                    {/* In the same 34px column as Base's spacer and Redacted's
+                        lock, so every row's name starts at one x (the bare
+                        button is narrower: the names sat 7px apart). */}
+                    <Box sx={ICON_COLUMN}>
+                      <Tooltip
+                        title={visible ? 'Hide layer' : 'Show layer'}
+                        placement="left"
                       >
-                        {visible ? (
-                          <VisibilityOutlinedIcon fontSize="small" />
-                        ) : (
-                          <VisibilityOffOutlinedIcon fontSize="small" />
-                        )}
-                      </IconButton>
-                    </Tooltip>
+                        <IconButton
+                          size="small"
+                          aria-label={`${visible ? 'Hide' : 'Show'} ${layer.name}`}
+                          aria-pressed={visible}
+                          onClick={() => {
+                            updateLayer(layer.id, { visible: !visible });
+                          }}
+                        >
+                          {visible ? (
+                            <VisibilityOutlinedIcon fontSize="small" />
+                          ) : (
+                            <VisibilityOffOutlinedIcon fontSize="small" />
+                          )}
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
                     <NameField
                       key={`${layer.id}:${layer.name}`}
                       initial={layer.name}
+                      autoFocus={layer.id === focusLayerId}
+                      onFocused={() => {
+                        if (layer.id === focusLayerId) setFocusLayerId(null);
+                      }}
                       onCommit={(name) => {
                         updateLayer(layer.id, { name });
                       }}
@@ -195,9 +226,7 @@ export const LayersButton = () => {
                 );
               })}
               <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                <Box
-                  sx={{ width: 34, display: 'flex', justifyContent: 'center' }}
-                >
+                <Box sx={ICON_COLUMN}>
                   <LockOutlinedIcon fontSize="small" color="action" />
                 </Box>
                 <Box sx={{ flex: 1 }}>
@@ -217,7 +246,7 @@ export const LayersButton = () => {
                 variant="outlined"
                 disabled={layers.length >= LAYERS_MAX}
                 onClick={() => {
-                  addLayer(`Layer ${layers.length + 1}`);
+                  setFocusLayerId(addLayer(`Layer ${layers.length + 1}`));
                 }}
               >
                 Add layer

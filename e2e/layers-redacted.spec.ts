@@ -82,6 +82,8 @@ test.describe('Layers panel', () => {
     await panel.getByRole('button', { name: 'Add layer' }).click();
     const names = panel.getByRole('textbox', { name: 'Layer name' });
     await expect(names).toHaveCount(2);
+    // Focus goes to the new layer's name field (sweep 2026-09-30).
+    await expect(names.nth(1)).toBeFocused();
     await names.nth(1).fill('Scratch');
     await names.nth(1).press('Enter');
     await expect(panel.getByRole('button', { name: 'Delete Scratch' })).toBeVisible();
@@ -100,6 +102,36 @@ test.describe('Layers panel', () => {
     await expect(names).toHaveCount(1);
 
     await page.keyboard.press('Escape');
+  });
+
+  // Sweep 2026-09-30: Base and Redacted sat 7px right of the other names.
+  test('every row's name starts at the same x', async ({ page }) => {
+    await load(page);
+    await page.getByRole('button', { name: 'Layers', exact: true }).click();
+    const panel = page.getByRole('dialog', { name: 'Layers' });
+    const xs = await panel.evaluate((el) => {
+      const textLeft = (node: Element) => {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return Math.round(range.getBoundingClientRect().left);
+      };
+      const input = el.querySelector('input[aria-label="Layer name"]')!;
+      const inputLeft =
+        input.getBoundingClientRect().left +
+        parseFloat(getComputedStyle(input).paddingLeft);
+      const byText = (t: string) => {
+        return [...el.querySelectorAll('p')].find((p) => {
+          return p.textContent === t;
+        })!;
+      };
+      return {
+        base: textLeft(byText('Base')),
+        layer: Math.round(inputLeft),
+        redacted: textLeft(byText('Redacted'))
+      };
+    });
+    expect(Math.abs(xs.base - xs.layer)).toBeLessThanOrEqual(1);
+    expect(Math.abs(xs.redacted - xs.layer)).toBeLessThanOrEqual(1);
   });
 
   test('the Redacted layer says it is in use', async ({ page }) => {

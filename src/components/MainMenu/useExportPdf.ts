@@ -3,6 +3,8 @@
 // (which rasters it via html-to-image and embeds the PNG in a
 // jsPDF document), then closes the menu.
 //
+// Other floors' ghosts are hidden for the capture too, and put back after.
+//
 // lw-052: the PDF is a picture of the canvas, which already leaves hidden
 // layers out. The Redacted layer is shown on the canvas, so it is hidden
 // for the capture unless the export opts in; a diagram with anything on
@@ -35,9 +37,13 @@ export const useDownloadPdf = () => {
       // The PDF is a picture of the live canvas, so the pointer's hover
       // tile came out in it. Hide it for the capture, then put the tool
       // back as it was.
-      const { mode } = uiStateActions.get();
+      const { mode, showOtherFloors } = uiStateActions.get();
       uiStateActions.setMode({ ...mode, showCursor: false });
       uiStateActions.setHideRedacted(!includeRedacted);
+      // The faint other-floor ghosts are an editing aid, not the diagram:
+      // they came out along the top of the PDF (sweep 2026-09-30). The PNG
+      // and SVG exports render NON_INTERACTIVE, which never draws them.
+      uiStateActions.setShowOtherFloors(false);
       await new Promise<void>((resolve) => {
         requestAnimationFrame(() => {
           resolve();
@@ -46,6 +52,7 @@ export const useDownloadPdf = () => {
       try {
         await exportAsPdf(rendererEl, undefined, title);
       } finally {
+        uiStateActions.setShowOtherFloors(showOtherFloors);
         uiStateActions.setHideRedacted(false);
         uiStateActions.setMode(mode);
       }

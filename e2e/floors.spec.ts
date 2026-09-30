@@ -57,3 +57,60 @@ test('double-clicking a tab still renames', async ({ page }) => {
   await page.getByLabel('Floor name').press('Enter');
   await expect(page.getByRole('tab', { name: 'Mezzanine' })).toBeVisible();
 });
+
+// Sweep 2026-09-30: the PDF showed the other floors' faint ghosts along its
+// top. No export includes them.
+test('Export as PDF leaves the other floors out, and they come back after', async ({
+  page
+}) => {
+  const ghosts = page.locator('[data-testid^="other-floor-"]');
+  await expect(ghosts.first()).toBeAttached();
+  await page.evaluate(() => {
+    const w = window as unknown as { __ghostMin: number };
+    const count = () => {
+      return document.querySelectorAll('[data-testid^="other-floor-"]').length;
+    };
+    w.__ghostMin = count();
+    new MutationObserver(() => {
+      w.__ghostMin = Math.min(w.__ghostMin, count());
+    }).observe(document.body, { childList: true, subtree: true });
+  });
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Export as PDF' }).click();
+  await download;
+  const min = await page.evaluate(() => {
+    return (window as unknown as { __ghostMin: number }).__ghostMin;
+  });
+  expect(min).toBe(0);
+  await expect(ghosts.first()).toBeAttached();
+});
+
+test('the PNG and SVG exports leave the other floors out', async ({ page }) => {
+  await expect(
+    page.locator('[data-testid^="other-floor-"]').first()
+  ).toBeAttached();
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: /Export as Image/i }).click();
+  const png = page.getByRole('dialog', { name: 'Export as image' });
+  await expect(png.locator('img[src^="data:image/png"]')).toBeVisible({
+    timeout: 20000
+  });
+  await expect(png.locator('[data-testid^="other-floor-"]')).toHaveCount(0);
+  await png.getByRole('button', { name: 'Cancel' }).click();
+
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Export as SVG' }).click();
+  const svg = page.getByRole('dialog', { name: 'Export as SVG' });
+  for (const name of ['Download universal SVG', 'Download vector SVG']) {
+    const download = page.waitForEvent('download', { timeout: 20000 });
+    await svg.getByRole('button', { name }).click({ timeout: 20000 });
+    const { readFileSync } = await import('node:fs');
+    const body = readFileSync(await (await download).path(), 'utf8');
+    expect(body, name).not.toContain('other-floor-');
+    // The universal SVG is a picture of the canvas, labels and all.
+    if (name === 'Download universal SVG') {
+      expect(body, name).toContain('Core switch');
+    }
+  }
+});

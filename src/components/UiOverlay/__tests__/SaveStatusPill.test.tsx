@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { SaveStatusPill } from '../SaveStatusPill';
 
 let saveStatus = {
@@ -43,11 +43,18 @@ describe('SaveStatusPill', () => {
     expect(getComputedStyle(pill).whiteSpace).toBe('nowrap');
   });
 
-  test('shortened when compact, the full wording in its tooltip', () => {
+  // Round 4: the full wording was only in a native title, which a tap
+  // never shows and assistive tech did not read. It is now the text a
+  // screen reader reads, and a tooltip a tap opens.
+  test('shortened when compact; a screen reader and a tap get the full wording', async () => {
     render(<SaveStatusPill compact />);
     const pill = screen.getByTestId('save-status');
-    expect(pill.textContent).toBe('Unsaved');
-    expect(pill.getAttribute('title')).toBe('Unsaved changes');
+    expect(pill.querySelector('[aria-hidden]')?.textContent).toBe('Unsaved');
+    expect(pill.textContent).toContain('Unsaved changes');
+    fireEvent.click(pill);
+    expect((await screen.findByRole('tooltip')).textContent).toBe(
+      'Unsaved changes'
+    );
   });
 
   test('"Saved just now" is "Saved" when compact', () => {
@@ -58,6 +65,9 @@ describe('SaveStatusPill', () => {
       lastSavedAt: Date.now()
     };
     render(<SaveStatusPill compact />);
-    expect(screen.getByTestId('save-status').textContent).toBe('Saved');
+    expect(
+      screen.getByTestId('save-status').querySelector('[aria-hidden]')
+        ?.textContent
+    ).toBe('Saved');
   });
 });

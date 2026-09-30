@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Tooltip, Typography } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import { modelFromModelStore, performSave } from 'src/utils';
+import { visuallyHidden } from 'src/components/ScreenReaderSupport/ScreenReaderSupport';
 
 // where saving stands, in the title bar. Renders nothing
 // unless the host passed `onSave`, and nothing for a clean diagram that
@@ -35,6 +36,9 @@ export const SaveStatusPill = ({ compact = false }: { compact?: boolean }) => {
   const [now, setNow] = useState(() => {
     return Date.now();
   });
+  // Opened by a tap (its click) as well as a hover: MUI's own touch
+  // opening waits for a press, and a quick tap ended it first.
+  const [tipOpen, setTipOpen] = useState(false);
 
   // Keep "Saved N s ago" honest without re-rendering on every frame.
   useEffect(() => {
@@ -70,23 +74,46 @@ export const SaveStatusPill = ({ compact = false }: { compact?: boolean }) => {
       }[label] ?? (label.startsWith('Saved ') ? 'Saved' : label))
     : label;
 
-  return (
+  // The full wording, when the pill shows less: a tooltip a tap opens (a
+  // native title only showed on a mouse hover, so a tap showed nothing),
+  // and the text assistive tech reads (it read the short word).
+  const more = status.error ?? (shown !== label ? label : null);
+
+  const pill = (
     <Box
       role="status"
       aria-live="polite"
       data-testid="save-status"
-      title={status.error ?? (shown !== label ? label : undefined)}
+      onClick={
+        more
+          ? () => {
+              setTipOpen((open) => {
+                return !open;
+              });
+            }
+          : undefined
+      }
       sx={{
         display: 'inline-flex',
         alignItems: 'center',
         gap: 1,
         ml: compact ? 1 : 2,
         flexShrink: 0,
-        whiteSpace: 'nowrap'
+        whiteSpace: 'nowrap',
+        pointerEvents: more ? 'auto' : undefined
       }}
     >
       <Typography variant="body2" sx={{ color: tone, fontWeight: 600 }}>
-        {shown}
+        {shown !== label ? (
+          <>
+            <span aria-hidden>{shown}</span>
+            <Box component="span" sx={visuallyHidden}>
+              {label}
+            </Box>
+          </>
+        ) : (
+          shown
+        )}
       </Typography>
       {status.state === 'error' && (
         <Button
@@ -107,5 +134,24 @@ export const SaveStatusPill = ({ compact = false }: { compact?: boolean }) => {
         </Button>
       )}
     </Box>
+  );
+
+  if (!more) return pill;
+  return (
+    <Tooltip
+      title={more}
+      describeChild
+      open={tipOpen}
+      onOpen={() => {
+        setTipOpen(true);
+      }}
+      onClose={() => {
+        setTipOpen(false);
+      }}
+      leaveTouchDelay={3000}
+      placement="top"
+    >
+      {pill}
+    </Tooltip>
   );
 };

@@ -52,7 +52,12 @@ const labelCellSx = { display: { xs: 'block', sm: 'table-cell' }, verticalAlign:
 const keysCellSx = { display: { xs: 'block', sm: 'table-cell' }, verticalAlign: 'top', borderBottom: { xs: 0 }, p: { xs: 0 }, width: { sm: '50%' }, textAlign: { xs: 'left', sm: 'right' } };
 // On a phone each difference is a block, its columns one under another with
 // their headings inline: as three columns they were 80-100px wide each.
-const diffCellSx = { display: { xs: 'block', sm: 'table-cell' }, borderBottom: { xs: 0 }, p: { xs: 0 }, pb: { xs: 0.25 } };
+// Only on a phone: `{ xs: 0 }` applies from xs up, so it also took the
+// desktop table's cell padding and row dividers (sweep 2026-09-30, round 4).
+const diffCellSx = {
+    display: { xs: 'block', sm: 'table-cell' },
+    '@media (max-width: 599.95px)': { borderBottom: 0, p: 0, pb: 0.25 }
+};
 const DiffHeading = ({ children }) => (_jsx(Box, { component: "span", sx: { display: { xs: 'inline', sm: 'none' }, color: 'text.secondary' }, children: children }));
 // The `?` dialog: every binding a tool has, from the shared keymap, and the
 // Excalidraw bindings it deliberately does not match.

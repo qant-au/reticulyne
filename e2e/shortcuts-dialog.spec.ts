@@ -172,3 +172,31 @@ for (const [width, height] of [
     }
   });
 }
+
+// Sweep 2026-09-30, round 4: the phone stacking zeroed the Differences
+// cells' padding and border at every width, so at 1440 the rows shrank from
+// 27 to 16-17px and lost their dividers. Only a phone stacks.
+test('at 1440 the Differences table keeps its row height and dividers', async ({
+  page
+}) => {
+  await openDialog(page, 1440, 900);
+  const cells = await page
+    .getByTestId('excalidraw-differences')
+    .locator('tbody tr td')
+    .evaluateAll((tds) => {
+      return tds.map((td) => {
+        const cs = getComputedStyle(td);
+        return {
+          display: cs.display,
+          height: td.getBoundingClientRect().height,
+          border: parseFloat(cs.borderBottomWidth)
+        };
+      });
+    });
+  expect(cells.length).toBeGreaterThan(0);
+  for (const c of cells) {
+    expect(c.display).toBe('table-cell');
+    expect(c.height).toBeGreaterThanOrEqual(26);
+    expect(c.border).toBeGreaterThanOrEqual(1);
+  }
+});

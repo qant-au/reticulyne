@@ -53,10 +53,10 @@ afterEach(() => {
 // Sweep 2026-09-30: the inspector said "Group (Ctrl+G)" on macOS while the
 // shortcuts dialog said ⌘ G. The hint now comes from the keymap, formatted
 // for the platform as the dialog formats it.
-test('the Group hint reads ⌘ G on macOS', () => {
+test('the Group hint reads ⌘ + G on macOS', () => {
   setPlatform('MacIntel');
   render(<GroupSection selection={selection} />);
-  expect(screen.getByRole('button').textContent).toBe('Group (⌘ G)');
+  expect(screen.getByRole('button').textContent).toBe('Group (⌘ + G)');
 });
 
 test('the Group hint reads Ctrl + G elsewhere', () => {

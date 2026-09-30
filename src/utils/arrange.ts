@@ -77,3 +77,39 @@ export const planArrangement = (
   }
   return moves;
 };
+
+/**
+ * Would moving these nodes by `delta` put one on a tile a node outside
+ * the move holds? A nudge and a drag are refused when it would, as Align
+ * and Distribute are: it stacked the two, hiding the one below.
+ */
+export const wouldStackNodes = (
+  moving: ItemReference[],
+  delta: Coords,
+  viewItems: { id: string; tile: Coords }[]
+): boolean => {
+  const ids = new Set(
+    moving
+      .filter((ref) => {
+        return ref.type === 'ITEM';
+      })
+      .map((ref) => {
+        return ref.id;
+      })
+  );
+  if (ids.size === 0 || (delta.x === 0 && delta.y === 0)) return false;
+  const taken = new Set(
+    viewItems
+      .filter((i) => {
+        return !ids.has(i.id);
+      })
+      .map((i) => {
+        return `${i.tile.x},${i.tile.y}`;
+      })
+  );
+  return viewItems.some((i) => {
+    return (
+      ids.has(i.id) && taken.has(`${i.tile.x + delta.x},${i.tile.y + delta.y}`)
+    );
+  });
+};

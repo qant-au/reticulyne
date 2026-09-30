@@ -145,6 +145,61 @@ describe('DragItems mode', () => {
       });
     });
 
+    // Sweep 2026-09-30: a drag dropped a node on another's tile, stacking
+    // them and hiding the moved node's label, while a nudge onto an
+    // occupied tile is refused (BUG15-56). A drag is refused the same way.
+    const onOccupied = (refused?: { x: number; y: number }) => {
+      return makeState({
+        mode: {
+          type: 'DRAG_ITEMS',
+          showCursor: true,
+          items: [{ type: 'ITEM', id: 'a' }],
+          isInitialMovement: false,
+          refused
+        },
+        mouse: {
+          mousedown: { screen: { x: 0, y: 0 }, tile: { x: 0, y: 0 } },
+          position: { screen: { x: 0, y: 0 }, tile: { x: 1, y: 0 } },
+          delta: { screen: { x: 10, y: 0 }, tile: { x: 1, y: 0 } }
+        },
+        scene: {
+          items: [
+            { id: 'a', tile: { x: 0, y: 0 } },
+            { id: 'b', tile: { x: 1, y: 0 } }
+          ],
+          currentView: {
+            id: 'v',
+            name: 'V',
+            items: [
+              { id: 'a', tile: { x: 0, y: 0 } },
+              { id: 'b', tile: { x: 1, y: 0 } }
+            ]
+          }
+        } as unknown as Partial<SceneShape>
+      });
+    };
+
+    test('a step onto a tile another node holds is refused and remembered', () => {
+      const state = onOccupied();
+      DragItems.mousemove?.(state);
+      expect(state.scene.updateViewItem).not.toHaveBeenCalled();
+      expect(
+        (state.uiState.actions.setMode as jest.Mock).mock.calls[0][0]
+      ).toEqual(expect.objectContaining({ refused: { x: 1, y: 0 } }));
+    });
+
+    test('past the occupied tile the node catches up with the pointer', () => {
+      // One tile refused already; the pointer moves one more tile on.
+      const state = onOccupied({ x: 1, y: 0 });
+      DragItems.mousemove?.(state);
+      expect(state.scene.updateViewItem).toHaveBeenCalledWith('a', {
+        tile: { x: 2, y: 0 }
+      });
+      const next = (state.uiState.actions.setMode as jest.Mock).mock
+        .calls[0][0];
+      expect(next.refused).toBeUndefined();
+    });
+
     test('moves a RECTANGLE by the delta — both corners shift together', () => {
       const rect: Rectangle = {
         id: 'rect-1',

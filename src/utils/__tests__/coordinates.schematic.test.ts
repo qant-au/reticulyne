@@ -2,7 +2,9 @@ import {
   cornerTileAtPointer,
   getTilePosition,
   isoToScreen,
-  screenToIso
+  screenToIso,
+  screenToTilePoint,
+  scrollKeepingCentre
 } from '../coordinates';
 import { getIsoMatrix, getProjectedTileSize } from '../projection';
 import { SCHEMATIC_TILE_SIZE } from 'src/config';
@@ -107,5 +109,90 @@ describe('schematic projection', () => {
       getTilePosition({ tile: { x: 1, y: 0 }, projection: 'iso' })
     );
     expect(getIsoMatrix('X', 'schematic')).toEqual([1, 0, 0, 1, 0, 0]);
+  });
+});
+
+// Sweep 2026-09-30 (A07): iso -> flat -> iso moved every node 45px left,
+// because the centre was rounded to its tile before the switch.
+describe('the view toggle keeps the centre, unrounded', () => {
+  const rendererSize = { width: 1440, height: 900 };
+  const scrolls = [
+    { x: 0, y: 0 },
+    { x: 37, y: -12 },
+    { x: -451.3, y: 208.9 }
+  ];
+
+  test.each(scrolls)(
+    'iso -> flat -> iso returns to the same scroll (%o)',
+    (at) => {
+      const zoom = 0.64;
+      const scroll = { position: at, offset: { x: 0, y: 0 } };
+      const flat = scrollKeepingCentre({
+        zoom,
+        scroll,
+        rendererSize,
+        from: 'iso',
+        to: 'schematic'
+      });
+      const back = scrollKeepingCentre({
+        zoom,
+        scroll: { position: flat, offset: { x: 0, y: 0 } },
+        rendererSize,
+        from: 'schematic',
+        to: 'iso'
+      });
+      expect(back.x).toBeCloseTo(at.x, 6);
+      expect(back.y).toBeCloseTo(at.y, 6);
+    }
+  );
+
+  test('the point at the centre is the same tile point in both views', () => {
+    const zoom = 0.8;
+    const scroll = { position: { x: 91, y: -33 }, offset: { x: 0, y: 0 } };
+    const centre = { x: rendererSize.width / 2, y: rendererSize.height / 2 };
+    const before = screenToTilePoint({
+      mouse: centre,
+      zoom,
+      scroll,
+      rendererSize,
+      projection: 'iso'
+    });
+    const flat = scrollKeepingCentre({
+      zoom,
+      scroll,
+      rendererSize,
+      from: 'iso',
+      to: 'schematic'
+    });
+    const after = screenToTilePoint({
+      mouse: centre,
+      zoom,
+      scroll: { position: flat, offset: { x: 0, y: 0 } },
+      rendererSize,
+      projection: 'schematic'
+    });
+    expect(after.x).toBeCloseTo(before.x, 6);
+    expect(after.y).toBeCloseTo(before.y, 6);
+  });
+
+  test('a tile centre comes back as whole tile coordinates', () => {
+    const zoom = 1;
+    const scroll = { position: { x: 0, y: 0 }, offset: { x: 0, y: 0 } };
+    for (const projection of ['iso', 'schematic'] as const) {
+      const p = isoToScreen({
+        tile: { x: 3, y: -2 },
+        rendererSize,
+        projection
+      });
+      const t = screenToTilePoint({
+        mouse: p,
+        zoom,
+        scroll,
+        rendererSize,
+        projection
+      });
+      expect(t.x).toBeCloseTo(3, 6);
+      expect(t.y).toBeCloseTo(-2, 6);
+    }
   });
 });

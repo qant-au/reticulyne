@@ -1,7 +1,5 @@
-import { useRef, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { PROJECTED_TILE_SIZE } from 'src/config';
-import { useResizeObserver } from 'src/hooks/useResizeObserver';
 
 interface Props {
   url: string;
@@ -9,20 +7,8 @@ interface Props {
 }
 
 export const IsometricIcon = ({ url, onImageLoaded }: Props) => {
-  const ref = useRef<HTMLImageElement | null>(null);
-  const { size, observe, disconnect } = useResizeObserver();
-
-  useEffect(() => {
-    if (!ref.current) return;
-
-    observe(ref.current);
-
-    return disconnect;
-  }, [observe, disconnect]);
-
   return (
     <Box
-      ref={ref}
       component="img"
       loading="lazy"
       onLoad={onImageLoaded}
@@ -39,8 +25,14 @@ export const IsometricIcon = ({ url, onImageLoaded }: Props) => {
         maxWidth: 'none',
         maxHeight: 'none',
         height: 'auto',
-        top: -size.height,
-        left: -size.width / 2,
+        // Stands on the node's point, bottom centre, whatever its size.
+        // It used to be placed by its measured size, which a
+        // ResizeObserver reported a frame or more after the image loaded:
+        // an image export captured in between drew the icon a whole icon
+        // height below its node (sweep 2026-09-30, A14/A18).
+        top: 0,
+        left: 0,
+        transform: 'translate(-50%, -100%)',
         pointerEvents: 'none'
       }}
     />

@@ -7,7 +7,7 @@ const strokeWidth = 2;
 // 1.4: the visible rubber band: the rectangle the pointer draws, in px
 // over the canvas. It is not in a scene layer (zoom and scroll do not
 // apply), because it is what the marquee catches against: everything it
-// visibly touches (getItemsInScreenRect). It used to be the box of tiles
+// wholly contains (getItemsInScreenRect). It used to be the box of tiles
 // between the two corners, which in the isometric view is a thin diamond
 // that missed nodes plainly inside the drag (sweep 2026-09-30).
 export const MarqueeBand = () => {

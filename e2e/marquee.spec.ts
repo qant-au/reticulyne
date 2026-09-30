@@ -1,8 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 
 /**
- * The marquee catches what is visibly inside the rectangle the pointer
- * draws. Sweep 2026-09-30: the band was the box of tiles between the two
+ * The marquee catches what is wholly inside the rectangle the pointer
+ * draws, as Excalidraw's does: a connector only when its whole route is. Sweep 2026-09-30: the band was the box of tiles between the two
  * corner tiles - in the isometric view a thin diamond - so a node plainly
  * inside the drag (the Firewall, up and to the right) was never selected.
  * Fixture injected via `window.__RETICULYNE_E2E__` (Docker entry only, see
@@ -32,6 +32,16 @@ test.beforeEach(async ({ page }) => {
                 { id: 'sw', tile: { x: 0, y: 0 } },
                 { id: 'fw', tile: { x: 4, y: 0 } },
                 { id: 'far', tile: { x: -4, y: 0 } }
+              ],
+              connectors: [
+                {
+                  id: 'sw-fw',
+                  color: 'c',
+                  anchors: [
+                    { id: 'a1', ref: { item: 'sw' } },
+                    { id: 'a2', ref: { item: 'fw' } }
+                  ]
+                }
               ]
             }
           ]
@@ -71,9 +81,11 @@ test('a node visibly inside the dragged rectangle is selected', async ({
   const sw = await box(page, 'Switch');
   const fw = await box(page, 'Firewall');
   // From empty canvas left of and above the Switch, to past the Firewall
-  // and below the Switch: both are inside, 'Far away' (to the left) is not.
-  const from = { x: sw.x - 30, y: fw.y - 40 };
-  const to = { x: fw.x + fw.width + 40, y: sw.y + sw.height + 90 };
+  // and below the Switch, clear of both nodes' whole tiles: both are
+  // inside, and so is the connector between them; 'Far away' (to the left)
+  // is not.
+  const from = { x: sw.x + sw.width / 2 - 100, y: fw.y - 40 };
+  const to = { x: fw.x + fw.width / 2 + 100, y: sw.y + sw.height + 90 };
 
   await drag(page, from, to, async () => {
     // The band is that rectangle, on the screen.
@@ -84,5 +96,35 @@ test('a node visibly inside the dragged rectangle is selected', async ({
     expect(band.height).toBeCloseTo(Math.abs(to.y - from.y), -1);
   });
 
-  await expect(page.getByText('2 selected', { exact: true })).toBeVisible();
+  await expect(page.getByText('3 selected', { exact: true })).toBeVisible();
+});
+
+// Sweep 2026-09-30 (X3b): a band around one node also took the connector
+// running from it to a node outside the band.
+test('a band around one node leaves out its connector to a node outside', async ({
+  page
+}) => {
+  const sw = await box(page, 'Switch');
+  const cx = sw.x + sw.width / 2;
+  await drag(
+    page,
+    { x: cx - 100, y: sw.y - 40 },
+    { x: cx + 100, y: sw.y + sw.height + 90 }
+  );
+  // One thing selected: the Switch's own inspector, not "2 selected".
+  await expect(page.getByText(/^\d+ selected$/)).toHaveCount(0);
+  // The node inspector (a Description section) for the Switch alone.
+  await expect(page.getByText('Description', { exact: true })).toBeVisible();
+});
+
+test('a band over only part of a node does not select it', async ({ page }) => {
+  const sw = await box(page, 'Switch');
+  const cx = sw.x + sw.width / 2;
+  await drag(
+    page,
+    { x: cx - 100, y: sw.y - 40 },
+    { x: cx, y: sw.y + sw.height + 90 }
+  );
+  await expect(page.getByText('Description', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/^\d+ selected$/)).toHaveCount(0);
 });

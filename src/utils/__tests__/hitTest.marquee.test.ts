@@ -66,9 +66,14 @@ describe('getItemsInBounds', () => {
     expect(found).toEqual([{ type: 'ITEM', id: 'in' }]);
   });
 
-  test('a rectangle the band merely crosses is caught (intersection, not containment)', () => {
+  // Containment, as Excalidraw (the parity target): sweep 2026-09-30 found a
+  // band around one node also took the connector running off to another.
+  test('a rectangle the band merely crosses is not caught; one wholly inside is', () => {
     const scene = makeScene({
-      rectangles: [{ id: 'big', from: { x: -10, y: 2 }, to: { x: 10, y: 3 } }]
+      rectangles: [
+        { id: 'big', from: { x: -10, y: 2 }, to: { x: 10, y: 3 } },
+        { id: 'small', from: { x: 1, y: 1 }, to: { x: 3, y: 2 } }
+      ]
     } as unknown as Partial<SceneShape>);
 
     const found = getItemsInBounds({
@@ -77,10 +82,32 @@ describe('getItemsInBounds', () => {
       scene
     });
 
-    expect(found).toEqual([{ type: 'RECTANGLE', id: 'big' }]);
+    expect(found).toEqual([{ type: 'RECTANGLE', id: 'small' }]);
   });
 
-  test('a connector is caught when any path tile is inside', () => {
+  test('a connector is caught only when its whole route is inside', () => {
+    const scene = makeScene({
+      connectors: [
+        {
+          id: 'inside',
+          path: {
+            rectangle: { from: { x: 0, y: 0 }, to: { x: 5, y: 5 } },
+            tiles: [
+              { x: 1, y: 1 },
+              { x: 2, y: 1 },
+              { x: 3, y: 1 }
+            ]
+          }
+        }
+      ]
+    } as unknown as Partial<SceneShape>);
+
+    expect(
+      getItemsInBounds({ from: { x: 0, y: 0 }, to: { x: 5, y: 5 }, scene })
+    ).toEqual([{ type: 'CONNECTOR', id: 'inside' }]);
+  });
+
+  test('a connector with one end outside the band is not caught', () => {
     const scene = makeScene({
       connectors: [
         {
@@ -98,7 +125,7 @@ describe('getItemsInBounds', () => {
 
     expect(
       getItemsInBounds({ from: { x: 0, y: 0 }, to: { x: 5, y: 5 }, scene })
-    ).toEqual([{ type: 'CONNECTOR', id: 'con' }]);
+    ).toEqual([]);
   });
 
   test('a connector wholly outside the band is not caught', () => {
@@ -200,8 +227,9 @@ describe('getItemsInScreenRect', () => {
       { id: 'outside', tile: { x: -6, y: 0 } }
     ]
   } as unknown as Partial<SceneShape>);
-  const from = { x: at(0, 0).x - 20, y: at(4, 0).y - 20 };
-  const to = { x: at(4, 0).x + 20, y: at(0, 0).y + 20 };
+  // Clear of each node's whole tile (about 141 x 82 px at zoom 1).
+  const from = { x: at(0, 0).x - 90, y: at(4, 0).y - 50 };
+  const to = { x: at(4, 0).x + 90, y: at(0, 0).y + 50 };
 
   test('catches what is visibly inside the rectangle', () => {
     expect(
@@ -247,8 +275,8 @@ describe('getItemsInScreenRect', () => {
     const c = shown(4, 0);
     expect(
       getItemsInScreenRect({
-        from: { x: c.x - 5, y: c.y - 5 },
-        to: { x: c.x + 5, y: c.y + 5 },
+        from: { x: c.x - 40, y: c.y - 25 },
+        to: { x: c.x + 40, y: c.y + 25 },
         scene,
         zoom,
         scroll,
@@ -270,5 +298,61 @@ describe('getItemsInScreenRect', () => {
         to: { x: o.x + 300, y: o.y + 5 }
       })
     ).toEqual([]);
+  });
+
+  test('a node only partly inside, and a connector with an end outside, are not caught', () => {
+    const withConnector = makeScene({
+      items: [
+        { id: 'a', tile: { x: 0, y: 0 } },
+        { id: 'b', tile: { x: 4, y: 0 } }
+      ],
+      connectors: [
+        {
+          id: 'ab',
+          path: {
+            rectangle: { from: { x: 0, y: 0 }, to: { x: 4, y: 0 } },
+            tiles: [0, 1, 2, 3, 4].map((x) => {
+              return { x, y: 0 };
+            })
+          }
+        }
+      ]
+    } as unknown as Partial<SceneShape>);
+    const args = {
+      scene: withConnector,
+      zoom: 1,
+      scroll: noScroll,
+      rendererSize: canvas
+    };
+    const a = at(0, 0);
+    // Around node a only: a is caught, its connector to b is not.
+    expect(
+      getItemsInScreenRect({
+        ...args,
+        from: { x: a.x - 90, y: a.y - 50 },
+        to: { x: a.x + 90, y: a.y + 50 }
+      })
+    ).toEqual([{ type: 'ITEM', id: 'a' }]);
+    // Over half of node a: nothing.
+    expect(
+      getItemsInScreenRect({
+        ...args,
+        from: { x: a.x - 90, y: a.y - 50 },
+        to: { x: a.x, y: a.y + 50 }
+      })
+    ).toEqual([]);
+    // Around both: both nodes and the connector.
+    const b = at(4, 0);
+    expect(
+      getItemsInScreenRect({
+        ...args,
+        from: { x: a.x - 90, y: b.y - 50 },
+        to: { x: b.x + 90, y: a.y + 50 }
+      })
+    ).toEqual([
+      { type: 'ITEM', id: 'a' },
+      { type: 'ITEM', id: 'b' },
+      { type: 'CONNECTOR', id: 'ab' }
+    ]);
   });
 });

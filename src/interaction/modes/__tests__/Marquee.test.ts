@@ -27,14 +27,16 @@ const threeNodes = scene([
 // The band is a screen rectangle (px over the canvas). makeState's canvas
 // is 1000 x 1000 at zoom 1 with no scroll, so a tile's centre is at
 // (500, 500) plus its projected position. These nodes all sit on the
-// screen's vertical centre line; a band is drawn from just below-left of
-// tile (0, 0) to just right of the centre of the tile given.
+// screen's vertical centre line, higher up as x and y grow; a band is
+// drawn from below-left of tile (0, 0) to above-right of the tile given,
+// clear of each whole tile (about 141 x 82 px): the marquee catches only
+// what is wholly inside it.
 const at = (tile: { x: number; y: number }) => {
   const p = getTilePosition({ tile });
   return { x: 500 + p.x, y: 500 + p.y };
 };
 const bandTo = (tile: { x: number; y: number }) => {
-  return { x: at(tile).x + 40, y: at(tile).y };
+  return { x: at(tile).x + 90, y: at(tile).y - 50 };
 };
 
 const marqueeMode = (
@@ -44,7 +46,7 @@ const marqueeMode = (
   return {
     type: 'MARQUEE' as const,
     showCursor: true,
-    from: { x: at({ x: 0, y: 0 }).x - 40, y: at({ x: 0, y: 0 }).y },
+    from: { x: at({ x: 0, y: 0 }).x - 90, y: at({ x: 0, y: 0 }).y + 50 },
     to: bandTo(toTile),
     base
   };

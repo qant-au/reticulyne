@@ -175,8 +175,10 @@ export interface DragItemsMode {
 }
 
 // 1.4: marquee ("rubber band") drag-select. Entered from CURSOR when the
-// user presses on empty canvas and moves. `from` is the tile the drag
-// started on, `to` tracks the pointer.
+// user presses on empty canvas and moves. `from` is where the drag
+// started and `to` tracks the pointer, both in px relative to the canvas:
+// the band is the rectangle the pointer draws on the screen, not a box of
+// tiles (which in the isometric view is a diamond elsewhere).
 //
 // `base` is the selection as it stood when the drag began — empty for a
 // plain drag, the existing selection for a Shift-drag. The live selection

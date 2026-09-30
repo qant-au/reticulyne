@@ -145,8 +145,9 @@ describe('Cursor mode — 1.4 multi-select', () => {
       expect(lastModeChange(state)).toEqual({
         type: 'MARQUEE',
         showCursor: true,
-        from: { x: 2, y: 2 },
-        to: { x: 4, y: 4 },
+        // The band is the rectangle on the screen, not a box of tiles.
+        from: { x: 20, y: 20 },
+        to: { x: 40, y: 40 },
         base: []
       });
     });

@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import { ModeActions } from 'src/types';
-import { getItemsInBounds } from 'src/utils';
+import { getItemsInScreenRect } from 'src/utils';
 
 // 1.4: marquee ("rubber band") drag-select.
 //
@@ -32,11 +32,11 @@ export const Marquee: ModeActions = {
     renderer.style.userSelect = 'auto';
   },
 
-  mousemove: ({ uiState, scene }) => {
+  mousemove: ({ uiState, scene, rendererSize }) => {
     if (uiState.mode.type !== 'MARQUEE') return;
     if (uiState.editorMode !== 'EDITABLE') return;
 
-    const to = uiState.mouse.position.tile;
+    const to = uiState.mouse.position.screen;
 
     uiState.actions.setMode(
       produce(uiState.mode, (draft) => {
@@ -44,10 +44,13 @@ export const Marquee: ModeActions = {
       })
     );
 
-    const caught = getItemsInBounds({
+    const caught = getItemsInScreenRect({
       from: uiState.mode.from,
       to,
-      scene
+      scene,
+      zoom: uiState.zoom,
+      scroll: uiState.scroll,
+      rendererSize
     });
 
     // Always `base ∪ caught`, recomputed from scratch — see the MarqueeMode

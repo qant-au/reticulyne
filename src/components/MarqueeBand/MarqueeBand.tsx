@@ -1,34 +1,15 @@
+import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { Svg } from 'src/components/Svg/Svg';
 import { TRANSFORM_CONTROLS_COLOR } from 'src/config';
-import { useIsoProjection } from 'src/hooks/useIsoProjection';
-import { Coords } from 'src/types';
 
 const strokeWidth = 2;
 
-// 1.4: the visible rubber band. Split from the mode so the projection
-// hook runs unconditionally (hooks cannot sit behind the mode check).
-const Band = ({ from, to }: { from: Coords; to: Coords }) => {
-  const { css, pxSize } = useIsoProjection({ from, to });
-
-  return (
-    <Svg style={{ ...css, pointerEvents: 'none' }}>
-      <g transform={`translate(${strokeWidth}, ${strokeWidth})`}>
-        <rect
-          width={Math.max(pxSize.width - strokeWidth * 2, 0)}
-          height={Math.max(pxSize.height - strokeWidth * 2, 0)}
-          fill={TRANSFORM_CONTROLS_COLOR}
-          fillOpacity={0.12}
-          stroke={TRANSFORM_CONTROLS_COLOR}
-          strokeDasharray={`${strokeWidth * 2} ${strokeWidth * 2}`}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-        />
-      </g>
-    </Svg>
-  );
-};
-
+// 1.4: the visible rubber band: the rectangle the pointer draws, in px
+// over the canvas. It is not in a scene layer (zoom and scroll do not
+// apply), because it is what the marquee catches against: everything it
+// visibly touches (getItemsInScreenRect). It used to be the box of tiles
+// between the two corners, which in the isometric view is a thin diamond
+// that missed nodes plainly inside the drag (sweep 2026-09-30).
 export const MarqueeBand = () => {
   const mode = useUiStateStore((state) => {
     return state.mode;
@@ -36,5 +17,24 @@ export const MarqueeBand = () => {
 
   if (mode.type !== 'MARQUEE') return null;
 
-  return <Band from={mode.from} to={mode.to} />;
+  const { from, to } = mode;
+
+  return (
+    <Box
+      data-testid="marquee-band"
+      sx={{
+        position: 'absolute',
+        pointerEvents: 'none',
+        boxSizing: 'border-box',
+        bgcolor: `${TRANSFORM_CONTROLS_COLOR}1f`,
+        border: `${strokeWidth}px dashed ${TRANSFORM_CONTROLS_COLOR}`
+      }}
+      style={{
+        left: Math.min(from.x, to.x),
+        top: Math.min(from.y, to.y),
+        width: Math.abs(to.x - from.x),
+        height: Math.abs(to.y - from.y)
+      }}
+    />
+  );
 };

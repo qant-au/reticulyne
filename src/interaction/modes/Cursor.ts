@@ -285,8 +285,8 @@ export const Cursor: ModeActions = {
       uiState.actions.setMode({
         type: 'MARQUEE',
         showCursor: true,
-        from: uiState.mouse.mousedown.tile,
-        to: uiState.mouse.position.tile,
+        from: uiState.mouse.mousedown.screen,
+        to: uiState.mouse.position.screen,
         base: modifiers.shift ? uiState.selection : []
       });
       return;

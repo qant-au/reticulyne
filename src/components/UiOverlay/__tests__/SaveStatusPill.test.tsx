@@ -1,8 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
-import { SaveStatusPill } from '../SaveStatusPill';
+import {
+  render,
+  screen,
+  cleanup,
+  fireEvent,
+  act,
+  waitForElementToBeRemoved
+} from '@testing-library/react';
+import { SaveStatusPill, TIP_PIN_MS } from '../SaveStatusPill';
 
 let saveStatus = {
   state: 'idle',
@@ -55,6 +62,50 @@ describe('SaveStatusPill', () => {
     expect((await screen.findByRole('tooltip')).textContent).toBe(
       'Unsaved changes'
     );
+  });
+
+  // Round 5: on a touch tap the tooltip was added at opacity 0 and removed
+  // ~200 ms later - the emulated mouse "left" the pill when the larger touch
+  // tooltip landed under the finger. A tap now pins it until a tap
+  // elsewhere, or TIP_PIN_MS.
+  test('a tap pins the tooltip: a mouse leave keeps it, a tap elsewhere closes it', async () => {
+    render(<SaveStatusPill compact />);
+    const pill = screen.getByTestId('save-status');
+    fireEvent.click(pill);
+    await screen.findByRole('tooltip');
+    fireEvent.mouseLeave(pill);
+    fireEvent.pointerDown(pill);
+    await new Promise((r) => {
+      setTimeout(r, 50);
+    });
+    expect(screen.queryByRole('tooltip')).not.toBeNull();
+    fireEvent.pointerDown(document.body);
+    await waitForElementToBeRemoved(() => {
+      return screen.queryByRole('tooltip');
+    });
+  });
+
+  test('a pinned tooltip closes by itself after TIP_PIN_MS', async () => {
+    jest.useFakeTimers();
+    try {
+      render(<SaveStatusPill compact />);
+      fireEvent.click(screen.getByTestId('save-status'));
+      expect(screen.queryByRole('tooltip')).not.toBeNull();
+      act(() => {
+        jest.advanceTimersByTime(TIP_PIN_MS - 100);
+      });
+      expect(screen.queryByRole('tooltip')).not.toBeNull();
+      act(() => {
+        jest.advanceTimersByTime(200);
+      });
+      // then the fade-out
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      expect(screen.queryByRole('tooltip')).toBeNull();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   test('"Saved just now" is "Saved" when compact', () => {

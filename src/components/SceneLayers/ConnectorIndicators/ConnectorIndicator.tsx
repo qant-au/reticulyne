@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Box } from '@mui/material';
 import { useScene } from 'src/hooks/useScene';
+import { useProjection } from 'src/hooks/useProjection';
 import { connectorPathTileToGlobal, getTilePosition } from 'src/utils';
 import type { ConnectorIndicatorComponent } from 'src/types/reticulyneProps';
 import type { Connector as ConnectorModel, View } from 'src/types';
@@ -17,14 +18,16 @@ interface Props {
 // screen via getTilePosition). The slot is absolutely positioned but
 // pointer-events stay default so embedder content remains clickable.
 export const ConnectorIndicator = ({ connector, view, Indicator }: Props) => {
+  const projection = useProjection();
   const midpoint = useMemo(() => {
     const tileIndex = Math.floor(connector.path.tiles.length / 2);
     const tile = connector.path.tiles[tileIndex];
 
     return getTilePosition({
-      tile: connectorPathTileToGlobal(tile, connector.path.rectangle.from)
+      tile: connectorPathTileToGlobal(tile, connector.path.rectangle.from),
+      projection
     });
-  }, [connector.path]);
+  }, [connector.path, projection]);
 
   // Strip the runtime `path` decoration before handing the connector
   // to the embedder — they see the schema-level shape only, matching

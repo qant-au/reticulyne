@@ -73,7 +73,8 @@ export const getUnprojectedBounds = (view: View) => {
 
   const cornerPositions = projectBounds.map((corner) => {
     return getTilePosition({
-      tile: corner
+      tile: corner,
+      projection: view.kind
     });
   });
   const sortedCorners = sortByPosition(cornerPositions);
@@ -105,7 +106,7 @@ export const getFitToViewParams = (view: View, viewportSize: Size) => {
     x: (sortedCornerPositions.lowX + boundingBoxSize.width / 2) * zoom,
     y: (sortedCornerPositions.lowY + boundingBoxSize.height / 2) * zoom
   };
-  const scroll = getTileScrollPosition(scrollTarget);
+  const scroll = getTileScrollPosition(scrollTarget, undefined, view.kind);
 
   return {
     zoom,

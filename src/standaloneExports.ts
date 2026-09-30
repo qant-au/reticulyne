@@ -65,6 +65,7 @@ export {
   catalogueItemSymbol,
   expandPorts,
   itemToSceneObject,
+  schematicIconUrl,
   schematicIcons,
   validateCatalogue
 } from 'src/catalogue';

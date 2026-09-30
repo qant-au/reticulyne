@@ -34,7 +34,10 @@ export const ContextMenuManager = ({ anchorEl }: Props) => {
       anchorEl={anchorEl}
       onClose={onClose}
       position={CoordsUtils.multiply(
-        getTilePosition({ tile: contextMenu.tile }),
+        getTilePosition({
+          tile: contextMenu.tile,
+          projection: scene.projection
+        }),
         zoom
       )}
       items={[

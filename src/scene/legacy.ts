@@ -203,7 +203,6 @@ export const legacyModelToScene = (
 ): Scene => {
   const { model: normalised } = normaliseLegacyModel(model);
   return sceneFromModel(normalised, {
-    opened: { format: SCENE_FORMAT, version: SCENE_VERSION, id, objects: [] },
-    viewKinds: new Map()
+    opened: { format: SCENE_FORMAT, version: SCENE_VERSION, id, objects: [] }
   });
 };

@@ -7,6 +7,7 @@ import { MAX_ZOOM, MIN_ZOOM } from 'src/config';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { Surface, ToolButton } from 'src/vendor/accurona-ui';
+import { ViewKindToggle } from './ViewKindToggle';
 
 export const ZoomControls = () => {
   const uiStateStoreActions = useUiStateStore((state) => {
@@ -16,6 +17,11 @@ export const ZoomControls = () => {
     return state.zoom;
   });
   const { fitToView } = useDiagramUtils();
+  // Switching the drawing changes the saved view, so only an editable
+  // diagram offers it.
+  const editable = useUiStateStore((state) => {
+    return state.editorMode === 'EDITABLE';
+  });
 
   return (
     <Stack direction="row" spacing={1}>
@@ -61,6 +67,7 @@ export const ZoomControls = () => {
           onClick={fitToView}
         />
       </Surface>
+      {editable && <ViewKindToggle />}
     </Stack>
   );
 };

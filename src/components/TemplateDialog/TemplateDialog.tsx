@@ -18,7 +18,7 @@ const TemplatePreview = ({ template }: { template: DiagramTemplate }) => {
   const view = template.views[0];
   const tiles = new Map(
     (view?.items ?? []).map((i) => {
-      return [i.id, getTilePosition({ tile: i.tile })];
+      return [i.id, getTilePosition({ tile: i.tile, projection: view?.kind })];
     })
   );
   const rects = (view?.rectangles ?? []).map((r) => {
@@ -31,7 +31,7 @@ const TemplatePreview = ({ template }: { template: DiagramTemplate }) => {
         r.to,
         { x: r.from.x, y: r.to.y }
       ].map((t) => {
-        return getTilePosition({ tile: t });
+        return getTilePosition({ tile: t, projection: view?.kind });
       })
     };
   });

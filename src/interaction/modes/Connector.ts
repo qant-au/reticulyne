@@ -27,7 +27,8 @@ const targetAtPointer = ({
     zoom: uiState.zoom,
     scroll: uiState.scroll,
     rendererSize,
-    nodes: scene.items
+    nodes: scene.items,
+    projection: scene.projection
   });
   if (portNode) return { type: 'ITEM', id: portNode.id };
   return getItemAtTile({ tile: uiState.mouse.position.tile, scene });

@@ -101,7 +101,8 @@ const mousedown: ModeActionsAction = ({
       zoom: uiState.zoom,
       scroll: uiState.scroll,
       rendererSize,
-      nodes: scene.items
+      nodes: scene.items,
+      projection: scene.projection
     });
     if (portNode) {
       const connectorId = generateId();

@@ -1,4 +1,4 @@
-import type { Coords, Scroll, Size } from 'src/types';
+import type { Coords, Projection, Scroll, Size } from 'src/types';
 import { getTilePosition } from './coordinates';
 
 // a node's four ports sit on the midpoints of its
@@ -17,6 +17,7 @@ interface View {
   zoom: number;
   scroll: Scroll;
   rendererSize: Size;
+  projection?: Projection;
 }
 
 const toScreen = (p: Coords, { zoom, scroll, rendererSize }: View) => {
@@ -29,8 +30,16 @@ const toScreen = (p: Coords, { zoom, scroll, rendererSize }: View) => {
 /** Screen positions of the four ports of the node on `tile`. */
 export const getPortScreenPositions = (tile: Coords, view: View): Coords[] => {
   return EDGES.map(([a, b]) => {
-    const pa = getTilePosition({ tile, origin: a });
-    const pb = getTilePosition({ tile, origin: b });
+    const pa = getTilePosition({
+      tile,
+      origin: a,
+      projection: view.projection
+    });
+    const pb = getTilePosition({
+      tile,
+      origin: b,
+      projection: view.projection
+    });
     return toScreen({ x: (pa.x + pb.x) / 2, y: (pa.y + pb.y) / 2 }, view);
   });
 };
@@ -41,7 +50,10 @@ export const getPortScreenPositions = (tile: Coords, view: View): Coords[] => {
  * cover the whole node and turn every drag into a connector.
  */
 export const getPortRadius = (view: View) => {
-  const c = toScreen(getTilePosition({ tile: { x: 0, y: 0 } }), view);
+  const c = toScreen(
+    getTilePosition({ tile: { x: 0, y: 0 }, projection: view.projection }),
+    view
+  );
   const [p] = getPortScreenPositions({ x: 0, y: 0 }, view);
   return Math.min(12, Math.hypot(p.x - c.x, p.y - c.y) / 3);
 };
@@ -88,11 +100,12 @@ export const getNodeAtPointerPort = <
   scroll: Scroll;
   rendererSize: Size;
   nodes: T[];
+  projection?: Projection;
 }): T | null => {
-  const { mouse, zoom, scroll, rendererSize, nodes } = state;
+  const { mouse, zoom, scroll, rendererSize, nodes, projection } = state;
   return getNodeAtPort(
     mouse.position.screen,
     nodesNearTile(mouse.position.tile, nodes),
-    { zoom, scroll, rendererSize }
+    { zoom, scroll, rendererSize, projection }
   );
 };

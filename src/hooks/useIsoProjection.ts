@@ -6,6 +6,7 @@ import {
   getTilePosition
 } from 'src/utils';
 import { UNPROJECTED_TILE_SIZE } from 'src/config';
+import { useProjection } from './useProjection';
 
 interface Props {
   from: Coords;
@@ -25,6 +26,8 @@ export const useIsoProjection = ({
   gridSize: Size;
   pxSize: Size;
 } => {
+  const projection = useProjection();
+
   const gridSize = useMemo(() => {
     return {
       width: Math.abs(from.x - to.x) + 1,
@@ -43,11 +46,12 @@ export const useIsoProjection = ({
   const position = useMemo(() => {
     const pos = getTilePosition({
       tile: origin,
-      origin: orientation === 'Y' ? 'TOP' : 'LEFT'
+      origin: orientation === 'Y' ? 'TOP' : 'LEFT',
+      projection
     });
 
     return pos;
-  }, [origin, orientation]);
+  }, [origin, orientation, projection]);
 
   const pxSize = useMemo(() => {
     return {
@@ -63,7 +67,7 @@ export const useIsoProjection = ({
       top: position.y,
       width: `${pxSize.width}px`,
       height: `${pxSize.height}px`,
-      transform: getIsoProjectionCss(orientation),
+      transform: getIsoProjectionCss(orientation, projection),
       transformOrigin: 'top left'
     },
     position,

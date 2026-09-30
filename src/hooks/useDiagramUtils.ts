@@ -114,13 +114,13 @@ export const useDiagramUtils = () => {
           ? zoom
           : Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, atZoom));
       if (z !== zoom) uiStateActions.setZoom(z);
-      const p = getTilePosition({ tile });
+      const p = getTilePosition({ tile, projection: scene.projection });
       uiStateActions.setScroll({
         position: { x: -p.x * z, y: -p.y * z },
         offset: scrollOffset
       });
     },
-    [zoom, scrollOffset, uiStateActions]
+    [zoom, scrollOffset, uiStateActions, scene.projection]
   );
 
   return {

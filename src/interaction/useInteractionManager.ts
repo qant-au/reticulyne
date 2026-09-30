@@ -202,7 +202,8 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         scroll: liveUiState.scroll,
         lastMouse: lastMouseRef.current ?? liveUiState.mouse,
         mouseEvent: e,
-        rendererSize
+        rendererSize,
+        projection: sceneRef.current.projection
       });
 
       lastMouseRef.current = nextMouse;

@@ -100,7 +100,10 @@ export const ungroup = (
 };
 
 export const updateGroup = (
-  { id, ...updates }: { id: string } & Partial<Pick<Group, 'name' | 'color'>>,
+  {
+    id,
+    ...updates
+  }: { id: string } & Partial<Pick<Group, 'name' | 'color' | 'collapsed'>>,
   { viewId, state }: ViewReducerContext
 ): State => {
   return produce(state, (draft) => {
@@ -108,7 +111,13 @@ export const updateGroup = (
     const group = v.groups?.find((g) => {
       return g.id === id;
     });
-    if (group) Object.assign(group, updates);
+    if (!group) return;
+    Object.assign(group, updates);
+    // An undefined field is a cleared one (an expanded group has no
+    // `collapsed`), not a key to save.
+    for (const key of Object.keys(updates) as (keyof Group)[]) {
+      if (group[key] === undefined) delete group[key];
+    }
   });
 };
 

@@ -161,7 +161,7 @@ one whose items are on different views is drawn on each as a transition stub. It
 the scene format's `connections` entry, less the ports, kind, props and links, which
 are kept from the opened scene on save while the ends are unchanged.
 
-A view may also carry `groups: { id, name?, color?, parentGroupId? }[]` (1.7); nodes,
+A view may also carry `groups: { id, name?, color?, parentGroupId?, collapsed? }[]` (1.7); nodes,
 rectangles, text boxes and groups join one through `parentGroupId`. See
 [embedding.md](embedding.md) for how grouping behaves.
 
@@ -191,7 +191,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `Connector.get(id)` | `(id: string) => Connector \| undefined` | Returns the connector (defaults merged) for the given id, or `undefined` if no view contains it. |
 | `Connector.update(id, patch)` | `(id, patch) => void` | Mutate `color` / `width` / `style` / `direction` / `glyph` / `animated` from the host. **Bypasses the undo stack** so a live-data poller doesn't fill Ctrl+Z. Gated on `editorMode !== 'NON_INTERACTIVE'` — warns and no-ops otherwise. |
 | `Connector.pulse(id, opts?)` | `(id, { durationMs?, glyph? }?) => void` | Fire a one-shot signal pulse — the chosen glyph travels the connector once over `durationMs` (default 1500). Runtime-only: writes to the scene-store overlay, never persisted to the model, never recorded in history. Each call supersedes any pulse already in-flight on that connector. |
-| `applyPatch(patch, opts?)` | `(patch: DiagramPatch, { pushToUndo? }?) => void` | Live update by id: node `name` / `description` / `icon` / `tile`; connector, rectangle and text-box styling; group `name` / `color`. Never touches the selection, zoom or pan. Ids that no longer exist are skipped. During a drag, a marquee or a connector or rectangle being drawn, the patch waits and lands when the gesture ends. Validated first (a bad patch goes to `onValidationError`, nothing changes). Not on the undo stack unless `pushToUndo: true`. Refused in `NON_INTERACTIVE`. |
+| `applyPatch(patch, opts?)` | `(patch: DiagramPatch, { pushToUndo? }?) => void` | Live update by id: node `name` / `description` / `icon` / `tile`; connector, rectangle and text-box styling; group `name` / `color` / `collapsed`. Never touches the selection, zoom or pan. Ids that no longer exist are skipped. During a drag, a marquee or a connector or rectangle being drawn, the patch waits and lands when the gesture ends. Validated first (a bad patch goes to `onValidationError`, nothing changes). Not on the undo stack unless `pushToUndo: true`. Refused in `NON_INTERACTIVE`. |
 | `updateNode(id, patch, opts?)` | `(id, NodePatch, opts?) => void` | `applyPatch` for one node. |
 | `setConnectorRate(id, rate, opts?)` | `(id, rate: number) => void` | Connector animation rate, 0 (stopped) to 1. Shows only with `enableAnimation`. |
 | `getNode(id)` | `(id) => NodeInfo \| undefined` | `{ id, name, description?, icon?, tile }`, a copy; `tile` is `null` when the node is not on the current view. |

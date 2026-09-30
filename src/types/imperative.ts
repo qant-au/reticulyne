@@ -35,7 +35,7 @@ export type RectanglePatch = Partial<
 export type TextBoxPatch = Partial<Pick<TextBox, 'content' | 'fontSize'>>;
 
 /** 1.7: a group's label and backing colour. */
-export type GroupPatch = Partial<Pick<Group, 'name' | 'color'>>;
+export type GroupPatch = Partial<Pick<Group, 'name' | 'color' | 'collapsed'>>;
 
 /**
  * A set of changes keyed by id. Node fields apply wherever the node is;

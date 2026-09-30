@@ -52,7 +52,13 @@ export const ExamplesSidebar = ({
           height: '100vh',
           width: isExpanded ? SIDEBAR_WIDTH : 0,
           overflow: 'hidden',
-          transition: 'width 200ms ease-in-out',
+          // Collapsed, the rail is only clipped to zero width: its items
+          // stayed focusable by Tab and read out by a screen reader while
+          // nothing showed. Hidden once the slide-out ends (visibility
+          // flips at the end of its transition when hiding, at once when
+          // showing).
+          visibility: isExpanded ? 'visible' : 'hidden',
+          transition: 'width 200ms ease-in-out, visibility 200ms',
           bgcolor: 'background.paper',
           borderRight: isExpanded ? '1px solid' : 'none',
           borderColor: 'grey.300',

@@ -378,3 +378,62 @@ describe('getScene and loadModel with a scene', () => {
     expect(api().getScene()).toEqual(scene);
   });
 });
+
+// lw-091: the legacyConnections prop reaches initialData and loadModel.
+describe('legacyConnections', () => {
+  const legacy = (): InitialData => {
+    return {
+      title: 'Old',
+      items: [
+        { id: 'a', name: 'A' },
+        { id: 'b', name: 'B' }
+      ],
+      views: [
+        {
+          id: 'v',
+          name: 'V',
+          items: [
+            { id: 'a', tile: { x: 0, y: 0 } },
+            { id: 'b', tile: { x: 2, y: 0 } }
+          ],
+          connectors: [
+            {
+              id: 'k',
+              anchors: [
+                { id: 'k1', ref: { item: 'a' } },
+                { id: 'k2', ref: { item: 'b' } }
+              ]
+            }
+          ]
+        }
+      ],
+      icons: [],
+      colors: []
+    };
+  };
+
+  test('off by default', () => {
+    const api = mount({ initialData: legacy() });
+    expect(api().getScene().connections).toBeUndefined();
+  });
+
+  test('initialData: the connector draws a new connection', () => {
+    const api = mount({ initialData: legacy(), legacyConnections: true });
+    const scene = api().getScene();
+    expect(scene.connections).toEqual([
+      { id: expect.any(String), from: 'a', to: 'b' }
+    ]);
+    const view = scene.views?.[0];
+    expect(view?.kind !== 'plan' && view?.connectors?.[0].connection).toBe(
+      scene.connections?.[0].id
+    );
+  });
+
+  test('loadModel follows the prop too', () => {
+    const api = mount({ legacyConnections: true });
+    act(() => {
+      api().loadModel(legacy());
+    });
+    expect(api().getScene().connections).toHaveLength(1);
+  });
+});

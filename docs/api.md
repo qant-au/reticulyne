@@ -24,6 +24,7 @@ Every prop is optional.
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `initialData` | `Scene \| InitialData` | empty diagram | Diagram to open on mount: a [scene](#the-file-format-scenes), or a legacy Reticulyne model (`InitialData`), which is converted to a scene on load. A scene is validated against the scene schema, a model against `initialDataSchema` (Zod), and either is refused whole. On rejection the editor renders empty and the failure is routed to `onValidationError` (or `console.error` if that prop is omitted). |
+| `legacyConnections` | `boolean` | `false` | When a legacy Reticulyne model is opened (by `initialData`, `loadModel` or Open), give each pair of items a connector joins a logical connection, drawn by every connector between them: one per pair, whatever views, reusing one the model already has. Off by default because two connectors between the same pair are not necessarily two cables. A scene is opened as it is either way. |
 | `mainMenuOptions` | `MainMenuOptions` | full menu | Whitelist of main-menu entries. Pass `[]` to hide the main menu entirely. |
 | `showTitleBar` | `boolean` | `undefined` (follows editorMode) | Override title-bar visibility. `false` = always hidden; `true` = always shown; omitted = controlled by editor mode (`EDITABLE` / `EXPLORABLE_READONLY` show it, `NON_INTERACTIVE` hides it). |
 | `showAlignmentGuides` | `boolean` | `true` | While dragging, draw a guide to the nearest other item on the same tile X or Y line. Items already sit on whole tiles, so there is no separate snap setting. |
@@ -128,6 +129,8 @@ scene: `onSave`, Export as JSON, `getScene()` and the Docker editor's saved diag
 
 `Scene`, `validateScene`, `parseScene`, `serializeScene` and `legacyModelToScene` are
 exported for hosts that store or check diagrams themselves.
+`legacyModelToScene(model, id?, { connections: true })` makes the connections the
+`legacyConnections` prop does.
 
 ## `InitialData`
 

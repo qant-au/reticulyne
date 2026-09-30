@@ -232,16 +232,77 @@ export const normaliseLegacyModel = (
   return { model: next, viewId };
 };
 
+export interface LegacyModelOptions {
+  /**
+   * lw-091: give every connector whose two ends are items a logical
+   * connection between them (scene-format.md, "Reticulyne model"). Off by
+   * default: two connectors between the same pair are not necessarily
+   * two cables, so it is only done when asked.
+   */
+  connections?: boolean;
+}
+
+const pairKey = (a: string, b: string) => {
+  return a < b ? `${a}\n${b}` : `${b}\n${a}`;
+};
+
+/**
+ * The model with a connection for each pair of items a connector joins,
+ * and each such connector drawing it. One connection per pair, whatever
+ * views and however many connectors draw it: a second cable between the
+ * same two items is added by hand. A pair the model already connects
+ * reuses that connection, and a connector that already draws one is left
+ * as it is.
+ */
+export const connectionsFromConnectors = (model: Model): Model => {
+  const connections = [...(model.connections ?? [])];
+  const byPair = new Map<string, string>();
+  connections.forEach((c) => {
+    const key = pairKey(c.from, c.to);
+    if (!byPair.has(key)) byPair.set(key, c.id);
+  });
+  const itemIds = new Set(ids(model.items));
+  let added = false;
+  const views = model.views.map((view) => {
+    if (!view.connectors) return view;
+    return {
+      ...view,
+      connectors: view.connectors.map((c) => {
+        if (c.connection !== undefined) return c;
+        const from = c.anchors[0]?.ref.item;
+        const to = c.anchors[c.anchors.length - 1]?.ref.item;
+        if (from === undefined || to === undefined || from === to) return c;
+        if (!itemIds.has(from) || !itemIds.has(to)) return c;
+        const key = pairKey(from, to);
+        let connection = byPair.get(key);
+        if (connection === undefined) {
+          connection = generateId();
+          byPair.set(key, connection);
+          connections.push({ id: connection, from, to });
+          added = true;
+        }
+        return { ...c, connection };
+      })
+    };
+  });
+  return added ? { ...model, views, connections } : { ...model, views };
+};
+
 /**
  * A Reticulyne model as a scene: one `iso` view per Reticulyne view, the
  * model items as objects (including any not placed in a view), and the
- * icons and colours unchanged. The model's `version` is dropped.
+ * icons and colours unchanged. The model's `version` is dropped. With
+ * `connections`, connectors between items also become connections.
  */
 export const legacyModelToScene = (
   model: Model,
-  id: string = generateId()
+  id: string = generateId(),
+  options: LegacyModelOptions = {}
 ): Scene => {
-  const { model: normalised } = normaliseLegacyModel(model);
+  const { model: valid } = normaliseLegacyModel(model);
+  const normalised = options.connections
+    ? connectionsFromConnectors(valid)
+    : valid;
   return sceneFromModel(normalised, {
     opened: { format: SCENE_FORMAT, version: SCENE_VERSION, id, objects: [] }
   });

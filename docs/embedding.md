@@ -42,6 +42,7 @@ All props are optional. The component renders a fully-functional editor with sen
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `initialData` | `Scene \| InitialData` | `INITIAL_DATA` (empty diagram) | Diagram to open on mount: a scene ([the file format](#the-file-format-scenes)), or a legacy Reticulyne model, converted to a scene on load. Validated whole (Zod). On rejection the editor renders empty and the failure is routed to `onValidationError` (or `console.error` if that prop is omitted). |
+| `legacyConnections` | `boolean` | `false` | When a legacy Reticulyne model is opened (by `initialData`, `loadModel` or Open), give each pair of items a connector joins a logical connection, drawn by every connector between them: one per pair, whatever views, reusing one the model already has. Off by default because two connectors between the same pair are not necessarily two cables. A scene is opened as it is either way. |
 | `mainMenuOptions` | `MainMenuOptions` | full menu | Whitelist of main-menu items. Pass `[]` to hide the main menu entirely. See [Controlling UI visibility](#controlling-ui-visibility). |
 | `showTitleBar` | `boolean` | `undefined` (follows editorMode) | Override title-bar visibility. `false` = always hidden; `true` = always shown; omitted = controlled by editor mode (`EDITABLE` / `EXPLORABLE_READONLY` show it, `NON_INTERACTIVE` hides it). |
 | `showAlignmentGuides` | `boolean` | `true` | While dragging, draw a guide to the nearest other item on the same tile X or Y line. Items already sit on whole tiles, so there is no separate snap setting. |
@@ -450,7 +451,8 @@ objects no diagram view places, connections, object `props` / `ports` / `links`,
 and the connection a connector draws survive a round trip through Reticulyne. A legacy
 Reticulyne model (`InitialData`) is still accepted as input, by `initialData`,
 `loadModel` and Open, and converted to a scene (one `iso` view per Reticulyne view, ids
-and colours normalised to the scene format's rules). It is never written.
+and colours normalised to the scene format's rules). It is never written. Its connectors
+carry no logical connection; pass `legacyConnections` to have them made on load.
 
 ```ts
 import { parseScene, serializeScene, type Scene } from '@reticulyne/editor';

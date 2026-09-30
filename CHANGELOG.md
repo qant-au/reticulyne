@@ -16,6 +16,7 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **`legacyConnections` prop: connections from a legacy model's connectors.** Opt-in. When a legacy Reticulyne model is opened (`initialData`, `loadModel` or Open), each pair of items a connector joins gets one logical connection, drawn by every connector between them and reusing one the model already has. `legacyModelToScene(model, id, { connections: true })` does the same for hosts converting stored models. Off by default, since two connectors between the same pair are not necessarily two cables.
 - **`applyPatch` colour changes fade in.** A connector, rectangle or group colour set by a patch transitions over about 200 ms instead of jumping, so a live feed reads as a change rather than a flicker. It is CSS, so it costs no extra renders, and it is off under `prefers-reduced-motion`. Colours the user picks, undo and selection outlines still change at once.
 
 ### Fixed

@@ -67,6 +67,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         error: null
       },
       onValidationError: undefined,
+      legacyConnections: false,
       nodeIndicatorComponent: undefined,
       connectorIndicatorComponent: undefined,
       selectionDimEnabled: false,
@@ -282,6 +283,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setOnValidationError: (onValidationError) => {
           set({ onValidationError });
+        },
+        setLegacyConnections: (legacyConnections) => {
+          set({ legacyConnections });
         },
         setNodeIndicatorComponent: (component) => {
           set({ nodeIndicatorComponent: component });

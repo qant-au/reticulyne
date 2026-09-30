@@ -53,6 +53,14 @@ export interface ReticulyneProps {
    * always scenes, merged into the one opened here.
    */
   initialData?: Scene | InitialData;
+  /**
+   * lw-091: when a legacy Reticulyne model is opened (as `initialData`,
+   * by `loadModel` or by Open), give each pair of items a connector joins
+   * a logical connection, drawn by every connector between them. Default
+   * `false`: two connectors between the same pair are not necessarily two
+   * cables. Scenes are opened as they are either way.
+   */
+  legacyConnections?: boolean;
   mainMenuOptions?: MainMenuOptions;
   /**
    * Live state: called with the editor's model after every change. It is

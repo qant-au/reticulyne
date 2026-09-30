@@ -384,6 +384,9 @@ export interface UiState {
   // merge-then-validate failures through the same channel the
   // <Reticulyne onValidationError> prop uses for initialData/loadModel.
   onValidationError: ValidationErrorHandler | undefined;
+  // lw-091: the <Reticulyne legacyConnections> prop, for every load path
+  // (Open, loadModel, templates), not only initialData.
+  legacyConnections: boolean;
   // Host-supplied per-node decorator (FEA5-07). When defined, the
   // Node renderer reads it through the uiState store and renders it
   // inside every Node.
@@ -472,6 +475,7 @@ export interface UiStateActions {
   setOnValidationError: (
     onValidationError: ValidationErrorHandler | undefined
   ) => void;
+  setLegacyConnections: (legacyConnections: boolean) => void;
   setNodeIndicatorComponent: (
     component: NodeIndicatorComponent | undefined
   ) => void;

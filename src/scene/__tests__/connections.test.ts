@@ -1,7 +1,12 @@
 import { validateScene, type Scene } from 'src/vendor/accurona-core';
 import { modelSchema } from 'src/schemas/model';
 import type { Model } from 'src/types';
-import { legacyModelToScene, sceneFromModel, sceneToModel } from 'src/scene';
+import {
+  legacyModelToScene,
+  readScene,
+  sceneFromModel,
+  sceneToModel
+} from 'src/scene';
 
 // lw-053: connections between items, whatever floors (views) they are on.
 
@@ -160,6 +165,119 @@ describe('connections', () => {
     const scene = legacyModelToScene(legacy, 'old');
     expectValid(scene);
     expect(scene.connections).toEqual([{ id: 'x_y', from: 'a_b', to: 'c' }]);
+  });
+});
+
+// lw-091: connectors between items becoming connections, only when asked.
+describe('a legacy model with connections from connectors', () => {
+  const connector = (id: string, from: string, to: string) => {
+    return {
+      id,
+      anchors: [
+        { id: `${id}-a`, ref: { item: from } },
+        { id: `${id}-b`, ref: { item: to } }
+      ]
+    };
+  };
+  // a-b drawn twice on one view and once on another, a-c once, and one
+  // connector ending on a tile.
+  const legacy = (): Model => {
+    return {
+      title: 'Old',
+      items: [
+        { id: 'a', name: 'A' },
+        { id: 'b', name: 'B' },
+        { id: 'c', name: 'C' }
+      ],
+      views: [
+        {
+          id: 'v1',
+          name: 'One',
+          items: [
+            { id: 'a', tile: { x: 0, y: 0 } },
+            { id: 'b', tile: { x: 2, y: 0 } },
+            { id: 'c', tile: { x: 4, y: 0 } }
+          ],
+          connectors: [
+            connector('k1', 'a', 'b'),
+            connector('k2', 'b', 'a'),
+            connector('k3', 'a', 'c'),
+            {
+              id: 'k4',
+              anchors: [
+                { id: 'k4-a', ref: { item: 'c' } },
+                { id: 'k4-b', ref: { tile: { x: 6, y: 0 } } }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'v2',
+          name: 'Two',
+          items: [
+            { id: 'a', tile: { x: 0, y: 0 } },
+            { id: 'b', tile: { x: 2, y: 0 } }
+          ],
+          connectors: [connector('k5', 'a', 'b')]
+        }
+      ],
+      icons: [],
+      colors: []
+    };
+  };
+  const drawn = (scene: Scene) => {
+    return Object.fromEntries(
+      (scene.views ?? []).flatMap((view) => {
+        return view.kind === 'plan'
+          ? []
+          : (view.connectors ?? []).map((c) => {
+              return [c.id, c.connection];
+            });
+      })
+    );
+  };
+
+  test('off by default: no connection is made', () => {
+    const scene = legacyModelToScene(legacy(), 'old');
+    expectValid(scene);
+    expect(scene.connections).toBeUndefined();
+    expect(Object.values(drawn(scene)).filter(Boolean)).toEqual([]);
+  });
+
+  test('one connection per pair, drawn by every connector between it', () => {
+    const scene = legacyModelToScene(legacy(), 'old', { connections: true });
+    expectValid(scene);
+    expect(scene.connections).toHaveLength(2);
+    const [ab, ac] = scene.connections!;
+    expect(ab).toEqual({ id: ab.id, from: 'a', to: 'b' });
+    expect(ac).toEqual({ id: ac.id, from: 'a', to: 'c' });
+    expect(drawn(scene)).toEqual({
+      k1: ab.id,
+      k2: ab.id,
+      k3: ac.id,
+      k4: undefined,
+      k5: ab.id
+    });
+    // And it opens with them, ready to edit.
+    const { model } = sceneToModel(scene);
+    expect(model.connections).toHaveLength(2);
+  });
+
+  test("the model's own connections are reused, not doubled", () => {
+    const model = legacy();
+    model.connections = [{ id: 'own', from: 'b', to: 'a', kind: 'ethernet' }];
+    const scene = legacyModelToScene(model, 'old', { connections: true });
+    expectValid(scene);
+    expect(scene.connections).toEqual([
+      { id: 'own', from: 'b', to: 'a', kind: 'ethernet' },
+      { id: expect.any(String), from: 'a', to: 'c' }
+    ]);
+    expect(drawn(scene)).toMatchObject({ k1: 'own', k2: 'own', k5: 'own' });
+  });
+
+  test('readScene passes the option to a legacy model', () => {
+    const result = readScene(legacy(), 'old', { connections: true });
+    expect(result.ok && result.scene.connections).toHaveLength(2);
   });
 });
 

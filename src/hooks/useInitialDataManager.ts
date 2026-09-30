@@ -39,6 +39,12 @@ interface UseInitialDataManagerOptions {
    * every icon in the validated data passes through unchanged.
    */
   iconCollections?: { allow?: string[]; deny?: string[] };
+  /**
+   * lw-091: a legacy model's connectors between items become connections.
+   * When omitted, the <Reticulyne legacyConnections> prop's value on the
+   * store is used, so Open and loadModel follow the prop too.
+   */
+  legacyConnections?: boolean;
 }
 
 // What a load() call did: opened the diagram, found it already open (the
@@ -47,7 +53,8 @@ export type LoadOutcome = 'loaded' | 'unchanged' | 'invalid';
 
 export const useInitialDataManager = ({
   onValidationError,
-  iconCollections
+  iconCollections,
+  legacyConnections
 }: UseInitialDataManagerOptions = {}) => {
   const [isReady, setIsReady] = useState(false);
   const prevInitialData = useRef<Scene | InitialData | undefined>(undefined);
@@ -81,6 +88,11 @@ export const useInitialDataManager = ({
   useEffect(() => {
     onValidationErrorRef.current = onValidationError;
   }, [onValidationError]);
+
+  const legacyConnectionsRef = useRef(legacyConnections);
+  useEffect(() => {
+    legacyConnectionsRef.current = legacyConnections;
+  }, [legacyConnections]);
 
   const iconCollectionsRef = useRef(iconCollections);
   // Stringify the filter spec for a stable identity dep. Hosts
@@ -118,7 +130,10 @@ export const useInitialDataManager = ({
       // A scene, or a legacy model converted to one: either way the
       // editor opens a validated scene and remembers it, so a save can
       // merge into it.
-      const read = readScene(_initialData);
+      const read = readScene(_initialData, undefined, {
+        connections:
+          legacyConnectionsRef.current ?? uiStateActions.get().legacyConnections
+      });
 
       if (!read.ok) {
         const cb = onValidationErrorRef.current;

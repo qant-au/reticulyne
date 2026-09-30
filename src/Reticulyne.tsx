@@ -63,6 +63,7 @@ const App = ({
   height = '100%',
   onModelUpdated,
   onValidationError,
+  legacyConnections = false,
   enableDebugTools = false,
   enableAnimation = false,
   enableGlobalDragHandlers = true,
@@ -95,7 +96,8 @@ const App = ({
   });
   const initialDataManager = useInitialDataManager({
     onValidationError,
-    iconCollections
+    iconCollections,
+    legacyConnections
   });
   const model = useModelStore(
     useShallow((state) => {
@@ -195,6 +197,12 @@ const App = ({
   useEffect(() => {
     uiStateActions.setOnValidationError(onValidationError);
   }, [onValidationError, uiStateActions]);
+
+  // lw-091: Open, loadModel and templates load through their own hook
+  // instances, which read the prop from the store.
+  useEffect(() => {
+    uiStateActions.setLegacyConnections(legacyConnections);
+  }, [legacyConnections, uiStateActions]);
 
   useEffect(() => {
     return () => {

@@ -192,10 +192,10 @@ export const Renderer = ({
       <SceneLayer>
         <TransformControlsManager />
       </SceneLayer>
-      {/* Above the outlines so the band stays visible over what it catches */}
-      <SceneLayer>
-        <MarqueeBand />
-      </SceneLayer>
+      {/* Above the outlines so the band stays visible over what it catches.
+          In canvas px, not a scene layer: it is the rectangle the pointer
+          draws on the screen. */}
+      <MarqueeBand />
     </Box>
   );
 };

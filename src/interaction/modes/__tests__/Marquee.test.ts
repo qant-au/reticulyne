@@ -4,6 +4,7 @@
 import { Marquee } from '../Marquee';
 import { makeState, lastModeChange, ref, type SceneShape } from './_helpers';
 import type { ViewItem } from 'src/types';
+import { getTilePosition } from 'src/utils';
 
 const itemAt = (id: string, tile: { x: number; y: number }): ViewItem => {
   return { id, tile };
@@ -23,15 +24,28 @@ const threeNodes = scene([
   itemAt('far', { x: 20, y: 20 })
 ]);
 
+// The band is a screen rectangle (px over the canvas). makeState's canvas
+// is 1000 x 1000 at zoom 1 with no scroll, so a tile's centre is at
+// (500, 500) plus its projected position. These nodes all sit on the
+// screen's vertical centre line; a band is drawn from just below-left of
+// tile (0, 0) to just right of the centre of the tile given.
+const at = (tile: { x: number; y: number }) => {
+  const p = getTilePosition({ tile });
+  return { x: 500 + p.x, y: 500 + p.y };
+};
+const bandTo = (tile: { x: number; y: number }) => {
+  return { x: at(tile).x + 40, y: at(tile).y };
+};
+
 const marqueeMode = (
-  to: { x: number; y: number },
+  toTile: { x: number; y: number },
   base: (typeof nodeA)[] = []
 ) => {
   return {
     type: 'MARQUEE' as const,
     showCursor: true,
-    from: { x: 0, y: 0 },
-    to,
+    from: { x: at({ x: 0, y: 0 }).x - 40, y: at({ x: 0, y: 0 }).y },
+    to: bandTo(toTile),
     base
   };
 };
@@ -44,7 +58,12 @@ describe('Marquee mode', () => {
   test('selects everything the band covers', () => {
     const state = makeState({
       mode: marqueeMode({ x: 5, y: 5 }),
-      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 5, y: 5 } } },
+      mouse: {
+        position: {
+          screen: bandTo({ x: 5, y: 5 }),
+          tile: { x: 5, y: 5 }
+        }
+      },
       scene: threeNodes
     });
 
@@ -59,21 +78,31 @@ describe('Marquee mode', () => {
   test('tracks the pointer into mode.to so the band redraws', () => {
     const state = makeState({
       mode: marqueeMode({ x: 2, y: 2 }),
-      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 7, y: 7 } } },
+      mouse: {
+        position: {
+          screen: bandTo({ x: 7, y: 7 }),
+          tile: { x: 7, y: 7 }
+        }
+      },
       scene: threeNodes
     });
 
     Marquee.mousemove?.(state);
 
     expect(lastModeChange(state)).toEqual(
-      expect.objectContaining({ type: 'MARQUEE', to: { x: 7, y: 7 } })
+      expect.objectContaining({ type: 'MARQUEE', to: bandTo({ x: 7, y: 7 }) })
     );
   });
 
   test('unions with the base on a Shift-drag', () => {
     const state = makeState({
       mode: marqueeMode({ x: 5, y: 5 }, [nodeFar]),
-      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 5, y: 5 } } },
+      mouse: {
+        position: {
+          screen: bandTo({ x: 5, y: 5 }),
+          tile: { x: 5, y: 5 }
+        }
+      },
       scene: threeNodes
     });
 
@@ -89,7 +118,12 @@ describe('Marquee mode', () => {
   test('an item already in the base is not added twice', () => {
     const state = makeState({
       mode: marqueeMode({ x: 5, y: 5 }, [nodeA]),
-      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 5, y: 5 } } },
+      mouse: {
+        position: {
+          screen: bandTo({ x: 5, y: 5 }),
+          tile: { x: 5, y: 5 }
+        }
+      },
       scene: threeNodes
     });
 
@@ -108,7 +142,12 @@ describe('Marquee mode', () => {
   test('shrinking the band releases items it no longer covers', () => {
     const wide = makeState({
       mode: marqueeMode({ x: 5, y: 5 }),
-      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 5, y: 5 } } },
+      mouse: {
+        position: {
+          screen: bandTo({ x: 5, y: 5 }),
+          tile: { x: 5, y: 5 }
+        }
+      },
       scene: threeNodes
     });
     Marquee.mousemove?.(wide);
@@ -118,7 +157,12 @@ describe('Marquee mode', () => {
     // selection at this point is [a, b] — the result must still be [a].
     const narrow = makeState({
       mode: marqueeMode({ x: 2, y: 2 }),
-      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 2, y: 2 } } },
+      mouse: {
+        position: {
+          screen: bandTo({ x: 2, y: 2 }),
+          tile: { x: 2, y: 2 }
+        }
+      },
       scene: threeNodes,
       selection: [nodeA, nodeB]
     });
@@ -130,7 +174,12 @@ describe('Marquee mode', () => {
   test('shrinking a Shift-drag never drops the pre-drag selection', () => {
     const state = makeState({
       mode: marqueeMode({ x: -1, y: -1 }, [nodeFar]),
-      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: -1, y: -1 } } },
+      mouse: {
+        position: {
+          screen: bandTo({ x: -1, y: -1 }),
+          tile: { x: -1, y: -1 }
+        }
+      },
       scene: threeNodes,
       selection: [nodeFar, nodeA, nodeB]
     });
@@ -143,7 +192,12 @@ describe('Marquee mode', () => {
   test('does nothing in a read-only diagram', () => {
     const state = makeState({
       mode: marqueeMode({ x: 5, y: 5 }),
-      mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 5, y: 5 } } },
+      mouse: {
+        position: {
+          screen: bandTo({ x: 5, y: 5 }),
+          tile: { x: 5, y: 5 }
+        }
+      },
       scene: threeNodes,
       editorMode: 'EXPLORABLE_READONLY'
     });

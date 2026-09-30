@@ -1,4 +1,5 @@
-import { getItemsInBounds } from '../hitTest';
+import { getItemsInBounds, getItemsInScreenRect } from '../hitTest';
+import { getTilePosition, screenToIso } from '../coordinates';
 import { doBoundsIntersect, getBoundingBox } from '../geometry';
 import type { useScene } from 'src/hooks/useScene';
 
@@ -176,5 +177,98 @@ describe('getItemsInBounds', () => {
         return f.type === 'CONNECTOR_ANCHOR';
       })
     ).toBe(false);
+  });
+});
+
+// Sweep 2026-09-30: the band was the box of tiles between the drag's two
+// corner tiles. In the isometric view that is a thin diamond, so a node
+// plainly inside the rectangle the pointer drew (Firewall, off the band's
+// diagonal) was never caught. The band is now the screen rectangle.
+describe('getItemsInScreenRect', () => {
+  const canvas = { width: 1000, height: 800 };
+  const noScroll = { position: { x: 0, y: 0 }, offset: { x: 0, y: 0 } };
+  // Where a tile's centre is drawn on this canvas, at zoom 1.
+  const at = (x: number, y: number) => {
+    const p = getTilePosition({ tile: { x, y } });
+    return { x: canvas.width / 2 + p.x, y: canvas.height / 2 + p.y };
+  };
+  const scene = makeScene({
+    items: [
+      // Up and to the right of the drag's start, well inside the rectangle.
+      { id: 'firewall', tile: { x: 4, y: 0 } },
+      { id: 'start', tile: { x: 0, y: 0 } },
+      { id: 'outside', tile: { x: -6, y: 0 } }
+    ]
+  } as unknown as Partial<SceneShape>);
+  const from = { x: at(0, 0).x - 20, y: at(4, 0).y - 20 };
+  const to = { x: at(4, 0).x + 20, y: at(0, 0).y + 20 };
+
+  test('catches what is visibly inside the rectangle', () => {
+    expect(
+      getItemsInScreenRect({
+        from,
+        to,
+        scene,
+        zoom: 1,
+        scroll: noScroll,
+        rendererSize: canvas
+      })
+    ).toEqual([
+      { type: 'ITEM', id: 'firewall' },
+      { type: 'ITEM', id: 'start' }
+    ]);
+  });
+
+  test('the same drag as a box of tiles missed it', () => {
+    // What the old band tested: the box between the tiles under the two
+    // corners.
+    const tile = (mouse: { x: number; y: number }) => {
+      return screenToIso({
+        mouse,
+        zoom: 1,
+        scroll: noScroll,
+        rendererSize: canvas
+      });
+    };
+    const found = getItemsInBounds({ from: tile(from), to: tile(to), scene });
+    expect(found).not.toContainEqual({ type: 'ITEM', id: 'firewall' });
+  });
+
+  test('follows zoom and scroll, as the canvas does', () => {
+    const zoom = 0.5;
+    const scroll = { position: { x: 100, y: -50 }, offset: { x: 0, y: 0 } };
+    const shown = (x: number, y: number) => {
+      const p = getTilePosition({ tile: { x, y } });
+      return {
+        x: canvas.width / 2 + scroll.position.x + p.x * zoom,
+        y: canvas.height / 2 + scroll.position.y + p.y * zoom
+      };
+    };
+    const c = shown(4, 0);
+    expect(
+      getItemsInScreenRect({
+        from: { x: c.x - 5, y: c.y - 5 },
+        to: { x: c.x + 5, y: c.y + 5 },
+        scene,
+        zoom,
+        scroll,
+        rendererSize: canvas
+      })
+    ).toEqual([{ type: 'ITEM', id: 'firewall' }]);
+  });
+
+  test('corner order does not matter, and nothing outside is caught', () => {
+    const args = { scene, zoom: 1, scroll: noScroll, rendererSize: canvas };
+    expect(getItemsInScreenRect({ ...args, from: to, to: from })).toEqual(
+      getItemsInScreenRect({ ...args, from, to })
+    );
+    const o = at(-6, 0);
+    expect(
+      getItemsInScreenRect({
+        ...args,
+        from: { x: o.x + 200, y: o.y - 5 },
+        to: { x: o.x + 300, y: o.y + 5 }
+      })
+    ).toEqual([]);
   });
 });

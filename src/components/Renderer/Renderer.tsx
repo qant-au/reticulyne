@@ -27,6 +27,7 @@ import { ConnectorHotspots } from 'src/components/ConnectorHotspots/ConnectorHot
 import { SmartGuides } from 'src/components/SmartGuides/SmartGuides';
 import { SearchHighlights } from 'src/components/SearchBar/SearchHighlights';
 import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
+import { PATCH_FADE_ATTR, PATCH_FADE_MS } from 'src/hooks/usePatchApplier';
 import { RendererProps } from 'src/types/rendererProps';
 import { visuallyHidden } from 'src/components/ScreenReaderSupport/ScreenReaderSupport';
 
@@ -119,6 +120,14 @@ export const Renderer = ({
         // 2.12: the editor handles touch itself (pinch, drag); without this
         // the browser takes two-finger gestures for page zoom and scroll.
         touchAction: 'none',
+        // lw-090: colours set by applyPatch fade in rather than jump. CSS,
+        // not React-driven animation, so a live feed costs no extra renders.
+        [`&[${PATCH_FADE_ATTR}] *`]: {
+          transition: `fill ${PATCH_FADE_MS}ms ease, stroke ${PATCH_FADE_MS}ms ease`
+        },
+        '@media (prefers-reduced-motion: reduce)': {
+          [`&[${PATCH_FADE_ATTR}] *`]: { transition: 'none' }
+        },
         bgcolor: (theme) => {
           return backgroundColor ?? theme.customVars.customPalette.diagramBg;
         }

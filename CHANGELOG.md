@@ -14,6 +14,10 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Added
+
+- **`applyPatch` colour changes fade in.** A connector, rectangle or group colour set by a patch transitions over about 200 ms instead of jumping, so a live feed reads as a change rather than a flicker. It is CSS, so it costs no extra renders, and it is off under `prefers-reduced-motion`. Colours the user picks, undo and selection outlines still change at once.
+
 ### Fixed
 
 - **Read-only mode looks, and stays, read-only.** In `EXPLORABLE_READONLY`, pressing `V` for the select tool and dragging moved nodes and marked the diagram unsaved; a drag there now does nothing. The hover tile no longer follows the pointer, and the cursor is the default arrow at rest (a grabbing hand only while panning) instead of the hand tool's open hand.

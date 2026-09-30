@@ -111,3 +111,16 @@ test('a row tooltip opens to the side, not over the next row', async () => {
   expect(tip.textContent).toBe('Hide layer');
   expect(tip.getAttribute('data-popper-placement')).toMatch(/^left/);
 });
+
+// Sweep 2026-09-30: Add layer left focus on nothing.
+test("Add layer puts focus in the new layer's name field", () => {
+  openLayers();
+  const field = screen.getByRole('textbox', { name: 'Layer name' });
+  expect(document.activeElement).toBe(field);
+  act(() => {
+    fireEvent.click(screen.getByRole('button', { name: 'Add layer' }));
+  });
+  const fields = screen.getAllByRole('textbox', { name: 'Layer name' });
+  expect(fields).toHaveLength(2);
+  expect(document.activeElement).toBe(fields[1]);
+});

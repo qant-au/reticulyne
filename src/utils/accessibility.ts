@@ -127,9 +127,10 @@ export const plainText = (html: string | undefined, max = 200) => {
   const text = (html ?? '')
     .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    // Last, so an escaped entity (&amp;lt;) stays the literal text &lt;.
+    .replace(/&amp;/g, '&')
     .replace(/\s+/g, ' ')
     .trim();
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;

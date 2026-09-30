@@ -126,6 +126,7 @@ describe('helpers', () => {
   test('plainText strips markup and shortens', () => {
     expect(plainText('<p>a &amp; b</p><p>c</p>')).toBe('a & b c');
     expect(plainText('x'.repeat(300), 10)).toHaveLength(10);
+    expect(plainText('<p>&amp;lt;b&amp;gt;</p>')).toBe('&lt;b&gt;');
   });
 
   test('freeTileNear skips tiles a node holds, and the tiles around them', () => {

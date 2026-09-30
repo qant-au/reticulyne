@@ -63,6 +63,13 @@ const FloorName = ({
   );
 };
 
+// In the title bar the diagram's title gives way first (TitleBar); the
+// floors keep their natural width, up to this share of the bar, beyond
+// which the shown floor's name takes an ellipsis. Shrinking with the title
+// in proportion cut it by a fraction of a pixel, which showed "M..." for
+// "Main" (sweep 2026-09-30).
+const NAME_MAX_WIDTH = '60%';
+
 export const FloorSwitcher = () => {
   const {
     floors,
@@ -115,7 +122,15 @@ export const FloorSwitcher = () => {
   // One floor, and nothing to add: just its name, as before floors.
   if (floors.length === 1 && !editable) {
     return (
-      <Typography noWrap sx={{ fontWeight: 600, color: 'text.secondary' }}>
+      <Typography
+        noWrap
+        sx={{
+          fontWeight: 600,
+          color: 'text.secondary',
+          flexShrink: 0,
+          maxWidth: NAME_MAX_WIDTH
+        }}
+      >
         {currentView.name}
       </Typography>
     );
@@ -131,7 +146,13 @@ export const FloorSwitcher = () => {
       role="tablist"
       aria-label="Floors"
       data-testid="floor-switcher"
-      sx={{ alignItems: 'center', minWidth: 0, pointerEvents: 'auto' }}
+      sx={{
+        alignItems: 'center',
+        minWidth: 0,
+        flexShrink: 0,
+        maxWidth: NAME_MAX_WIDTH,
+        pointerEvents: 'auto'
+      }}
     >
       <Stack
         direction="row"
@@ -176,7 +197,10 @@ export const FloorSwitcher = () => {
                 px: 1,
                 py: 0.25,
                 borderRadius: 1,
-                flexShrink: 0,
+                // Only the shown floor's name gives way, with an ellipsis,
+                // once the title has; the others keep theirs and scroll.
+                flexShrink: active ? 1 : 0,
+                minWidth: active ? '3.5em' : undefined,
                 fontWeight: 600,
                 typography: 'body2',
                 color: active ? 'text.primary' : 'text.secondary',
@@ -184,7 +208,16 @@ export const FloorSwitcher = () => {
                 '&:hover': { bgcolor: 'action.hover' }
               }}
             >
-              {floor.name}
+              <Box
+                component="span"
+                sx={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {floor.name}
+              </Box>
             </ButtonBase>
           );
         })}

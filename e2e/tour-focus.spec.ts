@@ -49,3 +49,24 @@ test('Finish, End tour and Escape return focus to Start tour', async ({
   await page.keyboard.press('Escape');
   await expect(start).toBeFocused();
 });
+
+// Sweep 2026-09-30: Start tour sat after the canvas in the DOM, and Tab
+// walks the canvas's objects, so reaching it took 74 presses.
+test('Tab reaches Start tour before the canvas', async ({ page }) => {
+  await openReadonly(page);
+  const start = page.getByRole('button', { name: 'Start tour' });
+  await page.getByTestId('sidebar-item-2').focus();
+  let presses = 0;
+  for (; presses < 20; presses += 1) {
+    const onStart = await start.evaluate((el) => {
+      return el === document.activeElement;
+    });
+    if (onStart) break;
+    const onCanvas = await page.getByLabel('Diagram canvas').evaluate((el) => {
+      return el.contains(document.activeElement);
+    });
+    expect(onCanvas, 'Tab reached the canvas before Start tour').toBe(false);
+    await page.keyboard.press('Tab');
+  }
+  await expect(start).toBeFocused();
+});

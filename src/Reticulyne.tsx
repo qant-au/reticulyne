@@ -36,6 +36,7 @@ import { GlobalStyles } from 'src/styles/GlobalStyles';
 import { Renderer } from 'src/components/Renderer/Renderer';
 import { ScreenReaderSupport } from 'src/components/ScreenReaderSupport/ScreenReaderSupport';
 import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
+import { TourPanel } from 'src/components/TourPanel/TourPanel';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
@@ -268,6 +269,10 @@ const App = ({
           }
         }}
       >
+        {/* Before the canvas in the DOM, so Tab reaches Start tour first:
+            after it, a keyboard user walked every object on the canvas
+            (74 presses in the read-only example) to get there. */}
+        <TourPanel />
         <Renderer
           {...renderer}
           enableGlobalDragHandlers={enableGlobalDragHandlers}

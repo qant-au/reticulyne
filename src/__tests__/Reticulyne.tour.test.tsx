@@ -328,6 +328,17 @@ describe('tour (lw-064)', () => {
     expect(screen.getByRole('button', { name: 'Start tour' })).toBeTruthy();
   });
 
+  // Sweep 2026-09-30: Start tour came after the canvas in the DOM, so Tab
+  // walked every object (74 presses in the read-only example) to reach it.
+  test('Start tour comes before the canvas in tab order', () => {
+    mount({ editorMode: 'EXPLORABLE_READONLY', tour: STEPS });
+    const start = screen.getByRole('button', { name: 'Start tour' });
+    const canvas = screen.getByLabelText('Diagram canvas');
+    expect(
+      start.compareDocumentPosition(canvas) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
   test('keyboard focus follows the tour instead of falling to the page', () => {
     const api = mount({ editorMode: 'EXPLORABLE_READONLY', tour: STEPS });
     const clickFocused = (name: string) => {

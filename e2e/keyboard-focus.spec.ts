@@ -108,3 +108,11 @@ test('an icon placed from the keyboard keeps its label clear of the others', asy
     expect(overlaps, `Untitled label overlaps ${name}`).toBe(false);
   }
 });
+
+test('an icon placed from the keyboard leaves focus on the canvas', async ({
+  page
+}) => {
+  await openEditor(page);
+  await placeTinyFromKeyboard(page);
+  await expect(page.getByRole('application')).toBeFocused();
+});

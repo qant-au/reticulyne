@@ -303,6 +303,9 @@ test('an icon picked from the keyboard goes straight onto a free tile', () => {
   expect(added).toBeDefined();
   expect(['0,0', '3,0']).not.toContain(`${added!.tile.x},${added!.tile.y}`);
   expect(ui().selection).toEqual([{ type: 'ITEM', id: added!.id }]);
+  // Focus goes to the canvas, where the announced arrow keys and Enter
+  // work, not to the page as the icon panel closes.
+  expect(document.activeElement).toBe(screen.getByRole('application'));
 });
 
 test('a pointer press still only arms the icon, for a click on the canvas', () => {

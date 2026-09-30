@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type FocusEvent } from 'react';
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -30,7 +30,41 @@ export const TourPanel = () => {
   const items = useModelStore((state) => {
     return state.items;
   });
+  const uiStateActions = useUiStateStore((state) => {
+    return state.actions;
+  });
   const tour = useTour();
+
+  // Starting, stepping or ending the tour from its own buttons removes (or
+  // disables) the button that had focus, which dropped focus to the page.
+  // It goes to the obvious next control instead: Next while the tour runs,
+  // then the Start tour button, or the canvas when there is none. Only when
+  // focus was in here and has been lost, so a tour the host drives never
+  // takes focus.
+  const hadFocus = useRef(false);
+  const nextRef = useRef<HTMLButtonElement>(null);
+  const startRef = useRef<HTMLButtonElement>(null);
+  const running = tourState !== null;
+  const stepIndex = tourState?.index;
+  useEffect(() => {
+    if (!hadFocus.current) return;
+    const active = document.activeElement;
+    if (active && active !== document.body) return;
+    const target = running
+      ? nextRef.current
+      : (startRef.current ?? uiStateActions.get().rendererEl);
+    target?.focus();
+  }, [running, stepIndex, uiStateActions]);
+  const focusWatch = {
+    onFocus: () => {
+      hadFocus.current = true;
+    },
+    onBlur: (e: FocusEvent<HTMLElement>) => {
+      if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+        hadFocus.current = false;
+      }
+    }
+  };
 
   // Another diagram replaced this one: the tour was about the old one.
   const seenGeneration = useRef(loadGeneration);
@@ -55,6 +89,8 @@ export const TourPanel = () => {
     return (
       <Surface sx={placement}>
         <Button
+          ref={startRef}
+          {...focusWatch}
           size="small"
           startIcon={<PlayArrowIcon />}
           onClick={() => {
@@ -88,6 +124,7 @@ export const TourPanel = () => {
         role="region"
         aria-label="Tour"
         data-testid="tour-panel"
+        {...focusWatch}
         sx={{ px: 2, pt: 1.25, pb: interactive ? 1 : 1.5 }}
       >
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
@@ -131,6 +168,7 @@ export const TourPanel = () => {
               Previous
             </Button>
             <Button
+              ref={nextRef}
               size="small"
               variant="contained"
               disableElevation

@@ -194,3 +194,17 @@ test.describe('on a touch phone', () => {
     await expect(page.getByRole('tooltip')).toHaveText('Unsaved changes');
   });
 });
+
+// At 1440 the bar sat at ~824px, midway between the left controls and the
+// mini-map, not under the Diagrams button at the canvas centre.
+test('at 1440 a bar that fits is centred on the canvas', async ({ page }) => {
+  await open(page, 1440, 900, {
+    title: 'up',
+    views: [{ id: 'v', name: 'Main' }]
+  });
+  const centre = await page.getByTestId('title-bar').evaluate((el) => {
+    const b = el.parentElement!.getBoundingClientRect();
+    return b.left + b.width / 2;
+  });
+  expect(Math.abs(centre - 720)).toBeLessThanOrEqual(2);
+});

@@ -23,6 +23,7 @@ import type { ToolName } from 'src/utils';
 import type { ItemControls } from 'src/types';
 import type { Size } from 'src/types/common';
 import { Surface } from 'src/vendor/accurona-ui';
+import { titleBarRaised } from './TitleBar';
 
 interface AppPadding {
   x: number;
@@ -37,6 +38,8 @@ interface Props {
   itemControls: ItemControls | null;
   // The zoom row's element, measured so the title bar keeps clear of it.
   bottomRowRef?: (el: HTMLDivElement | null) => void;
+  // The zoom row's measured width; 0 before it is measured.
+  bottomRowWidth?: number;
 }
 
 // Below this canvas width the zoom row drops its percentage readout.
@@ -48,7 +51,8 @@ export const ToolbarSlots = ({
   spacing,
   rendererSize,
   itemControls,
-  bottomRowRef
+  bottomRowRef,
+  bottomRowWidth = 0
 }: Props) => {
   // The combined toolbar renders when EITHER half is active — i.e.
   // the host wants the hamburger (MAIN_MENU) and/or the tool buttons
@@ -58,6 +62,18 @@ export const ToolbarSlots = ({
   const showHamburger = availableTools.includes('MAIN_MENU');
   const showToolButtons = availableTools.includes('TOOL_MENU');
   const showCombinedToolbar = showHamburger || showToolButtons;
+
+  // The inspector stops a gap above the bottom bars: the zoom row, and the
+  // title bar where that sits a row up (a phone), whose top is where the
+  // bottom chrome starts.
+  const inspectorTop = appPadding.y * 2 + spacing(2);
+  const bottomChromeTop = titleBarRaised(
+    rendererSize.width,
+    appPadding,
+    bottomRowWidth
+  )
+    ? rendererSize.height - appPadding.y * 3 - 8
+    : rendererSize.height - appPadding.y * 2;
 
   return (
     <>
@@ -79,8 +95,8 @@ export const ToolbarSlots = ({
             width: rendererSize.width
               ? Math.min(360, rendererSize.width - appPadding.x * 2)
               : 360,
-            top: appPadding.y * 2 + spacing(2),
-            maxHeight: rendererSize.height - appPadding.y * 6
+            top: inspectorTop,
+            maxHeight: bottomChromeTop - spacing(2) - inspectorTop
           }}
         >
           {/* BUG15-50: a press in the inspector is the panel's own, not

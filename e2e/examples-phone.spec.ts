@@ -62,3 +62,42 @@ test('narrowed to a phone, the rail closes and the tour panel keeps a usable wid
   expect(panel!.x + panel!.width).toBeLessThanOrEqual(390);
   await expect(page.getByRole('button', { name: 'Previous' })).toBeInViewport();
 });
+
+// Sweep 2026-09-30: at 390 the Start tour button sat on the title bar's
+// text, and at Step 1 an expanded description ran off the top.
+test('Read-only mode on a phone: Start tour and the tour clear the title bar; the label fits', async ({
+  page
+}) => {
+  await openPhone(page);
+  await pick(page, 2); // Read-only mode
+  const titleBar = async () => {
+    return (await page
+      .getByText('Airport management software system', { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"MuiPaper-root")][1]')
+      .boundingBox())!;
+  };
+  const start = (await page
+    .getByRole('button', { name: 'Start tour' })
+    .boundingBox())!;
+  expect(start.y + start.height).toBeLessThanOrEqual((await titleBar()).y);
+
+  // Expand the first node's description, then start the tour on it.
+  await page
+    .getByRole('button', { name: 'Show more' })
+    .first()
+    .click({ force: true });
+  await page.getByRole('button', { name: 'Start tour' }).click();
+  const panel = (await page.getByTestId('tour-panel').boundingBox())!;
+  expect(panel.y + panel.height).toBeLessThanOrEqual((await titleBar()).y);
+  await expect(async () => {
+    const top = await page.evaluate(() => {
+      const label = document.querySelector('[data-node-label="item1"]');
+      return Math.min(
+        ...[...label!.querySelectorAll('*')].map((el) => {
+          return el.getBoundingClientRect().top;
+        })
+      );
+    });
+    expect(top).toBeGreaterThanOrEqual(0);
+  }).toPass({ timeout: 3000 });
+});

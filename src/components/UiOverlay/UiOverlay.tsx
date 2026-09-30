@@ -14,14 +14,14 @@
 // Split out under QUA4-10. EDITOR_MODE_MAPPING + getEditorModeMapping
 // have moved to src/utils/editorModeMapping.ts.
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { getEditorModeMapping } from 'src/utils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { ToolbarSlots } from './ToolbarSlots';
-import { TitleBar } from './TitleBar';
+import { TitleBar, titleBarRaised } from './TitleBar';
 import { DebugPanel } from './DebugPanel';
 import { HoverTooltip } from './HoverTooltip';
 import { SearchBar } from 'src/components/SearchBar/SearchBar';
@@ -80,6 +80,14 @@ export const UiOverlay = () => {
     return getEditorModeMapping(editorMode);
   }, [editorMode]);
 
+  // The tour panel, outside this overlay, keeps above a raised title bar.
+  const raised =
+    (showTitleBar ?? availableTools.includes('VIEW_TITLE')) &&
+    titleBarRaised(rendererSize.width, appPadding, bottomRowSize.width);
+  useEffect(() => {
+    uiStateActions.setTitleBarRaised(raised);
+  }, [raised, uiStateActions]);
+
   const onCloseDialog = useCallback(() => {
     uiStateActions.setDialog(null);
   }, [uiStateActions]);
@@ -102,6 +110,7 @@ export const UiOverlay = () => {
           rendererSize={rendererSize}
           itemControls={itemControls}
           bottomRowRef={setBottomRow}
+          bottomRowWidth={bottomRowSize.width}
         />
         <TitleBar
           visible={showTitleBar ?? availableTools.includes('VIEW_TITLE')}

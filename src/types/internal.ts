@@ -320,6 +320,9 @@ export interface UiState {
   // for the session so reopening either dialog keeps it. Unset: the export
   // theme's diagram background.
   exportBackgroundColor: string | undefined;
+  // Whether the title bar sits a row up, above the zoom row (a phone), as
+  // the overlay last laid it out; the tour panel keeps above it.
+  titleBarRaised: boolean;
   showTitleBar: boolean | undefined;
   // 2.9: alignment guides while dragging.
   showAlignmentGuides: boolean;
@@ -431,6 +434,7 @@ export interface UiStateActions {
   setEnableAnimation: (enabled: boolean) => void;
   setExportTheme: (mode: 'light' | 'dark') => void;
   setExportBackgroundColor: (color: string) => void;
+  setTitleBarRaised: (raised: boolean) => void;
   setShowTitleBar: (show: boolean | undefined) => void;
   setShowAlignmentGuides: (show: boolean) => void;
   setSearchOpen: (open: boolean) => void;

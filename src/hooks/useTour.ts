@@ -25,6 +25,64 @@ const clampZoom = (zoom: number) => {
   return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
 };
 
+// Room kept between a step's node label and the top of the canvas.
+const LABEL_MARGIN = 16;
+
+/**
+ * How far to move the view down so a step's node label, which rises above
+ * the node, is not cut off at the top of the canvas: on a phone an
+ * expanded description ran off the top at Step 1 (sweep 2026-09-30). The
+ * node itself stays clear of the tour panel. Measured from the label's
+ * DOM relative to its scene layer, so the answer is where the label will
+ * be at the step's zoom and scroll, whatever the move's animation has
+ * reached. 0 when it fits, or nothing can be measured.
+ */
+export const labelOverflowShift = ({
+  rendererEl,
+  nodeId,
+  scrollY,
+  zoom
+}: {
+  rendererEl: HTMLElement | null;
+  nodeId: string;
+  /** The step's scroll and zoom, which the view may still be moving to. */
+  scrollY: number;
+  zoom: number;
+}): number => {
+  if (!rendererEl || typeof DOMMatrix === 'undefined') return 0;
+  const label = [...rendererEl.querySelectorAll('[data-node-label]')].find(
+    (el) => {
+      return el.getAttribute('data-node-label') === nodeId;
+    }
+  );
+  const layer = label?.closest('[data-scene-layer]');
+  if (!label || !layer) return 0;
+  const layerRect = layer.getBoundingClientRect();
+  const scale = new DOMMatrix(getComputedStyle(layer).transform).a || 1;
+  const anchor = label.firstElementChild ?? label;
+  const anchorY = (anchor.getBoundingClientRect().top - layerRect.top) / scale;
+  const tops = [...label.querySelectorAll('*')].map((el) => {
+    return (el.getBoundingClientRect().top - layerRect.top) / scale;
+  });
+  if (tops.length === 0) return 0;
+  // Scene y to canvas y at the step's zoom and scroll (SceneLayer).
+  const toCanvas = (sceneY: number) => {
+    return rendererEl.clientHeight / 2 + scrollY + sceneY * zoom;
+  };
+  const rendererTop = rendererEl.getBoundingClientRect().top;
+  const nodeScreenY = toCanvas(anchorY);
+  const labelTop = toCanvas(Math.min(...tops));
+  const need = LABEL_MARGIN - labelTop;
+  if (need <= 0) return 0;
+  const panel = rendererEl.ownerDocument.querySelector(
+    '[data-testid="tour-panel"]'
+  );
+  const floor = panel
+    ? panel.getBoundingClientRect().top - rendererTop - LABEL_MARGIN
+    : rendererEl.clientHeight - LABEL_MARGIN;
+  return Math.max(0, Math.min(need, floor - nodeScreenY));
+};
+
 const holds = (view: View, nodeId: string) => {
   return view.items.some((item) => {
     return item.id === nodeId;
@@ -118,12 +176,29 @@ export const useTour = () => {
       const zoom = clampZoom(step.zoom ?? TOUR_ZOOM);
       const p = getTilePosition({ tile: placed.tile, projection: view.kind });
       uiStateActions.setZoom(zoom);
-      uiStateActions.setScroll({
-        position: { x: -p.x * zoom, y: -p.y * zoom },
-        offset: live.scroll.offset
-      });
+      const position = { x: -p.x * zoom, y: -p.y * zoom };
+      uiStateActions.setScroll({ position, offset: live.scroll.offset });
       uiStateActions.setHighlightedItemId(step.nodeId);
       uiStateActions.setTour({ steps, index, hostHighlight });
+      // Once the step has rendered (the tour panel and the label), move
+      // the view down if the node's label would run off the top.
+      requestAnimationFrame(() => {
+        const now = uiStateActions.get();
+        if (now.tour?.index !== index || now.tour.steps !== steps) return;
+        const rendererEl = now.rendererEl;
+        const shift = labelOverflowShift({
+          rendererEl,
+          nodeId: step.nodeId,
+          scrollY: position.y,
+          zoom
+        });
+        if (shift > 0) {
+          uiStateActions.setScroll({
+            position: { x: position.x, y: position.y + shift },
+            offset: now.scroll.offset
+          });
+        }
+      });
       live.onTourStepChange?.({
         index,
         total: steps.length,

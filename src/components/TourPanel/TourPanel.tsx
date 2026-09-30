@@ -34,6 +34,9 @@ export const TourPanel = () => {
     return state.actions;
   });
   const tour = useTour();
+  const titleBarRaised = useUiStateStore((state) => {
+    return state.titleBarRaised;
+  });
 
   // Starting, stepping or ending the tour from its own buttons removes (or
   // disables) the button that had focus, which dropped focus to the page.
@@ -76,10 +79,12 @@ export const TourPanel = () => {
 
   const interactive = editorMode !== 'NON_INTERACTIVE';
 
+  // Above the title strip: on a phone that sits a row up, over the zoom
+  // row, and the Start tour button landed on its text (sweep 2026-09-30).
   const placement = {
     position: 'absolute',
     left: '50%',
-    bottom: 88,
+    bottom: titleBarRaised ? 136 : 88,
     transform: 'translateX(-50%)',
     zIndex: 5
   } as const;

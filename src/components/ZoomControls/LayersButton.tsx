@@ -124,6 +124,22 @@ export const LayersButton = () => {
         role="presentation"
         disablePortal
         popperOptions={{ strategy: 'fixed' }}
+        // Kept inside the screen: on a phone it ran off the right edge
+        // (x285-561 of 390, sweep 2026-09-30).
+        modifiers={[
+          {
+            name: 'preventOverflow',
+            options: {
+              padding: 8,
+              // The screen, not the small card round the button, which
+              // clips nothing (its overflow is not what bounds the panel).
+              boundary:
+                typeof document === 'undefined'
+                  ? 'clippingParents'
+                  : document.documentElement
+            }
+          }
+        ]}
         sx={{
           zIndex: (theme) => {
             return theme.zIndex.modal;
@@ -142,7 +158,7 @@ export const LayersButton = () => {
             aria-label="Layers"
             aria-modal="false"
             elevation={8}
-            sx={{ width: 300, p: 1.5, mb: 1 }}
+            sx={{ width: 'min(300px, calc(100vw - 16px))', p: 1.5, mb: 1 }}
             onKeyDown={(e) => {
               if (e.key !== 'Escape') return;
               e.stopPropagation();

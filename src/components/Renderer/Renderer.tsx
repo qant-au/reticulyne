@@ -2,7 +2,11 @@ import { useEffect, useId, useMemo, useRef } from 'react';
 import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInteractionManager } from 'src/interaction/useInteractionManager';
-import { useKeyboardShortcuts } from 'src/interaction/useKeyboardShortcuts';
+import {
+  KEYMAP,
+  useKeyboardShortcuts
+} from 'src/interaction/useKeyboardShortcuts';
+import { formatBinding } from 'src/vendor/accurona-core';
 import { useSpacePan } from 'src/interaction/useSpacePan';
 import { Grid } from 'src/components/Grid/Grid';
 import { Cursor } from 'src/components/Cursor/Cursor';
@@ -26,12 +30,17 @@ import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
 import { RendererProps } from 'src/types/rendererProps';
 import { visuallyHidden } from 'src/components/ScreenReaderSupport/ScreenReaderSupport';
 
+// The pan keys as the ? dialog writes them: Ctrl, or the Cmd glyph on macOS.
+const PAN_KEYS = formatBinding(
+  KEYMAP.find((binding) => {
+    return binding.action === 'pan';
+  })!
+)[0];
+
 // lw-068: read by a screen reader when the canvas takes focus.
 const HINTS = {
-  EDITABLE:
-    'Tab and Shift+Tab move between objects. Arrow keys move the selected object, Enter edits it, Delete removes it, Shift+F10 opens its menu. Ctrl+arrow keys pan. Question mark lists every shortcut.',
-  EXPLORABLE_READONLY:
-    'Read only. Tab and Shift+Tab move between objects. Ctrl+arrow keys pan, plus and minus zoom, F fits the diagram. Question mark lists every shortcut.',
+  EDITABLE: `Tab and Shift+Tab move between objects. Arrow keys move the selected object, Enter edits it, Delete removes it, Shift+F10 opens its menu. ${PAN_KEYS} pan. Question mark lists every shortcut.`,
+  EXPLORABLE_READONLY: `Read only. Tab and Shift+Tab move between objects. ${PAN_KEYS} pan, plus and minus zoom, F fits the diagram. Question mark lists every shortcut.`,
   NON_INTERACTIVE: 'A diagram. Its outline follows the canvas.'
 } as const;
 

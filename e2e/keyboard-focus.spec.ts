@@ -116,3 +116,20 @@ test('an icon placed from the keyboard leaves focus on the canvas', async ({
   await placeTinyFromKeyboard(page);
   await expect(page.getByRole('application')).toBeFocused();
 });
+
+test('the canvas hint writes the pan keys as the shortcuts dialog does', async ({
+  page
+}) => {
+  await openEditor(page);
+  const canvas = page.getByRole('application');
+  const hintId = await canvas.getAttribute('aria-describedby');
+  const hint = (await page.locator(`[id="${hintId}"]`).textContent()) ?? '';
+  await canvas.focus();
+  await page.keyboard.press('?');
+  const row = page.getByRole('row').filter({ hasText: 'Pan the view' });
+  const keys = (
+    (await row.getByRole('cell').nth(1).textContent()) ?? ''
+  ).trim();
+  expect(keys).toMatch(/arrow keys$/);
+  expect(hint).toContain(`${keys} pan.`);
+});

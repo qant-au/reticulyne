@@ -16,7 +16,10 @@ const ago = (ms: number) => {
   return `${Math.round(m / 60)} h ago`;
 };
 
-export const SaveStatusPill = () => {
+// `compact` (the title bar on a phone) says the same in fewer words, so the
+// status stays on one line: "Unsaved changes" wrapped to two and kept its
+// width while the title shrank to a few letters (sweep 2026-09-30, round 3).
+export const SaveStatusPill = ({ compact = false }: { compact?: boolean }) => {
   const onSave = useUiStateStore((state) => {
     return state.onSave;
   });
@@ -60,17 +63,30 @@ export const SaveStatusPill = () => {
     label = `Saved ${ago(Math.max(0, now - status.lastSavedAt))}`;
   }
   if (!label) return null;
+  const shown = compact
+    ? ({
+        'Unsaved changes': 'Unsaved',
+        'Save failed': 'Failed'
+      }[label] ?? (label.startsWith('Saved ') ? 'Saved' : label))
+    : label;
 
   return (
     <Box
       role="status"
       aria-live="polite"
       data-testid="save-status"
-      title={status.error ?? undefined}
-      sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, ml: 2 }}
+      title={status.error ?? (shown !== label ? label : undefined)}
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 1,
+        ml: compact ? 1 : 2,
+        flexShrink: 0,
+        whiteSpace: 'nowrap'
+      }}
     >
       <Typography variant="body2" sx={{ color: tone, fontWeight: 600 }}>
-        {label}
+        {shown}
       </Typography>
       {status.state === 'error' && (
         <Button

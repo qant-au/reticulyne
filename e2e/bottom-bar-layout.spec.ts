@@ -84,7 +84,9 @@ for (const [width, height] of [
       });
     };
     const title = await measure(page.getByText(TITLE, { exact: true }));
-    expect(title.scroll).toBeGreaterThan(title.client);
+    // At 1440 the bar now has the room up to the mini-map, and this title
+    // fits (sweep 2026-09-30, round 3); on a phone it truncates.
+    if (width < 600) expect(title.scroll).toBeGreaterThan(title.client);
     const chip = page.getByRole('tab', { name: 'Main' });
     await expect(chip).toBeVisible();
     const name = await measure(chip.locator('span').first());

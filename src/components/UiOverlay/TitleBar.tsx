@@ -35,10 +35,17 @@ const MINI_MAP_RESERVE = 16 + 200 + GAP;
 // moves up a row.
 const MIN_TITLE_WIDTH = 240;
 
-// How far in from each side the title keeps: clear of the zoom row on the
-// left and the mini-map on the right.
+// How far in the title keeps from the left: clear of the zoom row.
 const titleReserve = (appPadding: AppPadding, bottomRowWidth: number) => {
-  return Math.max(300, appPadding.x + bottomRowWidth + GAP, MINI_MAP_RESERVE);
+  return Math.max(300, appPadding.x + bottomRowWidth + GAP);
+};
+
+// And from the right: clear of the mini-map where that shows. Reserving the
+// zoom row's width on this side too left the bar ~300px wide beside the
+// examples picker, the title cut short beside empty canvas (sweep
+// 2026-09-30, round 3).
+const rightReserveFor = (rendererWidth: number, appPadding: AppPadding) => {
+  return rendererWidth >= MINI_MAP_MIN_WIDTH ? MINI_MAP_RESERVE : appPadding.x;
 };
 
 /** Whether the title bar sits a row up, above the zoom row. */
@@ -49,10 +56,15 @@ export const titleBarRaised = (
 ) => {
   return (
     rendererWidth < MINI_MAP_MIN_WIDTH ||
-    rendererWidth - titleReserve(appPadding, bottomRowWidth) * 2 <
+    rendererWidth -
+      titleReserve(appPadding, bottomRowWidth) -
+      rightReserveFor(rendererWidth, appPadding) <
       MIN_TITLE_WIDTH
   );
 };
+
+// A title this short never truncates: there is nothing to gain from it.
+const SHORT_TITLE = 6;
 
 export const TitleBar = ({
   visible,
@@ -63,16 +75,17 @@ export const TitleBar = ({
 }: Props) => {
   if (!visible) return null;
 
-  // Centred on the bottom row, clear of the zoom row on the left and the
-  // mini-map on the right: the same reserve both sides. The zoom row is
-  // measured, since it grows with what the editor offers; a fixed 300px
-  // let a long title cover Layers and ? (BUG15-34). With too little room
-  // left (a phone), it moves up a row and spans the width, clear of the
-  // mini-map where that shows, the title truncating.
+  // Between the zoom row on the left and the mini-map on the right, each
+  // measured or known, centred in that space. The zoom row is measured,
+  // since it grows with what the editor offers; a fixed 300px let a long
+  // title cover Layers and ? (BUG15-34). With too little room left (a
+  // phone), it moves up a row and spans the width, clear of the mini-map
+  // where that shows.
   const reserve = titleReserve(appPadding, bottomRowWidth);
   const narrow = titleBarRaised(rendererSize.width, appPadding, bottomRowWidth);
-  const rightReserve =
-    rendererSize.width >= MINI_MAP_MIN_WIDTH ? MINI_MAP_RESERVE : appPadding.x;
+  const rightReserve = rightReserveFor(rendererSize.width, appPadding);
+  const left = narrow ? appPadding.x : reserve;
+  const short = title.length <= SHORT_TITLE;
 
   return (
     <Box
@@ -83,13 +96,11 @@ export const TitleBar = ({
         pointerEvents: 'none'
       }}
       style={{
-        left: narrow ? appPadding.x : reserve,
+        left,
         top: narrow
           ? rendererSize.height - appPadding.y * 3 - 8
           : rendererSize.height - appPadding.y * 2,
-        width: narrow
-          ? rendererSize.width - appPadding.x - rightReserve
-          : rendererSize.width - reserve * 2,
+        width: rendererSize.width - left - rightReserve,
         height: appPadding.y
       }}
     >
@@ -102,25 +113,34 @@ export const TitleBar = ({
           maxWidth: '100%'
         }}
       >
-        <Stack direction="row" sx={{ alignItems: 'center', minWidth: 0 }}>
-          {/* The title gives way first, to a few letters and an ellipsis;
-              only then does the view's name shrink. Both shrank together,
-              and a long title cut the view chip to "M" with no ellipsis
-              (sweep 2026-09-30). */}
+        <Stack
+          direction="row"
+          data-testid="title-bar"
+          sx={{ alignItems: 'center', minWidth: 0 }}
+        >
+          {/* Nothing truncates while there is room. When there is not, the
+              title gives way first, down to a few letters and an ellipsis;
+              then the floors; the save status never. Flex basis 0 is what
+              orders it: the title takes only the room the rest leave, and
+              once it is at its minimum the floors shrink. A share of the
+              bar for the floors (60%) was a share of the bar's own content
+              width, so a short title cut "Main" to "M..." with room to
+              spare (sweep 2026-09-30, round 3). */}
           <Typography
             noWrap
+            data-testid="title-bar-title"
             sx={{
               fontWeight: 600,
               color: 'text.secondary',
-              flexShrink: 1,
-              minWidth: '3em'
+              flex: short ? 'none' : '1 1 0',
+              minWidth: short ? undefined : '3em'
             }}
           >
             {title}
           </Typography>
           <ChevronRight sx={{ flexShrink: 0 }} />
           <FloorSwitcher />
-          <SaveStatusPill />
+          <SaveStatusPill compact={narrow} />
         </Stack>
       </Surface>
     </Box>

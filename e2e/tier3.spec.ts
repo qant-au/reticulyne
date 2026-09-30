@@ -236,8 +236,13 @@ test('dragging the label-height slider keeps the inspector open', async ({
   await page.mouse.click(c.x, c.y);
   const slider = page.getByRole('slider').first();
   const before = await slider.getAttribute('aria-valuenow');
+  // The slider sits below the fold of the inspector, which scrolls: at
+  // 1280x720 it is at y 605 while the panel ends at 576. Pressed there
+  // unscrolled, the press lands on the canvas under it, which rightly
+  // deselects and closes the inspector.
+  await slider.scrollIntoViewIfNeeded();
   const box = (await slider.boundingBox())!;
-  await page.mouse.move(box.x + 4, box.y + box.height / 2);
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
   await page.mouse.move(box.x + 120, box.y + box.height / 2, { steps: 10 });
   await page.mouse.up();

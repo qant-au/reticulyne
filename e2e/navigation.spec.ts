@@ -160,4 +160,12 @@ test('zoom out retraces zoom in from the Fit level', async ({ page }) => {
   }
   await zoomOut.click();
   await expect(readout).toHaveText(fit);
+  // Sweep 2026-09-30: below Fit's 64% zoom out stepped to 60, a 4-point
+  // step. Fit now replaces a rung within half a step of it.
+  await zoomOut.click();
+  const below = parseInt((await readout.textContent())!, 10);
+  const fitPct = parseInt(fit, 10);
+  if (below !== 20) expect(fitPct - below).toBeGreaterThanOrEqual(10);
+  await zoomIn.click();
+  await expect(readout).toHaveText(fit);
 });

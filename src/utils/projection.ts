@@ -89,7 +89,26 @@ export const zoomLadder = (anchor?: number | null): number[] => {
   }
   if (anchor !== undefined && anchor !== null) {
     const a = toPercent(clamp(anchor, MIN_ZOOM, MAX_ZOOM));
-    if (!rungs.includes(a)) rungs.push(a);
+    if (!rungs.includes(a)) {
+      // The anchor replaces a rung closer than half a step, so no step is
+      // a sliver: from Fit's 64% out goes to 40, not 60 (sweep 2026-09-30).
+      // MIN_ZOOM and MAX_ZOOM stay, being the limits a step must reach.
+      const near = (r: number) => {
+        return (
+          Math.abs(r - a) < ZOOM_INCREMENT / 2 - 1e-9 &&
+          r !== toPercent(MIN_ZOOM) &&
+          r !== toPercent(MAX_ZOOM)
+        );
+      };
+      return [
+        ...rungs.filter((r) => {
+          return !near(r);
+        }),
+        a
+      ].sort((x, y) => {
+        return x - y;
+      });
+    }
   }
   return rungs.sort((a, b) => {
     return a - b;

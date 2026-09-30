@@ -49,12 +49,22 @@ describe('TitleBar layout (BUG15-34)', () => {
     // The zoom row with the 2D toggle, Layers and ?: 40 + 384 = 424.
     const { left, width } = box(1440, 384);
     expect(left).toBeGreaterThanOrEqual(40 + 384);
-    // Centred: the same reserve on the right.
-    expect(left + width).toBe(1440 - left);
+    // On the right it keeps clear of the mini-map only (16 + 200 + 16).
+    expect(left + width).toBe(1440 - 232);
   });
 
-  test('before the row is measured it reserves 300px a side, as before', () => {
-    expect(box(1440)).toMatchObject({ left: 300, width: 840 });
+  test('before the row is measured it reserves 300px on the left', () => {
+    expect(box(1440)).toMatchObject({ left: 300, width: 1440 - 300 - 232 });
+  });
+
+  // Sweep 2026-09-30, round 3: beside the examples picker (a 1180px canvas
+  // at 1440) the bar was 298px wide, the zoom row's reserve repeated on the
+  // right, and the title cut short beside empty canvas.
+  test('beside the examples picker it has the room up to the mini-map', () => {
+    const { left, width } = box(1180, 385);
+    expect(left).toBe(40 + 385 + 16);
+    expect(width).toBe(1180 - 441 - 232);
+    expect(width).toBeGreaterThan(450);
   });
 
   test('with no room between the row and the mini-map it moves up a row, clear of the mini-map', () => {

@@ -63,12 +63,15 @@ const FloorName = ({
   );
 };
 
-// In the title bar the diagram's title gives way first (TitleBar); the
-// floors keep their natural width, up to this share of the bar, beyond
-// which the shown floor's name takes an ellipsis. Shrinking with the title
-// in proportion cut it by a fraction of a pixel, which showed "M..." for
-// "Main" (sweep 2026-09-30).
-const NAME_MAX_WIDTH = '60%';
+// In the title bar the diagram's title gives way first (TitleBar), then the
+// floors: of those, only the shown floor's name, with an ellipsis. The
+// others keep theirs and scroll. A name this short never truncates: a
+// minimum wider than the name itself would leave a gap beside it.
+const nameShrink = (name: string) => {
+  return name.length <= 4
+    ? { flexShrink: 0 }
+    : { flexShrink: 1, minWidth: '3.5em' };
+};
 
 export const FloorSwitcher = () => {
   const {
@@ -127,8 +130,7 @@ export const FloorSwitcher = () => {
         sx={{
           fontWeight: 600,
           color: 'text.secondary',
-          flexShrink: 0,
-          maxWidth: NAME_MAX_WIDTH
+          ...nameShrink(currentView.name)
         }}
       >
         {currentView.name}
@@ -149,8 +151,6 @@ export const FloorSwitcher = () => {
       sx={{
         alignItems: 'center',
         minWidth: 0,
-        flexShrink: 0,
-        maxWidth: NAME_MAX_WIDTH,
         pointerEvents: 'auto'
       }}
     >
@@ -199,8 +199,7 @@ export const FloorSwitcher = () => {
                 borderRadius: 1,
                 // Only the shown floor's name gives way, with an ellipsis,
                 // once the title has; the others keep theirs and scroll.
-                flexShrink: active ? 1 : 0,
-                minWidth: active ? '3.5em' : undefined,
+                ...(active ? nameShrink(floor.name) : { flexShrink: 0 }),
                 fontWeight: 600,
                 typography: 'body2',
                 color: active ? 'text.primary' : 'text.secondary',

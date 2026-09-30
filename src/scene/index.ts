@@ -9,4 +9,11 @@ export {
 } from './convert';
 export { legacyModelToScene, sceneSafeId } from './legacy';
 export { readScene, type LoadHints, type SceneReadResult } from './read';
-export { availableIcon, objectIcon, objectName, twinOf } from './crossover';
+export {
+  availableIcon,
+  catalogueTemplate,
+  objectIcon,
+  objectName,
+  objectTemplate,
+  twinOf
+} from './crossover';

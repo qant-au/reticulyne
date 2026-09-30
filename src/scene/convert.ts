@@ -161,7 +161,25 @@ const itemToObject = (item: ModelItem): SceneObject => {
     id: item.id,
     name: item.name || undefined,
     description: item.description || undefined,
-    icon: item.icon
+    icon: item.icon,
+    element: item.element,
+    props: item.props,
+    ports: item.ports,
+    links: item.links
+  });
+};
+
+/** The model item for a scene object (lw-082: with what makes it a device). */
+export const objectToModelItem = (object: SceneObject): ModelItem => {
+  return defined({
+    id: object.id,
+    name: object.name ?? '',
+    description: object.description,
+    icon: object.icon,
+    element: object.element,
+    props: object.props,
+    ports: object.ports,
+    links: object.links
   });
 };
 
@@ -175,7 +193,15 @@ export const modelToSceneUpdate = (
     viewKinds: ['iso', 'schematic'],
     views: model.views.map(viewToScene),
     objects: model.items.map(itemToObject),
-    objectFields: ['name', 'description', 'icon'],
+    objectFields: [
+      'name',
+      'description',
+      'icon',
+      'element',
+      'props',
+      'ports',
+      'links'
+    ],
     preserve: {
       connector: ['connection']
     },
@@ -422,14 +448,7 @@ export const sceneToModel = (
     .filter((o) => {
       return placed.has(o.id);
     })
-    .map((o) => {
-      return defined({
-        id: o.id,
-        name: o.name ?? '',
-        description: o.description,
-        icon: o.icon
-      });
-    });
+    .map(objectToModelItem);
   // lw-053: the connections between two of those items, whatever views
   // they are on. The rest stay in the scene and are kept on save.
   const connections: Connection[] | undefined = scene.connections

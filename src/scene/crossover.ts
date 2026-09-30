@@ -4,9 +4,12 @@ import { ITEMS } from 'src/catalogue/items';
 import {
   accuronaElement,
   catalogueItemIcon,
-  elementIcon
+  elementIcon,
+  itemToSceneObject
 } from 'src/catalogue/place';
 import type { CatalogueItem } from 'src/catalogue/schema';
+import type { ModelItem } from 'src/types/model';
+import { objectToModelItem } from './convert';
 
 // lw-055: an object on a floor plan, drawn in a diagram. Axonometra writes
 // only the object's Accurona `element`; Reticulyne draws it with the
@@ -63,4 +66,35 @@ export const availableIcon = (
     })
     ? icon
     : undefined;
+};
+
+/**
+ * The model item a scene object is placed as, less its id: all of it
+ * (element, props, ports and links too, which a save writes back), named
+ * and drawn as `objectName` and `availableIcon` say.
+ */
+export const objectTemplate = (
+  object: SceneObject,
+  icons: { id: string }[]
+): Omit<ModelItem, 'id'> => {
+  const template: Partial<ModelItem> = objectToModelItem({
+    ...object,
+    name: objectName(object),
+    icon: availableIcon(object, icons)
+  });
+  delete template.id;
+  return template as Omit<ModelItem, 'id'>;
+};
+
+/**
+ * lw-082: what a catalogue item becomes when it is placed, less its id:
+ * `itemToSceneObject` (ports expanded and copied, the item recorded as a
+ * 'reticulyne' link, its Accurona twin as the `element`) as a model item.
+ * The twin's drawing is used only when the editor has that icon.
+ */
+export const catalogueTemplate = (
+  item: CatalogueItem,
+  icons: { id: string }[]
+): Omit<ModelItem, 'id'> => {
+  return objectTemplate(itemToSceneObject(item, item.id), icons);
 };

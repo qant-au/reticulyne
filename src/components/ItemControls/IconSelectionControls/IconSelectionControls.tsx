@@ -13,6 +13,10 @@ import { Icons } from './Icons';
 import { IconGrid } from './IconGrid';
 import { UploadIconButton } from './UploadIconButton';
 import { FloorPlanObjects, type FloorPlanObject } from './FloorPlanObjects';
+import { CatalogueItems } from './CatalogueItems';
+import { useModelStore } from 'src/stores/modelStore';
+import { catalogueTemplate } from 'src/scene/crossover';
+import type { CatalogueItem } from 'src/catalogue/schema';
 import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 interface Props {
@@ -103,11 +107,7 @@ export const IconSelectionControls = ({
       if (mode.type !== 'PLACE_ICON' && !armFromAnyMode) return;
 
       if (targetTile && !armFromAnyMode) {
-        createModelItem({
-          id: object.id,
-          name: object.name,
-          icon: object.icon
-        });
+        createModelItem({ ...object.template, id: object.id });
         createViewItem({
           ...VIEW_ITEM_DEFAULTS,
           id: object.id,
@@ -126,7 +126,8 @@ export const IconSelectionControls = ({
         type: 'PLACE_ICON',
         showCursor: true,
         id: object.icon ?? DEFAULT_ICON.id,
-        object
+        object: { id: object.id, name: object.name, icon: object.icon },
+        template: object.template
       });
     },
     [
@@ -137,6 +138,70 @@ export const IconSelectionControls = ({
       createViewItem,
       armFromAnyMode
     ]
+  );
+
+  // lw-082: a catalogue item places like an icon, but as a new object with
+  // the item's ports, links and element each time.
+  const icons = useModelStore((state) => {
+    return state.icons;
+  });
+
+  const onCatalogueMouseDown = useCallback(
+    (item: CatalogueItem) => {
+      if (mode.type !== 'PLACE_ICON' && !armFromAnyMode) return;
+      const template = catalogueTemplate(item, icons);
+
+      if (targetTile && !armFromAnyMode) {
+        const id = generateId();
+        createModelItem({ ...template, id });
+        createViewItem({ ...VIEW_ITEM_DEFAULTS, id, tile: targetTile });
+        uiStateActions.setMode({
+          type: 'CURSOR',
+          showCursor: true,
+          mousedownItem: null
+        });
+        uiStateActions.setSelection([{ type: 'ITEM', id }]);
+        return;
+      }
+
+      uiStateActions.setMode({
+        type: 'PLACE_ICON',
+        showCursor: true,
+        id: template.icon ?? DEFAULT_ICON.id,
+        template
+      });
+    },
+    [
+      mode,
+      uiStateActions,
+      targetTile,
+      createModelItem,
+      createViewItem,
+      armFromAnyMode,
+      icons
+    ]
+  );
+
+  const onCatalogueClick = useCallback(
+    (item: CatalogueItem) => {
+      const current = uiStateActions.get().mode;
+      if (current.type !== 'PLACE_ICON' && !armFromAnyMode) return;
+      const template = catalogueTemplate(item, icons);
+      // The press before it armed this same item: the pointer places it.
+      if (
+        current.type === 'PLACE_ICON' &&
+        current.template?.links?.[0]?.ref === item.id
+      ) {
+        return;
+      }
+      placeIcon(
+        template.icon ?? DEFAULT_ICON.id,
+        undefined,
+        armFromAnyMode ? undefined : targetTile,
+        template
+      );
+    },
+    [uiStateActions, armFromAnyMode, placeIcon, targetTile, icons]
   );
 
   return (
@@ -157,6 +222,11 @@ export const IconSelectionControls = ({
       }
     >
       {!filteredIcons && <FloorPlanObjects onMouseDown={onFloorPlanObject} />}
+      <CatalogueItems
+        filter={filter}
+        onMouseDown={onCatalogueMouseDown}
+        onClick={onCatalogueClick}
+      />
       {filteredIcons && (
         <PanelSection>
           {filteredIcons.length === 0 ? (

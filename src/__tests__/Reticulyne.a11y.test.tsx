@@ -342,6 +342,129 @@ test('a pointer press still only arms the icon, for a click on the canvas', () =
   expect(ui().mode).toMatchObject({ type: 'PLACE_ICON', id: 'box' });
 });
 
+const ItemsProbe = ({
+  onItems
+}: {
+  onItems: (items: InitialData['items']) => void;
+}) => {
+  const items = useModelStore((state) => {
+    return state.items;
+  });
+  useEffect(() => {
+    onItems(items);
+  }, [items, onItems]);
+  return null;
+};
+
+describe('lw-082: the catalogue palette', () => {
+  let items: InitialData['items'] = [];
+  const onItems = (next: InitialData['items']) => {
+    items = next;
+  };
+  const openPalette = () => {
+    act(() => {
+      render(
+        <Reticulyne initialData={diagram}>
+          <Probe />
+          <ItemsProbe onItems={onItems} />
+        </Reticulyne>
+      );
+    });
+    act(() => {
+      ui().actions.setIconPaletteOpen(true);
+    });
+    return screen.getByTestId('icon-palette');
+  };
+
+  test('sections follow the medium families, in the spec order', () => {
+    const palette = openPalette();
+    const catalogue = palette.querySelector('[data-testid="catalogue-items"]')!;
+    const headings = Array.from(catalogue.querySelectorAll('button p')).map(
+      (p) => {
+        return p.textContent;
+      }
+    );
+    expect(headings).toEqual([
+      'Ethernet and IP',
+      'Wireless',
+      'Serial and field bus',
+      'Marine and vehicle',
+      'Security and access',
+      'Fire',
+      'AV',
+      'Power',
+      'Virtual'
+    ]);
+  });
+
+  test('search finds an item whatever its section; Enter places it with its ports, link and element', () => {
+    const palette = openPalette();
+    const search = palette.querySelector('input') as HTMLInputElement;
+    act(() => {
+      fireEvent.change(search, { target: { value: 'PoE switch' } });
+    });
+    const tile = screen
+      .getByAltText('Icon PoE switch (8-port)')
+      .closest('button')!;
+    act(() => {
+      fireEvent.click(tile);
+    });
+    const added = items.find((item) => {
+      return !['a', 'b'].includes(item.id);
+    })!;
+    expect(added).toMatchObject({
+      name: 'PoE switch (8-port)',
+      element: 'network-switch',
+      links: [{ source: 'reticulyne', ref: 'poe-switch-8' }]
+    });
+    // No Accurona drawings in this editor: the default block, not a
+    // dangling icon id.
+    expect(added.icon).toBeUndefined();
+    expect(
+      added.ports!.map((p) => {
+        return p.id;
+      })
+    ).toEqual([
+      'eth1',
+      'eth2',
+      'eth3',
+      'eth4',
+      'eth5',
+      'eth6',
+      'eth7',
+      'eth8',
+      'uplink1',
+      'uplink2',
+      'ac-in'
+    ]);
+    expect(added.ports![0]).toMatchObject({
+      kind: 'ethernet-copper',
+      props: { capabilities: 'poe-pse' }
+    });
+    expect(ui().selection).toEqual([{ type: 'ITEM', id: added.id }]);
+  });
+
+  test('a press arms the item; each placement is a new object', () => {
+    const palette = openPalette();
+    const search = palette.querySelector('input') as HTMLInputElement;
+    act(() => {
+      fireEvent.change(search, { target: { value: 'PoE switch' } });
+    });
+    const tile = screen
+      .getByAltText('Icon PoE switch (8-port)')
+      .closest('button')!;
+    act(() => {
+      fireEvent.mouseDown(tile);
+      fireEvent.click(tile);
+    });
+    expect(items).toHaveLength(2);
+    expect(ui().mode).toMatchObject({
+      type: 'PLACE_ICON',
+      template: { links: [{ source: 'reticulyne', ref: 'poe-switch-8' }] }
+    });
+  });
+});
+
 test('the floor link button has a name of its own, apart from the description Link', () => {
   mount({
     initialData: {

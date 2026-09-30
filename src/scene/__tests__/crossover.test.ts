@@ -1,9 +1,13 @@
 import { validateScene, type Scene } from 'src/vendor/accurona-core';
+import { ITEMS } from 'src/catalogue/items';
 import {
   availableIcon,
+  catalogueTemplate,
+  freshSceneContext,
   objectIcon,
   objectName,
   sceneFromModel,
+  objectTemplate,
   sceneToModel,
   twinOf
 } from 'src/scene';
@@ -84,9 +88,13 @@ describe('crossover', () => {
     ];
     // What placing cam-1 from the "On the floor plan" palette does.
     model.items.push({
-      id: 'cam-1',
-      name: objectName({ element: 'cctv-dome' }),
-      icon: availableIcon({ element: 'cctv-dome' }, model.icons)
+      ...objectTemplate(
+        building().objects.find((o) => {
+          return o.id === 'cam-1';
+        })!,
+        model.icons
+      ),
+      id: 'cam-1'
     });
     model.views[0].items.push({ id: 'cam-1', tile: { x: 2, y: 0 } });
 
@@ -126,5 +134,51 @@ describe('crossover', () => {
         return o.id;
       })
     ).toEqual(['ap-1', 'cam-1', 'sofa']);
+  });
+
+  test('save: a catalogue item keeps its ports, catalogue link and element, and reopens as it was (lw-082)', () => {
+    const item = ITEMS.find((i) => {
+      return i.id === 'poe-switch-8';
+    })!;
+    const context = freshSceneContext('Office');
+    const { model } = sceneToModel(context.opened);
+    model.icons = [
+      {
+        id: 'accurona-network-switch',
+        name: 'Network switch',
+        url: 'https://example.com/s.svg',
+        isIsometric: true
+      }
+    ];
+    model.items.push({ ...catalogueTemplate(item, model.icons), id: 'sw1' });
+    model.views = [
+      { id: 'v', name: 'Network', items: [{ id: 'sw1', tile: { x: 0, y: 0 } }] }
+    ];
+
+    const saved = sceneFromModel(model, context);
+    expectValid(saved);
+    const sw1 = saved.objects.find((o) => {
+      return o.id === 'sw1';
+    })!;
+    expect(sw1).toMatchObject({
+      name: 'PoE switch (8-port)',
+      element: 'network-switch',
+      icon: 'accurona-network-switch',
+      links: [{ source: 'reticulyne', ref: 'poe-switch-8' }]
+    });
+    expect(sw1.ports).toHaveLength(11);
+    expect(sw1.ports![8]).toMatchObject({
+      id: 'uplink1',
+      kind: 'ethernet-fibre'
+    });
+
+    // Opened again and saved with no edits: the same object.
+    const reopened = sceneToModel(saved);
+    const again = sceneFromModel(reopened.model, reopened.context);
+    expect(
+      again.objects.find((o) => {
+        return o.id === 'sw1';
+      })
+    ).toEqual(sw1);
   });
 });

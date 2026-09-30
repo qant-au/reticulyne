@@ -40,16 +40,22 @@ export const PlaceIcon: ModeActions = {
       // a UI control and got a stray icon on the canvas. Compare to
       // TextBox.mouseup which uses the same gate to delete the in-
       // progress textbox on out-of-renderer release.
-      const { object } = uiState.mode;
+      const { object, template } = uiState.mode;
       const modelItemId = object?.id ?? generateId();
 
-      scene.createModelItem({
-        id: modelItemId,
-        name: object?.name ?? 'Untitled',
-        // A floor-plan object's icon may be none (the default block); the
-        // mode's id is then only what the drag preview draws.
-        icon: object ? object.icon : uiState.mode.id
-      });
+      // lw-082: a catalogue item is a new object with its ports, links and
+      // element each time.
+      scene.createModelItem(
+        template
+          ? { ...template, id: modelItemId }
+          : {
+              id: modelItemId,
+              name: object?.name ?? 'Untitled',
+              // A floor-plan object's icon may be none (the default block);
+              // the mode's id is then only what the drag preview draws.
+              icon: object ? object.icon : uiState.mode.id
+            }
+      );
 
       scene.createViewItem({
         ...VIEW_ITEM_DEFAULTS,

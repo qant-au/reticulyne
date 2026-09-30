@@ -1,11 +1,14 @@
 # Catalogue
 
-> **Status: the data and the schema are built; the editor does not use them yet.** The
-> registries, the schema and the rules below are in `src/catalogue/` and exported from the
+> **Status: the data, the schema and the palette are built; the topology warnings are not.**
+> The registries, the schema and the rules below are in `src/catalogue/` and exported from the
 > package (`CATALOGUE`, `validateCatalogue`, `expandPorts`, `itemToSceneObject`,
-> `accuronaIcons`, `catalogueItemIcon`). The palette and the topology warnings are not built:
-> in the editor today an item is still `{ id, name, description?, icon? }` and a node's four
-> "ports" are tile-edge hotspots used only for connecting by drag.
+> `accuronaIcons`, `catalogueItemIcon`). The icon library panel has a **Catalogue** section, one
+> fold per medium family (see [The palette](#the-palette)); placing an item creates the object
+> described in [How an item lands in a scene](#how-an-item-lands-in-a-scene), and the editor's
+> model item carries the object's `element`, `props`, `ports` and `links` so a save writes them
+> back. Connectors do not attach to those ports yet: a node's four "ports" on the canvas are
+> still tile-edge hotspots used only for connecting by drag.
 >
 > An item with an Accurona twin draws with the element's isometric view: `accuronaIcons()`
 > returns those drawings as icons (collection `Accurona`, ids `accurona-<element id>`), and

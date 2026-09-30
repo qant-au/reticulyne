@@ -4,16 +4,21 @@ import { placedOnlyElsewhere } from 'src/vendor/accurona-core';
 import { PanelSection } from 'src/vendor/accurona-ui';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { availableIcon, objectName } from 'src/scene/crossover';
+import { availableIcon, objectName, objectTemplate } from 'src/scene/crossover';
 import { DEFAULT_ICON } from 'src/config';
-import type { Icon } from 'src/types';
+import type { Icon, ModelItem } from 'src/types';
 import { IconGrid } from './IconGrid';
 
-/** What arming a floor-plan object needs: its id, name and icon, if any. */
+/**
+ * What arming a floor-plan object needs: its id, name and icon, if any, and
+ * the whole object as a model item (lw-082: its element, props, ports and
+ * links are written back on save from the model item).
+ */
 export interface FloorPlanObject {
   id: string;
   name: string;
   icon?: string;
+  template: Omit<ModelItem, 'id'>;
 }
 
 // lw-055: devices placed on the floor plan (in Axonometra) that no diagram
@@ -52,7 +57,12 @@ export const FloorPlanObjects = ({
       .map((object) => {
         const icon = availableIcon(object, icons);
         return {
-          object: { id: object.id, name: objectName(object), icon },
+          object: {
+            id: object.id,
+            name: objectName(object),
+            icon,
+            template: objectTemplate(object, icons)
+          },
           tile: {
             id: object.id,
             name: objectName(object),

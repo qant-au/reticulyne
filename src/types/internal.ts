@@ -212,6 +212,11 @@ export interface PlaceIconMode {
    * floor plan). The item keeps the object's id, so the two are linked.
    */
   object?: { id: string; name: string; icon?: string };
+  /**
+   * lw-082: placing a catalogue item. Each placement is a new object with
+   * the item's ports, links and element (`catalogueTemplate`).
+   */
+  template?: Omit<ModelItem, 'id'>;
 }
 
 export interface ConnectorMode {

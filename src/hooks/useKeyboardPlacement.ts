@@ -3,7 +3,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { VIEW_ITEM_DEFAULTS } from 'src/config';
 import { freeTileNear, generateId, screenToIso } from 'src/utils';
-import type { Coords } from 'src/types';
+import type { Coords, ModelItem } from 'src/types';
 
 // lw-068: adding things without a pointer. A pointer puts an item where
 // it is released; the keyboard has no such place, so it uses the free
@@ -41,14 +41,20 @@ export const useKeyboardPlacement = () => {
     (
       iconId: string,
       object?: { id: string; name: string; icon?: string },
-      at?: Coords
+      at?: Coords,
+      template?: Omit<ModelItem, 'id'>
     ) => {
       const id = object?.id ?? generateId();
-      createModelItem({
-        id,
-        name: object?.name ?? 'Untitled',
-        icon: object ? object.icon : iconId
-      });
+      // lw-082: a catalogue item arrives as the template of its object.
+      createModelItem(
+        template
+          ? { ...template, id }
+          : {
+              id,
+              name: object?.name ?? 'Untitled',
+              icon: object ? object.icon : iconId
+            }
+      );
       createViewItem({
         ...VIEW_ITEM_DEFAULTS,
         id,
@@ -61,7 +67,7 @@ export const useKeyboardPlacement = () => {
       });
       uiStateActions.setSelection([{ type: 'ITEM', id }]);
       uiStateActions.announce(
-        `Added ${object?.name ?? 'an item'}. Arrow keys move it, Enter names it.`
+        `Added ${object?.name ?? template?.name ?? 'an item'}. Arrow keys move it, Enter names it.`
       );
       // From the icon panel the focused icon goes as the panel turns into
       // the node's, which dropped focus to the page; the canvas is where

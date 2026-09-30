@@ -120,10 +120,15 @@ describe('sceneToModel', () => {
         return i.id;
       })
     ).toEqual(['sw', 'ap']);
+    // lw-082: with the element, props, ports and links it carries.
     expect(model.items[0]).toEqual({
       id: 'sw',
       name: 'Switch',
-      icon: 'switch'
+      icon: 'switch',
+      element: 'network-switch',
+      props: { ip: '10.0.0.2' },
+      ports: [{ id: '14', kind: 'ethernet' }],
+      links: [{ source: 'rmm', ref: 'Sw1' }]
     });
     expect(model.views[0].connectors?.[0].anchors[0]).toEqual({
       id: 'a1',
@@ -282,7 +287,15 @@ describe('scene -> model -> scene', () => {
     const { model, context } = sceneToModel(richScene());
     const update = modelToSceneUpdate(model, context);
     expect(update.viewKinds).toEqual(['iso', 'schematic']);
-    expect(update.objectFields).toEqual(['name', 'description', 'icon']);
+    expect(update.objectFields).toEqual([
+      'name',
+      'description',
+      'icon',
+      'element',
+      'props',
+      'ports',
+      'links'
+    ]);
     // lw-052: layers are Reticulyne's now, so only connection is kept.
     expect(update.preserve).toEqual({ connector: ['connection'] });
     expect(update.set?.layers).toEqual([{ id: 'notes', name: 'Notes' }]);

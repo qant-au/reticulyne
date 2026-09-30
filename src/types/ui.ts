@@ -22,7 +22,9 @@ export const DialogTypeEnum = {
   EXPORT_PDF: 'EXPORT_PDF',
   KEYBOARD_SHORTCUTS: 'KEYBOARD_SHORTCUTS',
   RENAME_DIAGRAM: 'RENAME_DIAGRAM',
-  NEW_FROM_TEMPLATE: 'NEW_FROM_TEMPLATE'
+  NEW_FROM_TEMPLATE: 'NEW_FROM_TEMPLATE',
+  // lw-068: connect the selected node to another, chosen by name.
+  CONNECT_TO: 'CONNECT_TO'
 } as const;
 
 export const LayerOrderingActionOptions = {

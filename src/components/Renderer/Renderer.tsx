@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInteractionManager } from 'src/interaction/useInteractionManager';
@@ -24,6 +24,16 @@ import { SmartGuides } from 'src/components/SmartGuides/SmartGuides';
 import { SearchHighlights } from 'src/components/SearchBar/SearchHighlights';
 import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
 import { RendererProps } from 'src/types/rendererProps';
+import { visuallyHidden } from 'src/components/ScreenReaderSupport/ScreenReaderSupport';
+
+// lw-068: read by a screen reader when the canvas takes focus.
+const HINTS = {
+  EDITABLE:
+    'Tab and Shift+Tab move between objects. Arrow keys move the selected object, Enter edits it, Delete removes it, Shift+F10 opens its menu. Ctrl+arrow keys pan. Question mark lists every shortcut.',
+  EXPLORABLE_READONLY:
+    'Read only. Tab and Shift+Tab move between objects. Ctrl+arrow keys pan, plus and minus zoom, F fits the diagram. Question mark lists every shortcut.',
+  NON_INTERACTIVE: 'A diagram. Its outline follows the canvas.'
+} as const;
 
 export const Renderer = ({
   showGrid,
@@ -48,6 +58,10 @@ export const Renderer = ({
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
+  const editorMode = useUiStateStore((state) => {
+    return state.editorMode;
+  });
+  const hintId = useId();
   const { setInteractionsElement } = useInteractionManager(
     enableGlobalDragHandlers
   );
@@ -71,12 +85,22 @@ export const Renderer = ({
       role="application"
       aria-label="Diagram canvas"
       aria-roledescription="isometric diagram editor"
-      // FEA-07: when shortcuts are scoped off `window`, the canvas must be
-      // focusable so clicking it (or tabbing to it) routes keydown to the
-      // renderer-bound listener. Left unset in the default global mode so
-      // existing embedders' tab order is unchanged.
-      tabIndex={enableGlobalKeyboardShortcuts ? undefined : 0}
+      aria-describedby={hintId}
+      // lw-068: always focusable, so a keyboard user can reach the canvas
+      // and Tab through its objects. FEA-07 made it focusable only when
+      // shortcuts were scoped to it; that left the global default with no
+      // way in from the keyboard.
+      tabIndex={
+        editorMode === 'NON_INTERACTIVE' && enableGlobalKeyboardShortcuts
+          ? undefined
+          : 0
+      }
       sx={{
+        '&:focus-visible': {
+          outline: '2px solid',
+          outlineColor: 'primary.main',
+          outlineOffset: -2
+        },
         position: 'absolute',
         top: 0,
         left: 0,
@@ -91,6 +115,9 @@ export const Renderer = ({
         }
       }}
     >
+      <Box id={hintId} sx={visuallyHidden}>
+        {HINTS[editorMode]}
+      </Box>
       {/* lw-053: the other floors, faint, beneath everything on this one */}
       <SceneLayer>
         <OtherFloors />

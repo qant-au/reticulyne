@@ -59,6 +59,18 @@ export const ContextMenuManager = ({ anchorEl }: Props) => {
           }
         ]
       : [
+          // lw-068: the keyboard's way to draw a connector.
+          ...(item.type === 'ITEM'
+            ? [
+                {
+                  label: 'Connect to…',
+                  onClick: close(() => {
+                    uiStateActions.setSelection([item]);
+                    uiStateActions.setDialog('CONNECT_TO');
+                  })
+                }
+              ]
+            : []),
           ...(item.type === 'ITEM' ||
           item.type === 'TEXTBOX' ||
           item.type === 'RECTANGLE'

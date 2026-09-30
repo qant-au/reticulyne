@@ -123,8 +123,32 @@ export const useDiagramUtils = () => {
     [zoom, scrollOffset, uiStateActions, scene.projection]
   );
 
+  // lw-068: bring a tile into view only if it is not already well inside
+  // it, so Tab moving through nearby objects does not jolt the view.
+  const scrollPosition = useUiStateStore((state) => {
+    return state.scroll.position;
+  });
+  const revealTile = useCallback(
+    (tile: Coords) => {
+      const p = getTilePosition({ tile, projection: scene.projection });
+      const x = rendererSize.width / 2 + scrollPosition.x + p.x * zoom;
+      const y = rendererSize.height / 2 + scrollPosition.y + p.y * zoom;
+      const margin = 80;
+      if (
+        x < margin ||
+        y < margin ||
+        x > rendererSize.width - margin ||
+        y > rendererSize.height - margin
+      ) {
+        centerOnTile(tile);
+      }
+    },
+    [scene.projection, rendererSize, scrollPosition, zoom, centerOnTile]
+  );
+
   return {
     centerOnTile,
+    revealTile,
     getUnprojectedBounds,
     fitToView,
     fitToSelection,

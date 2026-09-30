@@ -47,6 +47,12 @@ const KeyboardShortcutsDialog = lazy(() => {
   );
 });
 
+const ConnectToDialog = lazy(() => {
+  return import('src/components/ConnectToDialog/ConnectToDialog').then((m) => {
+    return { default: m.ConnectToDialog };
+  });
+});
+
 interface Props {
   mode: Mode;
   mouseTile: Coords;
@@ -90,6 +96,7 @@ export const DialogLayer = ({
         {dialog === 'NEW_FROM_TEMPLATE' && (
           <TemplateDialog onClose={onCloseDialog} />
         )}
+        {dialog === 'CONNECT_TO' && <ConnectToDialog onClose={onCloseDialog} />}
         {dialog === 'KEYBOARD_SHORTCUTS' && (
           <KeyboardShortcutsDialog onClose={onCloseDialog} />
         )}

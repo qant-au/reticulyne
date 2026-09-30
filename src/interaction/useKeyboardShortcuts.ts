@@ -8,11 +8,14 @@ import {
   connectorsFirst,
   isLocked,
   collapsedBoxes,
-  collapsedGroupMembers
+  collapsedGroupMembers,
+  keyboardStops,
+  stopIndex
 } from 'src/utils';
 import { TEXTBOX_DEFAULTS } from 'src/config';
 import { useThemeToggle } from 'src/hooks/useThemeToggle';
 import { useTour } from 'src/hooks/useTour';
+import { useKeyboardPlacement } from 'src/hooks/useKeyboardPlacement';
 import { tourKeyAction } from './tourKeys';
 import type { ItemReference } from 'src/types';
 import {
@@ -23,6 +26,18 @@ import {
 
 const NUDGE_STEP = 1;
 const SHIFT_MULTIPLIER = 5;
+// lw-068: how far Ctrl/Cmd + arrow pans, in screen pixels.
+const PAN_STEP = 120;
+
+// A focused button or link acts on Enter itself; the canvas keys stay out.
+const isControl = (target: EventTarget | null) => {
+  const el = target as { closest?: (selector: string) => unknown } | null;
+  return Boolean(
+    el &&
+    typeof el.closest === 'function' &&
+    el.closest('button, a, [role="button"]')
+  );
+};
 
 // Reticulyne's bindings from the shared keymap. Rows the spec marks "where
 // built" that Reticulyne has not built stay unbound: Q (keep tool), align,
@@ -143,7 +158,8 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     visibleView,
     showAdjacentFloor
   } = useScene();
-  const { fitToView, fitToSelection } = useDiagramUtils();
+  const { fitToView, fitToSelection, revealTile } = useDiagramUtils();
+  const { placeIcon, drawRectangle } = useKeyboardPlacement();
   const toggleTheme = useThemeToggle();
   const tour = useTour();
 
@@ -376,6 +392,75 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           done();
           return;
 
+        // lw-068: Ctrl/Cmd + arrow pans, in every mode but NON_INTERACTIVE.
+        case 'pan': {
+          if (editorMode === 'NON_INTERACTIVE') return;
+          const { scroll } = uiStateActions.get();
+          const dx =
+            e.key === 'ArrowLeft'
+              ? PAN_STEP
+              : e.key === 'ArrowRight'
+                ? -PAN_STEP
+                : 0;
+          const dy =
+            e.key === 'ArrowUp'
+              ? PAN_STEP
+              : e.key === 'ArrowDown'
+                ? -PAN_STEP
+                : 0;
+          uiStateActions.setScroll({
+            position: { x: scroll.position.x + dx, y: scroll.position.y + dy },
+            offset: scroll.offset
+          });
+          done();
+          return;
+        }
+
+        // lw-068: Tab / Shift+Tab select the next / previous object, in
+        // reading order, while the canvas has focus. Past either end the
+        // selection clears and the key is left to the browser, so focus
+        // moves on out of the canvas: it is never a keyboard trap.
+        case 'next-object':
+        case 'previous-object': {
+          if (editorMode === 'NON_INTERACTIVE') return;
+          if (!rendererEl || !rendererEl.contains(e.target as Node)) return;
+          const stops = keyboardStops(visibleView, currentView);
+          const forward = action === 'next-object';
+          const at = stopIndex(stops, selection);
+          const next =
+            at === -1
+              ? forward
+                ? 0
+                : stops.length - 1
+              : at + (forward ? 1 : -1);
+          if (next < 0 || next >= stops.length) {
+            if (selection.length > 0) uiStateActions.clearSelection();
+            return;
+          }
+          if (itemControls && itemControls.type !== 'ADD_ITEM') {
+            uiStateActions.setItemControls(null);
+          }
+          uiStateActions.setSelection(stops[next].refs);
+          revealTile(stops[next].tile);
+          done();
+          return;
+        }
+
+        // lw-068: Shift+F10 or the Menu key opens the selected object's
+        // menu, the right-click menu reached from the keyboard.
+        case 'object-menu': {
+          if (selection.length !== 1) return;
+          const stops = keyboardStops(visibleView, currentView);
+          const stop = stops[stopIndex(stops, selection)];
+          if (!stop) return;
+          uiStateActions.setContextMenu({
+            item: selection[0],
+            tile: stop.tile
+          });
+          done();
+          return;
+        }
+
         case 'help':
           uiStateActions.setDialog(
             dialog === 'KEYBOARD_SHORTCUTS' ? null : 'KEYBOARD_SHORTCUTS'
@@ -472,6 +557,32 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         // takes focus, anything else opens its panel with the first field
         // focused, so the keyboard reaches what a double-click would.
         case 'edit': {
+          // lw-068: with a tool armed, Enter on the canvas does what a
+          // click would: puts the picked icon down, draws a rectangle, or
+          // (connector tool, one node selected) asks what to connect it to.
+          if (!isControl(e.target)) {
+            const { mode } = uiStateActions.get();
+            if (mode.type === 'PLACE_ICON' && mode.id) {
+              placeIcon(mode.id, mode.object);
+              done();
+              return;
+            }
+            if (mode.type === 'RECTANGLE.DRAW' && !mode.id) {
+              drawRectangle();
+              done();
+              return;
+            }
+            if (
+              mode.type === 'CONNECTOR' &&
+              !mode.id &&
+              selection.length === 1 &&
+              selection[0].type === 'ITEM'
+            ) {
+              uiStateActions.setDialog('CONNECT_TO');
+              done();
+              return;
+            }
+          }
           const target =
             selection.length === 1
               ? selection[0]
@@ -760,6 +871,9 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
     visibleView,
     showAdjacentFloor,
     toggleTheme,
-    tour
+    tour,
+    revealTile,
+    placeIcon,
+    drawRectangle
   ]);
 };

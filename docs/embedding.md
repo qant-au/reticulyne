@@ -112,6 +112,9 @@ All props are optional. The component renders a fully-functional editor with sen
 | `Alt ↑` / `Alt ↓` | Show the floor above / below |
 | `Alt ⇧ D` | Toggle light / dark |
 | `?` | Toggle keyboard shortcuts dialog |
+| `Tab` / `⇧ Tab` | Select the next / previous object (canvas focused; see [Keyboard and screen-reader access](#keyboard-and-screen-reader-access)) |
+| `⌘/Ctrl ↑↓←→` | Pan the view |
+| `⇧ F10`, Menu key | Open the selected object's menu |
 
 ### Container sizing
 
@@ -314,7 +317,50 @@ Undo/redo covers all document mutations (items, view items, connectors, rectangl
 - The clipboard lives in editor session state — copied selections survive across model loads, undo/redo, and view changes, but **not** across page refreshes. There is no integration with the OS clipboard.
 - Connectors are not copyable/duplicatable. Their anchors reference other items by id; the right "what does paste mean for a connector whose anchored items aren't in the target context?" semantics is not locked in. PRs welcome.
 - All shortcuts respect `editorMode`. `EXPLORABLE_READONLY` drops every editing binding and keeps selecting, panning, zoom, fit, find, the theme toggle, `Alt+I`, `Alt+Up` / `Alt+Down` (floors), `Esc` and `?`. `NON_INTERACTIVE` keeps only the ones that change the view, never a tool.
-- `Ctrl/Cmd` + arrow does nothing (it is Excalidraw's flowchart walk); only a bare or `Shift` arrow nudges.
+- `Ctrl/Cmd` + arrow pans the view (Excalidraw uses it for its flowchart walk, which has no equivalent here); only a bare or `Shift` arrow nudges.
+
+## Keyboard and screen-reader access
+
+Everything a pointer does on the canvas has a keyboard route, and a screen reader is
+told what is on the diagram and what is selected.
+
+**Reaching the canvas.** The canvas is a focusable `role="application"` region in every
+editor mode but `NON_INTERACTIVE`, so it is one stop in the page's tab order (lw-068;
+before, it was focusable only with `enableGlobalKeyboardShortcuts={false}`). Its
+`aria-describedby` hint names the keys below, and it shows a focus ring when reached
+from the keyboard.
+
+**Moving between objects.** With the canvas focused, `Tab` selects the next object and
+`Shift + Tab` the previous one, in reading order (top to bottom, then left to right, as
+drawn): nodes, text boxes, rectangles and collapsed groups, then connectors. Locked
+objects and hidden layers are skipped, as a click skips them. The view follows the
+selection when it would be off screen. Past the last object `Tab` clears the selection
+and focus moves on out of the canvas, so the canvas is never a keyboard trap. This works
+read-only too, and `Ctrl/Cmd` + arrow keys pan.
+
+**Acting on the selection (`EDITABLE`).** The ordinary shortcuts apply: arrows nudge,
+`Enter` edits (a node's name and description, a text box's text), `Delete` deletes.
+`Shift + F10` or the Menu key opens the object's right-click menu.
+
+| Pointer action | Keyboard route |
+|---|---|
+| Drag an icon onto the canvas | Open the icon library or the add-item tool, pick the icon with `Enter`; it goes on the free tile nearest the middle of the view, selected, ready to nudge |
+| Drag out a rectangle | `R`, then `Enter` on the canvas: a 3 by 3 rectangle in the middle of the view |
+| Drag from a port to another node | Select the node, then **Connect to…** in its menu (`Shift + F10`), or `A` then `Enter`; choose the other end by name |
+| Right-click | `Shift + F10`, or the Menu key |
+| Wheel / drag to pan | `Ctrl/Cmd` + arrow keys |
+
+**Screen readers.** A polite live region reads out each selection as it changes,
+however it was made (Tab, a click, a search hit): a node's name, its icon, the plain
+text of its description and what it is connected to; a connector's two ends and label;
+a text box's text; and where the object is in the Tab order ("3 of 12"). Keyboard
+additions and connections are confirmed the same way.
+
+Beside the canvas, outside the application region, a visually hidden **Diagram outline**
+section lists every node on the view with its description and connections, and every
+text box. It is the diagram's text alternative: a screen reader can browse the whole
+diagram with its ordinary reading keys, read-only embeds included, without selecting
+anything.
 
 ## Controlling UI visibility
 

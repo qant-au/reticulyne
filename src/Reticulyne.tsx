@@ -34,6 +34,7 @@ import { CONNECTOR_DEFAULTS, MIN_ZOOM, MAX_ZOOM } from 'src/config';
 import { HistoryProvider } from 'src/stores/historyStore';
 import { GlobalStyles } from 'src/styles/GlobalStyles';
 import { Renderer } from 'src/components/Renderer/Renderer';
+import { ScreenReaderSupport } from 'src/components/ScreenReaderSupport/ScreenReaderSupport';
 import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { DEFAULT_COLOR, INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
@@ -273,6 +274,7 @@ const App = ({
           enableGlobalKeyboardShortcuts={enableGlobalKeyboardShortcuts}
         />
         <UiOverlay />
+        <ScreenReaderSupport />
         {children}
       </Box>
     </>

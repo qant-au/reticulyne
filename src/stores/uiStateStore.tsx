@@ -51,6 +51,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       loadGeneration: 0,
       sceneContext: freshSceneContext(),
       focusTextBoxId: null,
+      announcement: { text: '', seq: 0 },
       templates: TEMPLATES,
       editingGroupId: null,
       hideRedacted: false,
@@ -242,6 +243,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setOnDiagramReplaced: (onDiagramReplaced) => {
           set({ onDiagramReplaced });
+        },
+        announce: (text) => {
+          set({ announcement: { text, seq: get().announcement.seq + 1 } });
         },
         setFocusTextBoxId: (focusTextBoxId) => {
           set({ focusTextBoxId });

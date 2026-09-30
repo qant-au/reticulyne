@@ -7,6 +7,7 @@ import { generateId } from 'src/utils';
 import { DEFAULT_ICON, VIEW_ITEM_DEFAULTS } from 'src/config';
 import { Searchbox } from 'src/components/ItemControls/IconSelectionControls/Searchbox';
 import { useIconFiltering } from 'src/hooks/useIconFiltering';
+import { useKeyboardPlacement } from 'src/hooks/useKeyboardPlacement';
 import { useIconCategories } from 'src/hooks/useIconCategories';
 import { Icons } from './Icons';
 import { IconGrid } from './IconGrid';
@@ -41,6 +42,7 @@ export const IconSelectionControls = ({
       : undefined;
   });
   const { createModelItem, createViewItem } = useScene();
+  const { placeIcon } = useKeyboardPlacement();
   const { setFilter, filteredIcons, filter } = useIconFiltering();
   const { iconCategories } = useIconCategories();
 
@@ -77,6 +79,21 @@ export const IconSelectionControls = ({
       createViewItem,
       armFromAnyMode
     ]
+  );
+
+  // lw-068: a click with no press before it came from the keyboard (Enter
+  // or Space on the icon). A pointer arms the icon on press and places it
+  // where it is released; the keyboard has nowhere to release, so the icon
+  // goes straight onto the free tile nearest the middle of the view.
+  const onClick = useCallback(
+    (icon: Icon) => {
+      // Read at click time: the press before it may just have armed it.
+      const current = uiStateActions.get().mode;
+      if (current.type !== 'PLACE_ICON' && !armFromAnyMode) return;
+      if (current.type === 'PLACE_ICON' && current.id === icon.id) return;
+      placeIcon(icon.id, undefined, armFromAnyMode ? undefined : targetTile);
+    },
+    [uiStateActions, armFromAnyMode, placeIcon, targetTile]
   );
 
   // lw-055: a device from the floor plan is placed like an icon, but as
@@ -147,12 +164,20 @@ export const IconSelectionControls = ({
               No icons match “{filter}”.
             </Typography>
           ) : (
-            <IconGrid icons={filteredIcons} onMouseDown={onMouseDown} />
+            <IconGrid
+              icons={filteredIcons}
+              onMouseDown={onMouseDown}
+              onClick={onClick}
+            />
           )}
         </PanelSection>
       )}
       {!filteredIcons && (
-        <Icons iconCategories={iconCategories} onMouseDown={onMouseDown} />
+        <Icons
+          iconCategories={iconCategories}
+          onMouseDown={onMouseDown}
+          onClick={onClick}
+        />
       )}
     </Panel>
   );

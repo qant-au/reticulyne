@@ -345,6 +345,8 @@ export interface UiState {
   // A text box just placed: its inspector takes focus once, so typing
   // goes into it instead of running as tool shortcuts.
   focusTextBoxId: string | null;
+  // lw-068: the latest screen-reader announcement; seq changes on each one.
+  announcement: { text: string; seq: number };
   // 1.7: the group entered by double-click; clicks select inside it.
   editingGroupId: string | null;
   // lw-052: the Redacted layer is left off the canvas, only while the
@@ -433,6 +435,7 @@ export interface UiStateActions {
   setOnDiagramReplaced: (handler: (() => void) | undefined) => void;
   markLoaded: () => void;
   setSceneContext: (context: SceneContext) => void;
+  announce: (text: string) => void;
   setFocusTextBoxId: (id: string | null) => void;
   setTemplates: (templates: DiagramTemplate[]) => void;
   setEditingGroupId: (id: string | null) => void;

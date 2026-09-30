@@ -18,6 +18,20 @@ const H = 150;
 const MIN_CANVAS_WIDTH = 800;
 const PAD = 60;
 
+// Where on the map a pointer is, held to the map: a drag that runs off
+// the map keeps the view at the map's edge. Without it, a press on the
+// map carried on across the canvas threw the view far past the diagram,
+// which then looked blank (sweep 2026-09-30, A14c).
+export const pointOnMap = (
+  client: Coords,
+  box: { left: number; top: number }
+): Coords => {
+  return {
+    x: Math.min(W, Math.max(0, client.x - box.left)),
+    y: Math.min(H, Math.max(0, client.y - box.top))
+  };
+};
+
 export const MiniMap = () => {
   const theme = useTheme();
   const visible = useUiStateStore((state) => {
@@ -129,7 +143,7 @@ export const MiniMap = () => {
 
   const moveTo = (e: React.PointerEvent<SVGSVGElement>) => {
     const box = e.currentTarget.getBoundingClientRect();
-    const p = toScene({ x: e.clientX - box.left, y: e.clientY - box.top });
+    const p = toScene(pointOnMap({ x: e.clientX, y: e.clientY }, box));
     uiStateActions.setScroll({
       position: { x: -p.x * zoom, y: -p.y * zoom },
       offset: scroll.offset

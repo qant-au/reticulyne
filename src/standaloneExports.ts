@@ -7,7 +7,8 @@ export * from 'src/schemas';
 export type {
   ReticulyneProps,
   InitialData,
-  IconUploadHandler
+  IconUploadHandler,
+  ValidationErrorHandler
 } from 'src/types';
 export type * from 'src/types/model';
 export type * from 'src/types/imperative';

@@ -102,14 +102,17 @@ test('a JSON file that is not a diagram goes to onValidationError', async () => 
   await waitFor(() => {
     expect(onValidationError).toHaveBeenCalled();
   });
+  // The host hears the file's name, so its message can name it.
+  expect(onValidationError.mock.calls[0][1]).toEqual({ fileName: 'file.json' });
 });
 
 test('a file that is not JSON goes to onValidationError', async () => {
   const onValidationError = jest.fn();
   await openFile('not json {', onValidationError);
   await waitFor(() => {
-    expect(onValidationError).toHaveBeenCalledWith([
-      expect.objectContaining({ message: 'Imported file is not valid JSON' })
-    ]);
+    expect(onValidationError).toHaveBeenCalledWith(
+      [expect.objectContaining({ message: 'Imported file is not valid JSON' })],
+      { fileName: 'file.json' }
+    );
   });
 });

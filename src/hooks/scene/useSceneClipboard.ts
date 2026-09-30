@@ -33,10 +33,9 @@ export const useSceneClipboard = ({
 >) => {
   // Deep-clone the target item with a freshly-generated id and a small
   // tile offset so the copy doesn't sit exactly on top of the original.
-  // Connectors are deliberately not duplicated yet — their anchors
-  // reference other items and the right semantics for "duplicate a
-  // connector pointing at the original anchors vs the copies" needs a
-  // UX decision.
+  // A connector is not duplicated on its own: a copy of it would join the
+  // same two items. Ctrl+D (duplicateSelection) copies a connector whose
+  // ends are both in the selection, rewired to the copies.
   const duplicateItem = useCallback(
     (target: ItemReference) => {
       const state = getState();
@@ -116,7 +115,7 @@ export const useSceneClipboard = ({
           return;
         }
         default:
-          // CONNECTOR / CONNECTOR_ANCHOR: not supported (see comment above).
+          // CONNECTOR / CONNECTOR_ANCHOR: see the comment above.
           break;
       }
     },

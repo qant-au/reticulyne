@@ -38,7 +38,7 @@ const modes: { [k in string]: ModeActions } = {
   CURSOR: Cursor,
   DRAG_ITEMS: DragItems,
   MARQUEE: Marquee,
-  // TODO: Adopt this notation for all modes (i.e. {node.type}.{action})
+  // Only the rectangle modes are keyed {node.type}.{action}.
   'RECTANGLE.DRAW': DrawRectangle,
   'RECTANGLE.TRANSFORM': TransformRectangle,
   CONNECTOR: Connector,

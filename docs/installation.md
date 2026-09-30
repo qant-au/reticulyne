@@ -73,8 +73,8 @@ v2 → v3 migration above.
 ## Bundler
 
 Any modern bundler can consume the package: webpack, Vite, Rollup, Parcel, esbuild, Next.js.
-The package ships both CJS and ESM entries from the same file (webpack-built UMD). A
-dedicated ESM build is a planned follow-up.
+The package ships a CommonJS build (`dist/*.js`) and an ES module build
+(`dist/esm/*.mjs`), chosen by the `require` and `import` conditions of its `exports`.
 
 ## Browser support
 

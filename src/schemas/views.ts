@@ -10,7 +10,8 @@ export const viewItemSchema = z
     id,
     tile: coords,
     labelHeight: z.number().optional(),
-    parentGroupId: id.optional()
+    parentGroupId: id.optional(),
+    layerId: id.optional()
   })
   .strict();
 

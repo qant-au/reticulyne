@@ -176,6 +176,7 @@ export const useInitialDataManager = ({
       model.actions.set({
         version: undefined,
         description: undefined,
+        layers: undefined,
         ...initialData
       });
       uiStateActions.setSceneContext(context);

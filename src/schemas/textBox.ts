@@ -14,6 +14,7 @@ export const textBoxSchema = z
         z.literal(ProjectionOrientationEnum.Y)
       ])
       .optional(),
-    parentGroupId: id.optional()
+    parentGroupId: id.optional(),
+    layerId: id.optional()
   })
   .strict();

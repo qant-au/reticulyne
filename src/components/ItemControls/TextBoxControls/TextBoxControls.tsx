@@ -16,6 +16,7 @@ import { useProjection } from 'src/hooks/useProjection';
 import { NAME_MAX } from 'src/schemas/common';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
+import { LayerSection } from '../components/LayerSection';
 import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
 interface Props {
@@ -118,6 +119,7 @@ export const TextBoxControls = ({ id }: Props) => {
           </ToggleButton>
         </ToggleButtonGroup>
       </PanelSection>
+      <LayerSection targets={[{ type: 'TEXTBOX', id }]} />
       <LayerOrderSection targets={[{ type: 'TEXTBOX', id }]} />
       <PanelSection>
         <Box>

@@ -389,6 +389,27 @@ const text = serializeScene(scene); // validated; throws on an invalid scene
 const result = parseScene(text);    // { ok: true, scene } or { ok: false, errors }
 ```
 
+### Layers and the Redacted layer
+
+Nodes, connectors, rectangles and text boxes can sit on named **layers** (the scene
+format's `layers` and `layer`), which cut across views and groups. The **Layers**
+button beside the zoom controls lists them: add, rename, delete (what a layer held
+moves to the base layer) and show or hide each one; the inspector's **Layer** field
+puts an item, or the whole selection, on one. Anything without a layer is on the base
+layer, which is always shown. What a hidden layer holds is not drawn, not selectable
+and not exported, and a connector that ends on a hidden node is hidden with it.
+Whether a layer is shown is saved with the diagram, and a host can switch it with
+`useReticulyne().setLayerVisible(id, visible)`, so one diagram serves several
+audiences.
+
+**Redacted** is a reserved layer, always offered and never listed. What is on it is
+shown in the editor and left out of **every export** (PNG, PDF, SVG and JSON) unless
+the export ticks **Include redacted content**: put addresses and other sensitive
+notes there, and the copy you send out leaves them behind. A diagram with nothing on
+it exports exactly as before, with no extra question. The file the editor saves
+(`onSave`, the Docker image's own storage) is the working copy and always keeps it;
+`redactScene(scene)` in `@accurona/core` gives the redacted copy of any scene.
+
 ### Host-managed save — `onSave` + `'ACTION.SAVE'`
 
 The default `'EXPORT.JSON'` menu entry downloads a `.json` scene file to the user's disk — useful for ad-hoc archival, but rarely what a host application wants. For a hosted editor whose state lives in the parent application, the natural save path is "hand the diagram back to the host" — register an `'ACTION.SAVE'` entry in `mainMenuOptions` and pass an `onSave` callback. It receives the diagram as a validated scene:
@@ -484,6 +505,8 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => void` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view. Gated on `editorMode === 'EDITABLE'`. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor) of the model. Allowed in every editor mode; clears the selection; warns and does nothing for an unknown id. The editor has no view-switcher UI of its own, so this is how a host offers one. |
+| `getLayers()` | `() => Layer[]` | The diagram's layers, `{ id, name, visible? }` (absent `visible` is shown). The base layer and the reserved Redacted layer are never listed. |
+| `setLayerVisible(layerId, visible)` | `(layerId: string, visible: boolean) => void` | Show or hide a layer, so one diagram serves several audiences. Allowed in every editor mode; saved with the diagram; not recorded in undo; warns and does nothing for an unknown id. |
 | `setZoom(z)` | `(z: number) => void` | Set absolute zoom, clamped to 0.2 to 1. |
 | `incrementZoom()` / `decrementZoom()` | `() => void` | Step zoom by `ZOOM_INCREMENT` (0.2). |
 | `rendererEl` | `HTMLDivElement \| null` | The renderer's outer DOM node — useful for export-to-image or programmatic focus. |

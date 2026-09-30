@@ -11,6 +11,7 @@ export const rectangleSchema = z
     zIndex: z.number().int().optional(),
     from: coords,
     to: coords,
-    parentGroupId: id.optional()
+    parentGroupId: id.optional(),
+    layerId: id.optional()
   })
   .strict();

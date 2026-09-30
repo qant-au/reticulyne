@@ -4,6 +4,7 @@ import { NAME_MAX } from 'src/schemas/common';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { DeleteButton } from '../../components/DeleteButton';
+import { LayerSection } from '../../components/LayerSection';
 import { PanelSection } from 'src/vendor/accurona-ui';
 
 export type NodeUpdates = {
@@ -63,6 +64,7 @@ export const NodeSettings = ({
           />
         </PanelSection>
       )}
+      <LayerSection targets={[{ type: 'ITEM', id: node.id }]} />
       <PanelSection>
         <Box>
           <DeleteButton onClick={onDeleted} />

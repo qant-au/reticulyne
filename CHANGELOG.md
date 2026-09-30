@@ -17,6 +17,7 @@ potentially breaking and read the release notes before upgrading.
 ### Added
 
 - **A flat 2D (Visio-style) view alongside the isometric one.** A view's `kind` is `'iso'` (the default) or `'schematic'`, as in the scene format, and buttons beside the zoom controls switch the current view between them, keeping the tile at the centre of the canvas in place. Both draw the same tiles, so nodes, connectors, rectangles, text boxes and groups keep their places. The flat view draws a square grid, and a node with an Accurona twin as that element's 2D schematic symbol (`schematicIconUrl`). A view switched in the editor saves as its new kind.
+- **Diagram layers, and a Redacted layer left out of exports.** Nodes, connectors, rectangles and text boxes take a `layerId`, and the model a `layers` list (`{ id, name, visible? }`), read from and saved to the scene format's `layers` and `layer`. A Layers button beside the zoom controls adds, renames, deletes and shows or hides layers; the inspector's Layer field moves an item or a selection. A hidden layer's items are not drawn, selected or exported. The reserved `redacted` layer is shown in the editor and left out of PNG, PDF, SVG and JSON exports unless the export ticks "Include redacted content"; a diagram with nothing on it exports as before. `useReticulyne()` gains `getLayers()` and `setLayerVisible(id, visible)`.
 
 ### Fixed
 

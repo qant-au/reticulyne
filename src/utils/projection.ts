@@ -9,15 +9,43 @@
 // Extracted from src/utils/renderer.ts under QUA4-07.
 
 import { produce } from 'immer';
-import { Coords, ProjectionOrientationEnum } from 'src/types';
+import { Coords, Projection, ProjectionOrientationEnum } from 'src/types';
 import { clamp, roundToOneDecimalPlace } from './common';
-import { ZOOM_INCREMENT, MAX_ZOOM, MIN_ZOOM } from 'src/config';
+import {
+  ZOOM_INCREMENT,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  PROJECTED_TILE_SIZE,
+  SCHEMATIC_TILE_SIZE
+} from 'src/config';
 
 const isoProjectionBaseValues = [0.707, -0.409, 0.707, 0.409, 0, -0.816];
 
+// The schematic view's matrices are the iso ones with the tile grid drawn
+// flat: an unprojected x step is still one tile along +x (right on screen)
+// and a y step one tile along -y (down), so anything laid out in
+// unprojected space lands on the same tiles in both views. The Y
+// orientation (u along -y, v along -x) is a quarter turn.
+const schematicMatrices = {
+  X: [1, 0, 0, 1, 0, 0],
+  Y: [0, 1, -1, 0, 0, 0]
+};
+
+/** A tile's size on screen, at zoom 1, in the given projection. */
+export const getProjectedTileSize = (projection: Projection = 'iso') => {
+  return projection === 'schematic' ? SCHEMATIC_TILE_SIZE : PROJECTED_TILE_SIZE;
+};
+
 export const getIsoMatrix = (
-  orientation?: keyof typeof ProjectionOrientationEnum
+  orientation?: keyof typeof ProjectionOrientationEnum,
+  projection: Projection = 'iso'
 ) => {
+  if (projection === 'schematic') {
+    return orientation === ProjectionOrientationEnum.Y
+      ? schematicMatrices.Y
+      : schematicMatrices.X;
+  }
+
   switch (orientation) {
     case ProjectionOrientationEnum.Y:
       return produce(isoProjectionBaseValues, (draft) => {
@@ -31,9 +59,10 @@ export const getIsoMatrix = (
 };
 
 export const getIsoProjectionCss = (
-  orientation?: keyof typeof ProjectionOrientationEnum
+  orientation?: keyof typeof ProjectionOrientationEnum,
+  projection: Projection = 'iso'
 ) => {
-  const matrixTransformValues = getIsoMatrix(orientation);
+  const matrixTransformValues = getIsoMatrix(orientation, projection);
 
   return `matrix(${matrixTransformValues.join(', ')})`;
 };

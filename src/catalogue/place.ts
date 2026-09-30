@@ -72,6 +72,21 @@ export const catalogueItemSymbol = (
 };
 
 /**
+ * What a node draws with in the flat, schematic view (lw-050): an Accurona
+ * element's isometric drawing is swapped for that element's 2D schematic;
+ * any other icon is drawn as it is.
+ */
+export const schematicIconUrl = (icon: Pick<Icon, 'id' | 'url'>): string => {
+  if (icon.id.startsWith(ACCURONA_ICON_PREFIX)) {
+    const element = icon.id.slice(ACCURONA_ICON_PREFIX.length);
+    if (element in SCHEMATIC_DRAWINGS) {
+      return `data:image/svg+xml,${encodeURIComponent(SCHEMATIC_DRAWINGS[element].svg)}`;
+    }
+  }
+  return icon.url;
+};
+
+/**
  * The schematic symbol of each item that has one, as a flat icon with the
  * id `schematic-<item id>`, for a 2D view to draw the items with.
  */

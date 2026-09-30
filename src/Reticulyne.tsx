@@ -608,7 +608,10 @@ const useReticulyne = () => {
       const live = uiStateActions.get();
       const zoom =
         options.zoom === undefined ? live.zoom : clampZoom(options.zoom);
-      const p = getTilePosition({ tile: placed.tile });
+      const p = getTilePosition({
+        tile: placed.tile,
+        projection: currentView()?.kind
+      });
       uiStateActions.setZoom(zoom);
       uiStateActions.setScroll({
         position: { x: -p.x * zoom, y: -p.y * zoom },

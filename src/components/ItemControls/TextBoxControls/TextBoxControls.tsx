@@ -12,6 +12,7 @@ import { useTextBox } from 'src/hooks/useTextBox';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { getIsoProjectionCss } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
+import { useProjection } from 'src/hooks/useProjection';
 import { NAME_MAX } from 'src/schemas/common';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
@@ -26,6 +27,7 @@ export const TextBoxControls = ({ id }: Props) => {
     return state.actions;
   });
   const textBox = useTextBox(id);
+  const projection = useProjection();
   // Only a text box just placed takes focus: selecting an existing one
   // must leave Delete deleting the box, not its text.
   const autoFocus = useUiStateStore((state) => {
@@ -103,12 +105,14 @@ export const TextBoxControls = ({ id }: Props) => {
           }}
         >
           <ToggleButton value={ProjectionOrientationEnum.X}>
-            <TextRotationNoneIcon sx={{ transform: getIsoProjectionCss() }} />
+            <TextRotationNoneIcon
+              sx={{ transform: getIsoProjectionCss(undefined, projection) }}
+            />
           </ToggleButton>
           <ToggleButton value={ProjectionOrientationEnum.Y}>
             <TextRotationNoneIcon
               sx={{
-                transform: `scale(-1, 1) ${getIsoProjectionCss()} scale(-1, 1)`
+                transform: `scale(-1, 1) ${getIsoProjectionCss(undefined, projection)} scale(-1, 1)`
               }}
             />
           </ToggleButton>

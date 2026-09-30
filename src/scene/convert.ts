@@ -35,13 +35,11 @@ export type DiagramKind = DiagramView['kind'];
 export interface SceneContext {
   /** The scene as it was loaded; a save is merged into it. */
   opened: Scene;
-  /** The kind each loaded view had. A view not listed here is new: 'iso'. */
-  viewKinds: Map<string, DiagramKind>;
 }
 
 /** The context of a new diagram: an empty scene with a fresh id. */
 export const freshSceneContext = (title?: string): SceneContext => {
-  return { opened: emptyScene(generateId(), title), viewKinds: new Map() };
+  return { opened: emptyScene(generateId(), title) };
 };
 
 // Optional fields are written only when set, as the scene format asks.
@@ -89,10 +87,12 @@ const connectorToScene = (c: Connector): SceneConnector => {
   });
 };
 
-const viewToScene = (view: View, kind: DiagramKind): DiagramView => {
+// A view's kind is on the view itself, so a view switched between iso and
+// schematic in the editor saves as what it is now (lw-050).
+const viewToScene = (view: View): DiagramView => {
   return defined({
     id: view.id,
-    kind,
+    kind: view.kind ?? 'iso',
     name: view.name,
     description: view.description,
     lastUpdated: view.lastUpdated,
@@ -158,9 +158,7 @@ export const modelToSceneUpdate = (
   const { opened } = context;
   return {
     viewKinds: ['iso', 'schematic'],
-    views: model.views.map((view) => {
-      return viewToScene(view, context.viewKinds.get(view.id) ?? 'iso');
-    }),
+    views: model.views.map(viewToScene),
     objects: model.items.map(itemToObject),
     objectFields: ['name', 'description', 'icon'],
     preserve: {
@@ -254,6 +252,8 @@ const anchorFromScene = (anchor: SceneAnchor): ConnectorAnchor => {
 const viewFromScene = (view: DiagramView): View => {
   return defined({
     id: view.id,
+    // Absent means iso, so an iso view reads back exactly as it was.
+    kind: view.kind === 'schematic' ? view.kind : undefined,
     name: view.name,
     description: view.description,
     lastUpdated: utcDate(view.lastUpdated),
@@ -356,13 +356,6 @@ export const sceneToModel = (
   });
   return {
     model,
-    context: {
-      opened: scene,
-      viewKinds: new Map(
-        diagramViews.map((view) => {
-          return [view.id, view.kind];
-        })
-      )
-    }
+    context: { opened: scene }
   };
 };

@@ -3,6 +3,7 @@ import { Coords } from 'src/types';
 import { useTheme, Box } from '@mui/material';
 import { getIsoProjectionCss } from 'src/utils';
 import { Svg } from 'src/components/Svg/Svg';
+import { useProjection } from 'src/hooks/useProjection';
 import { TRANSFORM_ANCHOR_SIZE, TRANSFORM_CONTROLS_COLOR } from 'src/config';
 
 interface Props {
@@ -15,6 +16,7 @@ const strokeWidth = 2;
 export const TransformAnchor = ({ position, onMouseDown }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
   const theme = useTheme();
+  const projection = useProjection();
 
   return (
     <Box
@@ -27,7 +29,7 @@ export const TransformAnchor = ({ position, onMouseDown }: Props) => {
       onMouseDown={onMouseDown}
       sx={{
         position: 'absolute',
-        transform: getIsoProjectionCss(),
+        transform: getIsoProjectionCss(undefined, projection),
         width: TRANSFORM_ANCHOR_SIZE,
         height: TRANSFORM_ANCHOR_SIZE
       }}

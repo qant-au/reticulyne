@@ -58,12 +58,17 @@ export const deleteView = (ctx: ViewReducerContext): State => {
 };
 
 export const updateView = (
-  updates: Partial<Pick<View, 'name'>>,
+  updates: Partial<Pick<View, 'name' | 'kind'>>,
   ctx: ViewReducerContext
 ): State => {
   const newState = produce(ctx.state, (draft) => {
-    const view = getItemByIdOrThrow(draft.model.views, ctx.viewId);
-    view.value = { ...view.value, ...updates };
+    // Assign through the draft array: reassigning the lookup's `value`
+    // changed nothing, so this reducer used to be a silent no-op.
+    const { index } = getItemByIdOrThrow(draft.model.views, ctx.viewId);
+    const updated = { ...draft.model.views[index], ...updates };
+    // No kind is 'iso'; leave no undefined key behind (lw-050).
+    if (updated.kind === undefined) delete updated.kind;
+    draft.model.views[index] = updated;
   });
 
   return newState;

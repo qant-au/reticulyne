@@ -40,7 +40,11 @@ export const Groups = () => {
         // node labels rise above their nodes, so the top corner collides.
         const bottom = corners
           .map((tile) => {
-            return getTilePosition({ tile, origin: 'BOTTOM' });
+            return getTilePosition({
+              tile,
+              origin: 'BOTTOM',
+              projection: currentView.kind
+            });
           })
           .sort((a, b) => {
             return b.y - a.y;

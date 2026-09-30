@@ -4,6 +4,8 @@ import { useModelStore } from 'src/stores/modelStore';
 import { useSceneStore } from 'src/stores/sceneStore';
 import { useHistoryStore } from 'src/stores/historyStore';
 import type { State } from 'src/stores/reducers/types';
+import * as reducers from 'src/stores/reducers';
+import type { Projection } from 'src/types';
 import { getItemByIdOrThrow } from 'src/utils';
 import { useSceneItems } from './scene/useSceneItems';
 import { useSceneConnectors } from './scene/useSceneConnectors';
@@ -148,6 +150,21 @@ export const useScene = () => {
     }
   }, [model.actions, scene.actions, historyActions]);
 
+  // lw-050: draw the current view isometrically or flat. Undoable, and
+  // saved on the view; 'iso' is stored as no kind at all.
+  const setViewKind = useCallback(
+    (kind: Projection) => {
+      setState(
+        reducers.view({
+          action: 'UPDATE_VIEW',
+          payload: { kind: kind === 'schematic' ? kind : undefined },
+          ctx: { viewId: currentViewId, state: getState() }
+        })
+      );
+    },
+    [getState, setState, currentViewId]
+  );
+
   const itemOps = useSceneItems({ getState, setState, currentViewId });
   const connectorOps = useSceneConnectors({
     getState,
@@ -177,6 +194,9 @@ export const useScene = () => {
     rectangles,
     textBoxes,
     currentView,
+    // How the current view is drawn (lw-050): isometric or flat.
+    projection: currentView.kind ?? 'iso',
+    setViewKind,
     ...itemOps,
     ...connectorOps,
     ...shapeOps,

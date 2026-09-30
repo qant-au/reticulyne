@@ -41,7 +41,7 @@ export const SmartGuides = () => {
   const enabled = useUiStateStore((state) => {
     return state.showAlignmentGuides;
   });
-  const { items, textBoxes } = useScene();
+  const { items, textBoxes, projection } = useScene();
 
   const lines = useMemo(() => {
     if (!enabled || mode.type !== 'DRAG_ITEMS') return [];
@@ -71,14 +71,14 @@ export const SmartGuides = () => {
         if (hit) {
           out.push({
             key: `${m.key}-${axis}`,
-            a: getTilePosition({ tile: m.tile }),
-            b: getTilePosition({ tile: hit.tile })
+            a: getTilePosition({ tile: m.tile, projection }),
+            b: getTilePosition({ tile: hit.tile, projection })
           });
         }
       }
     }
     return out;
-  }, [enabled, mode, items, textBoxes]);
+  }, [enabled, mode, items, textBoxes, projection]);
 
   if (lines.length === 0) return null;
 

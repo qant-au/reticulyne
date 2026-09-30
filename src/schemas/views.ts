@@ -20,6 +20,9 @@ export const viewSchema = z
     lastUpdated: z.string().datetime().optional(),
     name: constrainedStrings.name,
     description: constrainedStrings.description.optional(),
+    // How the view is drawn: absent is 'iso'. Both kinds share one shape,
+    // so a view switches between them without losing anything.
+    kind: z.enum(['iso', 'schematic']).optional(),
     items: z.array(viewItemSchema).max(SCHEMA_LIMITS.VIEW_ITEMS),
     rectangles: z
       .array(rectangleSchema)

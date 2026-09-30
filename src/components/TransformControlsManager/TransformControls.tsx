@@ -3,6 +3,7 @@ import { Coords, AnchorPosition } from 'src/types';
 import { Svg } from 'src/components/Svg/Svg';
 import { TRANSFORM_CONTROLS_COLOR } from 'src/config';
 import { useIsoProjection } from 'src/hooks/useIsoProjection';
+import { useProjection } from 'src/hooks/useProjection';
 import {
   getBoundingBox,
   outermostCornerPositions,
@@ -20,6 +21,7 @@ interface Props {
 const strokeWidth = 2;
 
 export const TransformControls = ({ from, to, onAnchorMouseDown }: Props) => {
+  const projection = useProjection();
   const { css, pxSize } = useIsoProjection({
     from,
     to
@@ -34,7 +36,8 @@ export const TransformControls = ({ from, to, onAnchorMouseDown }: Props) => {
       ([key, value], i) => {
         const position = getTilePosition({
           tile: value,
-          origin: outermostCornerPositions[i]
+          origin: outermostCornerPositions[i],
+          projection
         });
 
         return {
@@ -48,7 +51,7 @@ export const TransformControls = ({ from, to, onAnchorMouseDown }: Props) => {
     );
 
     return cornerPositions;
-  }, [onAnchorMouseDown, from, to]);
+  }, [onAnchorMouseDown, from, to, projection]);
 
   return (
     <>

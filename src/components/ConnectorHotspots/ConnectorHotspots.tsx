@@ -7,6 +7,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { CoordsUtils, getNodeAtPort, nodesNearTile } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { usePointerOverCanvas } from 'src/hooks/usePointerOverCanvas';
+import { useProjection } from 'src/hooks/useProjection';
 import type { Coords } from 'src/types';
 
 // the node under the pointer shows a port on each of
@@ -73,6 +74,7 @@ export const ConnectorHotspots = () => {
   const { size: rendererSize } = useResizeObserver(rendererEl);
   const items = useSceneItemsList();
   const overCanvas = usePointerOverCanvas();
+  const projection = useProjection();
 
   const active =
     overCanvas &&
@@ -91,10 +93,11 @@ export const ConnectorHotspots = () => {
       getNodeAtPort(screen, nodesNearTile(tile, items), {
         zoom,
         scroll,
-        rendererSize
+        rendererSize,
+        projection
       })
     );
-  }, [active, items, mouse.position, zoom, scroll, rendererSize]);
+  }, [active, items, mouse.position, zoom, scroll, rendererSize, projection]);
 
   if (!hovered) return null;
   return <Ports tile={hovered.tile} />;

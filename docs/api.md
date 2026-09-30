@@ -108,9 +108,15 @@ scene: `onSave`, Export as JSON, `getScene()` and the Docker editor's saved diag
   them. Object `name`, `description` and `icon` are edited; everything else is kept.
 - **Saving** merges the edited diagram back into the scene that was opened, so plan
   views, objects no diagram view places, connections, object `props`, `ports` and
-  `links`, layers and the `connection` a connector draws all survive. A view keeps its
-  kind; a view added in Reticulyne is `iso`. A connector whose end is moved to another
-  object stops drawing its connection.
+  `links`, layers and the `connection` a connector draws all survive. A view saves as
+  the kind it is drawn as now; a view added in Reticulyne is `iso`. A connector whose
+  end is moved to another object stops drawing its connection.
+- **Isometric or flat.** A view's kind is its `kind`: `'iso'` (also when absent) or
+  `'schematic'`, on the scene view and on the Reticulyne `View`. Both draw the same tile
+  grid, so switching loses nothing. In an editable diagram the buttons beside the zoom
+  controls switch the current view, as an undoable edit. The flat view draws a node
+  whose icon is an Accurona twin (`accurona-<element id>`) with that element's 2D
+  schematic (`schematicIconUrl(icon)`), and any other icon flat, as it is.
 - **Legacy models** (`InitialData`, below) are read, never written. Opening one converts
   it to a scene with one `iso` view per Reticulyne view. Ids the scene format does not
   allow (`/^[A-Za-z0-9_-]{1,64}$/`) are rewritten, and a colour that is not `#rrggbb`

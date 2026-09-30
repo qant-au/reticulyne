@@ -9,6 +9,21 @@ import {
   getIsoProjectionCss
 } from 'src/utils';
 import { UNPROJECTED_TILE_SIZE } from 'src/config';
+import type { Projection } from 'src/types';
+
+// The hook reads the current view's kind from the stores; the tests set it.
+let mockProjection: Projection = 'iso';
+jest.mock('../useProjection', () => {
+  return {
+    useProjection: () => {
+      return mockProjection;
+    }
+  };
+});
+
+afterEach(() => {
+  mockProjection = 'iso';
+});
 
 describe('useIsoProjection', () => {
   describe('gridSize', () => {
@@ -167,6 +182,30 @@ describe('useIsoProjection', () => {
         height: `${result.current.pxSize.height}px`,
         transformOrigin: 'top left'
       });
+    });
+  });
+
+  describe('schematic view (lw-050)', () => {
+    test('draws the same tiles flat: no projection, positioned by the flat grid', () => {
+      mockProjection = 'schematic';
+      const { result } = renderHook(() => {
+        return useIsoProjection({ from: { x: 0, y: 0 }, to: { x: 2, y: 1 } });
+      });
+
+      expect(result.current.css.transform).toBe(
+        getIsoProjectionCss(undefined, 'schematic')
+      );
+      expect(result.current.css.transform).toBe('matrix(1, 0, 0, 1, 0, 0)');
+      expect(result.current.position).toEqual(
+        getTilePosition({
+          tile: getBoundingBox([
+            { x: 0, y: 0 },
+            { x: 2, y: 1 }
+          ])[3],
+          origin: 'LEFT',
+          projection: 'schematic'
+        })
+      );
     });
   });
 });

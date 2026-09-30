@@ -18,6 +18,10 @@ possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELO
 
 - **Drag-and-drop editor.** Lay out icons, regions (rectangles) and connectors on an
   isometric grid.
+- **Isometric or flat 2D, per view.** The same diagram drawn isometrically or as a
+  flat, Visio-style schematic. The toolbar switches the current view between the two;
+  nothing moves, because both draw the same tiles. The flat view draws catalogue items
+  with their 2D symbols.
 - **Bring your own icons.** Icon collections are plain `Icon[]` arrays
   ([isopacks](docs/isopacks.md)). The component ships no icons of its own; the
   standalone editor comes with AWS, Azure, GCP and Kubernetes collections plus the

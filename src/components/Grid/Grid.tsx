@@ -3,7 +3,8 @@ import { Box, useTheme } from '@mui/material';
 import gsap from 'gsap';
 import { Size } from 'src/types';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { PROJECTED_TILE_SIZE } from 'src/config';
+import { getProjectedTileSize } from 'src/utils/projection';
+import { useProjection } from 'src/hooks/useProjection';
 import { SizeUtils } from 'src/utils/SizeUtils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 
@@ -20,6 +21,16 @@ const buildGridTileDataUrl = (stroke: string, opacity: number): string => {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
+// The flat, schematic view's grid (lw-050): one square tile, its top and
+// left edges drawn, repeated.
+const buildSquareGridTileDataUrl = (
+  stroke: string,
+  opacity: number
+): string => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0 0H100M0 0V100" stroke="${stroke}" stroke-opacity="${opacity}" stroke-width="1" fill="none"/></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
 export const Grid = () => {
   const [element, setElement] = useState<HTMLDivElement | null>(null);
   const { size } = useResizeObserver(element);
@@ -31,6 +42,7 @@ export const Grid = () => {
     return state.zoom;
   });
   const theme = useTheme();
+  const projection = useProjection();
 
   // Pick a stroke colour + opacity per palette mode. Dark mode needs
   // a brighter stroke with higher opacity so the iso-grid is still
@@ -38,30 +50,41 @@ export const Grid = () => {
   // pre-FEA7-04 look (black at 0.15 alpha) exactly.
   const gridBg = useMemo(() => {
     const isDark = theme.palette.mode === 'dark';
-    return buildGridTileDataUrl(
-      isDark ? '#ffffff' : '#000000',
-      isDark ? 0.12 : 0.15
-    );
-  }, [theme.palette.mode]);
+    const build =
+      projection === 'schematic'
+        ? buildSquareGridTileDataUrl
+        : buildGridTileDataUrl;
+    return build(isDark ? '#ffffff' : '#000000', isDark ? 0.12 : 0.15);
+  }, [theme.palette.mode, projection]);
 
   useEffect(() => {
     if (!element) return;
 
-    const tileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
+    const tileSize = SizeUtils.multiply(getProjectedTileSize(projection), zoom);
     const elSize = element.getBoundingClientRect();
-    const backgroundPosition: Size = {
-      width: elSize.width / 2 + scroll.position.x + tileSize.width / 2,
-      height: elSize.height / 2 + scroll.position.y
-    };
+    const flat = projection === 'schematic';
+    // Tile (0, 0) is centred on the canvas centre plus the scroll; the flat
+    // tile image starts at a tile's top-left corner.
+    const backgroundPosition: Size = flat
+      ? {
+          width: elSize.width / 2 + scroll.position.x - tileSize.width / 2,
+          height: elSize.height / 2 + scroll.position.y - tileSize.height / 2
+        }
+      : {
+          width: elSize.width / 2 + scroll.position.x + tileSize.width / 2,
+          height: elSize.height / 2 + scroll.position.y
+        };
 
     gsap.to(element, {
       duration: isFirstRenderRef.current ? 0 : 0.25,
-      backgroundSize: `${tileSize.width}px ${tileSize.height * 2}px`,
+      backgroundSize: flat
+        ? `${tileSize.width}px ${tileSize.height}px`
+        : `${tileSize.width}px ${tileSize.height * 2}px`,
       backgroundPosition: `${backgroundPosition.width}px ${backgroundPosition.height}px`
     });
 
     isFirstRenderRef.current = false;
-  }, [scroll, zoom, size, element]);
+  }, [scroll, zoom, size, element, projection]);
 
   return (
     <Box

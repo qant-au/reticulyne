@@ -1,14 +1,11 @@
 import { useMemo } from 'react';
 import { Box, Typography, Stack } from '@mui/material';
-import {
-  PROJECTED_TILE_SIZE,
-  DEFAULT_LABEL_HEIGHT,
-  isEmptyMarkdown
-} from 'src/config';
-import { getTilePosition } from 'src/utils';
+import { DEFAULT_LABEL_HEIGHT, isEmptyMarkdown } from 'src/config';
+import { getProjectedTileSize, getTilePosition } from 'src/utils';
 import { useIcon } from 'src/hooks/useIcon';
 import { ViewItem } from 'src/types';
 import { useModelItem } from 'src/hooks/useModelItem';
+import { useProjection } from 'src/hooks/useProjection';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { ExpandableLabel } from 'src/components/Label/ExpandableLabel';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
@@ -21,17 +18,21 @@ interface Props {
 
 export const Node = ({ node, order, isDimmed }: Props) => {
   const modelItem = useModelItem(node.id);
-  const { iconComponent } = useIcon(modelItem?.icon);
+  const projection = useProjection();
+  const { iconComponent } = useIcon(modelItem?.icon, projection);
   const NodeIndicator = useUiStateStore((state) => {
     return state.nodeIndicatorComponent;
   });
 
   const position = useMemo(() => {
+    // An isometric node stands on its tile's bottom vertex; a flat one is
+    // centred on the tile.
     return getTilePosition({
       tile: node.tile,
-      origin: 'BOTTOM'
+      origin: projection === 'schematic' ? 'CENTER' : 'BOTTOM',
+      projection
     });
-  }, [node.tile]);
+  }, [node.tile, projection]);
 
   const description = useMemo(() => {
     if (!modelItem || isEmptyMarkdown(modelItem.description)) return null;
@@ -62,7 +63,7 @@ export const Node = ({ node, order, isDimmed }: Props) => {
         {(modelItem.name || description) && (
           <Box
             sx={{ position: 'absolute' }}
-            style={{ bottom: PROJECTED_TILE_SIZE.height / 2 }}
+            style={{ bottom: getProjectedTileSize(projection).height / 2 }}
           >
             <ExpandableLabel
               maxWidth={250}

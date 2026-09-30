@@ -12,47 +12,63 @@ import {
   Size,
   Scroll,
   Mouse,
-  SlimMouseEvent
+  SlimMouseEvent,
+  Projection
 } from 'src/types';
-import { PROJECTED_TILE_SIZE } from 'src/config';
 import { CoordsUtils } from './CoordsUtils';
 import { SizeUtils } from './SizeUtils';
+import { getProjectedTileSize } from './projection';
 
 interface ScreenToIso {
   mouse: Coords;
   zoom: number;
   scroll: Scroll;
   rendererSize: Size;
+  projection?: Projection;
 }
 
-// converts a mouse position to a tile position
-export const screenToIso = ({
+// The pointer's position in tile units before flooring: tile x spans
+// [x, x+1) of fx, and tile y spans (y-1, y] of fy.
+const fractionalTile = ({
   mouse,
   zoom,
   scroll,
-  rendererSize
+  rendererSize,
+  projection
 }: ScreenToIso) => {
-  const projectedTileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
-  const halfW = projectedTileSize.width / 2;
-  const halfH = projectedTileSize.height / 2;
+  const projectedTileSize = SizeUtils.multiply(
+    getProjectedTileSize(projection),
+    zoom
+  );
+  const px = -rendererSize.width * 0.5 + mouse.x - scroll.position.x;
+  const py = -rendererSize.height * 0.5 + mouse.y - scroll.position.y;
 
-  const projectPosition = {
-    x: -rendererSize.width * 0.5 + mouse.x - scroll.position.x,
-    y: -rendererSize.height * 0.5 + mouse.y - scroll.position.y
-  };
+  if (projection === 'schematic') {
+    return {
+      fx: (px + projectedTileSize.width / 2) / projectedTileSize.width,
+      fy: -(py + projectedTileSize.height / 2) / projectedTileSize.height
+    };
+  }
 
-  const tile = {
-    x: Math.floor(
-      (projectPosition.x + halfW) / projectedTileSize.width -
-        projectPosition.y / projectedTileSize.height
-    ),
-    y: -Math.floor(
-      (projectPosition.y + halfH) / projectedTileSize.height +
-        projectPosition.x / projectedTileSize.width
+  return {
+    fx:
+      (px + projectedTileSize.width / 2) / projectedTileSize.width -
+      py / projectedTileSize.height,
+    fy: -(
+      (py + projectedTileSize.height / 2) / projectedTileSize.height +
+      px / projectedTileSize.width
     )
   };
+};
 
-  return tile;
+// converts a mouse position to a tile position
+export const screenToIso = (args: ScreenToIso) => {
+  const { fx, fy } = fractionalTile(args);
+
+  return {
+    x: Math.floor(fx),
+    y: -Math.floor(-fy)
+  };
 };
 
 // The tile a dragged rectangle corner should snap to. A corner handle is
@@ -62,22 +78,11 @@ export const screenToIso = ({
 // nearest the pointer instead. `highX`/`highY` say which side of the
 // rectangle the corner is on.
 export const cornerTileAtPointer = (
-  { mouse, zoom, scroll, rendererSize }: ScreenToIso,
+  args: ScreenToIso,
   highX: boolean,
   highY: boolean
 ): Coords => {
-  const projectedTileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
-  const px = -rendererSize.width * 0.5 + mouse.x - scroll.position.x;
-  const py = -rendererSize.height * 0.5 + mouse.y - scroll.position.y;
-  // screenToIso's two expressions before flooring: tile x spans [x, x+1)
-  // of fx, and tile y spans (y-1, y] of fy.
-  const fx =
-    (px + projectedTileSize.width / 2) / projectedTileSize.width -
-    py / projectedTileSize.height;
-  const fy = -(
-    (py + projectedTileSize.height / 2) / projectedTileSize.height +
-    px / projectedTileSize.width
-  );
+  const { fx, fy } = fractionalTile(args);
   return {
     x: highX ? Math.round(fx) - 1 : Math.round(fx),
     y: highY ? Math.round(fy) : Math.round(fy) + 1
@@ -87,14 +92,38 @@ export const cornerTileAtPointer = (
 interface GetTilePosition {
   tile: Coords;
   origin?: TileOrigin;
+  projection?: Projection;
 }
+
+// Where each named vertex of a tile sits, from its centre, in the flat
+// view. The names are the iso vertices' (LEFT is the corner at the lowest
+// x and y), so a caller that anchors to one lands on the same corner of
+// the tile in both views.
+const schematicOrigins: Record<TileOrigin, Coords> = {
+  CENTER: { x: 0, y: 0 },
+  LEFT: { x: -0.5, y: -0.5 },
+  RIGHT: { x: 0.5, y: 0.5 },
+  TOP: { x: 0.5, y: -0.5 },
+  BOTTOM: { x: -0.5, y: 0.5 }
+};
 
 export const getTilePosition = ({
   tile,
-  origin = 'CENTER'
+  origin = 'CENTER',
+  projection = 'iso'
 }: GetTilePosition) => {
-  const halfW = PROJECTED_TILE_SIZE.width / 2;
-  const halfH = PROJECTED_TILE_SIZE.height / 2;
+  if (projection === 'schematic') {
+    const size = getProjectedTileSize(projection);
+    const offset = schematicOrigins[origin] ?? schematicOrigins.CENTER;
+    return {
+      x: (tile.x + offset.x) * size.width,
+      y: (-tile.y + offset.y) * size.height
+    };
+  }
+
+  const tileSize = getProjectedTileSize(projection);
+  const halfW = tileSize.width / 2;
+  const halfH = tileSize.height / 2;
 
   const position: Coords = {
     x: halfW * tile.x - halfW * tile.y,
@@ -120,8 +149,13 @@ type IsoToScreen = GetTilePosition & {
   rendererSize: Size;
 };
 
-export const isoToScreen = ({ tile, origin, rendererSize }: IsoToScreen) => {
-  const position = getTilePosition({ tile, origin });
+export const isoToScreen = ({
+  tile,
+  origin,
+  rendererSize,
+  projection
+}: IsoToScreen) => {
+  const position = getTilePosition({ tile, origin, projection });
 
   return {
     x: position.x + rendererSize.width / 2,
@@ -136,6 +170,7 @@ interface GetMouse {
   lastMouse: Mouse;
   mouseEvent: SlimMouseEvent;
   rendererSize: Size;
+  projection?: Projection;
 }
 
 export const getMouse = ({
@@ -144,7 +179,8 @@ export const getMouse = ({
   scroll,
   lastMouse,
   mouseEvent,
-  rendererSize
+  rendererSize,
+  projection
 }: GetMouse): Mouse => {
   const componentOffset = interactiveElement.getBoundingClientRect();
   const offset: Coords = {
@@ -165,7 +201,8 @@ export const getMouse = ({
       mouse: mousePosition,
       zoom,
       scroll,
-      rendererSize
+      rendererSize,
+      projection
     })
   };
 
@@ -204,9 +241,10 @@ export const getMouse = ({
 
 export const getTileScrollPosition = (
   tile: Coords,
-  origin?: TileOrigin
+  origin?: TileOrigin,
+  projection?: Projection
 ): Coords => {
-  const tilePosition = getTilePosition({ tile, origin });
+  const tilePosition = getTilePosition({ tile, origin, projection });
 
   return {
     x: -tilePosition.x,

@@ -36,12 +36,12 @@ export const MiniMap = () => {
     return state.actions;
   });
   const { size } = useResizeObserver(rendererEl);
-  const { items, rectangles, colors } = useScene();
+  const { items, rectangles, colors, projection } = useScene();
   const dragging = useRef(false);
 
   const layout = useMemo(() => {
     const nodes = items.map((i) => {
-      return getTilePosition({ tile: i.tile });
+      return getTilePosition({ tile: i.tile, projection });
     });
     const rects = rectangles.map((r) => {
       const corners = [
@@ -50,7 +50,7 @@ export const MiniMap = () => {
         r.to,
         { x: r.from.x, y: r.to.y }
       ].map((t) => {
-        return getTilePosition({ tile: t });
+        return getTilePosition({ tile: t, projection });
       });
       const colour =
         r.colorValue ??
@@ -96,7 +96,7 @@ export const MiniMap = () => {
       y: (H - (maxY - minY) * scale) / 2 - minY * scale
     };
     return { nodes, rects, scale, offset };
-  }, [items, rectangles, colors]);
+  }, [items, rectangles, colors, projection]);
 
   // Too narrow to sit beside the zoom controls and the title bar: on a
   // phone it covered both.

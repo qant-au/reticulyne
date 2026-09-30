@@ -1012,4 +1012,43 @@ describe('useScene', () => {
       expect(ref).toBeNull();
     });
   });
+
+  describe('setViewKind (lw-050)', () => {
+    test('switches the current view to flat and back, and undoes', () => {
+      // History coalesces edits within 250ms; step past it between switches.
+      jest.useFakeTimers();
+      const slot = setup();
+      const viewId = slot.current.scene.currentView.id;
+      const before = slot.current.scene.items;
+      expect(slot.current.scene.projection).toBe('iso');
+
+      act(() => {
+        slot.current.scene.setViewKind('schematic');
+      });
+      expect(slot.current.scene.projection).toBe('schematic');
+      const flat = slot.current.getModel().views.find((v) => {
+        return v.id === viewId;
+      });
+      expect(flat?.kind).toBe('schematic');
+      // Nothing moves: both kinds draw the same tiles.
+      expect(slot.current.scene.items).toEqual(before);
+
+      act(() => {
+        jest.advanceTimersByTime(300);
+      });
+      act(() => {
+        slot.current.scene.setViewKind('iso');
+      });
+      const iso = slot.current.getModel().views.find((v) => {
+        return v.id === viewId;
+      });
+      expect(iso && 'kind' in iso).toBe(false);
+
+      act(() => {
+        slot.current.scene.undo();
+      });
+      expect(slot.current.scene.projection).toBe('schematic');
+      jest.useRealTimers();
+    });
+  });
 });

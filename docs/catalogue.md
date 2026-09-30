@@ -16,8 +16,9 @@
 > `catalogueItemSymbol(item)` returns it as SVG, and `schematicIcons()` returns them as flat icons
 > (collection `Schematic`, ids `schematic-<item id>`). An item with a twin uses the schematic
 > Accurona generates from the element's model (`dist/schematic/<id>.svg`, vendored beside the
-> isometric drawings); an item with no twin has one drawn in `src/catalogue/symbols.ts`. The flat
-> view that draws with them is not built yet.
+> isometric drawings); an item with no twin has one drawn in `src/catalogue/symbols.ts`. A view
+> of kind `schematic` (the flat view) draws a node whose icon is `accurona-<element id>` with that
+> element's schematic; `schematicIconUrl(icon)` is the swap.
 
 The **catalogue** is Reticulyne's list of the things a diagram connects: devices with ports, the
 passive parts that make up a bus (tees, terminators, power injectors), and virtual things that

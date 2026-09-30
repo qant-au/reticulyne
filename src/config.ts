@@ -42,6 +42,13 @@ export const PROJECTED_TILE_SIZE = {
   height: UNPROJECTED_TILE_SIZE * TILE_PROJECTION_MULTIPLIERS.height
 };
 
+// A tile on screen in the flat, schematic view (lw-050): a square, drawn
+// with no projection, so the unprojected size is the size on screen.
+export const SCHEMATIC_TILE_SIZE = {
+  width: UNPROJECTED_TILE_SIZE,
+  height: UNPROJECTED_TILE_SIZE
+};
+
 export const DEFAULT_COLOR: Colors[0] = {
   id: '__DEFAULT__',
   value: customVars.customPalette.defaultColor
@@ -50,7 +57,7 @@ export const DEFAULT_COLOR: Colors[0] = {
 export const DEFAULT_FONT_FAMILY = 'Roboto, Arial, sans-serif';
 
 export const VIEW_DEFAULTS: Required<
-  Omit<View, 'id' | 'description' | 'lastUpdated' | 'groups'>
+  Omit<View, 'id' | 'description' | 'lastUpdated' | 'groups' | 'kind'>
 > = {
   name: 'Untitled view',
   items: [],

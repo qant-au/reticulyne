@@ -109,7 +109,7 @@ const richScene = (): Scene => {
 
 describe('sceneToModel', () => {
   test('loads the diagram views and the objects placed in them', () => {
-    const { model, context } = sceneToModel(richScene());
+    const { model } = sceneToModel(richScene());
     expect(
       model.views.map((v) => {
         return v.id;
@@ -130,8 +130,14 @@ describe('sceneToModel', () => {
       ref: { item: 'sw' }
     });
     expect(model.views[0].items[1].parentGroupId).toBe('g1');
-    expect(context.viewKinds.get('net')).toBe('schematic');
-    expect(context.viewKinds.get('iso')).toBe('iso');
+    expect(
+      model.views.map((v) => {
+        return [v.id, v.kind];
+      })
+    ).toEqual([
+      ['net', 'schematic'],
+      ['iso', undefined]
+    ]);
     expect(modelSchema.safeParse(model).success).toBe(true);
   });
 
@@ -181,6 +187,27 @@ describe('scene -> model -> scene', () => {
       ['net', 'schematic'],
       ['iso', 'iso'],
       ['new', 'iso']
+    ]);
+  });
+
+  test('a view switched in the editor saves as its new kind (lw-050)', () => {
+    const { model, context } = sceneToModel(richScene());
+    const edited: Model = {
+      ...model,
+      views: model.views.map((v) => {
+        return { ...v, kind: v.id === 'iso' ? 'schematic' : undefined };
+      })
+    };
+    const saved = sceneFromModel(edited, context);
+    expectValid(saved);
+    expect(
+      saved.views?.map((v) => {
+        return [v.id, v.kind];
+      })
+    ).toEqual([
+      ['plan', 'plan'],
+      ['net', 'iso'],
+      ['iso', 'schematic']
     ]);
   });
 

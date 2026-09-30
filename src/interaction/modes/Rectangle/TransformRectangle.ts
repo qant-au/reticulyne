@@ -36,7 +36,8 @@ export const TransformRectangle: ModeActions = {
         mouse: uiState.mouse.position.screen,
         zoom: uiState.zoom,
         scroll: uiState.scroll,
-        rendererSize
+        rendererSize,
+        projection: scene.projection
       },
       anchor === 'BOTTOM_RIGHT' || anchor === 'TOP_RIGHT',
       anchor === 'TOP_RIGHT' || anchor === 'TOP_LEFT'

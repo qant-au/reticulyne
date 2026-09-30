@@ -330,6 +330,7 @@ export declare const groupSchema: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
     color: z.ZodOptional<z.ZodString>;
     group: z.ZodOptional<z.ZodString>;
+    collapsed: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 export declare const diagramViewSchema: z.ZodObject<{
     kind: z.ZodEnum<{
@@ -447,6 +448,7 @@ export declare const diagramViewSchema: z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
         color: z.ZodOptional<z.ZodString>;
         group: z.ZodOptional<z.ZodString>;
+        collapsed: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     id: z.ZodString;
     name: z.ZodString;
@@ -615,6 +617,7 @@ export declare const viewSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
         color: z.ZodOptional<z.ZodString>;
         group: z.ZodOptional<z.ZodString>;
+        collapsed: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     id: z.ZodString;
     name: z.ZodString;
@@ -853,6 +856,7 @@ export declare const sceneShapeSchema: z.ZodObject<{
             name: z.ZodOptional<z.ZodString>;
             color: z.ZodOptional<z.ZodString>;
             group: z.ZodOptional<z.ZodString>;
+            collapsed: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         id: z.ZodString;
         name: z.ZodString;
@@ -1099,6 +1103,7 @@ export declare const sceneSchema: z.ZodObject<{
             name: z.ZodOptional<z.ZodString>;
             color: z.ZodOptional<z.ZodString>;
             group: z.ZodOptional<z.ZodString>;
+            collapsed: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         id: z.ZodString;
         name: z.ZodString;

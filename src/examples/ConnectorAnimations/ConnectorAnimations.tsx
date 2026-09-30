@@ -7,6 +7,7 @@ import Reticulyne from 'src/Reticulyne';
 import { icons, colors } from '../initialData';
 import type { InitialData } from 'src/types';
 import { useExamplesThemeMode } from '../themeModeContext';
+import { useExamplesValidationError } from '../openErrorContext';
 
 const animationsInitialData: InitialData = {
   title: 'Connector animations',
@@ -69,12 +70,14 @@ const animationsInitialData: InitialData = {
 
 export const ConnectorAnimations = () => {
   const { themeMode } = useExamplesThemeMode();
+  const onValidationError = useExamplesValidationError();
   return (
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
       <Reticulyne
         initialData={animationsInitialData}
         enableAnimation
         themeMode={themeMode}
+        onValidationError={onValidationError}
       />
       <Box
         sx={{

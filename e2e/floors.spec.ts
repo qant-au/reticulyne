@@ -114,3 +114,49 @@ test('the PNG and SVG exports leave the other floors out', async ({ page }) => {
     }
   }
 });
+
+// Sweep 2026-09-30, round 3: the image, PDF and universal SVG exports kept
+// the cross-floor marker but dropped the dashed riser to it, and drew the
+// diamond black instead of blue. The PDF is the same picture as the PNG.
+test('the exports draw the cross-floor riser and its blue diamond', async ({
+  page
+}) => {
+  await expect(page.getByTestId('floor-stub-riser-c1-sw')).toBeAttached();
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: /Export as Image/i }).click();
+  const png = page.getByRole('dialog', { name: 'Export as image' });
+  const img = png.locator('img[src^="data:image/png"]');
+  await expect(img).toBeVisible({ timeout: 20000 });
+  // The diagram's only blue is the diamond: the connector is not on Ground.
+  const blue = await img.evaluate(async (el: HTMLImageElement) => {
+    await el.decode();
+    const c = document.createElement('canvas');
+    c.width = el.naturalWidth;
+    c.height = el.naturalHeight;
+    const ctx = c.getContext('2d')!;
+    ctx.drawImage(el, 0, 0);
+    const d = ctx.getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i + 2] > 150 && d[i + 2] - d[i] > 80) n += 1;
+    }
+    return n;
+  });
+  expect(blue).toBeGreaterThan(40);
+  await png.getByRole('button', { name: 'Cancel' }).click();
+
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Export as SVG' }).click();
+  const svg = page.getByRole('dialog', { name: 'Export as SVG' });
+  const download = page.waitForEvent('download', { timeout: 20000 });
+  await svg
+    .getByRole('button', { name: 'Download universal SVG' })
+    .click({ timeout: 20000 });
+  const { readFileSync } = await import('node:fs');
+  const body = readFileSync(await (await download).path(), 'utf8');
+  const riser = body.match(/<line[^>]*stroke-dasharray="8 6"[^>]*>/)?.[0];
+  expect(riser).toBeDefined();
+  expect(riser).toMatch(/ stroke="(#|rgb)/);
+  const diamond = body.match(/<rect[^>]*rotate\(45[^>]*>/)?.[0];
+  expect(diamond).toMatch(/ fill="(#|rgb)/);
+});

@@ -82,7 +82,8 @@ The custom nginx config (`docker/nginx.conf`) ships:
 - **Security headers** (applied to every response):
   - `X-Content-Type-Options: nosniff`
   - `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` (assumes HTTPS-only ingress — see [`SECURITY.md`](../SECURITY.md); drop it if you knowingly serve over plain HTTP)
-  - `Referrer-Policy: no-referrer-when-downgrade`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Embedder-Policy: require-corp` and `Cross-Origin-Resource-Policy: same-origin`, which together make the page cross-origin isolated. Nothing on the page loads from another origin; a fork that adds a web font CDN needs a `crossorigin` attribute on its `<link>`, or COEP switched to `credentialless`
   - `X-Frame-Options: SAMEORIGIN` (legacy fallback — modern browsers honour the CSP `frame-ancestors` directive below)
   - `Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()`
   - `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'`

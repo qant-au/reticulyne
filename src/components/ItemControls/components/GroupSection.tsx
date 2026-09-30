@@ -6,6 +6,8 @@ import { groupChain, groupMatchingSelection } from 'src/utils';
 import type { ItemReference } from 'src/types';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 import { PanelSection } from 'src/vendor/accurona-ui';
+import { shortcutHint } from 'src/vendor/accurona-core';
+import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 
 // Keyed on the group and its saved name, so it starts over when either
 // changes rather than syncing state in an effect.
@@ -72,7 +74,7 @@ export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
             groupSelection(selection);
           }}
         >
-          Group (Ctrl+G)
+          Group ({shortcutHint(KEYMAP, 'group')})
         </Button>
       </PanelSection>
     );
@@ -137,7 +139,7 @@ export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
             ungroupSelection(selection);
           }}
         >
-          Ungroup (Ctrl+Shift+G)
+          Ungroup ({shortcutHint(KEYMAP, 'ungroup')})
         </Button>
       </Stack>
     </PanelSection>

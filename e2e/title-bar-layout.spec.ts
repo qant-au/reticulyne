@@ -138,7 +138,9 @@ for (const [width, height] of [
     await page.getByLabel('Title').fill('Sweep diagram retitled');
     await page.getByLabel('Title').press('Enter');
     const pill = page.getByTestId('save-status');
-    await expect(pill).toHaveText(width < 600 ? 'Unsaved' : 'Unsaved changes');
+    await expect(pill).toContainText(
+      width < 600 ? 'Unsaved' : 'Unsaved changes'
+    );
     const l = await layout(page);
     expectOrder(l);
     expect(l.chipCut).toBe(false);
@@ -163,3 +165,32 @@ for (const [width, height] of [
     if (width === 1440) expect(l.titleCut).toBe(false);
   });
 }
+
+// Sweep 2026-09-30, round 4.
+const rename = async (page: Page, title: string) => {
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Rename diagram' }).click();
+  await page.getByLabel('Title').fill(title);
+  await page.getByLabel('Title').press('Enter');
+};
+
+// The compact status carried its full wording only in a native title: a tap
+// showed nothing and assistive tech read the short word.
+test.describe('on a touch phone', () => {
+  test.use({ hasTouch: true, isMobile: true });
+  test('a tap on the save status shows its full wording, which is also its text', async ({
+    page
+  }) => {
+    await open(page, 390, 844, {
+      title: 'Sweep',
+      views: [{ id: 'v', name: 'Main' }],
+      save: true
+    });
+    await rename(page, 'Sweep two');
+    const pill = page.getByTestId('save-status');
+    await expect(pill.locator('[aria-hidden]')).toHaveText('Unsaved');
+    await expect(pill).toContainText('Unsaved changes');
+    await pill.tap();
+    await expect(page.getByRole('tooltip')).toHaveText('Unsaved changes');
+  });
+});

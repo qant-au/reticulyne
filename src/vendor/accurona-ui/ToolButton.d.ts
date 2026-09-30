@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import { type TooltipProps } from '@mui/material';
 export interface ToolButtonProps {
     name: string;

@@ -70,3 +70,35 @@ test('Tab reaches Start tour before the canvas', async ({ page }) => {
   }
   await expect(start).toBeFocused();
 });
+
+// Sweep 2026-09-30, round 3: at 390 Step 1 left the AODB description at two
+// lines and a Show more chevron, by click and by keyboard. A step shows its
+// node's description in full, at every width, on screen.
+for (const [width, height] of [
+  [1440, 900],
+  [390, 844]
+] as const) {
+  for (const how of ['click', 'keyboard'] as const) {
+    test(`at ${width} Step 1 shows its node's description in full (${how})`, async ({
+      page
+    }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto(BASE);
+      const expand = page.getByRole('button', { name: 'Expand sidebar' });
+      if (await expand.isVisible()) await expand.click();
+      await page.getByTestId('sidebar-item-2').click();
+      const start = page.getByRole('button', { name: 'Start tour' });
+      await expect(start).toBeVisible();
+      if (how === 'click') await start.click();
+      else await startFromKeyboard(page);
+      await expect(page.getByTestId('tour-panel')).toBeVisible();
+      const label = page.locator('[data-node-label="item1"]');
+      await expect(
+        label.getByRole('button', { name: 'Show less' })
+      ).toBeVisible();
+      await expect(label.getByRole('button', { name: 'Show more' })).toHaveCount(0);
+      await page.getByRole('button', { name: 'Next' }).click();
+      await expect(label.getByRole('button', { name: 'Show more' })).toBeVisible();
+    });
+  }
+}

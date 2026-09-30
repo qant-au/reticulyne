@@ -134,10 +134,17 @@ const App = ({
     // reference (BUG5-06).
   }, [mergedInitialData, load, iconCollectionsKey]);
 
+  // Separate effects: setEditorMode also resets the active tool, so it
+  // must run only when editorMode changes. Sharing an effect with
+  // mainMenuOptions (often a fresh array on every host render) switched
+  // Pan back to Select whenever the host re-rendered, e.g. after a save.
   useEffect(() => {
     uiStateActions.setEditorMode(editorMode);
+  }, [editorMode, uiStateActions]);
+
+  useEffect(() => {
     uiStateActions.setMainMenuOptions(mainMenuOptions);
-  }, [editorMode, uiStateActions, mainMenuOptions]);
+  }, [mainMenuOptions, uiStateActions]);
 
   useEffect(() => {
     uiStateActions.setShowTitleBar(showTitleBar);

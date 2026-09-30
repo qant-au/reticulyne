@@ -340,6 +340,29 @@ test('a pointer press still only arms the icon, for a click on the canvas', () =
   expect(ui().mode).toMatchObject({ type: 'PLACE_ICON', id: 'box' });
 });
 
+test('the floor link button has a name of its own, apart from the description Link', () => {
+  mount({
+    initialData: {
+      ...diagram,
+      views: [
+        diagram.views[0],
+        {
+          id: 'l1',
+          name: 'Level 1',
+          items: [{ id: 'b', tile: { x: 0, y: 0 } }]
+        }
+      ]
+    }
+  });
+  act(() => {
+    ui().actions.setItemControls({ type: 'ITEM', id: 'a' });
+  });
+  const floorLink = screen.getByRole('button', { name: 'Link to floor item' });
+  expect(
+    screen.queryAllByRole('button', { name: 'Link' }).includes(floorLink)
+  ).toBe(false);
+});
+
 describe('screen-reader support', () => {
   test('a selection is read out through the live region', () => {
     const canvas = mount();

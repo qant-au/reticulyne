@@ -29,6 +29,13 @@ Manhattan heuristic, 8-directional movement, and diagonal step cost
 `√2`. No alternative finders, no biased heuristics, no jump-point
 search, no smoother / interpolator.
 
+## Role since ROADMAP 3.3
+
+Connectors are now routed by `src/utils/router.ts` (turn-aware,
+deterministic tie-breaks). This A* still runs on every route as the
+baseline: `src/utils/pathfinder.ts` keeps the new route only when it
+is no longer and turns no more often than this one's.
+
 ## Local modifications
 
 None vs. the documented subset. The implementation is a clean rewrite

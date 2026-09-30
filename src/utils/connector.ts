@@ -19,6 +19,7 @@ import {
 import { CONNECTOR_SEARCH_OFFSET, UNPROJECTED_TILE_SIZE } from 'src/config';
 import { CoordsUtils } from './CoordsUtils';
 import { findPath } from './pathfinder';
+import { directionOf } from './router';
 import { getItemByIdOrThrow } from './common';
 import {
   getBoundingBox,
@@ -226,9 +227,26 @@ export const getConnectorPath = ({
       const entry = sideStep(anchors[i], position);
       const useExit = exit !== null && !CoordsUtils.isEqual(exit, position);
       const useEntry = entry !== null && !CoordsUtils.isEqual(entry, prev);
+      // ROADMAP 3.3: a route carries on in the direction it is already
+      // going - out of the node edge it leaves by, or through a manual
+      // waypoint - and arrives square to the edge it enters by.
+      const last = acc.length >= 2 ? acc.length - 1 : -1;
+      const startDir = useExit
+        ? directionOf(exit.x - prev.x, exit.y - prev.y)
+        : last >= 0
+          ? directionOf(
+              acc[last].x - acc[last - 1].x,
+              acc[last].y - acc[last - 1].y
+            )
+          : undefined;
+      const endDir = useEntry
+        ? directionOf(position.x - entry.x, position.y - entry.y)
+        : undefined;
       const path = findPath({
         from: useExit ? exit : prev,
         to: useEntry ? entry : position,
+        startDir,
+        endDir,
         gridSize: searchAreaSize,
         obstacles: [
           ...obstacles,

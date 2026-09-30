@@ -423,7 +423,10 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         case 'next-object':
         case 'previous-object': {
           if (editorMode === 'NON_INTERACTIVE') return;
-          if (!rendererEl || !rendererEl.contains(e.target as Node)) return;
+          // Only from the canvas element itself: Tab from a control inside
+          // it (a label's Show more button) is the browser's, or focus could
+          // never leave that control.
+          if (!rendererEl || e.target !== rendererEl) return;
           const stops = keyboardStops(visibleView, currentView);
           const forward = action === 'next-object';
           const at = stopIndex(stops, selection);

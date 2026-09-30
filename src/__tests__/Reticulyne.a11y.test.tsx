@@ -177,6 +177,16 @@ describe('keyboard access', () => {
     expect(selected()).toEqual([]);
   });
 
+  test('Tab from a control inside the canvas is left to the browser', () => {
+    const canvas = mount({ editorMode: 'EXPLORABLE_READONLY' });
+    // As a node label's Show more button: inside the canvas, but not it.
+    const button = document.createElement('button');
+    canvas.appendChild(button);
+    expect(tab(button)).toBe(true);
+    expect(tab(button, true)).toBe(true);
+    expect(selected()).toEqual([]);
+  });
+
   test('Tab works read-only too', () => {
     const canvas = mount({ editorMode: 'EXPLORABLE_READONLY' });
     tab(canvas);

@@ -207,6 +207,7 @@ export declare const diagramPlacementSchema: z.ZodObject<{
     labelHeight: z.ZodOptional<z.ZodNumber>;
     group: z.ZodOptional<z.ZodString>;
     layer: z.ZodOptional<z.ZodString>;
+    locked: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 export declare const anchorSchema: z.ZodObject<{
     id: z.ZodString;
@@ -274,6 +275,7 @@ export declare const connectorSchema: z.ZodObject<{
         both: "both";
     }>>;
     layer: z.ZodOptional<z.ZodString>;
+    locked: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 export declare const rectangleSchema: z.ZodObject<{
     id: z.ZodString;
@@ -292,6 +294,7 @@ export declare const rectangleSchema: z.ZodObject<{
     zIndex: z.ZodOptional<z.ZodNumber>;
     group: z.ZodOptional<z.ZodString>;
     layer: z.ZodOptional<z.ZodString>;
+    locked: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 export declare const textBoxSchema: z.ZodObject<{
     id: z.ZodString;
@@ -307,6 +310,7 @@ export declare const textBoxSchema: z.ZodObject<{
     }>>;
     group: z.ZodOptional<z.ZodString>;
     layer: z.ZodOptional<z.ZodString>;
+    locked: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 export declare const groupSchema: z.ZodObject<{
     id: z.ZodString;
@@ -328,6 +332,7 @@ export declare const diagramViewSchema: z.ZodObject<{
         labelHeight: z.ZodOptional<z.ZodNumber>;
         group: z.ZodOptional<z.ZodString>;
         layer: z.ZodOptional<z.ZodString>;
+        locked: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     connectors: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -381,6 +386,7 @@ export declare const diagramViewSchema: z.ZodObject<{
             both: "both";
         }>>;
         layer: z.ZodOptional<z.ZodString>;
+        locked: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     rectangles: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -399,6 +405,7 @@ export declare const diagramViewSchema: z.ZodObject<{
         zIndex: z.ZodOptional<z.ZodNumber>;
         group: z.ZodOptional<z.ZodString>;
         layer: z.ZodOptional<z.ZodString>;
+        locked: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     textBoxes: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -414,6 +421,7 @@ export declare const diagramViewSchema: z.ZodObject<{
         }>>;
         group: z.ZodOptional<z.ZodString>;
         layer: z.ZodOptional<z.ZodString>;
+        locked: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     groups: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -486,6 +494,7 @@ export declare const viewSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
         labelHeight: z.ZodOptional<z.ZodNumber>;
         group: z.ZodOptional<z.ZodString>;
         layer: z.ZodOptional<z.ZodString>;
+        locked: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     connectors: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -539,6 +548,7 @@ export declare const viewSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
             both: "both";
         }>>;
         layer: z.ZodOptional<z.ZodString>;
+        locked: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     rectangles: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -557,6 +567,7 @@ export declare const viewSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
         zIndex: z.ZodOptional<z.ZodNumber>;
         group: z.ZodOptional<z.ZodString>;
         layer: z.ZodOptional<z.ZodString>;
+        locked: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     textBoxes: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -572,6 +583,7 @@ export declare const viewSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
         }>>;
         group: z.ZodOptional<z.ZodString>;
         layer: z.ZodOptional<z.ZodString>;
+        locked: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>;
     groups: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -714,6 +726,7 @@ export declare const sceneShapeSchema: z.ZodObject<{
             labelHeight: z.ZodOptional<z.ZodNumber>;
             group: z.ZodOptional<z.ZodString>;
             layer: z.ZodOptional<z.ZodString>;
+            locked: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         connectors: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
@@ -767,6 +780,7 @@ export declare const sceneShapeSchema: z.ZodObject<{
                 both: "both";
             }>>;
             layer: z.ZodOptional<z.ZodString>;
+            locked: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         rectangles: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
@@ -785,6 +799,7 @@ export declare const sceneShapeSchema: z.ZodObject<{
             zIndex: z.ZodOptional<z.ZodNumber>;
             group: z.ZodOptional<z.ZodString>;
             layer: z.ZodOptional<z.ZodString>;
+            locked: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         textBoxes: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
@@ -800,6 +815,7 @@ export declare const sceneShapeSchema: z.ZodObject<{
             }>>;
             group: z.ZodOptional<z.ZodString>;
             layer: z.ZodOptional<z.ZodString>;
+            locked: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         groups: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
@@ -950,6 +966,7 @@ export declare const sceneSchema: z.ZodObject<{
             labelHeight: z.ZodOptional<z.ZodNumber>;
             group: z.ZodOptional<z.ZodString>;
             layer: z.ZodOptional<z.ZodString>;
+            locked: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         connectors: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
@@ -1003,6 +1020,7 @@ export declare const sceneSchema: z.ZodObject<{
                 both: "both";
             }>>;
             layer: z.ZodOptional<z.ZodString>;
+            locked: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         rectangles: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
@@ -1021,6 +1039,7 @@ export declare const sceneSchema: z.ZodObject<{
             zIndex: z.ZodOptional<z.ZodNumber>;
             group: z.ZodOptional<z.ZodString>;
             layer: z.ZodOptional<z.ZodString>;
+            locked: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         textBoxes: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
@@ -1036,6 +1055,7 @@ export declare const sceneSchema: z.ZodObject<{
             }>>;
             group: z.ZodOptional<z.ZodString>;
             layer: z.ZodOptional<z.ZodString>;
+            locked: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>;
         groups: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;

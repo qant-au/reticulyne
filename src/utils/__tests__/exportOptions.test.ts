@@ -19,6 +19,8 @@ import {
   downloadFile,
   exportAsPdf,
   exportAsImage,
+  exportAsUniversalSvg,
+  exportAsVectorSvg,
   filenameForTitle,
   waitForImages
 } from '../exportOptions';
@@ -254,6 +256,33 @@ describe('exportAsImage', () => {
     await expect(
       exportAsImage(document.createElement('div') as HTMLDivElement)
     ).rejects.toThrow(/could not be drawn/);
+  });
+});
+
+describe('SVG exports wait for their icons too', () => {
+  const broken = () => {
+    const el = document.createElement('div');
+    const img = document.createElement('img');
+    img.setAttribute('src', 'data:image/svg+xml,%3Csvg%3E%3C/svg%3E');
+    Object.defineProperty(img, 'decode', {
+      value: () => {
+        return Promise.reject(new Error('EncodingError'));
+      }
+    });
+    el.appendChild(img);
+    return el;
+  };
+
+  test('vector', async () => {
+    await expect(exportAsVectorSvg(broken(), '#fff')).rejects.toThrow(
+      /did not load for the export/
+    );
+  });
+
+  test('universal', async () => {
+    await expect(exportAsUniversalSvg(broken(), '#fff')).rejects.toThrow(
+      /did not load for the export/
+    );
   });
 });
 

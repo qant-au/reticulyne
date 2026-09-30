@@ -85,6 +85,52 @@ export const exportAsJSON = (scene: Scene) => {
   downloadFile(data, filenameForTitle(scene.title ?? 'Untitled', 'json'));
 };
 
+export const IMAGE_READY_TIMEOUT_MS = 10_000;
+
+// Every <img> under `el` loaded and decoded, or an Error saying which did
+// not. Node icons are loading="lazy", and a lazy image the browser does
+// not see (the export dialog renders its editor off screen, and the PDF
+// captures icons scrolled out of view) never loads: the capture drew the
+// labels with no icons (sweep 2026-09-30, A14). An export never drops an
+// icon silently.
+export const waitForImages = async (
+  el: HTMLElement,
+  timeoutMs = IMAGE_READY_TIMEOUT_MS
+) => {
+  const images = [...el.querySelectorAll('img')].filter((img) => {
+    return !!img.getAttribute('src');
+  });
+  const failed: string[] = [];
+
+  await Promise.all(
+    images.map(async (img) => {
+      img.setAttribute('loading', 'eager');
+      if (typeof img.decode !== 'function') return;
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      try {
+        await Promise.race([
+          img.decode(),
+          new Promise((_, reject) => {
+            timer = setTimeout(() => {
+              reject(new Error('timed out'));
+            }, timeoutMs);
+          })
+        ]);
+      } catch {
+        failed.push(img.src.slice(0, 80));
+      } finally {
+        clearTimeout(timer);
+      }
+    })
+  );
+
+  if (failed.length > 0) {
+    throw new Error(
+      `${failed.length} image(s) did not load for the export: ${failed.join(', ')}`
+    );
+  }
+};
+
 export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
   // Wait for any pending web-font loads before rasterising. Without
   // this, html-to-image may capture node labels rendered in the
@@ -104,15 +150,29 @@ export const exportAsImage = async (el: HTMLDivElement, size?: Size) => {
     }
   }
 
+  await waitForImages(el);
+
+  const failed: string[] = [];
   const imageData = await toPng(el, {
     ...size,
     cacheBust: true,
-    // An image that will not load (a missing icon, an empty src) is left
-    // out of the picture. Without this html-to-image rejects the whole
-    // capture with the image's DOM error Event, and the export silently
-    // did nothing (sweep 2026-09-30, Export as PDF).
-    onImageErrorHandler: () => {}
+    // html-to-image rejects a capture with an image that will not load by
+    // throwing the image's bare DOM error Event, which says nothing (sweep
+    // 2026-09-30, Export as PDF). Note it here and fail below with a real
+    // Error instead.
+    onImageErrorHandler: (event) => {
+      const target = typeof event === 'string' ? null : event?.target;
+      failed.push(
+        target instanceof HTMLImageElement ? target.src.slice(0, 80) : 'image'
+      );
+    }
   });
+
+  if (failed.length > 0) {
+    throw new Error(
+      `${failed.length} image(s) could not be drawn into the export: ${failed.join(', ')}`
+    );
+  }
 
   return imageData;
 };

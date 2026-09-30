@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useModelStore } from 'src/stores/modelStore';
@@ -45,6 +45,7 @@ const Stub = ({
   onFollow: (stub: FloorStub) => void;
 }) => {
   const projection = useProjection();
+  const theme = useTheme();
   const tileHeight = getProjectedTileSize(projection).height;
   const rise =
     Math.round(tileHeight * 1.6) * (stub.direction === 'up' ? -1 : 1);
@@ -76,11 +77,11 @@ const Stub = ({
             strokeWidth={4}
             strokeDasharray="8 6"
             strokeLinecap="round"
-            sx={{
-              stroke: (theme) => {
-                return theme.palette.text.secondary;
-              }
-            }}
+            // Colours as attributes, not sx classes: the image and PDF
+            // exports (html-to-image) keep an SVG's attributes but not its
+            // class styles, so the riser vanished and the diamond came out
+            // black (sweep 2026-09-30, round 3). Connectors do the same.
+            stroke={theme.palette.text.secondary}
           />
           <Box
             component="rect"
@@ -89,11 +90,7 @@ const Stub = ({
             width={14}
             height={14}
             transform={`rotate(45 0 ${rise})`}
-            sx={{
-              fill: (theme) => {
-                return theme.palette.primary.main;
-              }
-            }}
+            fill={theme.palette.primary.main}
           />
         </Box>
       </Box>

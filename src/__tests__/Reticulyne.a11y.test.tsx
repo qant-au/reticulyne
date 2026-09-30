@@ -241,13 +241,17 @@ describe('keyboard access', () => {
       }
     });
     while (selected()[0] !== 'TEXTBOX:t') tab(canvas);
-    // Open the panel first, as a selection does in the browser, so
-    // autoFocus on mount alone cannot pass this.
+    // As in the browser: the panel is already open from the selection and
+    // the canvas has focus, so neither autoFocus on mount nor MUI's
+    // focus-when-nothing-is-focused can pass this.
     act(() => {
       ui().actions.setItemControls({ type: 'TEXTBOX', id: 't' });
+      canvas.focus();
     });
     press(canvas, { key: 'Enter', code: 'Enter' });
-    const field = screen.getByRole('textbox', { name: 'Text' }) as HTMLInputElement;
+    const field = screen.getByRole('textbox', {
+      name: 'Text'
+    }) as HTMLInputElement;
     expect(document.activeElement).toBe(field);
     expect(field.selectionStart).toBe(0);
     expect(field.selectionEnd).toBe('Label'.length);

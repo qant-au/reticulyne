@@ -56,3 +56,22 @@ test('Tab from a label Show more button moves focus on, not the selection', asyn
   await page.keyboard.press('Shift+Tab');
   await expect(showMore).not.toBeFocused();
 });
+
+test('Enter on a text box reached with Tab puts focus in its text', async ({
+  page
+}) => {
+  await openEditor(page);
+  const canvas = page.getByRole('application');
+  await canvas.focus();
+  const status = page.locator('[role="status"][aria-atomic]');
+  for (let i = 0; i < 5; i += 1) {
+    await page.keyboard.press('Tab');
+    if (((await status.textContent()) ?? '').startsWith('Text:')) break;
+  }
+  await expect(status).toHaveText(/^Text: Label text/);
+  await page.keyboard.press('Enter');
+  const field = page.getByRole('textbox', { name: 'Text' });
+  await expect(field).toBeFocused();
+  await page.keyboard.type('Edited');
+  await expect(field).toHaveValue('Edited');
+});

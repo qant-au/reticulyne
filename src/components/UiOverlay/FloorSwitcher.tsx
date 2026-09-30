@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Box,
   ButtonBase,
@@ -17,6 +17,7 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { NAME_MAX, SCHEMA_LIMITS } from 'src/schemas/common';
+import { floorsOf } from 'src/vendor/accurona-core';
 
 // lw-053: the floor switcher, in the title bar where the view name was. A
 // floor is a view, and the tabs read as the building does, lowest first.
@@ -83,6 +84,29 @@ export const FloorSwitcher = () => {
   });
   const [renaming, setRenaming] = useState<string | null>(null);
   const [menu, setMenu] = useState<HTMLElement | null>(null);
+  const opened = useUiStateStore((state) => {
+    return state.sceneContext.opened;
+  });
+  // lw-055: where each floor is on the building - the plan floors its items
+  // are on, most first. Read from the items as they are now, saved or not.
+  const onPlan = useMemo(() => {
+    return new Map(
+      floors.map((floor) => {
+        const where = floorsOf(
+          opened,
+          floor.items.map((item) => {
+            return item.id;
+          })
+        ).map((location) => {
+          return location.floorName ?? location.floorId;
+        });
+        return [
+          floor.id,
+          where.length ? `On the floor plan: ${where.join(', ')}` : undefined
+        ];
+      })
+    );
+  }, [floors, opened]);
 
   // One floor, and nothing to add: just its name, as before floors.
   if (floors.length === 1 && !editable) {
@@ -130,7 +154,14 @@ export const FloorSwitcher = () => {
               role="tab"
               aria-selected={active}
               data-testid={`floor-tab-${floor.id}`}
-              title={editable ? 'Double-click to rename' : undefined}
+              title={
+                [
+                  onPlan.get(floor.id),
+                  editable ? 'Double-click to rename' : undefined
+                ]
+                  .filter(Boolean)
+                  .join(' · ') || undefined
+              }
               onClick={() => {
                 showFloor(floor.id);
               }}

@@ -41,22 +41,13 @@ export function placedOnlyElsewhere(scene, kinds) {
     return scene.objects.filter((o) => elsewhere.has(o.id) && !here.has(o.id));
 }
 /**
- * Where a diagram view is on the building: the plan floors its objects are
- * placed on, most objects first (ties in plan and floor order). A diagram per
- * floor maps to that floor; a diagram of objects on no plan maps to nothing.
- * `objects` narrows it to some of the diagram's objects, such as the ones on
- * a layer.
+ * The plan floors some objects are placed on, most objects first (ties in
+ * plan and floor order). An editor passes the objects of a diagram view as it
+ * stands, saved or not.
  */
-export function diagramLocations(scene, diagramViewId, objects) {
-    const diagram = scene.views?.find((v) => v.id === diagramViewId && v.kind !== 'plan');
-    if (!diagram)
-        return [];
-    const placed = new Set((diagram.placements ?? []).map((p) => p.object));
-    const wanted = objects
-        ? new Set([...objects].filter((id) => placed.has(id)))
-        : placed;
+export function floorsOf(scene, objects) {
+    const wanted = new Set(objects);
     const out = [];
-    let order = 0;
     for (const view of scene.views ?? []) {
         if (view.kind !== 'plan')
             continue;
@@ -68,14 +59,22 @@ export function diagramLocations(scene, diagramViewId, objects) {
                     planViewName: view.name,
                     floorId: floor.id,
                     ...(floor.name ? { floorName: floor.name } : {}),
-                    count,
-                    order
+                    count
                 });
             }
-            order++;
         }
     }
-    return out
-        .sort((a, b) => b.count - a.count || a.order - b.order)
-        .map(({ order: _order, ...location }) => location);
+    // A stable sort, so a tie keeps plan and floor order.
+    return out.sort((a, b) => b.count - a.count);
+}
+/**
+ * Where a diagram view is on the building: the plan floors its objects are
+ * on. A diagram per storey maps to that storey; a diagram of objects on no
+ * plan maps to nothing. Empty for a plan view or an unknown id.
+ */
+export function diagramLocations(scene, diagramViewId) {
+    const diagram = scene.views?.find((v) => v.id === diagramViewId && v.kind !== 'plan');
+    return diagram
+        ? floorsOf(scene, (diagram.placements ?? []).map((p) => p.object))
+        : [];
 }

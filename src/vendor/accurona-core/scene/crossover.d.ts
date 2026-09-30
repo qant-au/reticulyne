@@ -25,8 +25,8 @@ export declare function objectPlaces(scene: Scene, objectId: string): ObjectPlac
  * Objects in no view at all are left out; they belong to neither editor yet.
  */
 export declare function placedOnlyElsewhere(scene: Scene, kinds: ViewKind[]): SceneObject[];
-/** A floor of a plan view, and how many of a diagram's objects are on it. */
-export interface DiagramLocation {
+/** A floor of a plan view, and how many of the given objects are on it. */
+export interface FloorLocation {
     planViewId: string;
     planViewName: string;
     floorId: string;
@@ -34,11 +34,15 @@ export interface DiagramLocation {
     count: number;
 }
 /**
- * Where a diagram view is on the building: the plan floors its objects are
- * placed on, most objects first (ties in plan and floor order). A diagram per
- * floor maps to that floor; a diagram of objects on no plan maps to nothing.
- * `objects` narrows it to some of the diagram's objects, such as the ones on
- * a layer.
+ * The plan floors some objects are placed on, most objects first (ties in
+ * plan and floor order). An editor passes the objects of a diagram view as it
+ * stands, saved or not.
  */
-export declare function diagramLocations(scene: Scene, diagramViewId: string, objects?: Iterable<string>): DiagramLocation[];
+export declare function floorsOf(scene: Scene, objects: Iterable<string>): FloorLocation[];
+/**
+ * Where a diagram view is on the building: the plan floors its objects are
+ * on. A diagram per storey maps to that storey; a diagram of objects on no
+ * plan maps to nothing. Empty for a plan view or an unknown id.
+ */
+export declare function diagramLocations(scene: Scene, diagramViewId: string): FloorLocation[];
 export {};

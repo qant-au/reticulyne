@@ -2,7 +2,12 @@ import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import type { ZodIssue } from 'zod';
 import type { InitialData, IconCollectionState, Model } from 'src/types';
 import type { Scene } from 'src/vendor/accurona-core';
-import { readScene, sceneToModel, type LoadHints } from 'src/scene';
+import {
+  availableIcon,
+  readScene,
+  sceneToModel,
+  type LoadHints
+} from 'src/scene';
 import { INITIAL_DATA, INITIAL_SCENE_STATE } from 'src/config';
 import {
   getFitToViewParams,
@@ -153,12 +158,26 @@ export const useInitialDataManager = ({
           !loadedIds.has(icon.id) && icon.collection !== CUSTOM_ICON_COLLECTION
         );
       });
+      const icons = filterIconsByCollection(
+        [...loaded.icons, ...library],
+        iconCollectionsRef.current
+      );
+      // lw-055: a device from the floor plan carries only its Accurona
+      // element; it draws with that element's catalogue twin, when the
+      // editor has the twin's icon.
+      const objects = new Map(
+        read.scene.objects.map((object) => {
+          return [object.id, object];
+        })
+      );
       const initialData: Model = {
         ...loaded,
-        icons: filterIconsByCollection(
-          [...loaded.icons, ...library],
-          iconCollectionsRef.current
-        )
+        items: loaded.items.map((item) => {
+          if (item.icon) return item;
+          const icon = availableIcon(objects.get(item.id) ?? {}, icons);
+          return icon ? { ...item, icon } : item;
+        }),
+        icons
       };
 
       if (initialData.views.length === 0) {

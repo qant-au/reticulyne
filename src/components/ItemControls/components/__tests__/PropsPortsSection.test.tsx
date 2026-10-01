@@ -103,6 +103,19 @@ describe('PropsTable', () => {
     );
     render(<PropsTable props={full} editable onChange={jest.fn()} />);
     expect(screen.queryByLabelText('New prop key')).toBeNull();
+    expect(screen.getByText('An object holds at most 50 props.')).toBeTruthy();
+  });
+
+  test('a new key that is taken says so, as a port id does', () => {
+    render(<PropsTable props={props} editable onChange={jest.fn()} />);
+    fireEvent.change(screen.getByLabelText('New prop key'), {
+      target: { value: 'ip' }
+    });
+    expect(screen.getByText('That key is taken')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Add' })).toHaveProperty(
+      'disabled',
+      true
+    );
   });
 });
 

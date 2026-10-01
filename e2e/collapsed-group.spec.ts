@@ -112,8 +112,10 @@ test('dragging the box moves the group and keeps its connector', async ({
 });
 
 // Sweep 2026-09-30: the docked connector ran on past its arrowhead to the
-// box's centre, and the name ran over the box's lower-right edge.
-test('the docked connector stops at the box edge; the name sits under the box', async ({
+// box's centre, and the name ran over the box's lower-right edge. Sweep
+// 2026-10-01: under the box, a connector docked at the bottom corner ran
+// through the name, so it sits in the middle of the box.
+test('the docked connector stops at the box edge; the name sits in the box', async ({
   page
 }) => {
   const box = await boxArea(page);
@@ -142,6 +144,6 @@ test('the docked connector stops at the box edge; the name sits under the box', 
   expect(reach).toBeGreaterThan(0.85);
 
   const label = (await page.getByText('Desk pair (2)').boundingBox())!;
-  expect(label.y).toBeGreaterThanOrEqual(box.y + box.height - 4);
   expect(Math.abs(label.x + label.width / 2 - centre.x)).toBeLessThan(4);
+  expect(Math.abs(label.y + label.height / 2 - centre.y)).toBeLessThan(4);
 });

@@ -340,10 +340,9 @@ An item that has a physical twin names it with an external link:
   validated**: an unknown element id is not an error.
 - An item with a twin can borrow the element's isometric drawing instead of having its own icon,
   and uses the element's generated 2D schematic as its symbol in the flat view.
-- First twins worth adding: `wifi-ap`, `network-switch`, `router`, `firewall`, `nas`, `ip-phone`,
-  `cctv-dome`, `cctv-bullet`, `cctv-ptz`, `nvr`, `alarm-panel`, `card-reader`, `pir-sensor`,
-  `door-contact`, `intercom`, `fire-panel`, `smoke-detector`, `heat-detector`,
-  `manual-call-point`.
+- 51 of the 66 built-in items have a twin. The 15 without one are the bus parts (tees,
+  terminators, the power injector, the end-of-line resistor, the loop isolator), the two
+  gateways, the marine devices and the virtual items.
 
 ## How an item lands in a scene
 
@@ -453,7 +452,7 @@ Catalogue items used:
 
 The GPS receiver has no power port: it is powered from the bus, which is the normal case for a
 small NMEA 2000 sensor. `len` is the device's Load Equivalency Number (1 LEN = 50 mA drawn from
-the bus); the editor can sum it against what the injector supplies.
+the bus); the topology checks do not sum it against what the injector supplies.
 
 The scene (port props omitted for brevity):
 

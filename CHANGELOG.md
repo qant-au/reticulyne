@@ -75,7 +75,7 @@ potentially breaking and read the release notes before upgrading.
 
 - **Publishing to GitHub Packages.** Releases no longer publish the package, and the
   repository no longer carries a registry `.npmrc`. Versions already published there are
-  left in place. Install from source until the public npm release
+  left in place. Install from the public npm registry instead
   ([Installation](docs/installation.md)).
 
 ### Removed (breaking)
@@ -175,8 +175,8 @@ potentially breaking and read the release notes before upgrading.
   optional in `initialData` and `loadModel()`; a model without one is
   `'Untitled'`.
 
-- **Layer ordering for connectors and text boxes, not just rectangles**
- . Front / Forward / Backward / Back buttons in each inspector
+- **Layer ordering for connectors and text boxes, not just rectangles**.
+  Front / Forward / Backward / Back buttons in each inspector
   and in the multi-select panel, the right-click menu on connectors and text
   boxes, and Excalidraw's hotkeys: `Ctrl/Cmd+]` / `[`, with `Shift` for
   to-front / to-back (UXA-06). A multi-selection moves as one block in one
@@ -415,9 +415,9 @@ to the public npm registry.
 
 ## Pre-rename history
 
-This project shipped as `@qant-au/isoflow` from v1.0.0 through v4.7.0 — see
-the README's **"Pre-rename development history"** section for the v4
+This project shipped as `@qant-au/isoflow` from v1.0.0 through v4.7.0. The v4
 modernisation arc (test surface, security hardening, dark-mode pass, SVG/PDF
-export, per-rectangle styling, 8-directional routing, embedding isolation).
-The pre-rename git tags (`v4.1.0`–`v4.6.0`) remain on this repository as
+export, per-rectangle styling, 8-directional routing, embedding isolation) is in
+`git log`; the README section that once summarised it has since been removed.
+The pre-rename git tags (`v4.0.0` to `v4.6.0`) remain on this repository as
 historical pointers.

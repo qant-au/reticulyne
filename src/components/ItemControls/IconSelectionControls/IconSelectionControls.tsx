@@ -16,6 +16,7 @@ import { FloorPlanObjects, type FloorPlanObject } from './FloorPlanObjects';
 import { CatalogueItems } from './CatalogueItems';
 import { useModelStore } from 'src/stores/modelStore';
 import { catalogueTemplate } from 'src/scene/crossover';
+import { schematicIcons } from 'src/catalogue/place';
 import type { CatalogueItem } from 'src/catalogue/schema';
 import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
@@ -145,11 +146,36 @@ export const IconSelectionControls = ({
   const icons = useModelStore((state) => {
     return state.icons;
   });
+  const modelActions = useModelStore((state) => {
+    return state.actions;
+  });
+
+  // The template to place: an item the editor has no drawing for draws with
+  // its 2D schematic symbol, which the diagram then carries as an icon (a
+  // scene may refer only to icons it holds), rather than with no image.
+  const templateFor = useCallback(
+    (item: CatalogueItem) => {
+      const template = catalogueTemplate(item, icons);
+      if (template.icon) return template;
+      const [symbol] = schematicIcons([item]);
+      if (!symbol) return template;
+      const current = modelActions.get().icons;
+      if (
+        !current.some((icon) => {
+          return icon.id === symbol.id;
+        })
+      ) {
+        modelActions.set({ icons: [...current, symbol] });
+      }
+      return { ...template, icon: symbol.id };
+    },
+    [icons, modelActions]
+  );
 
   const onCatalogueMouseDown = useCallback(
     (item: CatalogueItem) => {
       if (mode.type !== 'PLACE_ICON' && !armFromAnyMode) return;
-      const template = catalogueTemplate(item, icons);
+      const template = templateFor(item);
 
       if (targetTile && !armFromAnyMode) {
         const id = generateId();
@@ -178,7 +204,7 @@ export const IconSelectionControls = ({
       createModelItem,
       createViewItem,
       armFromAnyMode,
-      icons
+      templateFor
     ]
   );
 
@@ -186,7 +212,7 @@ export const IconSelectionControls = ({
     (item: CatalogueItem) => {
       const current = uiStateActions.get().mode;
       if (current.type !== 'PLACE_ICON' && !armFromAnyMode) return;
-      const template = catalogueTemplate(item, icons);
+      const template = templateFor(item);
       // The press before it armed this same item: the pointer places it.
       if (
         current.type === 'PLACE_ICON' &&
@@ -201,7 +227,7 @@ export const IconSelectionControls = ({
         template
       );
     },
-    [uiStateActions, armFromAnyMode, placeIcon, targetTile, icons]
+    [uiStateActions, armFromAnyMode, placeIcon, targetTile, templateFor]
   );
 
   return (

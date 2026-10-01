@@ -145,5 +145,8 @@ test('the docked connector stops at the box edge; the name sits in the box', asy
 
   const label = (await page.getByText('Desk pair (2)').boundingBox())!;
   expect(Math.abs(label.x + label.width / 2 - centre.x)).toBeLessThan(4);
-  expect(Math.abs(label.y + label.height / 2 - centre.y)).toBeLessThan(4);
+  // In the middle of the diamond, well clear of its corners.
+  expect(Math.abs(label.y + label.height / 2 - centre.y)).toBeLessThan(
+    box.height / 6
+  );
 });

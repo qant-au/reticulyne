@@ -209,8 +209,8 @@ export interface ReticulyneProps {
   enableGlobalDragHandlers?: boolean;
   /**
    * When `false`, the keyboard-shortcut listener attaches to the renderer
-   * element (made focusable) rather than `window`, so single-key tool and
-   * zoom shortcuts (`V`/`H`/`R`/`C`/`T`/`+`/`-`/`0`/`1`/`F`/`?`) only fire
+   * element rather than `window`, so single-key tool and zoom shortcuts
+   * (`V`/`H`/`R`/`A`/`T`/`+`/`-`/`1`/`F`/`?`) only fire
    * while the canvas has focus. This stops an embedded `<Reticulyne>` from
    * hijacking the host page's global keystrokes (FEA-07). Defaults to
    * `true` for backwards compatibility — the symmetric counterpart of

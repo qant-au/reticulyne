@@ -1,8 +1,8 @@
 import { PaletteMode, ThemeOptions } from '@mui/material';
 import {
-  createLineworkTheme,
-  lineworkThemeOptions,
-  lineworkVars,
+  createAccuronaTheme,
+  accuronaThemeOptions,
+  accuronaVars,
   type CustomThemeVars
 } from 'src/vendor/accurona-ui';
 
@@ -11,13 +11,13 @@ import {
 // embedded in other apps, and MUI would write them to the host's :root.
 
 // Legacy `customVars` export: the light-mode values, for any external import.
-export const customVars: CustomThemeVars = lineworkVars('light');
+export const customVars: CustomThemeVars = accuronaVars('light');
 
 // Embedders pass `themeMode` on <Reticulyne>; the resolved mode ('light' |
 // 'dark'; 'auto' is resolved at the React layer via prefers-color-scheme)
 // drives palette + customVars.
 export const createReticulyneTheme = (mode: PaletteMode) => {
-  return createLineworkTheme(mode);
+  return createAccuronaTheme(mode);
 };
 
 // Back-compat named export: the light-mode theme.
@@ -25,4 +25,4 @@ export const theme = createReticulyneTheme('light');
 
 // The light-mode ThemeOptions. The picker entry (`src/index.tsx`) spreads it
 // into `createTheme` to derive its own outer theme.
-export const themeConfig: ThemeOptions = lineworkThemeOptions('light');
+export const themeConfig: ThemeOptions = accuronaThemeOptions('light');

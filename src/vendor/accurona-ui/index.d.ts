@@ -1,4 +1,4 @@
-export { createLineworkTheme, lineworkThemeOptions, lineworkVars, type CustomThemeVars, type LineworkThemeSettings } from './theme.js';
+export { createAccuronaTheme, accuronaThemeOptions, accuronaVars, type CustomThemeVars, type AccuronaThemeSettings } from './theme.js';
 export { AppDialog } from './AppDialog.js';
 export { CloseButton } from './CloseButton.js';
 export { ContextMenu, type ContextMenuItem } from './ContextMenu.js';

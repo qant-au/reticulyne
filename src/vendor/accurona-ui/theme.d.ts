@@ -19,9 +19,9 @@ declare module '@mui/material/styles' {
         customVars?: CustomThemeVars;
     }
 }
-export declare const lineworkVars: (mode?: PaletteMode) => CustomThemeVars;
-export declare const lineworkThemeOptions: (mode?: PaletteMode) => ThemeOptions;
-export interface LineworkThemeSettings {
+export declare const accuronaVars: (mode?: PaletteMode) => CustomThemeVars;
+export declare const accuronaThemeOptions: (mode?: PaletteMode) => ThemeOptions;
+export interface AccuronaThemeSettings {
     cssVariables?: boolean;
 }
-export declare const createLineworkTheme: (mode?: PaletteMode, { cssVariables }?: LineworkThemeSettings) => import("@mui/material").Theme;
+export declare const createAccuronaTheme: (mode?: PaletteMode, { cssVariables }?: AccuronaThemeSettings) => import("@mui/material").Theme;

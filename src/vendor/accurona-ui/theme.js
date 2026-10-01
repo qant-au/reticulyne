@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material';
-export const lineworkVars = (mode = 'light') => {
+export const accuronaVars = (mode = 'light') => {
     const isDark = mode === 'dark';
     return {
         appPadding: { x: 40, y: 40 },
@@ -18,10 +18,10 @@ const createShadows = (mode) => {
         .map((_shadow, i) => i === 0 ? 'none' : `0px 10px 20px ${i - 10}px rgba(0,0,0,${alpha})`);
 };
 // The theme as options, for a host that builds its own theme on top.
-export const lineworkThemeOptions = (mode = 'light') => {
+export const accuronaThemeOptions = (mode = 'light') => {
     const isDark = mode === 'dark';
     return {
-        customVars: lineworkVars(mode),
+        customVars: accuronaVars(mode),
         shadows: createShadows(mode),
         typography: {
             h2: { fontSize: '4em', fontWeight: 'bold', lineHeight: 1.2 },
@@ -68,4 +68,4 @@ export const lineworkThemeOptions = (mode = 'light') => {
         }
     };
 };
-export const createLineworkTheme = (mode = 'light', { cssVariables = false } = {}) => createTheme({ ...lineworkThemeOptions(mode), cssVariables });
+export const createAccuronaTheme = (mode = 'light', { cssVariables = false } = {}) => createTheme({ ...accuronaThemeOptions(mode), cssVariables });

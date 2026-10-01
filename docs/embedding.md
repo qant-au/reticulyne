@@ -66,10 +66,11 @@ All props are optional. The component renders a fully-functional editor with sen
 | `onValidationError` | `(issues: ZodIssue[], context?: { fileName?: string }) => void` | `undefined` | Invoked when `initialData` (or a `useReticulyne().loadModel(...)` payload) fails schema validation. Receives the array of Zod issues, and, for a file opened through Main menu > Open, `{ fileName }` so a message can name it. When omitted, the failure is logged to `console.error` instead. Earlier versions popped a `window.alert`; that has been replaced by this contract. Callback identity does **not** need to be memoised. |
 | `enableAnimation` | `boolean` | `false` | Opt-in for the connector animation feature (FEA5-06). When `true`, a connector whose `animated` schema field is `true` renders its glyph travelling along the line on a continuous loop, and the **Animate** toggle appears in the ConnectorControls panel. When `false`, the toggle is hidden and `animated: true` connectors render statically — so a saved-with-animation diagram looks identical to a pre-FEA5-06 deployment until the host opts in. |
 | `enableGlobalDragHandlers` | `boolean` | `true` | When `false`, pointer event listeners attach to the renderer element rather than `window`, preventing drag events from leaking into host-page sibling widgets (FEA10-01). Defaults to `true` for backwards compatibility. All pointer input (mouse, touch, stylus) is handled via the Pointer Events API regardless of this setting. |
+| `enableGlobalKeyboardShortcuts` | `boolean` | `true` | When `false`, the keyboard-shortcut listener attaches to the canvas rather than `window`, so the shortcuts fire only while the canvas has focus and an embedded editor does not take the host page's keystrokes (FEA-07). Defaults to `true` for backwards compatibility. |
 | `nodeIndicatorComponent` | `(args: { item: ModelItem, view: ViewItem }) => ReactNode` | `undefined` | Per-node decorator (FEA5-07). Rendered inside every Node, positioned at the node's tile and receiving its `ModelItem` + `ViewItem`. Use it to overlay live indicators — status pips, gauges, badges, mini-charts — driven by host state that isn't part of the model. See [Live dashboards](#live-dashboards). Never drawn into an export or the mini-map ([details](#indicators-in-exports-and-the-mini-map)). |
 | `connectorIndicatorComponent` | `(args: { connector: Connector, view: View }) => ReactNode` | `undefined` | Per-connector decorator (FEA7-03). Rendered at every connector's midpoint as an absolutely-positioned overlay, receiving the connector's schema-level model and the parent `View`. Mirrors `nodeIndicatorComponent` for link-level telemetry — throughput, latency, error-rate, link-down — driven by host state that isn't part of the model. Never drawn into an export or the mini-map. |
 | `highlightedItemId` | `string` | `undefined` | When set, the editor highlights the item with this ID and dims all others to `opacity: 0.2` with a CSS transition (FEA12-01). Drives focus from host-side navigation without touching interaction state. When omitted, the `Alt+I` keyboard shortcut controls dimming based on the current interactive selection instead. |
-| `tour` | `TourStep[]` | `undefined` | A presentation tour (lw-064). When set, a **Start tour** button shows in every mode but `NON_INTERACTIVE`. Each step is `{ nodeId, viewId?, zoom?, title?, narration? }`; see [Presentation tours](embedding.md#presentation-tours). |
+| `tour` | `TourStep[]` | `undefined` | A presentation tour. When set, a **Start tour** button shows in every mode but `NON_INTERACTIVE`. Each step is `{ nodeId, viewId?, zoom?, title?, narration? }`; see [Presentation tours](embedding.md#presentation-tours). |
 | `onTourStepChange` | `(state: TourState \| null) => void` | `undefined` | Called with `{ index, total, step }` each time the tour moves to a step, and with `null` when it ends. |
 | `themeMode` | `'light'` \| `'dark'` \| `'auto'` | `'auto'` | Controls the editor colour scheme. `'light'` and `'dark'` force the respective palette. `'auto'` (the default) mirrors the OS/browser `prefers-color-scheme` setting and switches live when the user changes their system preference. The user can flip light / dark for the session with `Alt+Shift+D` (as in Excalidraw); that overrides this prop until the page reloads. |
 | `exportTheme` | `'light'` \| `'dark'` | `'light'` | Controls the initial background colour in the export dialog (PNG / PDF). `'light'` seeds the dialog with the light-mode diagram background (`#f6faff`); `'dark'` seeds it with the dark-mode background (`#1a1d24`). The user can still change the background colour inside the dialog before downloading. |
@@ -99,6 +100,7 @@ All props are optional. The component renders a fully-functional editor with sen
 | `⌘/Ctrl D` | Duplicate active item |
 | `⌘/Ctrl G` | Group the selection |
 | `⌘/Ctrl ⇧ G` | Ungroup |
+| `⌘/Ctrl ⇧ L` | Lock or unlock the selection |
 | `⌘/Ctrl A` | Select all |
 | `⌘/Ctrl F` | Find items by name, description or icon; `Enter` / `Shift+Enter` step through the matches, `Esc` closes |
 | `⇧ Click` | Add / remove from selection |
@@ -167,7 +169,7 @@ The host page never sees these wheel events bubble — the renderer's wheel list
 
 The editor wires the conventions used by Figma, Miro, Excalidraw and tldraw. All shortcuts are window-level and are suppressed while focus is on a text input / textarea / contenteditable surface (e.g. an item-description editor), so they never collide with the host's own typing.
 
-The bindings are the **shared linework keymap**, the same one [Axonometra](https://github.com/qant-au/axonometra) binds, aligned with **Excalidraw's**, letter and number alike, so an operator moving between an Excalidraw canvas and this one is not retrained. The specification, with every deliberate difference from Excalidraw, is [Accurona's `docs/keymap.md`](https://github.com/qant-au/accurona/blob/main/docs/keymap.md); the `?` dialog lists the same table. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
+The bindings are the **shared Accurona keymap**, the same one [Axonometra](https://github.com/qant-au/axonometra) binds, aligned with **Excalidraw's**, letter and number alike, so an operator moving between an Excalidraw canvas and this one is not retrained. The specification, with every deliberate difference from Excalidraw, is [Accurona's `docs/keymap.md`](https://github.com/qant-au/accurona/blob/main/docs/keymap.md); the `?` dialog lists the same table. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
 
 **Tools.** Bare key, no modifier. Select and Hand work in `EXPLORABLE_READONLY` too; the drawing tools need `EDITABLE`.
 
@@ -190,7 +192,7 @@ The bindings are the **shared linework keymap**, the same one [Axonometra](https
 | `F` or `Shift + 1` | Fit to view |
 | `Shift + 2` | Fit to selection (no-op when nothing is selected) |
 
-**Selection — `EDITABLE` mode only.**
+**Selection.** Click, `Shift` + click, `Ctrl/Cmd + A` and `Esc` work in `EXPLORABLE_READONLY` too; the rest need `EDITABLE`.
 
 | Gesture / Key | Action |
 |---|---|
@@ -326,8 +328,8 @@ Everything a pointer does on the canvas has a keyboard route, and a screen reade
 told what is on the diagram and what is selected.
 
 **Reaching the canvas.** The canvas is a focusable `role="application"` region in every
-editor mode but `NON_INTERACTIVE`, so it is one stop in the page's tab order (lw-068;
-before, it was focusable only with `enableGlobalKeyboardShortcuts={false}`). Its
+editor mode but `NON_INTERACTIVE`, so it is one stop in the page's tab order (before,
+it was focusable only with `enableGlobalKeyboardShortcuts={false}`). Its
 `aria-describedby` hint names the keys below, and it shows a focus ring when reached
 from the keyboard.
 
@@ -377,6 +379,8 @@ Available values (`MainMenuOptionsEnum`):
 |---|---|
 | `'ACTION.OPEN'` | Open a diagram from a local JSON file: a scene, or a legacy model (converted) |
 | `'ACTION.NEW_FROM_TEMPLATE'` | Replace the diagram with a starter diagram (see the `templates` prop) |
+| `'ACTION.SAVE'` | A **Save** entry that calls `onSave`; off by default, and shown only when `onSave` is supplied (see [Host-managed save](#host-managed-save--onsave--actionsave)) |
+| `'ACTION.RENAME'` | Rename the diagram (menu label: "Rename diagram") |
 | `'EXPORT.JSON'` | Download the diagram as a scene file (JSON) |
 | `'EXPORT.PNG'` | Export the diagram as a PNG image |
 | `'EXPORT.PDF'` | Export the diagram as a PDF |
@@ -511,8 +515,8 @@ is the viewer's, not the diagram's, and is not saved.
 
 ### Presentation tours
 
-For read-only embeds, a tour walks a viewer through the diagram one node at a time
-(lw-064). Each step switches to the node's view if need be, centres on it (the canvas
+For read-only embeds, a tour walks a viewer through the diagram one node at a time.
+Each step switches to the node's view if need be, centres on it (the canvas
 animates the move), highlights it as `highlightedItemId` does, and shows a narration
 panel above the title strip: the step count, the node's name, and its narration, with
 **Previous**, **Next** (**Finish** on the last step) and a close button.
@@ -656,7 +660,7 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `Connector.pulse(id, opts?)` | `(id, { durationMs?, glyph? }?) => void` | Fire a one-shot signal pulse — the chosen glyph travels the connector once over `durationMs` (default 1500). Runtime-only: writes to the scene-store overlay, never persisted to the model, never recorded in history. Each call supersedes any pulse already in-flight on that connector. |
 | `applyPatch(patch, opts?)` | `(patch: DiagramPatch, { pushToUndo? }?) => void` | Live update by id: node `name` / `description` / `icon` / `tile`; connector, rectangle and text-box styling; group `name` / `color` / `collapsed`. Never touches the selection, zoom or pan. Ids that no longer exist are skipped. During a drag, a marquee or a connector or rectangle being drawn, the patch waits and lands when the gesture ends. Validated first (a bad patch goes to `onValidationError`, nothing changes). Not on the undo stack unless `pushToUndo: true`. A colour it changes fades in over about 200 ms (none under `prefers-reduced-motion`). Refused in `NON_INTERACTIVE`. |
 | `updateNode(id, patch, opts?)` | `(id, NodePatch, opts?) => void` | `applyPatch` for one node. |
-| `setConnectorRate(id, rate, opts?)` | `(id, rate: number) => void` | Connector animation rate, 0 (stopped) to 1. Shows only with `enableAnimation`. |
+| `setConnectorRate(id, rate, opts?)` | `(id, rate: number, opts?) => void` | Connector animation rate, 0 (stopped) to 1. Shows only with `enableAnimation`. |
 | `getNode(id)` | `(id) => NodeInfo \| undefined` | `{ id, name, description?, icon?, tile }`, a copy; `tile` is `null` when the node is not on the current view. |
 | `getViewport()` | `() => Viewport` | `{ zoom, scroll: { x, y }, viewId }`. |
 | `getSelection()` | `() => SelectedRef[]` | `{ type, id }` copies, oldest first. |
@@ -664,13 +668,13 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `fitToView()` | `() => void` | Zoom and pan so the whole current view fits. Allowed in every mode. |
 | `select(ids)` | `(ids: string \| string[]) => void` | Replace the selection with these nodes, connectors, rectangles or text boxes on the current view; unknown ids are skipped. `EDITABLE` only. |
 | `clearSelection()` | `() => void` | Clear the selection. |
-| `startTour(steps?)` | `(steps?: TourStep[]) => boolean` | Start a presentation tour (lw-064): these steps, else the `tour` prop's, else every node on the current view in reading order. Validated (a bad step goes to `onValidationError`); a step whose node is on no view is skipped. Returns `false` if nothing could be started. Allowed in every mode. |
+| `startTour(steps?)` | `(steps?: TourStep[]) => boolean` | Start a presentation tour: these steps, else the `tour` prop's, else every node on the current view in reading order. Validated (a bad step goes to `onValidationError`); a step whose node is on no view is skipped. Returns `false` if nothing could be started. Allowed in every mode. |
 | `nextTourStep()` / `previousTourStep()` | `() => void` | Step the tour; does nothing past either end. |
 | `goToTourStep(index)` | `(index: number) => void` | Jump to a step (from 0); out of range does nothing. |
 | `endTour()` | `() => void` | End the tour and restore the highlight it replaced. |
 | `getTourState()` | `() => TourState \| null` | `{ index, total, step }`, or `null` when no tour is running. |
 
-The `Model` and `uiState` escape hatches were removed in 1.6 (breaking; see the CHANGELOG).
+The `Model` and `uiState` escape hatches were removed in 0.4.0 (breaking; see the CHANGELOG).
 Model writes go through `applyPatch`, `setTitle` or `loadModel`; view and selection through the
 methods above. There is no `setNodeStatus`: node status is host state, drawn with
 `nodeIndicatorComponent` (see Live dashboards).

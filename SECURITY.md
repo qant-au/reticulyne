@@ -7,8 +7,8 @@ latest release receives security fixes.
 
 | Version | Supported |
 | ------- | --------- |
-| 0.3.x   | Yes       |
-| < 0.3   | No        |
+| 0.5.x   | Yes       |
+| < 0.5   | No        |
 
 ## Reporting a vulnerability
 
@@ -91,7 +91,7 @@ The standalone Docker image (built from this repository, served by nginx — see
 
 - **Why `'unsafe-inline'`?** Reticulyne's styling stack is Emotion + MUI v9, both of which inject `<style>` tags at runtime as components mount. A strict `style-src 'self'` would block every Emotion-injected rule and the editor would render unstyled. A nonce-based policy is in principle possible but is not supported out of the box by Emotion's runtime injector.
 - **Why is the risk contained?** Inline _styles_ cannot execute script. The CSS-injection surface lets an attacker re-skin the page (or, with a carefully-crafted CSS-leak primitive, exfiltrate measurable state from the same origin), but not break out of CSS into JavaScript. The XSS-execution path that would matter — inline `<script>` — is still closed by `script-src 'self'`.
-- **Why `https://fonts.googleapis.com`?** The standalone editor uses Google Fonts (Roboto). The corresponding font-file fetch is allowed by `font-src https://fonts.gstatic.com data:`.
+- **Why `https://fonts.googleapis.com`?** The standalone editor loads no web fonts (it uses the system font stack); the allowance, with `font-src https://fonts.gstatic.com data:` for the font files, is kept for forks that add Google Fonts.
 - **Closes when:** Emotion (or whichever CSS-in-JS layer we use at the time) supports nonce- or hash-based style injection out of the box, _and_ MUI's emit path follows. Until then, this clause stays.
 
 ### `script-src 'self'`
@@ -198,7 +198,7 @@ No new overrides were added; `undici`, `browserslist`, `nanoid` and `baseline-br
 
 `webpack-dev-server@5.2.4 → sockjs@0.3.24` pinned `uuid@8.3.2`, which is in the vulnerable range (`< 11.1.1`) of `GHSA-w5hq-g745-h8pq` / `CVE-2026-41907` (silent partial buffer writes in `v3()/v5()/v6()` when caller-supplied `buf` is undersized or `offset` overflows). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`) and sockjs only ever calls `v4()` (`node_modules/sockjs/lib/transport.js:9`), so the vulnerable code path isn't even exercised in practice — but Dependabot kept the alert open. Added a top-level `"overrides": { "uuid": "^11.1.1" }` block in `package.json` so the transitive copy dedupes onto our already-patched direct dependency. `npm ls uuid` now returns a single `uuid@11.1.1` entry and the Dependabot alert auto-closes once the lockfile lands on `main`.
 
-**Changed to `"uuid": "$uuid"` in `DEP-15`.** The literal `^11.1.1` duplicated the direct dependency's range, so the first Dependabot npm run failed with `Override for uuid@14.0.2 conflicts with direct dependency`. `$uuid` is npm's reference form: the transitive copy follows whatever the direct dependency is, which is what this override was always for. `npm ls uuid` still returns a single `11.1.1`.
+**Changed to `"uuid": "$uuid"` in `DEP-15`.** The literal `^11.1.1` duplicated the direct dependency's range, so the first Dependabot npm run failed with `Override for uuid@14.0.2 conflicts with direct dependency`. `$uuid` is npm's reference form: the transitive copy follows whatever the direct dependency is, which is what this override was always for. `npm ls uuid` still returns a single copy, the direct dependency's.
 
 ### `SEC7-01` — overrode transitive `qs` to clear `GHSA-q8mj-m7cp-5q26`
 

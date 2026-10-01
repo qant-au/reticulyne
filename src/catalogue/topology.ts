@@ -88,6 +88,12 @@ const portUse = (connections: TopologyConnection[]) => {
   return use;
 };
 
+// The id a loop port belongs to: 'loop1-out' and 'loop1-in' are loop1.
+const loopOf = (portId: string) => {
+  const cut = portId.lastIndexOf('-');
+  return cut > 0 ? portId.slice(0, cut) : portId;
+};
+
 // Wireless association: a client associates with a hub; a peer with a
 // peer or a hub (a mesh). Hub to hub is allowed (a backhaul).
 const rolesAssociate = (a: string, b: string) => {
@@ -99,7 +105,8 @@ const rolesAssociate = (a: string, b: string) => {
 /**
  * The ports a new connection between two items should use: the first
  * medium both have (power last), and on it the first port on each side
- * with room left. When every shared port is taken it still returns the
+ * with room left, a loop's return first where that loop has left the item.
+ * When every shared port is taken it still returns the
  * first pair, so the connection is drawn and the overuse is a warning.
  * Undefined when the items share no medium, or either has no ports.
  */
@@ -145,14 +152,40 @@ export const pickPorts = (
     const used = use.get(endKey(item, port.id))?.length ?? 0;
     return used < portCapacity(port, medium);
   };
+  // A loop's return port, on an item whose out port for that loop is already
+  // connected: the connection closing the loop belongs there, not on the
+  // next loop's out port.
+  const closesLoop = (item: TopologyItem, port: Port) => {
+    if (portRole(port, byId.get(port.kind!)) !== 'loop-return') return false;
+    const loop = loopOf(port.id);
+    return (item.ports ?? []).some((p) => {
+      return (
+        p.kind !== undefined &&
+        loopOf(p.id) === loop &&
+        portRole(p, byId.get(p.kind)) === 'loop-out' &&
+        (use.get(endKey(item.id, p.id))?.length ?? 0) > 0
+      );
+    });
+  };
+  const closingFirst = (item: TopologyItem, ports: Port[]) => {
+    return [...ports].sort((x, y) => {
+      return Number(closesLoop(item, y)) - Number(closesLoop(item, x));
+    });
+  };
   for (const kind of kinds) {
     const medium = byId.get(kind);
-    const a = fromPorts.filter((p) => {
-      return p.kind === kind && free(from.id, p);
-    });
-    const b = toPorts.filter((p) => {
-      return p.kind === kind && free(to.id, p);
-    });
+    const a = closingFirst(
+      from,
+      fromPorts.filter((p) => {
+        return p.kind === kind && free(from.id, p);
+      })
+    );
+    const b = closingFirst(
+      to,
+      toPorts.filter((p) => {
+        return p.kind === kind && free(to.id, p);
+      })
+    );
     for (const pa of a) {
       const pb = b.find((p) => {
         return (
@@ -180,12 +213,6 @@ export const pickPorts = (
     toPort: choose(to, toPorts),
     kind
   };
-};
-
-// The id a loop port belongs to: 'loop1-out' and 'loop1-in' are loop1.
-const loopOf = (portId: string) => {
-  const cut = portId.lastIndexOf('-');
-  return cut > 0 ? portId.slice(0, cut) : portId;
 };
 
 interface End {

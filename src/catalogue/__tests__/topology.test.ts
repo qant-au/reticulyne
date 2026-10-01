@@ -78,6 +78,25 @@ describe('pickPorts', () => {
     const term = place('n2k-terminator-male', 't');
     expect(pickPorts(sw, term, [])).toBeUndefined();
   });
+
+  test('closes a fire loop on the return of the loop it left by', () => {
+    const fip = place('fire-panel-2-loop', 'fip');
+    const sd = place('smoke-detector', 'sd');
+    const mcp = place('manual-call-point', 'mcp');
+    expect(pickPorts(fip, sd, [])?.fromPort).toBe('loop1-out');
+    const taken = [
+      conn('l1', 'fip', 'loop1-out', 'sd', 'loop', 'fire-loop'),
+      conn('l2', 'sd', 'loop', 'mcp', 'loop', 'fire-loop')
+    ];
+    const back = pickPorts(mcp, fip, taken);
+    expect(back?.toPort).toBe('loop1-in');
+    expect(
+      messages(
+        [fip, sd, mcp],
+        [...taken, conn('l3', 'mcp', 'loop', 'fip', back!.toPort, 'fire-loop')]
+      )
+    ).toEqual([]);
+  });
 });
 
 describe('topologyWarnings', () => {

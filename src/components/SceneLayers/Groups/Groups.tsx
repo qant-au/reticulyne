@@ -170,28 +170,11 @@ export const Groups = () => {
         // box's lower-right edge (sweep 2026-09-30); under the bottom corner a
         // connector docked there ran through it (sweep 2026-10-01). Connectors
         // stop at the box's edge, so its middle is clear.
-        const corners = [
-          { x: box.tile.x - BOX, y: box.tile.y - BOX },
-          { x: box.tile.x + BOX, y: box.tile.y - BOX },
-          { x: box.tile.x + BOX, y: box.tile.y + BOX },
-          { x: box.tile.x - BOX, y: box.tile.y + BOX }
-        ].map((tile) => {
-          return getTilePosition({
-            tile,
-            origin: 'BOTTOM',
-            projection: currentView.kind
-          });
+        const label = getTilePosition({
+          tile: box.tile,
+          origin: 'CENTER',
+          projection: currentView.kind
         });
-        const label = {
-          x:
-            corners.reduce((sum, c) => {
-              return sum + c.x;
-            }, 0) / corners.length,
-          y:
-            corners.reduce((sum, c) => {
-              return sum + c.y;
-            }, 0) / corners.length
-        };
         return (
           <Box
             key={group.id}

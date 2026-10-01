@@ -5,7 +5,7 @@ covers the quick highlights; everything below is the depth.
 
 ## Getting started
 
-- [Installation](installation.md) — build from source and install the local package.
+- [Installation](installation.md) — install from npm, peer dependencies, migration notes.
 - [Quick start](quickstart.md) — minimal embed example, container sizing, Next.js note.
 
 ## Core reference

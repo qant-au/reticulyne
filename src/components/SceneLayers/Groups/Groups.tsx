@@ -144,7 +144,7 @@ export const Groups = () => {
                     fontWeight: 600,
                     color: 'text.secondary',
                     whiteSpace: 'nowrap',
-                    transform: 'translateX(-50%)',
+                    transform: 'translate(-50%, -50%)',
                     display: 'block'
                   }}
                 >
@@ -166,9 +166,10 @@ export const Groups = () => {
           members.every((m) => {
             return selectedKeys.has(`${m.type}:${m.id}`);
           });
-        // Centred under the box's lowest point (its bottom corner in the
-        // isometric view): at the right-hand corner the name ran over the
-        // box's lower-right edge (sweep 2026-09-30).
+        // Centred in the box. At the right-hand corner the name ran over the
+        // box's lower-right edge (sweep 2026-09-30); under the bottom corner a
+        // connector docked there ran through it (sweep 2026-10-01). Connectors
+        // stop at the box's edge, so its middle is clear.
         const corners = [
           { x: box.tile.x - BOX, y: box.tile.y - BOX },
           { x: box.tile.x + BOX, y: box.tile.y - BOX },
@@ -186,11 +187,10 @@ export const Groups = () => {
             corners.reduce((sum, c) => {
               return sum + c.x;
             }, 0) / corners.length,
-          y: Math.max(
-            ...corners.map((c) => {
-              return c.y;
-            })
-          )
+          y:
+            corners.reduce((sum, c) => {
+              return sum + c.y;
+            }, 0) / corners.length
         };
         return (
           <Box
@@ -216,7 +216,7 @@ export const Groups = () => {
             />
             <Box
               sx={{ position: 'absolute', pointerEvents: 'none' }}
-              style={{ left: label.x, top: label.y + 6 }}
+              style={{ left: label.x, top: label.y }}
             >
               <Typography
                 variant="caption"

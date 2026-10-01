@@ -11,7 +11,7 @@ self-hosted editor.
 
 ## Status
 
-Pre-1.0 (currently v0.3). The public API is settling, and breaking changes are still
+Pre-1.0 (currently v0.5). The public API is settling, and breaking changes are still
 possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## Features

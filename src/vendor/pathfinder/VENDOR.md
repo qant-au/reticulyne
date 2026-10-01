@@ -16,7 +16,7 @@ shim. SEC-04 swaps it for this minimal in-tree A*.
 ## Vendored subset
 
 The single call site
-(`src/utils/pathfinder.ts` → `src/utils/connector.ts:20`) only ever
+(`src/utils/pathfinder.ts` → `src/utils/connector.ts`) only ever
 exercised:
 
 - `new Grid(width, height)` with `setWalkableAt(x, y, walkable)`,
@@ -29,7 +29,7 @@ Manhattan heuristic, 8-directional movement, and diagonal step cost
 `√2`. No alternative finders, no biased heuristics, no jump-point
 search, no smoother / interpolator.
 
-## Role since ROADMAP 3.3
+## Role since the turn-aware router
 
 Connectors are now routed by `src/utils/router.ts` (turn-aware,
 deterministic tie-breaks). This A* still runs on every route as the

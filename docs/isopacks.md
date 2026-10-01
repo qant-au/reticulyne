@@ -13,7 +13,6 @@ type Icon = {
   id: string;
   name: string;
   url: string;       // resolvable image URL (absolute or relative)
-  category?: string; // optional grouping label
   collection?: string;
   isIsometric?: boolean;
 };
@@ -116,5 +115,5 @@ and no runtime API; you build the array and pass it in.
   are smaller, cacheable, and let you replace assets without re-emitting the model.
 - **Set the right CSP.** If you front the editor with a Content-Security-Policy that limits
   `img-src`, allowlist your icon host. The standalone Docker container's nginx config
-  allows the icon hosts used by the bundled collections — if you self-host or change icon
-  hosts, update the CSP accordingly (see [docker.md](docker.md)).
+  allows images only from `'self'`, `data:` and `blob:`, so no external icon host; if you
+  add externally hosted icons, update the CSP accordingly (see [docker.md](docker.md)).

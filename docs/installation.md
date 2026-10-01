@@ -85,7 +85,7 @@ The published bundle is compiled against the `browserslist` declared in `package
 ```
 
 Practically that's the current and previous major of every evergreen browser — recent
-Chrome / Edge / Firefox / Safari (including iOS Safari 14+ and Android Chrome on modern
+Chrome / Edge / Firefox / Safari (including iOS Safari 17+ and Android Chrome on modern
 versions of the platform). Internet Explorer, Opera Mini, and any vendor-discontinued
 browser are excluded.
 

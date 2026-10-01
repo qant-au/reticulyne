@@ -2,7 +2,7 @@
 
 The repository ships a self-contained Docker image that serves the editor as a static SPA over nginx. This is the right choice when you want a deployable instance of the editor without embedding it inside your own React application — for example, to run a private editor for a team on an internal subdomain.
 
-> If you want to **embed** the editor as a component inside an existing React app, build `@reticulyne/editor` from source ([`installation.md`](./installation.md)) and follow [`embedding.md`](./embedding.md) instead.
+> If you want to **embed** the editor as a component inside an existing React app, install `@reticulyne/editor` from npm ([`installation.md`](./installation.md)) and follow [`embedding.md`](./embedding.md) instead.
 
 ## What's in the image
 
@@ -20,7 +20,7 @@ The repo ships **two** standalone image variants, both built from a single `Dock
 | Container | Tag | Webpack entry | Host port (default) | What it serves |
 |---|---|---|---|---|
 | `reticulyne` | `reticulyne` | `src/index-docker.tsx` | `2222` | Single full-screen `<Reticulyne>` component. Intended for production-shaped deployments where the editor IS the page. |
-| `reticulyne-examples` | `reticulyne-examples` | `src/index.tsx` | `2223` | Examples-picker UI with the BasicEditor / DebugTools / ReadonlyMode menu. Useful for showcasing the embedding modes and for hand-testing in a browser. |
+| `reticulyne-examples` | `reticulyne-examples` | `src/index.tsx` | `2223` | Examples-picker UI: the basic editor, debug tools, read-only mode, a live dashboard, connector animations, connector pulses and node indicators. Useful for showcasing the embedding modes and for hand-testing in a browser. |
 
 The Dockerfile defaults match the main editor variant. The examples variant is selected at build time via `--build-arg WEBPACK_SCRIPT=docker:examples:build --build-arg DIST_DIR=dist-docker-examples` (which `restart.sh` does automatically). Both variants use the same `docker/nginx.conf` and the same `nginxinc/nginx-unprivileged:1.30-alpine` runtime base, so security headers, CSP, gzip, and cache discipline apply identically.
 
@@ -96,7 +96,7 @@ The page loads no web fonts (the editor uses the system font stack); the CSP sti
 
 The editor image is a Progressive Web App (APP-02). Chrome and Edge on macOS, Windows, Linux and ChromeOS offer **Install** in the address bar, and the installed app opens in its own window, titled with the open diagram's name.
 
-- **A service worker is active** (`sw.js`). At install it caches every file the build emitted, so after one visit the editor opens with no network. Pages are fetched network-first, so a redeploy is picked up on the next load; the bundles themselves are cache-first, which is safe because their names are content-hashed. Google Fonts are not cached, so offline the editor falls back to a system font.
+- **A service worker is active** (`sw.js`). At install it caches every file the build emitted, so after one visit the editor opens with no network. Pages are fetched network-first, so a redeploy is picked up on the next load; the bundles themselves are cache-first, which is safe because their names are content-hashed.
 - **Service workers need HTTPS** (or `localhost`). Behind plain HTTP the worker is not registered and the editor behaves as before, online only.
 - **Diagrams are stored in the browser either way** (see Persistence), so an installed editor keeps working offline with its saved diagrams.
 - To remove it: uninstall the app, or clear site data for the editor's origin, which also deletes saved diagrams.

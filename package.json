@@ -1,6 +1,6 @@
 {
   "name": "@reticulyne/editor",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "An open-source React component for drawing network diagrams.",
   "license": "MIT",
   "repository": {

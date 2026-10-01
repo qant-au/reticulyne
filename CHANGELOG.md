@@ -14,8 +14,17 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-01
+
+0.6.0 was tagged but never published: its release stopped at the changelog check. 0.6.1 carries everything listed for it, plus the fixes below.
+
 ### Added
 
+- **The catalogue in the icon library.** A Catalogue section lists Reticulyne's connectable devices by medium family; search covers every item. A placed item becomes an object with its ports, its catalogue link and its Accurona element, so it is the same object on a floor plan. An item with an Accurona twin draws with the twin's drawing when the host supplies the Accurona icons; an item with no twin draws with its 2D schematic symbol, which the diagram then carries as an icon.
+- **Twins for the connectable comms, security and safety elements**: outlets, a fibre cabinet, a siren, gates, suppression, an ultrawide camera, a KVM, a floor UPS, an ATS, a generator, CRAC and in-row cooling, and DALI exit and emergency fittings.
+- **Connections between ports.** A connector between two items that have ports draws a connection on a medium they share (`kind`), on named ports (`fromPort`, `toPort`), chosen with room left and, when it closes a loop, on that loop's return. The inspector edits both ends' ports. Topology rules are checked and shown under **Topology** as warnings, never refusals: port capacity, a bus that is not a tree or lacks its terminators, end-of-line device or bus power, a fire loop that does not return to its panel, and wireless association.
+- **Props and ports as tables in the inspector.** An object's props are shown and edited by type (text, number, yes/no): add, rename, remove, up to 50. Its ports are listed with id, name and medium, each with its own props. A taken key or port id says so, and a full table says why it has no add row.
+- **Esc cancels a drag** in progress (nodes, rectangles, text boxes, connectors, a multi-selection) and puts back what it moved.
 - **`legacyConnections` prop: connections from a legacy model's connectors.** Opt-in. When a legacy Reticulyne model is opened (`initialData`, `loadModel` or Open), each pair of items a connector joins gets one logical connection, drawn by every connector between them and reusing one the model already has. `legacyModelToScene(model, id, { connections: true })` does the same for hosts converting stored models. Off by default, since two connectors between the same pair are not necessarily two cables.
 - **`applyPatch` colour changes fade in.** A connector, rectangle or group colour set by a patch transitions over about 200 ms instead of jumping, so a live feed reads as a change rather than a flicker. It is CSS, so it costs no extra renders, and it is off under `prefers-reduced-motion`. Colours the user picks, undo and selection outlines still change at once.
 - **The Docker image is cross-origin isolated.** It sends `Cross-Origin-Embedder-Policy: require-corp` beside the existing COOP and CORP headers (SEC-09). The page loads nothing from another origin, so nothing is blocked; a fork that adds a web font CDN needs `crossorigin` on its `<link>`.
@@ -23,6 +32,9 @@ potentially breaking and read the release notes before upgrading.
 ### Fixed
 
 - **Read-only mode looks, and stays, read-only.** In `EXPLORABLE_READONLY`, pressing `V` for the select tool and dragging moved nodes and marked the diagram unsaved; a drag there now does nothing. The hover tile no longer follows the pointer, and the cursor is the default arrow at rest (a grabbing hand only while panning) instead of the hand tool's open hand.
+- **A collapsed group's name sits in the middle of its box.** Under the box, a connector docked at the bottom corner ran through it.
+- **Accessible plain text decodes `&amp;` last**, so an escaped entity (`&amp;lt;`) reads as the literal `&lt;` rather than `<`.
+- **The vector SVG note in the embedding docs** says, as the dialog does, that labels as well as text boxes are left out.
 
 ## [0.5.0] - 2026-10-01
 

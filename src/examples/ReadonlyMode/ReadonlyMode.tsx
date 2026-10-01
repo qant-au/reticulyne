@@ -4,7 +4,7 @@ import { initialData } from '../initialData';
 import { useExamplesThemeMode } from '../themeModeContext';
 import { useExamplesValidationError } from '../openErrorContext';
 
-// lw-064: a short tour, offered by a Start tour button. The second and
+// A short tour, offered by a Start tour button. The second and
 // third steps have no narration of their own, so they read the node's
 // description.
 const TOUR: TourStep[] = [

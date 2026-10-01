@@ -182,7 +182,7 @@ export const isoToScreen = ({
   };
 };
 
-// lw-050: the scroll that keeps the point at the centre of the canvas where
+// The scroll that keeps the point at the centre of the canvas where
 // it is when the view switches from one projection to the other.
 export const scrollKeepingCentre = ({
   zoom,

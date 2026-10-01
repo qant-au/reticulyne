@@ -41,7 +41,7 @@ export const PROJECTED_TILE_SIZE = {
   height: UNPROJECTED_TILE_SIZE * TILE_PROJECTION_MULTIPLIERS.height
 };
 
-// A tile on screen in the flat, schematic view (lw-050): a square, drawn
+// A tile on screen in the flat, schematic view: a square, drawn
 // with no projection, so the unprojected size is the size on screen.
 export const SCHEMATIC_TILE_SIZE = {
   width: UNPROJECTED_TILE_SIZE,
@@ -131,7 +131,7 @@ export const RECTANGLE_DEFAULTS: Required<
 export const ZOOM_INCREMENT = 0.2;
 export const MIN_ZOOM = 0.2;
 export const MAX_ZOOM = 1;
-// lw-064: the zoom a tour step shows its node at, unless the step says.
+// The zoom a tour step shows its node at, unless the step says.
 export const TOUR_ZOOM = 0.8;
 export const TRANSFORM_ANCHOR_SIZE = 30;
 export const TRANSFORM_CONTROLS_COLOR = '#0392ff';

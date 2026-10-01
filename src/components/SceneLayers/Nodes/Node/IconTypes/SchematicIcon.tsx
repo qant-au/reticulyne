@@ -5,7 +5,7 @@ interface Props {
   url: string;
 }
 
-// A node in the flat, schematic view (lw-050): its 2D symbol drawn flat,
+// A node in the flat, schematic view: its 2D symbol drawn flat,
 // centred on the tile and fitted inside it.
 export const SchematicIcon = ({ url }: Props) => {
   const size = SCHEMATIC_TILE_SIZE.width * 0.8;

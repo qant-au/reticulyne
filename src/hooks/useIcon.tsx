@@ -31,7 +31,7 @@ export const useIcon = (
   }, [icons, id]);
 
   const iconComponent = useMemo(() => {
-    // The flat view draws every node as a 2D symbol (lw-050).
+    // The flat view draws every node as a 2D symbol.
     if (projection === 'schematic') {
       const url = schematicIconUrl(icon);
       return <SchematicIcon key={url} url={url} />;

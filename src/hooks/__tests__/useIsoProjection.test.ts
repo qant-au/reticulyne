@@ -185,7 +185,7 @@ describe('useIsoProjection', () => {
     });
   });
 
-  describe('schematic view (lw-050)', () => {
+  describe('schematic view', () => {
     test('draws the same tiles flat: no projection, positioned by the flat grid', () => {
       mockProjection = 'schematic';
       const { result } = renderHook(() => {

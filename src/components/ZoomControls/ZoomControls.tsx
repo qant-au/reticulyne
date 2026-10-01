@@ -20,7 +20,7 @@ export const ZoomControls = ({ compact = false }: { compact?: boolean }) => {
     return state.zoom;
   });
   const { fitToView } = useDiagramUtils();
-  // Switching the drawing, and the layers (lw-052), change the saved
+  // Switching the drawing, and the layers, change the saved
   // diagram, so only an editable one offers them.
   const editable = useUiStateStore((state) => {
     return state.editorMode === 'EDITABLE';

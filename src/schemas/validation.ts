@@ -123,7 +123,7 @@ export const validateConnectorAnchor = (
 ): Issue[] => {
   const issues: Issue[] = [];
 
-  // lw-061: `side` qualifies an item reference rather than being one.
+  // `side` qualifies an item reference rather than being one.
   const { side, ...target } = anchor.ref;
   if (Object.keys(target).length !== 1) {
     issues.push({
@@ -406,7 +406,7 @@ export const validateModel = (model: Model): Issue[] => {
     issues.push(...validateView(view, { model }));
   });
 
-  // lw-052: layer ids are unique, 'redacted' is never listed, and every
+  // Layer ids are unique, 'redacted' is never listed, and every
   // layerId names a listed layer or 'redacted'.
   const layerIds = new Set<string>();
   (model.layers ?? []).forEach((layer) => {
@@ -446,7 +446,7 @@ export const validateModel = (model: Model): Issue[] => {
     });
   });
 
-  // lw-053: a connection joins two different items of the model, and its
+  // A connection joins two different items of the model, and its
   // id is unique among connections.
   const itemIds = new Set(
     model.items.map((item) => {

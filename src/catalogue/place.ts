@@ -76,7 +76,7 @@ export const catalogueItemSymbol = (
 };
 
 /**
- * What a node draws with in the flat, schematic view (lw-050): an Accurona
+ * What a node draws with in the flat, schematic view: an Accurona
  * element's isometric drawing is swapped for that element's 2D schematic;
  * any other icon is drawn as it is.
  */

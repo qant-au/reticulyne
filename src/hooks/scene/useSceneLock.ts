@@ -3,7 +3,7 @@ import type { ItemReference } from 'src/types';
 import * as reducers from 'src/stores/reducers';
 import type { SceneCore } from './types';
 
-// lw-069: lock and unlock. Each change is one undo step, saved with the
+// Lock and unlock. Each change is one undo step, saved with the
 // diagram.
 export const useSceneLock = ({
   getState,

@@ -8,7 +8,7 @@ import { PanelSection } from 'src/vendor/accurona-ui';
 const BASE = '__base__';
 const MIXED = '__mixed__';
 
-// lw-052: which diagram layer one item, or a whole selection, is on.
+// Which diagram layer one item, or a whole selection, is on.
 // Distinct from the layer ORDER section, which stacks items within a kind.
 export const LayerSection = ({ targets }: { targets: ItemReference[] }) => {
   const { currentView, layers, setItemsLayer } = useScene();

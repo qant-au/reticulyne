@@ -40,7 +40,7 @@ interface UseInitialDataManagerOptions {
    */
   iconCollections?: { allow?: string[]; deny?: string[] };
   /**
-   * lw-091: a legacy model's connectors between items become connections.
+   * a legacy model's connectors between items become connections.
    * When omitted, the <Reticulyne legacyConnections> prop's value on the
    * store is used, so Open and loadModel follow the prop too.
    */
@@ -177,7 +177,7 @@ export const useInitialDataManager = ({
         [...loaded.icons, ...library],
         iconCollectionsRef.current
       );
-      // lw-055: a device from the floor plan carries only its Accurona
+      // A device from the floor plan carries only its Accurona
       // element; it draws with that element's catalogue twin, when the
       // editor has the twin's icon.
       const objects = new Map(

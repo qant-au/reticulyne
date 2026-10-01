@@ -8,7 +8,7 @@ import { useTour } from 'src/hooks/useTour';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
 import { Surface } from 'src/vendor/accurona-ui';
 
-// lw-064: the tour's narration panel, bottom centre above the title strip.
+// The tour's narration panel, bottom centre above the title strip.
 // While a tour runs it shows the step count, the node's name (or the step's
 // title) and the narration (or the node's description), with Previous,
 // Next and End. With no tour running and steps offered through the `tour`

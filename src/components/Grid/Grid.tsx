@@ -21,7 +21,7 @@ const buildGridTileDataUrl = (stroke: string, opacity: number): string => {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
-// The flat, schematic view's grid (lw-050): one square tile, its top and
+// The flat, schematic view's grid: one square tile, its top and
 // left edges drawn, repeated.
 const buildSquareGridTileDataUrl = (
   stroke: string,

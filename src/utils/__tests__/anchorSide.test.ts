@@ -1,4 +1,4 @@
-// lw-061: a connector end can name the side of its node it leaves by.
+// A connector end can name the side of its node it leaves by.
 // These pin the three places that have to agree on what a side means:
 // the port under the pointer, the route, and the saved scene.
 

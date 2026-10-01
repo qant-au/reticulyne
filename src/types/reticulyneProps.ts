@@ -54,7 +54,7 @@ export interface ReticulyneProps {
    */
   initialData?: Scene | InitialData;
   /**
-   * lw-091: when a legacy Reticulyne model is opened (as `initialData`,
+   * when a legacy Reticulyne model is opened (as `initialData`,
    * by `loadModel` or by Open), give each pair of items a connector joins
    * a logical connection, drawn by every connector between them. Default
    * `false`: two connectors between the same pair are not necessarily two
@@ -277,7 +277,7 @@ export interface ReticulyneProps {
    */
   highlightedItemId?: string;
   /**
-   * lw-064: a presentation tour. When set, a Start tour button shows (in
+   * a presentation tour. When set, a Start tour button shows (in
    * every mode but NON_INTERACTIVE); the tour centres on each step's node
    * in turn, highlights it and shows its narration. The arrow keys step it
    * and Escape ends it. `useReticulyne().startTour()` starts it from code;
@@ -285,7 +285,7 @@ export interface ReticulyneProps {
    */
   tour?: TourStep[];
   /**
-   * lw-064: called with the tour's state each time it moves to a step, and
+   * called with the tour's state each time it moves to a step, and
    * with `null` when it ends.
    */
   onTourStepChange?: (state: TourState | null) => void;

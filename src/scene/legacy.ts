@@ -95,7 +95,7 @@ export const normaliseLegacyModel = (
     return id !== undefined && colorIds.has(id) ? colorId(id) : undefined;
   };
 
-  // lw-052: 'redacted' is reserved, so it is never remapped; a layerId
+  // 'redacted' is reserved, so it is never remapped; a layerId
   // naming no listed layer is dropped (the item goes to the base layer).
   const layers = (model.layers ?? []).filter((layer) => {
     return layer.id !== REDACTED_LAYER_ID;
@@ -126,7 +126,7 @@ export const normaliseLegacyModel = (
           : {})
       };
     }),
-    // lw-053: a connection's ends follow the items.
+    // A connection's ends follow the items.
     ...(model.connections
       ? {
           connections: (() => {
@@ -234,7 +234,7 @@ export const normaliseLegacyModel = (
 
 export interface LegacyModelOptions {
   /**
-   * lw-091: give every connector whose two ends are items a logical
+   * give every connector whose two ends are items a logical
    * connection between them (scene-format.md, "Reticulyne model"). Off by
    * default: two connectors between the same pair are not necessarily
    * two cables, so it is only done when asked.

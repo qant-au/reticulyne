@@ -12,7 +12,7 @@ export const viewItemSchema = z
     labelHeight: z.number().optional(),
     parentGroupId: id.optional(),
     layerId: id.optional(),
-    // lw-069: locked items are drawn but not selectable on the canvas.
+    // Locked items are drawn but not selectable on the canvas.
     locked: z.boolean().optional()
   })
   .strict();

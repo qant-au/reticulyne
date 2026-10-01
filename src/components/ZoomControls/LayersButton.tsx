@@ -75,7 +75,7 @@ const NameField = ({
   );
 };
 
-// lw-052: the diagram's layers, each with a visibility toggle. The base
+// The diagram's layers, each with a visibility toggle. The base
 // layer (items with no layer) is always shown; the reserved Redacted layer
 // is always shown here and left out of every export unless it opts in.
 export const LayersButton = () => {

@@ -27,7 +27,7 @@ import {
 
 const NUDGE_STEP = 1;
 const SHIFT_MULTIPLIER = 5;
-// lw-068: how far Ctrl/Cmd + arrow pans, in screen pixels.
+// How far Ctrl/Cmd + arrow pans, in screen pixels.
 const PAN_STEP = 120;
 
 // A focused button or link acts on Enter itself; the canvas keys stay out.
@@ -43,7 +43,7 @@ const isControl = (target: EventTarget | null) => {
 // Reticulyne's bindings from the shared keymap. Rows the spec marks "where
 // built" that Reticulyne has not built stay unbound: Q (keep tool), align,
 // and Ctrl/Cmd+Enter (there is no point-editing mode for connectors). Lock
-// is bound since lw-069.
+// is bound.
 export const KEYMAP = keymapFor('reticulyne', {
   omit: [
     'keep-tool',
@@ -62,7 +62,7 @@ const LAYER_ORDER = {
   'send-to-back': 'SEND_TO_BACK'
 } as const;
 
-// FEA5-02: keyboard shortcuts. Since lw-048 the bindings are the shared
+// FEA5-02: keyboard shortcuts. The bindings are the shared
 // keymap in @accurona/core (docs/keymap.md in Accurona), which Axonometra
 // binds too; this hook maps each action to what it does here.
 //
@@ -281,7 +281,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         return;
       }
 
-      // lw-064: while a tour runs, its keys come first: the arrows step it
+      // While a tour runs, its keys come first: the arrows step it
       // instead of nudging. Not in NON_INTERACTIVE, where the host drives.
       const { tour: runningTour } = uiStateActions.get();
       if (runningTour && editorMode !== 'NON_INTERACTIVE') {
@@ -393,7 +393,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           done();
           return;
 
-        // lw-068: Ctrl/Cmd + arrow pans, in every mode but NON_INTERACTIVE.
+        // Ctrl/Cmd + arrow pans, in every mode but NON_INTERACTIVE.
         case 'pan': {
           if (editorMode === 'NON_INTERACTIVE') return;
           const { scroll } = uiStateActions.get();
@@ -417,7 +417,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           return;
         }
 
-        // lw-068: Tab / Shift+Tab select the next / previous object, in
+        // Tab / Shift+Tab select the next / previous object, in
         // reading order, while the canvas has focus. Past either end the
         // selection clears and the key is left to the browser, so focus
         // moves on out of the canvas: it is never a keyboard trap.
@@ -450,7 +450,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           return;
         }
 
-        // lw-068: Shift+F10 or the Menu key opens the selected object's
+        // Shift+F10 or the Menu key opens the selected object's
         // menu, the right-click menu reached from the keyboard.
         case 'object-menu': {
           if (selection.length !== 1) return;
@@ -472,7 +472,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           done();
           return;
 
-        // lw-053: Alt+Up / Alt+Down show the floor above or below.
+        // Alt+Up / Alt+Down show the floor above or below.
         // Navigation, so read-only too, but not in a NON_INTERACTIVE render.
         case 'floor-up':
         case 'floor-down':
@@ -515,8 +515,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         // Connector anchors are excluded for the same reason the marquee
         // excludes them: they are sub-parts, not top-level items. Selecting
         // is editing here: the selection drives the edit panels. What a
-        // hidden layer holds is not selected (lw-052), nor anything locked
-        // (lw-069).
+        // hidden layer holds is not selected, nor anything locked.
         case 'select-all': {
           if (!isEditable) return;
           const open = (entry: { locked?: boolean }) => {
@@ -535,7 +534,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
             ...(visibleView.rectangles ?? []).filter(open).map((r) => {
               return { type: 'RECTANGLE' as const, id: r.id };
             }),
-            // lw-062: and what the collapsed groups stand for.
+            // And what the collapsed groups stand for.
             ...collapsedBoxes(visibleView).flatMap((box) => {
               return collapsedGroupMembers(currentView, box.groupId);
             })
@@ -561,7 +560,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         // takes focus, anything else opens its panel with the first field
         // focused, so the keyboard reaches what a double-click would.
         case 'edit': {
-          // lw-068: with a tool armed, Enter on the canvas does what a
+          // With a tool armed, Enter on the canvas does what a
           // click would: puts the picked icon down, draws a rectangle, or
           // (connector tool, one node selected) asks what to connect it to.
           if (!isControl(e.target)) {
@@ -711,7 +710,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           done();
           return;
 
-        // === Lock (lw-069, Excalidraw's Ctrl/Cmd+Shift+L) ===
+        // === Lock (Excalidraw's Ctrl/Cmd+Shift+L) ===
         // Locks the selection, or unlocks it when all of it is locked.
         // As in Excalidraw, locking deselects: a locked item cannot be
         // selected on the canvas, and is unlocked from its context menu.

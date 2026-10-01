@@ -8,7 +8,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import type { InitialData, ItemReference, View } from 'src/types';
 
-// lw-069: Ctrl/Cmd+Shift+L locks the selection, as in Excalidraw.
+// Ctrl/Cmd+Shift+L locks the selection, as in Excalidraw.
 
 beforeAll(() => {
   if (!Element.prototype.scrollTo) {

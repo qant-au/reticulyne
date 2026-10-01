@@ -120,7 +120,7 @@ describe('sceneToModel', () => {
         return i.id;
       })
     ).toEqual(['sw', 'ap']);
-    // lw-082: with the element, props, ports and links it carries.
+    // With the element, props, ports and links it carries.
     expect(model.items[0]).toEqual({
       id: 'sw',
       name: 'Switch',
@@ -195,7 +195,7 @@ describe('scene -> model -> scene', () => {
     ]);
   });
 
-  test('a view switched in the editor saves as its new kind (lw-050)', () => {
+  test('a view switched in the editor saves as its new kind', () => {
     const { model, context } = sceneToModel(richScene());
     const edited: Model = {
       ...model,
@@ -296,7 +296,7 @@ describe('scene -> model -> scene', () => {
       'ports',
       'links'
     ]);
-    // lw-052: layers are Reticulyne's now, so only connection is kept.
+    // Layers are Reticulyne's now, so only connection is kept.
     expect(update.preserve).toEqual({ connector: ['connection'] });
     expect(update.set?.layers).toEqual([{ id: 'notes', name: 'Notes' }]);
   });

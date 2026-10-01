@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { id, constrainedStrings } from './common';
 
-// lw-064: a presentation tour, the steps a host hands to the `tour` prop or
+// A presentation tour, the steps a host hands to the `tour` prop or
 // to useReticulyne().startTour(). Narration is rich text, capped like a
 // node description, and is rendered through the same schema-bound viewer.
 export const TOUR_MAX_STEPS = 500;

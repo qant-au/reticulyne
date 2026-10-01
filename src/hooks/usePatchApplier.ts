@@ -24,7 +24,7 @@ export const isGestureActive = (ui: Pick<UiState, 'mode'>): boolean => {
   }
 };
 
-// lw-090: how long a colour change from a patch takes to fade in. The
+// How long a colour change from a patch takes to fade in. The
 // attribute stays on a little longer than the fade, because taking the
 // transition away mid-fade would snap it to the end colour.
 export const PATCH_FADE_MS = 200;

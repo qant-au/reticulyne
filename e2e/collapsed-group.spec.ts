@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * lw-062: a collapsed group is one box. Sweep 2026-09-30: a press off the
+ * a collapsed group is one box. Sweep 2026-09-30: a press off the
  * box's centre tile selected nothing, and dragging the box grabbed the end
  * of a connector drawn to it, pinning that end to a bare tile and leaving
  * the members where they were. Fixture injected via

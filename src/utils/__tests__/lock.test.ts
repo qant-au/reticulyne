@@ -9,7 +9,7 @@ import { sceneFromModel, sceneToModel, freshSceneContext } from 'src/scene';
 import { getItemAtTile, getItemsInBounds } from '../hitTest';
 import { hasLocked, isLocked } from '../lock';
 
-// lw-069. A node (a) locked on top of a rectangle (r), a free node (b), a
+// A node (a) locked on top of a rectangle (r), a free node (b), a
 // note (t) and a connector (k) from a to b.
 const view = (): View => {
   return {

@@ -87,7 +87,7 @@ export interface HistoryStore {
     canUndo: () => boolean;
     canRedo: () => boolean;
     /**
-     * lw-089: forgets what a cancelled gesture recorded, so restoring
+     * forgets what a cancelled gesture recorded, so restoring
      * `origin` (the state when it began) leaves no undo step behind. A
      * burst that began before the gesture is kept, ending at `origin`.
      */

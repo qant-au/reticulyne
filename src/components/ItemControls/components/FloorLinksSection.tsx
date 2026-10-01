@@ -17,7 +17,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { floorStubs } from 'src/utils';
 import { PanelSection } from 'src/vendor/accurona-ui';
 
-// lw-053: connections from this item to items on other floors. Each is
+// Connections from this item to items on other floors. Each is
 // drawn on both floors as a stub; here they are listed, added and removed.
 export const FloorLinksSection = ({ itemId }: { itemId: string }) => {
   const { floors, currentView, connections, connectItems, deleteConnection } =

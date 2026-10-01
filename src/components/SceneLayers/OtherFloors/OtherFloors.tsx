@@ -8,7 +8,7 @@ import { useIcon } from 'src/hooks/useIcon';
 import { filterViewByLayers, getTilePosition } from 'src/utils';
 import type { Coords, ModelItem, View, ViewItem } from 'src/types';
 
-// lw-053: the other floors, drawn faintly above and below the one on show,
+// The other floors, drawn faintly above and below the one on show,
 // a storey apart, so the building reads as a stack: enough to follow the
 // topology, not enough to compete with the floor being edited. Only
 // isometric floors stack; they cannot be clicked, and they are never in an

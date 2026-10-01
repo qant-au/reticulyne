@@ -19,7 +19,7 @@ export const ProjectionOrientationEnum = {
 } as const;
 
 // How a diagram view draws its tile grid: 'iso' is the isometric view,
-// 'schematic' the flat, Visio-style 2D view of the same tiles (lw-050).
+// 'schematic' the flat, Visio-style 2D view of the same tiles.
 export type Projection = 'iso' | 'schematic';
 
 export type BoundingBox = [Coords, Coords, Coords, Coords];

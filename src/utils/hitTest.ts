@@ -30,7 +30,7 @@ export const hasMovedTile = (mouse: Mouse) => {
 interface GetItemAtTile {
   tile: Coords;
   scene: ReturnType<typeof useScene>;
-  // lw-069: pass over locked things, as a click on the canvas does.
+  // Pass over locked things, as a click on the canvas does.
   skipLocked?: boolean;
 }
 
@@ -136,7 +136,7 @@ interface BandTest {
  * and a connector only when its whole route is, so a band around one node
  * no longer takes the connector running off to another outside it (sweep
  * 2026-09-30). Shift+marquee adds to the selection (MarqueeMode's base).
- * CONNECTOR_ANCHOR is never returned, and nothing locked is (lw-069).
+ * CONNECTOR_ANCHOR is never returned, and nothing locked is.
  */
 const itemsInside = (scene: Scene, band: BandTest): ItemReference[] => {
   const found: ItemReference[] = [];
@@ -183,7 +183,7 @@ const itemsInside = (scene: Scene, band: BandTest): ItemReference[] => {
     }
   });
 
-  // lw-062: a collapsed group's box catches the members it stands for.
+  // A collapsed group's box catches the members it stands for.
   collapsedBoxes(scene.visibleView).forEach((box) => {
     if (!band.box(box.tile, box.tile)) return;
     found.push(...collapsedGroupMembers(scene.currentView, box.groupId));

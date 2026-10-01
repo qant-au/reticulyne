@@ -3,7 +3,7 @@
 // writes that scene (the file format) to a Blob, and triggers a download
 // via downloadFile(). Closes the menu afterwards.
 //
-// lw-052: what is on the Redacted layer is left out unless the export opts
+// What is on the Redacted layer is left out unless the export opts
 // in, so a diagram with anything on it asks first (the EXPORT_JSON
 // dialog); one with nothing on it downloads at once, as before.
 //

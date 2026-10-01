@@ -14,7 +14,7 @@ import {
   reroutedPath
 } from '../collapse';
 
-// lw-062. A rack group (a, b, a note and inner group "shelf" holding c)
+// A rack group (a, b, a note and inner group "shelf" holding c)
 // at x 0..4; an outside node z. k1 runs inside the rack (a-b), k2 from z
 // into the rack (z-c), k3 hangs off k1's end anchor.
 const view = (collapsed: { rack?: boolean; shelf?: boolean } = {}): View => {

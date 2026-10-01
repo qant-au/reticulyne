@@ -13,7 +13,7 @@ import {
 } from 'src/utils';
 import type { Model, TourState, TourStep, View } from 'src/types';
 
-// lw-064: presentation / tour mode. A tour walks through nodes in order:
+// Presentation / tour mode. A tour walks through nodes in order:
 // each step switches to the node's view if need be, centres on it at the
 // step's zoom (the scene layers animate the move), highlights it with the
 // selection-dimming highlight, and shows its narration on the tour panel.

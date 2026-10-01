@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * Floors (lw-053): the floor switcher in the title bar. The fixture is
+ * Floors: the floor switcher in the title bar. The fixture is
  * injected via `window.__RETICULYNE_E2E__` (Docker entry only, see
  * src/index-docker.tsx).
  */

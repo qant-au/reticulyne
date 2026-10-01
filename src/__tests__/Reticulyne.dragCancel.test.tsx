@@ -9,7 +9,7 @@ import { useModelStore } from 'src/stores/modelStore';
 import { useHistoryStore } from 'src/stores/historyStore';
 import type { InitialData, UiStateStore, Model } from 'src/types';
 
-// lw-089: Esc cancels a drag in progress and puts back what it moved, with
+// Esc cancels a drag in progress and puts back what it moved, with
 // no undo step left behind (UXA-03 noted that no drag had a cancel).
 
 beforeAll(() => {

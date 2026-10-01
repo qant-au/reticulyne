@@ -8,7 +8,7 @@ import {
   sceneToModel
 } from 'src/scene';
 
-// lw-053: connections between items, whatever floors (views) they are on.
+// Connections between items, whatever floors (views) they are on.
 
 const expectValid = (scene: Scene) => {
   const result = validateScene(scene);
@@ -59,7 +59,7 @@ const building = (): Scene => {
 describe('connections', () => {
   test('load: only the ones between two items Reticulyne shows', () => {
     const { model } = sceneToModel(building());
-    // lw-083: with the port and medium it is attached to.
+    // With the port and medium it is attached to.
     expect(model.connections).toEqual([
       { id: 'c1', from: 'sw', fromPort: '14', to: 'ap', kind: 'ethernet' }
     ]);
@@ -168,7 +168,7 @@ describe('connections', () => {
   });
 });
 
-// lw-091: connectors between items becoming connections, only when asked.
+// Connectors between items becoming connections, only when asked.
 describe('a legacy model with connections from connectors', () => {
   const connector = (id: string, from: string, to: string) => {
     return {

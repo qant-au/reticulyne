@@ -18,7 +18,7 @@ import {
 import type { Coords } from 'src/types';
 
 const PAD = 0.4;
-// lw-062: a collapsed group's box, drawn COLLAPSED_BOX_REACH from its
+// A collapsed group's box, drawn COLLAPSED_BOX_REACH from its
 // tile's centre (the area spans whole tiles, so less the half tile).
 const BOX = COLLAPSED_BOX_REACH - 0.5;
 
@@ -27,7 +27,7 @@ const BOX = COLLAPSED_BOX_REACH - 0.5;
 // The group being edited (double-click) gets a stronger outline.
 export const Groups = () => {
   const theme = useTheme();
-  // lw-052: a group is drawn around the members that are shown.
+  // A group is drawn around the members that are shown.
   const { visibleView: currentView, currentView: fullView } = useScene();
   const editingGroupId = useUiStateStore((state) => {
     return state.editingGroupId;
@@ -36,7 +36,7 @@ export const Groups = () => {
     return state.selection;
   });
 
-  // lw-062: an expanded group reaches round the boxes of the collapsed
+  // An expanded group reaches round the boxes of the collapsed
   // groups inside it; a group inside a collapsed one is not drawn at all.
   const boxes = useMemo(() => {
     return collapsedBoxes(currentView);

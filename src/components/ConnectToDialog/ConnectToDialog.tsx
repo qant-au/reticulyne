@@ -6,7 +6,7 @@ import { useModelStore } from 'src/stores/modelStore';
 import { useScene } from 'src/hooks/useScene';
 import { generateId } from 'src/utils';
 
-// lw-068: the keyboard's way to draw a connector. Dragging from a port
+// The keyboard's way to draw a connector. Dragging from a port
 // needs a pointer; this asks for the other end by name instead. It
 // connects the one node selected when it opened.
 interface Props {

@@ -5,7 +5,7 @@ import { VIEW_ITEM_DEFAULTS } from 'src/config';
 import { freeTileNear, generateId, screenToIso } from 'src/utils';
 import type { Coords, ModelItem } from 'src/types';
 
-// lw-068: adding things without a pointer. A pointer puts an item where
+// Adding things without a pointer. A pointer puts an item where
 // it is released; the keyboard has no such place, so it uses the free
 // tile nearest the middle of the view, and the arrow keys nudge it on.
 export const useKeyboardPlacement = () => {
@@ -45,7 +45,7 @@ export const useKeyboardPlacement = () => {
       template?: Omit<ModelItem, 'id'>
     ) => {
       const id = object?.id ?? generateId();
-      // lw-082: a catalogue item arrives as the template of its object.
+      // A catalogue item arrives as the template of its object.
       createModelItem(
         template
           ? { ...template, id }

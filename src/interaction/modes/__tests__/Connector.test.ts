@@ -70,7 +70,7 @@ describe('Connector mode', () => {
     );
   });
 
-  test('mousedown on a port anchors the start to that side of the node (lw-061)', () => {
+  test('mousedown on a port anchors the start to that side of the node', () => {
     const view = {
       zoom: 1,
       scroll: { position: { x: 0, y: 0 }, offset: { x: 0, y: 0 } },

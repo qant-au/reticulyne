@@ -112,7 +112,7 @@ export const GroupSection = ({ selection }: { selection: ItemReference[] }) => {
           variant="outlined"
           size="small"
           onClick={() => {
-            // lw-062: collapsing the group being worked inside leaves it.
+            // Collapsing the group being worked inside leaves it.
             if (
               !group.collapsed &&
               editingGroupId &&

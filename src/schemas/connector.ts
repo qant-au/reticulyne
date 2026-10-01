@@ -38,7 +38,7 @@ export const connectorGlyphOptions = [
   'star'
 ] as const;
 
-// lw-061: the edge of an item's tile a connector end leaves by, named by
+// The edge of an item's tile a connector end leaves by, named by
 // the grid direction it faces (as in the Accurona scene format). Only
 // meaningful with `item`; absent, the end docks on the tile's centre.
 export const anchorSideOptions = ['+X', '-X', '+Y', '-Y'] as const;
@@ -81,7 +81,7 @@ export const connectorSchema = z
     // END_TO_START" rule.
     animationFlow: z.enum(connectorAnimationFlowOptions).optional(),
     anchors: z.array(anchorSchema).max(SCHEMA_LIMITS.ANCHORS),
-    // lw-083: the model connection this connector draws, when its two
+    // The model connection this connector draws, when its two
     // ends are items with catalogue ports.
     connection: id.optional(),
     layerId: id.optional(),

@@ -1,4 +1,4 @@
-// lw-068: keyboard and screen-reader access. The order Tab walks the
+// Keyboard and screen-reader access. The order Tab walks the
 // objects in, and the words a screen reader is given for each one.
 import type { Coords, Icon, ItemReference, ModelItem, View } from 'src/types';
 import { getTilePosition } from './coordinates';

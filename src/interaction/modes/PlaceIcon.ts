@@ -43,7 +43,7 @@ export const PlaceIcon: ModeActions = {
       const { object, template } = uiState.mode;
       const modelItemId = object?.id ?? generateId();
 
-      // lw-082: a catalogue item is a new object with its ports, links and
+      // A catalogue item is a new object with its ports, links and
       // element each time.
       scene.createModelItem(
         template
@@ -63,7 +63,7 @@ export const PlaceIcon: ModeActions = {
         tile: uiState.mouse.position.tile
       });
 
-      // lw-055: an object from the floor plan goes in once; back to the
+      // An object from the floor plan goes in once; back to the
       // cursor with it selected.
       if (object) {
         uiState.actions.setMode({

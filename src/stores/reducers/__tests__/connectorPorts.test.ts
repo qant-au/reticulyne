@@ -7,7 +7,7 @@ import * as reducers from 'src/stores/reducers';
 import type { State } from 'src/stores/reducers/types';
 import type { Connector, Model } from 'src/types';
 
-// lw-083: a connector between two items with catalogue ports draws a
+// A connector between two items with catalogue ports draws a
 // connection attached to a port on each; it lets go of it when its ends
 // move and takes it along when it is deleted.
 
@@ -79,7 +79,7 @@ const drawn = (state: State, id: string) => {
   })!;
 };
 
-describe('connectors attach to catalogue ports (lw-083)', () => {
+describe('connectors attach to catalogue ports', () => {
   test('a connector between two devices draws a connection on free ports', () => {
     let state = create(initial(), connector('k1', 'sw', 'cam'));
     state = create(state, connector('k2', 'sw', 'cam2'));

@@ -76,7 +76,7 @@ const useStableMergedList = <S extends { id: string }, T>(
   }, [sources, keysFor, build, cache]);
 };
 
-// lw-052: what is drawn is the current view less its hidden layers
+// What is drawn is the current view less its hidden layers
 // (and the Redacted layer while a PDF export hides it).
 export const useLayerFilter = (): Set<string> => {
   const layers = useModelStore((state) => {
@@ -118,7 +118,7 @@ export const useSceneConnectorsList = (): ReturnType<
     return state.connectors;
   });
   const sources = currentView.connectors;
-  // lw-062: a connector re-docked on a collapsed group's box has its own path.
+  // A connector re-docked on a collapsed group's box has its own path.
   const keysFor = useMemo(() => {
     return (c: NonNullable<typeof sources>[number]) => {
       return [

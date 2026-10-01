@@ -10,7 +10,7 @@ import { pickPorts } from 'src/catalogue/topology';
 import { validateConnector } from 'src/schemas/validation';
 import { State, ViewReducerContext } from './types';
 
-// lw-083: a connector between two items with catalogue ports draws a
+// A connector between two items with catalogue ports draws a
 // model connection attached to a port on each (kind = the medium). The
 // connection goes with the last connector that draws it, and a connector
 // whose ends move to other items lets go of it and attaches afresh.

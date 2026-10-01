@@ -5,7 +5,7 @@
 //
 // Other floors' ghosts are hidden for the capture too, and put back after.
 //
-// lw-052: the PDF is a picture of the canvas, which already leaves hidden
+// The PDF is a picture of the canvas, which already leaves hidden
 // layers out. The Redacted layer is shown on the canvas, so it is hidden
 // for the capture unless the export opts in; a diagram with anything on
 // it asks first (the EXPORT_PDF dialog).

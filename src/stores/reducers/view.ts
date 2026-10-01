@@ -66,7 +66,7 @@ export const updateView = (
     // changed nothing, so this reducer used to be a silent no-op.
     const { index } = getItemByIdOrThrow(draft.model.views, ctx.viewId);
     const updated = { ...draft.model.views[index], ...updates };
-    // No kind is 'iso'; leave no undefined key behind (lw-050).
+    // No kind is 'iso'; leave no undefined key behind.
     if (updated.kind === undefined) delete updated.kind;
     draft.model.views[index] = updated;
   });

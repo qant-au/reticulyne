@@ -1,4 +1,4 @@
-// lw-064: the keys that step a running tour. Arrow keys advance, as the
+// The keys that step a running tour. Arrow keys advance, as the
 // roadmap asked, with PageDown / PageUp (what a presentation clicker
 // sends), Home / End for the ends, and Escape to leave. Space is not
 // taken: holding it pans the canvas. A chord is never a tour key, so

@@ -379,7 +379,7 @@ describe('getScene and loadModel with a scene', () => {
   });
 });
 
-// lw-091: the legacyConnections prop reaches initialData and loadModel.
+// The legacyConnections prop reaches initialData and loadModel.
 describe('legacyConnections', () => {
   const legacy = (): InitialData => {
     return {

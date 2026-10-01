@@ -15,7 +15,7 @@ import {
   type FloorStub
 } from 'src/utils';
 
-// lw-053: a connection to an item on another floor, drawn on this floor as
+// A connection to an item on another floor, drawn on this floor as
 // a riser from the item, up or down towards the other floor, ending at a
 // transition marker that names the floor and the item. Clicking the marker
 // shows that floor with the item selected (not in a NON_INTERACTIVE render,

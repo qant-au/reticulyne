@@ -1,7 +1,7 @@
 import type { Connection } from 'src/types';
 import type { State } from './types';
 
-// lw-053: floors (the model's views, lowest first) and the connections
+// Floors (the model's views, lowest first) and the connections
 // that join items across them. Each function returns the state unchanged
 // when there is nothing to do, so no empty undo step is made.
 
@@ -40,7 +40,7 @@ export type ConnectionPortUpdate = Partial<
   Pick<Connection, 'fromPort' | 'toPort' | 'kind'>
 >;
 
-/** lw-083: changes a connection's ports or kind. */
+/** changes a connection's ports or kind. */
 export const updateConnection = (
   state: State,
   id: string,

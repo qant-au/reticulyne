@@ -3,7 +3,7 @@ import { adjacentFloor, floorStubs, modelForExport } from 'src/utils';
 import * as reducers from 'src/stores/reducers';
 import { INITIAL_SCENE_STATE } from 'src/config';
 
-// lw-053: floors are the views, lowest first.
+// Floors are the views, lowest first.
 
 const view = (
   id: string,

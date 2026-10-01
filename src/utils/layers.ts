@@ -1,4 +1,4 @@
-// lw-052: which items a layer setting leaves on the canvas, and in an
+// Which items a layer setting leaves on the canvas, and in an
 // export. Pure, so the editor, the exports and the tests share one rule.
 //
 // An item is left out when its layer is hidden, or (in an export that has
@@ -132,7 +132,7 @@ export const modelForExport = <T extends Model>(
   const items = model.items.filter((item) => {
     return !placedBefore.has(item.id) || placed.has(item.id);
   });
-  // lw-053: and the connections to them, so a stub does not name them.
+  // And the connections to them, so a stub does not name them.
   const kept = new Set(
     items.map((item) => {
       return item.id;

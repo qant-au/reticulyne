@@ -92,7 +92,7 @@ describe('Cursor mode', () => {
       });
     });
 
-    test('lw-087: read-only never promotes a press on an item to a drag', () => {
+    test('read-only never promotes a press on an item to a drag', () => {
       const state = makeState({
         editorMode: 'EXPLORABLE_READONLY',
         mode: {

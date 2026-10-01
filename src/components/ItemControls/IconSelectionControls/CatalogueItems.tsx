@@ -27,7 +27,7 @@ const matches = (item: CatalogueItem, needle: string) => {
   });
 };
 
-// lw-082: Reticulyne's catalogue as palette sections, one per medium family
+// Reticulyne's catalogue as palette sections, one per medium family
 // (docs/catalogue.md "The palette"). A tile shows the item's Accurona twin
 // when the editor has that drawing, else its 2D schematic symbol.
 export const CatalogueItems = ({ filter, onMouseDown, onClick }: Props) => {

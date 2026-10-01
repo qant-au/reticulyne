@@ -71,7 +71,7 @@ const setup = (): { current: Captured } => {
   return ref as { current: Captured };
 };
 
-describe('historyStore discardSince (lw-089)', () => {
+describe('historyStore discardSince', () => {
   test('a burst from before the gesture still commits, ending at the origin', () => {
     jest.useFakeTimers();
     const s = setup();

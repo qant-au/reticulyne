@@ -1,4 +1,4 @@
-// lw-053: floors. A floor is one of the model's views, and the list is in
+// Floors. A floor is one of the model's views, and the list is in
 // floor order, lowest first. A connection whose two items are placed on
 // different floors is drawn on each floor as a stub: a short riser from
 // the item to a transition marker naming the other floor and item.

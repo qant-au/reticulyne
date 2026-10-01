@@ -2,7 +2,7 @@ import { produce } from 'immer';
 import { CoordsUtils, setWindowCursor } from 'src/utils';
 import { ModeActions } from 'src/types';
 
-// lw-087: at rest, the hand shows only in an editable diagram, where it
+// At rest, the hand shows only in an editable diagram, where it
 // says "this is the hand tool, not select". Read-only has nothing else to
 // do with a press, so it keeps the default cursor, and grabbing only while
 // a pan is actually under way.

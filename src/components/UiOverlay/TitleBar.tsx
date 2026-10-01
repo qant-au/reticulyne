@@ -1,5 +1,5 @@
 // Bottom-center title strip — displays "<project title> > <floors>": the
-// view name, or (lw-053) the floor switcher when there is more than one
+// view name, or the floor switcher when there is more than one
 // view or the diagram is editable.
 // Visible whenever the current editorMode includes 'VIEW_TITLE' in its
 // availableTools allowlist.

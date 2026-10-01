@@ -7,7 +7,7 @@ import { useView } from 'src/hooks/useView';
 import { adjacentFloor, generateId } from 'src/utils';
 import type { SceneCore } from './types';
 
-// lw-053: floors (the model's views, lowest first) and the connections
+// Floors (the model's views, lowest first) and the connections
 // that join items on different floors. Every change is one undo step, and
 // saved with the diagram; showing another floor is navigation, not a
 // change, so it makes no undo step.
@@ -160,7 +160,7 @@ export const useSceneFloors = ({
     [apply]
   );
 
-  // lw-083: a connection's ports and medium, chosen in the inspector.
+  // A connection's ports and medium, chosen in the inspector.
   const updateConnection = useCallback(
     (id: string, updates: ConnectionPortUpdate) => {
       apply((state) => {

@@ -97,7 +97,7 @@ const connectorToScene = (c: Connector): SceneConnector => {
 };
 
 // A view's kind is on the view itself, so a view switched between iso and
-// schematic in the editor saves as what it is now (lw-050).
+// schematic in the editor saves as what it is now.
 const viewToScene = (view: View): DiagramView => {
   return defined({
     id: view.id,
@@ -170,7 +170,7 @@ const itemToObject = (item: ModelItem): SceneObject => {
   });
 };
 
-/** The model item for a scene object (lw-082: with what makes it a device). */
+/** The model item for a scene object (with what makes it a device). */
 export const objectToModelItem = (object: SceneObject): ModelItem => {
   return defined({
     id: object.id,
@@ -213,7 +213,7 @@ export const modelToSceneUpdate = (
       // scene without icons or colours saves without them.
       ...(model.icons.length || opened.icons ? { icons: model.icons } : {}),
       ...(model.colors.length || opened.colors ? { colors: model.colors } : {}),
-      // lw-052: likewise for layers.
+      // Likewise for layers.
       ...(model.layers?.length || opened.layers
         ? { layers: model.layers ?? [] }
         : {})
@@ -226,8 +226,8 @@ const endObject = (anchor: SceneAnchor | undefined) => {
 };
 
 /**
- * The scene's connections with the model's in place of Reticulyne's own
- * (lw-053). A connection between two of the model's items is Reticulyne's:
+ * The scene's connections with the model's in place of Reticulyne's own.
+ * A connection between two of the model's items is Reticulyne's:
  * it is replaced by the model's copy, or dropped when the model no longer
  * has it. Any other connection (to an object on a plan, say) is kept. The
  * fields Reticulyne does not edit (ports, kind, props, links) are kept
@@ -294,7 +294,7 @@ export const sceneFromModel = (model: Model, context: SceneContext): Scene => {
       return [c.id, c];
     })
   );
-  // lw-083: mergeScene drops a connector's `connection` when the opened
+  // mergeScene drops a connector's `connection` when the opened
   // scene did not have it; the model's connector says what it draws.
   const drawnBy = new Map(
     model.views.flatMap((view) => {
@@ -463,7 +463,7 @@ export const sceneToModel = (
       return placed.has(o.id);
     })
     .map(objectToModelItem);
-  // lw-053: the connections between two of those items, whatever views
+  // The connections between two of those items, whatever views
   // they are on. The rest stay in the scene and are kept on save.
   const connections: Connection[] | undefined = scene.connections
     ?.filter((c) => {

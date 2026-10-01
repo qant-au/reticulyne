@@ -102,7 +102,7 @@ describe('DragItems mode', () => {
       );
     });
 
-    // lw-062 (sweep 2026-09-30): dragging a collapsed group's box drags
+    // Sweep 2026-09-30: dragging a collapsed group's box drags
     // its members, which the visible items leave out. Looked up there,
     // every move threw and the members stayed where they were.
     test("moves a collapsed group's hidden members, found in the whole view", () => {

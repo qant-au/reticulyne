@@ -2,7 +2,7 @@ import type { Layer, View } from 'src/types';
 import { REDACTED_LAYER_ID } from 'src/schemas/layer';
 import type { State } from './types';
 
-// lw-052: diagram layers. The list is model-wide (one layer can hold items
+// Diagram layers. The list is model-wide (one layer can hold items
 // on every view); an item names its layer with `layerId`, and an item
 // without one is on the base layer. Each function returns the state
 // unchanged when there is nothing to do, so no empty undo step is made.

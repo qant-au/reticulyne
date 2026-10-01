@@ -20,7 +20,7 @@ const dragItems = (
     if (item.type === 'ITEM') {
       // The whole view too, not only scene.items: a collapsed group's
       // members are left out of the visible items, and dragging the
-      // group's box drags them (lw-062). Looked up in scene.items alone,
+      // group's box drags them. Looked up in scene.items alone,
       // every move threw "Item with id not found" and the members stayed.
       const node = getItemByIdOrThrow(
         [...scene.items, ...(scene.currentView.items ?? [])],

@@ -54,7 +54,7 @@ export const getAnchorTile = (anchor: ConnectorAnchor, view: View): Coords => {
   throw new Error('Could not get anchor tile.');
 };
 
-// lw-061: the neighbouring tile each side of a node faces.
+// The neighbouring tile each side of a node faces.
 export const ANCHOR_SIDE_OFFSETS: Record<AnchorSide, Coords> = {
   '+X': { x: 1, y: 0 },
   '-X': { x: -1, y: 0 },
@@ -219,7 +219,7 @@ export const getConnectorPath = ({
       if (i === 0) return acc;
 
       const prev = positionsNormalisedFromSearchArea[i - 1];
-      // lw-061: an end with a side leaves (or arrives) through that edge
+      // An end with a side leaves (or arrives) through that edge
       // of its node, so the route starts from the tile beyond it and the
       // node's own tile is routed around. A step onto the other end is
       // no step: two ends facing each other are already adjacent.

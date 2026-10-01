@@ -4,7 +4,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { PortsTable, PropsTable } from '../PropsPortsSection';
 
-// lw-084: props and ports shown and edited as tables in the inspector.
+// Props and ports shown and edited as tables in the inspector.
 
 const blurWith = (label: string, text: string) => {
   const input = screen.getByLabelText(label);

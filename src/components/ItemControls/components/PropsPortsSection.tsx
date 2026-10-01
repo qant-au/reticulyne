@@ -27,7 +27,7 @@ import type { ModelItem } from 'src/types';
 import { PanelSection } from 'src/vendor/accurona-ui';
 import { SCENE_LIMITS } from 'src/vendor/accurona-core/scene/schema';
 
-// lw-084: an object's props and ports as tables (docs/scene-format.md,
+// An object's props and ports as tables (docs/scene-format.md,
 // "Objects": props are flat scalars "so that every tool can show and edit it
 // as a table without knowing what the keys mean"). A value keeps its type:
 // a yes/no is a checkbox, a number stays a number while it reads as one.

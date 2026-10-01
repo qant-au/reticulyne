@@ -8,7 +8,7 @@ import { scrollKeepingCentre } from 'src/utils';
 import type { Projection } from 'src/types';
 import { Surface, ToolButton } from 'src/vendor/accurona-ui';
 
-// lw-050: switch the current view between the isometric drawing and the
+// Switch the current view between the isometric drawing and the
 // flat, Visio-style 2D one. Both draw the same tiles, so nothing moves in
 // the model; the point at the centre of the canvas stays at the centre,
 // unrounded, so switching there and back returns to exactly the same view.

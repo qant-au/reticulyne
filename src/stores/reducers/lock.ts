@@ -1,6 +1,6 @@
 import type { State } from './types';
 
-// lw-069: lock and unlock (Excalidraw's Ctrl/Cmd+Shift+L). Locking is per
+// Lock and unlock (Excalidraw's Ctrl/Cmd+Shift+L). Locking is per
 // view, like a layer: `locked` sits on the view item, connector, rectangle
 // or text box. Returns the state unchanged when nothing changes, so no
 // empty undo step is made.

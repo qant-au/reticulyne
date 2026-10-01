@@ -8,7 +8,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import type { ModelItem } from 'src/types';
 import { PanelSection } from 'src/vendor/accurona-ui';
 
-// lw-083: a connector's catalogue ports, and the topology rules its
+// A connector's catalogue ports, and the topology rules its
 // connection or an object breaks. Warnings only: nothing is refused.
 
 const useWarnings = () => {

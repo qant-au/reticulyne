@@ -11,7 +11,7 @@ import {
   REDACTED_LAYER_ID
 } from '../layers';
 
-// lw-052. A switch (a) and a server (b) joined by k1; an address label on
+// A switch (a) and a server (b) joined by k1; an address label on
 // the Redacted layer; a note, a rectangle and the server on 'detail'; a
 // second connector (k2) hanging off k1's end anchor.
 const view = (): View => {

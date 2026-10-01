@@ -64,7 +64,7 @@ describe('PlaceIcon mode', () => {
     );
   });
 
-  test('mouseup placing a floor-plan object keeps its id and name, selects it and disarms (lw-055)', () => {
+  test('mouseup placing a floor-plan object keeps its id and name, selects it and disarms', () => {
     const state = makeState({
       mode: {
         type: 'PLACE_ICON',

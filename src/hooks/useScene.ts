@@ -55,7 +55,7 @@ export const useScene = () => {
 
   const leftOut = useLayerFilter();
   const visibleView = useMemo(() => {
-    // lw-062: and less the members of collapsed groups.
+    // And less the members of collapsed groups.
     return filterViewByCollapsedGroups(
       filterViewByLayers(currentView, leftOut)
     );
@@ -145,7 +145,7 @@ export const useScene = () => {
     [model.actions, scene.actions, historyIsApplying, historyActions]
   );
 
-  // lw-053: an undo or redo can take away the floor on show (one added,
+  // An undo or redo can take away the floor on show (one added,
   // then undone). Show the lowest floor instead of drawing one that is gone.
   const { changeView } = useView();
   const keepViewShown = useCallback(
@@ -197,7 +197,7 @@ export const useScene = () => {
     }
   }, [model.actions, scene.actions, historyActions, keepViewShown]);
 
-  // lw-089: put the diagram back as it was when a gesture began (Esc
+  // Put the diagram back as it was when a gesture began (Esc
   // during a drag). No undo step: the gesture is forgotten, not undone.
   const restoreState = useCallback(
     (origin: State) => {
@@ -213,7 +213,7 @@ export const useScene = () => {
     [model.actions, scene.actions, historyActions]
   );
 
-  // lw-050: draw the current view isometrically or flat. Undoable, and
+  // Draw the current view isometrically or flat. Undoable, and
   // saved on the view; 'iso' is stored as no kind at all.
   const setViewKind = useCallback(
     (kind: Projection) => {
@@ -265,9 +265,9 @@ export const useScene = () => {
     rectangles,
     textBoxes,
     currentView,
-    // lw-052: the current view as drawn, less its hidden layers.
+    // The current view as drawn, less its hidden layers.
     visibleView,
-    // How the current view is drawn (lw-050): isometric or flat.
+    // How the current view is drawn: isometric or flat.
     projection: currentView.kind ?? 'iso',
     setViewKind,
     ...itemOps,
@@ -278,9 +278,9 @@ export const useScene = () => {
     ...layerOps,
     ...lockOps,
     ...floorOps,
-    // lw-052: the diagram's layers; the base layer is never listed.
+    // The diagram's layers; the base layer is never listed.
     layers: model.layers ?? EMPTY_LAYERS,
-    // lw-053: the floors are the views, lowest first.
+    // The floors are the views, lowest first.
     floors: model.views,
     connections: model.connections ?? EMPTY_CONNECTIONS,
     undo,

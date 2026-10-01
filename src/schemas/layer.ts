@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { id, constrainedStrings } from './common';
 
-// lw-052: named layers that cut across views and groups. An item names
+// Named layers that cut across views and groups. An item names
 // its layer with `layerId`; an item without one is on the base layer,
 // which always exists and is never listed. Follows the scene format's
 // `layers` and `layer` (Accurona docs/scene-format.md, "Layers").

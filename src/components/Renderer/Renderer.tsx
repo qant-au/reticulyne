@@ -38,7 +38,7 @@ const PAN_KEYS = formatBinding(
   })!
 )[0];
 
-// lw-068: read by a screen reader when the canvas takes focus.
+// Read by a screen reader when the canvas takes focus.
 const HINTS = {
   EDITABLE: `Tab and Shift+Tab move between objects. Arrow keys move the selected object, Enter edits it, Delete removes it, Shift+F10 opens its menu. ${PAN_KEYS} pan. Question mark lists every shortcut.`,
   EXPLORABLE_READONLY: `Read only. Tab and Shift+Tab move between objects. ${PAN_KEYS} pan, plus and minus zoom, F fits the diagram. Question mark lists every shortcut.`,
@@ -96,7 +96,7 @@ export const Renderer = ({
       aria-label="Diagram canvas"
       aria-roledescription="isometric diagram editor"
       aria-describedby={hintId}
-      // lw-068: always focusable, so a keyboard user can reach the canvas
+      // Always focusable, so a keyboard user can reach the canvas
       // and Tab through its objects. FEA-07 made it focusable only when
       // shortcuts were scoped to it; that left the global default with no
       // way in from the keyboard.
@@ -120,7 +120,7 @@ export const Renderer = ({
         // 2.12: the editor handles touch itself (pinch, drag); without this
         // the browser takes two-finger gestures for page zoom and scroll.
         touchAction: 'none',
-        // lw-090: colours set by applyPatch fade in rather than jump. CSS,
+        // Colours set by applyPatch fade in rather than jump. CSS,
         // not React-driven animation, so a live feed costs no extra renders.
         [`&[${PATCH_FADE_ATTR}] *`]: {
           transition: `fill ${PATCH_FADE_MS}ms ease, stroke ${PATCH_FADE_MS}ms ease`
@@ -136,7 +136,7 @@ export const Renderer = ({
       <Box id={hintId} sx={visuallyHidden}>
         {HINTS[editorMode]}
       </Box>
-      {/* lw-053: the other floors, faint, beneath everything on this one */}
+      {/* The other floors, faint, beneath everything on this one */}
       <SceneLayer>
         <OtherFloors />
       </SceneLayer>
@@ -157,7 +157,7 @@ export const Renderer = ({
       >
         {isShowGrid && <Grid />}
       </Box>
-      {/* lw-087: the hover tile is a placement cue, so only when editable. */}
+      {/* The hover tile is a placement cue, so only when editable. */}
       {mode.showCursor && overCanvas && editorMode === 'EDITABLE' && (
         <SceneLayer>
           <Cursor />
@@ -194,7 +194,7 @@ export const Renderer = ({
       <SceneLayer>
         <Nodes />
       </SceneLayer>
-      {/* lw-053: a stub's riser, above the nodes it leaves */}
+      {/* A stub's riser, above the nodes it leaves */}
       <SceneLayer>
         <FloorStubs part="riser" />
       </SceneLayer>
@@ -203,7 +203,7 @@ export const Renderer = ({
       <SceneLayer>
         <NodeLabels />
       </SceneLayer>
-      {/* lw-053: above the names, so a stub's marker can be clicked */}
+      {/* Above the names, so a stub's marker can be clicked */}
       <SceneLayer>
         <FloorStubs part="marker" />
       </SceneLayer>

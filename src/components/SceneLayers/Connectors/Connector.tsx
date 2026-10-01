@@ -97,7 +97,7 @@ export const Connector = ({
   // space. See flipConnectorTileY for the why — BUG4-01 fixed the
   // X mirror; this is the Y companion.
   //
-  // lw-062: an end docked on a collapsed group's box stops at the box's
+  // An end docked on a collapsed group's box stops at the box's
   // edge, where its arrow is, instead of running on to the box's centre.
   const renderTiles = useMemo(() => {
     const origin = _connector.path.rectangle.from;

@@ -27,7 +27,7 @@ import {
   type FloorTabsPlan
 } from './floorTabsLayout';
 
-// lw-053: the floor switcher, in the title bar where the view name was. A
+// The floor switcher, in the title bar where the view name was. A
 // floor is a view, and the tabs read as the building does, lowest first.
 // Anyone can switch floors (Alt + Up / Down too) and show or hide the
 // faint other floors; only an editable diagram adds, renames (double-click
@@ -165,7 +165,7 @@ export const FloorSwitcher = ({
   const opened = useUiStateStore((state) => {
     return state.sceneContext.opened;
   });
-  // lw-055: where each floor is on the building - the plan floors its items
+  // Where each floor is on the building - the plan floors its items
   // are on, most first. Read from the items as they are now, saved or not.
   const onPlan = useMemo(() => {
     return new Map(

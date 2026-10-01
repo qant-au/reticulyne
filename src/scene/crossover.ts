@@ -11,7 +11,7 @@ import type { CatalogueItem } from 'src/catalogue/schema';
 import type { ModelItem } from 'src/types/model';
 import { objectToModelItem } from './convert';
 
-// lw-055: an object on a floor plan, drawn in a diagram. Axonometra writes
+// An object on a floor plan, drawn in a diagram. Axonometra writes
 // only the object's Accurona `element`; Reticulyne draws it with the
 // catalogue item that cross-references that element (its twin), else the
 // element's own isometric drawing.
@@ -87,7 +87,7 @@ export const objectTemplate = (
 };
 
 /**
- * lw-082: what a catalogue item becomes when it is placed, less its id:
+ * what a catalogue item becomes when it is placed, less its id:
  * `itemToSceneObject` (ports expanded and copied, the item recorded as a
  * 'reticulyne' link, its Accurona twin as the `element`) as a model item.
  * The twin's drawing is used only when the editor has that icon.

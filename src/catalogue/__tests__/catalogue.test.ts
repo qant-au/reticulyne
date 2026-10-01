@@ -393,7 +393,7 @@ describe('itemToSceneObject', () => {
   });
 });
 
-describe('schematicIconUrl (lw-050)', () => {
+describe('schematicIconUrl', () => {
   it('swaps an Accurona element drawing for its 2D schematic', () => {
     const [element] = Object.keys(SCHEMATIC_DRAWINGS);
     const icon = accuronaIcons().find((i) => {

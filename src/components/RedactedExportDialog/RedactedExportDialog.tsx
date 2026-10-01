@@ -10,7 +10,7 @@ import { AppDialog } from 'src/vendor/accurona-ui';
 import { useDownloadJson } from 'src/components/MainMenu/useExportJson';
 import { useDownloadPdf } from 'src/components/MainMenu/useExportPdf';
 
-// lw-052: the opt-in for exports that have no options dialog of their own
+// The opt-in for exports that have no options dialog of their own
 // (JSON and PDF). Opened only when something is on the Redacted layer.
 export const RedactedExportDialog = ({
   format,

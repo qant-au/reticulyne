@@ -85,7 +85,7 @@ export const IconSelectionControls = ({
     ]
   );
 
-  // lw-068: a click with no press before it came from the keyboard (Enter
+  // A click with no press before it came from the keyboard (Enter
   // or Space on the icon). A pointer arms the icon on press and places it
   // where it is released; the keyboard has nowhere to release, so the icon
   // goes straight onto the free tile nearest the middle of the view.
@@ -100,7 +100,7 @@ export const IconSelectionControls = ({
     [uiStateActions, armFromAnyMode, placeIcon, targetTile]
   );
 
-  // lw-055: a device from the floor plan is placed like an icon, but as
+  // A device from the floor plan is placed like an icon, but as
   // the object it already is.
   const onFloorPlanObject = useCallback(
     (object: FloorPlanObject) => {
@@ -140,7 +140,7 @@ export const IconSelectionControls = ({
     ]
   );
 
-  // lw-082: a catalogue item places like an icon, but as a new object with
+  // A catalogue item places like an icon, but as a new object with
   // the item's ports, links and element each time.
   const icons = useModelStore((state) => {
     return state.icons;

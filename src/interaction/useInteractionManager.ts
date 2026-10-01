@@ -47,7 +47,7 @@ const modes: { [k in string]: ModeActions } = {
   TEXTBOX: TextBox
 };
 
-// lw-089: the gestures Esc cancels, putting back what they moved.
+// The gestures Esc cancels, putting back what they moved.
 const isDragMode = (type: string) => {
   return type === 'DRAG_ITEMS' || type === 'RECTANGLE.TRANSFORM';
 };
@@ -120,7 +120,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     null
   );
 
-  // lw-089: Esc cancels a drag. `origin` is the diagram at the press, before
+  // Esc cancels a drag. `origin` is the diagram at the press, before
   // an Alt+drag made its copies; `selection` is what was selected just
   // before the drag began, so the originals are selected again rather than
   // copies that no longer exist. `swallowUp` keeps the release that ends a
@@ -334,7 +334,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
       const itemAtTile = getItemAtTile({ tile, scene: sceneRef.current });
       e.preventDefault();
 
-      // lw-062: double-clicking a collapsed group's box expands it, with
+      // Double-clicking a collapsed group's box expands it, with
       // its members selected. Anywhere on the box, and over a connector
       // drawn to it; only a node shown on those tiles comes first.
       const box =
@@ -358,7 +358,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         return;
       }
 
-      // lw-069: a locked item is neither selected nor built on.
+      // A locked item is neither selected nor built on.
       if (itemAtTile && isLocked(sceneRef.current.currentView, itemAtTile)) {
         return;
       }
@@ -400,8 +400,8 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
         scene: liveScene
       });
 
-      // 1.3: every kind with a layer order gets the menu, and since lw-069
-      // nodes too (for Lock; they are depth-sorted, so they get no layer
+      // 1.3: every kind with a layer order gets the menu, and so do
+      // nodes (for Lock; they are depth-sorted, so they get no layer
       // actions), and the empty canvas when something is locked (Unlock
       // all). A locked item is found here, unlike on a click, so it can be
       // unlocked. Every entry in the menu edits the diagram, so read-only
@@ -542,7 +542,7 @@ export const useInteractionManager = (enableGlobalDragHandlers = true) => {
     enableGlobalDragHandlers
   ]);
 
-  // lw-089: Esc during a drag puts everything the drag moved back, and the
+  // Esc during a drag puts everything the drag moved back, and the
   // drag leaves no undo step. Captured on the window so it runs before the
   // keyboard shortcuts' Esc, which would clear the selection as well.
   useEffect(() => {

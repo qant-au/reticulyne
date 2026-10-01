@@ -2,7 +2,7 @@ import type { Port } from 'src/vendor/accurona-core';
 import { MEDIA } from './media';
 import type { Medium } from './schema';
 
-// lw-083: connections attached to ports, and the topology rules of
+// Connections attached to ports, and the topology rules of
 // docs/catalogue.md ("Topology") checked as warnings. Nothing here ever
 // refuses a connection: a diagram in progress may be incomplete.
 

@@ -9,7 +9,7 @@ import {
 import { getIsoMatrix, getProjectedTileSize } from '../projection';
 import { SCHEMATIC_TILE_SIZE } from 'src/config';
 
-// lw-050: the flat, schematic view draws the same tile grid as the
+// The flat, schematic view draws the same tile grid as the
 // isometric one, without the projection.
 const S = SCHEMATIC_TILE_SIZE.width;
 // screenToIso negates a floor, as the iso view always has, so row 0 can

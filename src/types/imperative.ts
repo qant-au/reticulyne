@@ -82,7 +82,7 @@ export interface SelectedRef {
 }
 
 /**
- * lw-064: one stop on a presentation tour. The tour centres on `nodeId`,
+ * one stop on a presentation tour. The tour centres on `nodeId`,
  * on `viewId` if given, or else on the view on show when it holds the node,
  * or else the first view that does.
  */

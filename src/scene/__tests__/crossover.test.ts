@@ -12,7 +12,7 @@ import {
   twinOf
 } from 'src/scene';
 
-// lw-055: a device on the floor plan and its node in a diagram are one
+// A device on the floor plan and its node in a diagram are one
 // scene object. Axonometra writes only the element; Reticulyne draws it
 // with the element's catalogue twin and keeps the plan on save.
 
@@ -136,7 +136,7 @@ describe('crossover', () => {
     ).toEqual(['ap-1', 'cam-1', 'sofa']);
   });
 
-  test('save: a catalogue item keeps its ports, catalogue link and element, and reopens as it was (lw-082)', () => {
+  test('save: a catalogue item keeps its ports, catalogue link and element, and reopens as it was', () => {
     const item = ITEMS.find((i) => {
       return i.id === 'poe-switch-8';
     })!;

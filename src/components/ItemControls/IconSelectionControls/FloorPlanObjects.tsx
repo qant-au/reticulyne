@@ -11,7 +11,7 @@ import { IconGrid } from './IconGrid';
 
 /**
  * What arming a floor-plan object needs: its id, name and icon, if any, and
- * the whole object as a model item (lw-082: its element, props, ports and
+ * the whole object as a model item (its element, props, ports and
  * links are written back on save from the model item).
  */
 export interface FloorPlanObject {
@@ -21,7 +21,7 @@ export interface FloorPlanObject {
   template: Omit<ModelItem, 'id'>;
 }
 
-// lw-055: devices placed on the floor plan (in Axonometra) that no diagram
+// Devices placed on the floor plan (in Axonometra) that no diagram
 // view has yet. Placing one keeps its object id, so the node in the diagram
 // and the device on the plan are the same object.
 export const FloorPlanObjects = ({

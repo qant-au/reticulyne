@@ -6,7 +6,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { generateId } from 'src/utils';
 import type { SceneCore } from './types';
 
-// lw-052: add, rename, show/hide and delete layers, and put items on one.
+// Add, rename, show/hide and delete layers, and put items on one.
 // Every change is one undo step, and saved with the diagram.
 export const useSceneLayers = ({
   getState,

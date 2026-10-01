@@ -13,7 +13,7 @@ const EDGES = [
   ['LEFT', 'TOP']
 ] as const;
 
-// lw-061: the grid direction each of those edges faces, in the same
+// The grid direction each of those edges faces, in the same
 // order. The TOP-RIGHT edge is the one towards the tile at x + 1.
 export const PORT_SIDES: readonly AnchorSide[] = ['+X', '-Y', '-X', '+Y'];
 

@@ -38,7 +38,7 @@ export const ContextMenuManager = ({ anchorEl }: Props) => {
     };
   };
 
-  // lw-069: a locked item offers only Unlock; the empty canvas offers
+  // A locked item offers only Unlock; the empty canvas offers
   // Unlock all (it opens only when something is locked).
   const items: ContextMenuItem[] = !item
     ? [
@@ -59,7 +59,7 @@ export const ContextMenuManager = ({ anchorEl }: Props) => {
           }
         ]
       : [
-          // lw-068: the keyboard's way to draw a connector.
+          // The keyboard's way to draw a connector.
           ...(item.type === 'ITEM'
             ? [
                 {

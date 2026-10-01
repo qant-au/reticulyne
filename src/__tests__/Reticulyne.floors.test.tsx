@@ -15,7 +15,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import type { InitialData } from 'src/types';
 
-// lw-053: the floor switcher, cross-floor stubs, Alt + Up / Down, and the
+// The floor switcher, cross-floor stubs, Alt + Up / Down, and the
 // other floors drawn faintly.
 
 beforeAll(() => {

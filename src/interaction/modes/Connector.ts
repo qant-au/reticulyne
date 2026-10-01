@@ -18,7 +18,7 @@ import {
 
 // 2.5: what the pointer is aiming at. A node's port counts as the node
 // even when the pointer sits on the neighbouring tile, so releasing on a
-// target's port connects rather than cancelling. lw-061: aiming at a port
+// target's port connects rather than cancelling. Aiming at a port
 // also names its side, so the end snaps to that edge of the node.
 const targetAtPointer = ({
   uiState,

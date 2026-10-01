@@ -17,7 +17,7 @@ import { MAX_ZOOM, TOUR_ZOOM } from 'src/config';
 import { tourKeyAction } from 'src/interaction/tourKeys';
 import type { InitialData, TourStep, UiStateActions } from 'src/types';
 
-// lw-064: presentation / tour mode, driven through a mounted <Reticulyne>
+// Presentation / tour mode, driven through a mounted <Reticulyne>
 // as a host would, and through the keys and panel as a viewer would.
 
 beforeAll(() => {
@@ -105,7 +105,7 @@ const press = (key: string, init: KeyboardEventInit = {}) => {
   });
 };
 
-describe('tour (lw-064)', () => {
+describe('tour', () => {
   test('startTour centres the first node at the tour zoom and highlights it', () => {
     const api = mount({ editorMode: 'EXPLORABLE_READONLY' });
     let started = false;
@@ -418,7 +418,7 @@ describe('tour (lw-064)', () => {
   });
 });
 
-describe('tourKeyAction (lw-064)', () => {
+describe('tourKeyAction', () => {
   test('maps the presentation keys and leaves chords alone', () => {
     const k = (key: string, init: KeyboardEventInit = {}) => {
       return tourKeyAction(new KeyboardEvent('keydown', { key, ...init }));

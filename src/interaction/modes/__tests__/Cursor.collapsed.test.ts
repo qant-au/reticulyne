@@ -6,7 +6,7 @@ import { makeState, lastModeChange, ref, type SceneShape } from './_helpers';
 import { filterViewByCollapsedGroups, getTilePosition } from 'src/utils';
 import type { Coords, View } from 'src/types';
 
-// lw-062: a collapsed group's box stands for its members. Group g holds
+// A collapsed group's box stands for its members. Group g holds
 // node1 at (0,0) and node2 at (2,0); its box is at (1,0).
 const fullView: View = {
   id: 'view1',
@@ -38,7 +38,7 @@ const onBox = pointer({ x: 1, y: 0 }, { x: 1, y: 0 });
 const node1 = ref('ITEM', 'node1');
 const node2 = ref('ITEM', 'node2');
 
-describe('Cursor mode - lw-062 collapsed groups', () => {
+describe('Cursor mode - collapsed groups', () => {
   test('a click on the box selects every member, ready to drag', () => {
     const state = makeState({
       mode: { type: 'CURSOR', showCursor: true, mousedownItem: null },

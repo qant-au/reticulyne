@@ -208,12 +208,12 @@ export interface PlaceIconMode {
   showCursor: boolean;
   id: string | null;
   /**
-   * lw-055: placing a scene object another editor placed (a device on the
+   * placing a scene object another editor placed (a device on the
    * floor plan). The item keeps the object's id, so the two are linked.
    */
   object?: { id: string; name: string; icon?: string };
   /**
-   * lw-082: placing a catalogue item. Each placement is a new object with
+   * placing a catalogue item. Each placement is a new object with
    * the item's ports, links and element (`catalogueTemplate`).
    */
   template?: Omit<ModelItem, 'id'>;
@@ -272,7 +272,7 @@ export type IconCollectionStateWithIcons = IconCollectionState & {
 };
 
 export interface ContextMenu {
-  // null: the empty canvas (lw-069, for Unlock all).
+  // null: the empty canvas (for Unlock all).
   item: ItemReference | null;
   tile: Coords;
 }
@@ -364,14 +364,14 @@ export interface UiState {
   // A text box just placed: its inspector takes focus once, so typing
   // goes into it instead of running as tool shortcuts.
   focusTextBoxId: string | null;
-  // lw-068: the latest screen-reader announcement; seq changes on each one.
+  // The latest screen-reader announcement; seq changes on each one.
   announcement: { text: string; seq: number };
   // 1.7: the group entered by double-click; clicks select inside it.
   editingGroupId: string | null;
-  // lw-052: the Redacted layer is left off the canvas, only while the
+  // The Redacted layer is left off the canvas, only while the
   // PDF export captures it.
   hideRedacted: boolean;
-  // lw-053: the other floors drawn faintly behind the one on show.
+  // The other floors drawn faintly behind the one on show.
   showOtherFloors: boolean;
   // 2.14: what "New from template" offers.
   templates: DiagramTemplate[];
@@ -382,7 +382,7 @@ export interface UiState {
   // merge-then-validate failures through the same channel the
   // <Reticulyne onValidationError> prop uses for initialData/loadModel.
   onValidationError: ValidationErrorHandler | undefined;
-  // lw-091: the <Reticulyne legacyConnections> prop, for every load path
+  // The <Reticulyne legacyConnections> prop, for every load path
   // (Open, loadModel, templates), not only initialData.
   legacyConnections: boolean;
   // Host-supplied per-node decorator (FEA5-07). When defined, the
@@ -398,7 +398,7 @@ export interface UiState {
   // visual from outside without touching interaction state.
   selectionDimEnabled: boolean;
   highlightedItemId: string | undefined;
-  // lw-064: the tour running, if any. `hostHighlight` is what
+  // The tour running, if any. `hostHighlight` is what
   // highlightedItemId was before it started, restored when it ends.
   tour: ActiveTour | null;
   // The steps offered by the `tour` prop; a Start tour button shows when set.

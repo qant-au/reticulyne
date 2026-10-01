@@ -1,6 +1,6 @@
 import type { ItemReference, View } from 'src/types';
 
-// lw-069: a locked item is drawn but cannot be selected on the canvas, so
+// A locked item is drawn but cannot be selected on the canvas, so
 // it cannot be moved, edited or deleted until it is unlocked.
 
 const listFor = (view: View, type: ItemReference['type']) => {

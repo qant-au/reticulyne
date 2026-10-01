@@ -130,14 +130,14 @@ const mousedown: ModeActionsAction = ({
     }
   }
 
-  // lw-069: a click passes over locked things to whatever is below.
+  // A click passes over locked things to whatever is below.
   const itemAtTile = getItemAtTile({
     tile: uiState.mouse.position.tile,
     scene,
     skipLocked: true
   });
 
-  // lw-062: a collapsed group's box stands for its members. A click selects
+  // A collapsed group's box stands for its members. A click selects
   // them all, and a press on one of them makes a drag move the whole group.
   // Anywhere on the box, and over whatever else is on those tiles bar a
   // node: a connector from outside is drawn to the box's centre, and a
@@ -205,7 +205,7 @@ const mousedown: ModeActionsAction = ({
       itemAtTile.type === 'TEXTBOX'
         ? clickTarget(scene.currentView, itemAtTile, uiState.editingGroupId)
         : null;
-    // A group's locked members are not selected with it (lw-069).
+    // A group's locked members are not selected with it.
     const target = clicked && {
       ...clicked,
       refs: clicked.refs.filter((ref) => {
@@ -289,7 +289,7 @@ export const Cursor: ModeActions = {
   },
   mousemove: ({ scene, uiState, modifiers }) => {
     if (uiState.mode.type !== 'CURSOR' || !hasMovedTile(uiState.mouse)) return;
-    // lw-087: read-only can select but never drag: a drag moved nodes.
+    // Read-only can select but never drag: a drag moved nodes.
     if (uiState.editorMode !== 'EDITABLE') return;
 
     let item = uiState.mode.mousedownItem;
@@ -311,7 +311,7 @@ export const Cursor: ModeActions = {
     }
 
     if (item.type === 'CONNECTOR' && uiState.mouse.mousedown) {
-      // lw-062: a connector drawn to a collapsed group's box is left as it
+      // A connector drawn to a collapsed group's box is left as it
       // is until the group is expanded; see isDockedOnCollapsedBox.
       if (isDockedOnCollapsedBox(scene.currentView, item.id)) return;
 

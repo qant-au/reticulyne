@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * Layers (lw-052): the Layers panel, and the Redacted layer's opt-in on
+ * Layers: the Layers panel, and the Redacted layer's opt-in on
  * the JSON, SVG and PNG exports.
  *
  * Sweep 2026-09-30 found these features had no browser cover. The scene

@@ -198,7 +198,7 @@ const App = ({
     uiStateActions.setOnValidationError(onValidationError);
   }, [onValidationError, uiStateActions]);
 
-  // lw-091: Open, loadModel and templates load through their own hook
+  // Open, loadModel and templates load through their own hook
   // instances, which read the prop from the store.
   useEffect(() => {
     uiStateActions.setLegacyConnections(legacyConnections);
@@ -251,7 +251,7 @@ const App = ({
     uiStateActions.setExportTheme(exportTheme);
   }, [exportTheme, uiStateActions]);
 
-  // lw-064: the steps the Start tour button offers, and the step callback.
+  // The steps the Start tour button offers, and the step callback.
   useEffect(() => {
     uiStateActions.setTourSteps(tour);
   }, [tour, uiStateActions]);
@@ -403,7 +403,7 @@ const useReticulyne = () => {
   // prop documents; without it the failure only reached the console.
   const initialDataManager = useInitialDataManager({ onValidationError });
 
-  // lw-065: loadModel's promises wait for the render that shows the new
+  // loadModel's promises wait for the render that shows the new
   // diagram. A load bumps loadGeneration; the effect after that render
   // settles them. Unmounting first settles them as well, so none hangs.
   const loadGeneration = useUiStateStore((state) => {
@@ -548,7 +548,7 @@ const useReticulyne = () => {
     [ModelActions, changeView, uiStateActions]
   );
 
-  // lw-052: diagram layers. Showing or hiding one is how a host serves one
+  // Diagram layers. Showing or hiding one is how a host serves one
   // diagram to several audiences, so, like setView, it is allowed in every
   // editor mode. It is saved with the diagram and not recorded in undo.
   const getLayers = useCallback((): Layer[] => {
@@ -765,7 +765,7 @@ const useReticulyne = () => {
   );
   const clearSelection = uiStateActions.clearSelection;
 
-  // lw-064: presentation / tour mode. Navigation, so every editor mode.
+  // Presentation / tour mode. Navigation, so every editor mode.
   const tour = useTour();
 
   // FEA5-07: imperative Connector namespace — gives a live-data host
@@ -963,10 +963,10 @@ const useReticulyne = () => {
      * editor mode; clears the selection; warns and no-ops on an unknown id.
      */
     setView,
-    /** lw-052: the diagram's layers (the base layer is never listed). */
+    /** the diagram's layers (the base layer is never listed). */
     getLayers,
     /**
-     * lw-052: show or hide a layer by id. Allowed in every editor mode;
+     * show or hide a layer by id. Allowed in every editor mode;
      * saved with the diagram; not recorded in undo; warns and no-ops on
      * an unknown id. The Redacted layer is not listed and cannot be hidden.
      */
@@ -1033,7 +1033,7 @@ const useReticulyne = () => {
     /** Clear the selection. */
     clearSelection,
 
-    // --- lw-064: presentation / tour mode (every editor mode) ---
+    // --- presentation / tour mode (every editor mode) ---
     /**
      * Start a tour: these steps, else the `tour` prop's, else every node
      * on the view in reading order. Validated; steps whose node is on no

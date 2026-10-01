@@ -19,9 +19,9 @@ const modelObjectSchema = z
     views: viewsSchema,
     icons: iconsSchema,
     colors: colorsSchema,
-    // lw-052: absent is no layers but the base one.
+    // Absent is no layers but the base one.
     layers: layersSchema.optional(),
-    // lw-053: absent is none.
+    // Absent is none.
     connections: connectionsSchema.optional()
   })
   .strict();

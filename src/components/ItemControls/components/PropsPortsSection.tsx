@@ -234,6 +234,9 @@ export const PropsTable = ({
             placeholder="Key"
             value={newKey}
             error={newKey !== '' && Boolean(keyError(newKey))}
+            helperText={
+              newKey !== '' ? (keyError(newKey) ?? undefined) : undefined
+            }
             slotProps={{
               htmlInput: {
                 'aria-label': `New ${label} key`,
@@ -270,6 +273,11 @@ export const PropsTable = ({
             Add
           </Button>
         </Stack>
+      )}
+      {editable && entries.length >= SCENE_LIMITS.PROPS && (
+        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+          An object holds at most {SCENE_LIMITS.PROPS} {label}s.
+        </Typography>
       )}
     </Box>
   );
@@ -495,6 +503,11 @@ export const PortsTable = ({
             Add port
           </Button>
         </Stack>
+      )}
+      {editable && list.length >= SCENE_LIMITS.PORTS && (
+        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+          An object holds at most {SCENE_LIMITS.PORTS} ports.
+        </Typography>
       )}
     </Box>
   );

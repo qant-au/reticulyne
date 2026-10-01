@@ -16,7 +16,7 @@ import { FloorPlanObjects, type FloorPlanObject } from './FloorPlanObjects';
 import { CatalogueItems } from './CatalogueItems';
 import { useModelStore } from 'src/stores/modelStore';
 import { catalogueTemplate } from 'src/scene/crossover';
-import { schematicIcons } from 'src/catalogue/place';
+import { accuronaElement, schematicIcons } from 'src/catalogue/place';
 import type { CatalogueItem } from 'src/catalogue/schema';
 import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
 
@@ -150,13 +150,14 @@ export const IconSelectionControls = ({
     return state.actions;
   });
 
-  // The template to place: an item the editor has no drawing for draws with
-  // its 2D schematic symbol, which the diagram then carries as an icon (a
-  // scene may refer only to icons it holds), rather than with no image.
+  // The template to place. An item with no Accurona twin draws with its 2D
+  // schematic symbol, which the diagram then carries as an icon (a scene may
+  // refer only to icons it holds), rather than with no image. A twin the host
+  // supplied no drawing for keeps the default block, as documented.
   const templateFor = useCallback(
     (item: CatalogueItem) => {
       const template = catalogueTemplate(item, icons);
-      if (template.icon) return template;
+      if (template.icon || accuronaElement(item)) return template;
       const [symbol] = schematicIcons([item]);
       if (!symbol) return template;
       const current = modelActions.get().icons;

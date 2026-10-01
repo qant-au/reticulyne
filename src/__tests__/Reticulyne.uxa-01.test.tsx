@@ -315,7 +315,7 @@ describe('UXA-01 — Excalidraw tool hotkey alignment', () => {
     });
   });
 
-  // rtl-015: the bindings now come from the shared keymap in Accurona.
+  // The bindings now come from the shared keymap in Accurona.
   describe('shared keymap', () => {
     test('selecting and panning work read-only', () => {
       mount('EXPLORABLE_READONLY');

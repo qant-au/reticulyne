@@ -9,7 +9,7 @@ const metres = (mm: number | undefined) => {
   return mm === undefined ? '' : `${(mm / 1000).toFixed(1)} m`;
 };
 
-// lw-055: where this node is on the building. A node and a device on the
+// Where this node is on the building. A node and a device on the
 // floor plan are one scene object; this reads the plan placements of the
 // scene the diagram was opened from. Nothing shows for a node on no plan.
 export const FloorPlanSection = ({ itemId }: { itemId: string }) => {

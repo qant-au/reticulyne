@@ -123,7 +123,7 @@ export const useDiagramUtils = () => {
     [zoom, scrollOffset, uiStateActions, scene.projection]
   );
 
-  // rtl-027: bring a tile into view only if it is not already well inside
+  // Bring a tile into view only if it is not already well inside
   // it, so Tab moving through nearby objects does not jolt the view.
   const scrollPosition = useUiStateStore((state) => {
     return state.scroll.position;

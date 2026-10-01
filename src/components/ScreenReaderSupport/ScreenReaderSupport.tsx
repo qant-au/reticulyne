@@ -10,7 +10,7 @@ import {
   plainText
 } from 'src/utils';
 
-// rtl-027: what a screen reader gets from the diagram. The canvas itself is
+// What a screen reader gets from the diagram. The canvas itself is
 // an application region, so a screen reader reads what is said about it,
 // not its drawing. Two things are said here:
 //

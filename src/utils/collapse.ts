@@ -1,4 +1,4 @@
-// rtl-021: collapsed groups. A collapsed group is drawn as one box in place
+// Collapsed groups. A collapsed group is drawn as one box in place
 // of its members. Pure, so the editor, the exports and the tests share one
 // rule, and applied after the layer filter, so a box stands for the members
 // that are shown.

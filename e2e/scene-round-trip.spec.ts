@@ -2,9 +2,9 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 /**
- * Save and reopen keeps today's features: floors (rtl-018), crossover with
- * the floor plan (lw-055), locks (rtl-028), a collapsed group (rtl-021) and
- * a connector with sided ends and a manual waypoint (rtl-020, 3.3). The
+ * Save and reopen keeps today's features: floors, crossover with
+ * the floor plan, locks, a collapsed group and
+ * a connector with sided ends and a manual waypoint (3.3). The
  * scene is loaded through `window.__RETICULYNE_E2E__` (Docker entry only,
  * see src/index-docker.tsx), exported, imported back through Diagrams >
  * Import from file, and exported again.

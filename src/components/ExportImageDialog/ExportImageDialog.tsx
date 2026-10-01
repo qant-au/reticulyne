@@ -88,7 +88,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
     })
   );
 
-  // rtl-017: hidden layers are left out, and the Redacted layer unless
+  // Hidden layers are left out, and the Redacted layer unless
   // the export includes it.
   const [includeRedacted, setIncludeRedacted] = useState(false);
   const hasRedacted = useMemo(() => {

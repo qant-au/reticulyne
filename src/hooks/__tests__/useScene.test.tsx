@@ -1013,7 +1013,7 @@ describe('useScene', () => {
     });
   });
 
-  describe('setViewKind (rtl-016)', () => {
+  describe('setViewKind', () => {
     test('switches the current view to flat and back, and undoes', () => {
       // History coalesces edits within 250ms; step past it between switches.
       jest.useFakeTimers();

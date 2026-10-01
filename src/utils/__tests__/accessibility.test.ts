@@ -9,7 +9,7 @@ import {
 import { getTilePosition } from '../coordinates';
 import type { ModelItem, View } from 'src/types';
 
-// rtl-027: the order Tab walks the objects in, and what is read out.
+// The order Tab walks the objects in, and what is read out.
 
 const view: View = {
   id: 'v',

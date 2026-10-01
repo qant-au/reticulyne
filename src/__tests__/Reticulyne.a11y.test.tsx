@@ -14,7 +14,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import type { InitialData, UiStateStore, View } from 'src/types';
 
-// rtl-027: keyboard navigation and screen-reader support.
+// Keyboard navigation and screen-reader support.
 
 beforeAll(() => {
   if (!Element.prototype.scrollTo) {
@@ -356,7 +356,7 @@ const ItemsProbe = ({
   return null;
 };
 
-describe('rtl-032: the catalogue palette', () => {
+describe('the catalogue palette', () => {
   let items: InitialData['items'] = [];
   const onItems = (next: InitialData['items']) => {
     items = next;

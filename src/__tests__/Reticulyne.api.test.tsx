@@ -206,7 +206,7 @@ describe('loading a model from the host (DOC-03)', () => {
   });
 });
 
-describe('loadModel returns a promise (rtl-024)', () => {
+describe('loadModel returns a promise', () => {
   const replacement: InitialData = { ...twoViewModel, title: 'Replacement' };
 
   test('resolves true once the new diagram has rendered', async () => {

@@ -10,3 +10,5 @@ editor.
 | `three-tier-web.json` | Users through a CDN and load balancer to web, app and data tiers, with a queue and worker | Directed and two-way links, link labels, dotted and dashed styles, node descriptions, three zones, names with punctuation (`DB: primary`, `Load balancer (L7)`) |
 | `aws-serverless.json` | A serverless orders API on AWS: CloudFront, API Gateway, Cognito, Lambda, DynamoDB, SNS and SQS | Named groups, link glyphs, an animated link, a node with no links (CloudWatch), `&` in a name |
 | `two-floor-building.json` | A two-storey site: comms room on the ground floor, open-plan desks on level 1 | Two floors (views), a connection between items on different floors (the riser) |
+
+Each diagram has a PNG beside it, exported from the editor with **Export as image** at the default settings. The two-floor building has one per floor: `two-floor-building-ground.png` and `two-floor-building-level-1.png`.

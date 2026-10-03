@@ -1,0 +1,506 @@
+{
+  "format": "accurona-scene",
+  "version": 1,
+  "id": "aws-serverless",
+  "objects": [
+    {
+      "id": "route53",
+      "name": "Route 53",
+      "icon": "aws-route-53"
+    },
+    {
+      "id": "cloudfront",
+      "name": "CloudFront",
+      "icon": "aws-cloudfront"
+    },
+    {
+      "id": "site",
+      "name": "Static site (S3)",
+      "icon": "aws-simple-storage-service"
+    },
+    {
+      "id": "cognito",
+      "name": "Auth & identity",
+      "icon": "aws-cognito"
+    },
+    {
+      "id": "apigw",
+      "name": "API Gateway",
+      "icon": "aws-api-gateway"
+    },
+    {
+      "id": "orders-fn",
+      "name": "Orders function",
+      "description": "Creates and reads orders.",
+      "icon": "aws-lambda"
+    },
+    {
+      "id": "payments-fn",
+      "name": "Payments function",
+      "description": "Takes payment for an order, then publishes an event.",
+      "icon": "aws-lambda"
+    },
+    {
+      "id": "orders-db",
+      "name": "Orders table",
+      "icon": "aws-dynamodb"
+    },
+    {
+      "id": "events",
+      "name": "Order events",
+      "icon": "aws-simple-notification-service"
+    },
+    {
+      "id": "email-queue",
+      "name": "Email queue",
+      "icon": "aws-simple-queue-service"
+    },
+    {
+      "id": "notify-fn",
+      "name": "Notify function",
+      "icon": "aws-lambda"
+    },
+    {
+      "id": "cloudwatch",
+      "name": "CloudWatch",
+      "description": "Logs and metrics for every function.",
+      "icon": "aws-cloudwatch"
+    }
+  ],
+  "title": "Serverless orders API on AWS",
+  "description": "A serverless orders API: CloudFront serves the site and fronts API Gateway, Cognito authorises callers, Lambda functions use DynamoDB, and order events fan out through SNS and SQS to a notification function.",
+  "icons": [
+    {
+      "id": "aws-api-gateway",
+      "name": "aws-api-gateway",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjQjAwODREIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGNEY4QiIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0iTTE5IDI4aDJ2LTFoLTJ2MVpNMTQgNy4yNjJsLTcgMy4wNHYyMC4wNTVsNyAyLjQzOVY3LjI2MlpNMTUgMTN2MTRoMnYxaC0ydjUuNWEuNS41IDAgMCAxLS42NjQuNDcybC04LTIuNzg3QS41LjUgMCAwIDEgNiAzMC43MTNWOS45NzRjMC0uMTk5LjExOC0uMzc5LjMwMS0uNDU4bDgtMy40NzRBLjUuNSAwIDAgMSAxNSA2LjVWMTJoMnYxaC0yWm0xOC0yLjY5OC03LTMuMDR2MjUuNTM0bDctMi40MzlWMTAuMzAyWm0xLS4zMjh2MjAuNzM5YS41LjUgMCAwIDEtLjMzNi40NzJsLTggMi43ODdhLjUwNy41MDcgMCAwIDEtLjQ1NC0uMDY0LjUuNSAwIDAgMS0uMjEtLjQwOFYyOGgtMnYtMWgyVjEzaC0ydi0xaDJWNi41YS41LjUgMCAwIDEgLjY5OS0uNDU4bDggMy40NzRhLjQ5OS40OTkgMCAwIDEgLjMwMS40NThaTTE5IDEzaDJ2LTFoLTJ2MVptNC45NzUgMi42NTgtLjk1LS4zMTYtMyA5IC45NS4zMTYgMy05Wm0tNC44MjkgNy4xOTYtMy0zYS41MDIuNTAyIDAgMCAxIDAtLjcwOGwzLTMgLjcwOC43MDgtMi42NDcgMi42NDYgMi42NDcgMi42NDYtLjcwOC43MDhaIiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-cloudfront",
+      "name": "aws-cloudfront",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjNEQyN0E4IiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ExNjZGRiIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0iTTI4IDI2LjQ5N2MwLS44MjgtLjY3My0xLjUtMS41LTEuNXMtMS41LjY3Mi0xLjUgMS41YzAgLjgyNy42NzMgMS41IDEuNSAxLjVzMS41LS42NzMgMS41LTEuNVptMSAwYTIuNTAzIDIuNTAzIDAgMCAxLTIuNSAyLjUgMi41MDMgMi41MDMgMCAwIDEtMi41LTIuNSAyLjUwMyAyLjUwMyAwIDAgMSAyLjUtMi41MDFjMS4zNzkgMCAyLjUgMS4xMjIgMi41IDIuNVptLTE0LTguMDA0YzAtLjgyNy0uNjczLTEuNS0xLjUtMS41cy0xLjUuNjczLTEuNSAxLjVjMCAuODI4LjY3MyAxLjUwMSAxLjUgMS41MDFzMS41LS42NzMgMS41LTEuNVptMSAwYTIuNTAzIDIuNTAzIDAgMCAxLTIuNSAyLjUwMiAyLjUwMyAyLjUwMyAwIDAgMS0yLjUtMi41MDIgMi41MDMgMi41MDMgMCAwIDEgMi41LTIuNWMxLjM3OSAwIDIuNSAxLjEyMiAyLjUgMi41Wm00LTguMDAzYzAgLjgyNy42NzMgMS41IDEuNSAxLjVzMS41LS42NzMgMS41LTEuNS0uNjczLTEuNS0xLjUtMS41LTEuNS42NzMtMS41IDEuNVptLTEgMGEyLjUwMyAyLjUwMyAwIDAgMSAyLjUtMi41MDFjMS4zNzkgMCAyLjUgMS4xMjIgMi41IDIuNTAxYTIuNTAzIDIuNTAzIDAgMCAxLTIuNSAyLjUwMSAyLjUwMyAyLjUwMyAwIDAgMS0yLjUtMi41Wm0xNCA5LjUwNGMwLTQuNjM4LTIuNDg1LTguOTMtNi40OTQtMTEuMjUtLjcyMS4xNDUtMS40MTYuMzQ0LTIuMjguNjU3bC0uMzQtLjk0YTE5Ljg3IDE5Ljg3IDAgMCAxIDEuMjMzLS40MDVBMTIuOTUgMTIuOTUgMCAwIDAgMjAgNi45OWMtLjg0NCAwLTEuNjc1LjA4Ny0yLjQ4Ny4yNDYuNTg3LjM0MyAxLjEwOC42ODYgMS42MTUgMS4wNzFsLS42MDQuNzk3Yy0uNzE1LS41NDMtMS40NTctMS0yLjQyNi0xLjUxYTEzLjAxNiAxMy4wMTYgMCAwIDAtOS4wMDcgMTAuOTYzIDE3LjYwMiAxNy42MDIgMCAwIDEgMy4xMTYtLjM0OWwuMDI1IDFhMTYuMzIgMTYuMzIgMCAwIDAtMy4yMTguMzg5Yy0uMDA0LjEzMi0uMDE0LjI2Ny0uMDE0LjM5OCAwIDQuMzM1IDIuMTQ2IDguMzMgNS42NzYgMTAuNzM2LS42MjctMS44Ny0uOTUtMy42MzgtLjk1LTUuMzYgMC0uOTg1LjE2OS0xLjc5My4zNDctMi42NDlsLjEyNC0uNjAyLjk4MS4xOTMtLjEyNS42MTRjLS4xNzYuODM5LS4zMjcgMS41NjItLjMyNyAyLjQ0MyAwIDEuOTUyLjQzMiAzLjk3MyAxLjMwMiA2LjE2NmExMi44NDQgMTIuODQ0IDAgMCAwIDkuOTc4LjgyMWMuNTAyLS45OS44NzUtMS45MjcgMS4xODktMy4wMDlsLjk2MS4yOGMtLjIyOC43ODctLjQ5IDEuNS0uODAxIDIuMjEuODA0LS4zNjEgMS41NjQtLjgxIDIuMjc5LTEuMzMtLjE3My0uNDI2LS4zNS0uODUtLjU1NC0xLjI2bC44OTUtLjQ0NmMuMTcxLjM0My4zMTMuNzAxLjQ2MyAxLjA1NEMzMS4zMzUgMjcuMzc3IDMzIDIzLjgzIDMzIDE5Ljk5NVptMSAwYzAgNC4zNjUtMS45ODIgOC40MDMtNS40NCAxMS4wNzlhMTMuNjkgMTMuNjkgMCAwIDEtNC4wNDIgMi4xNzNjLTEuNDQuNS0yLjk2MS43NTQtNC41MTguNzU0LTIuMyAwLTQuNTg0LS41NzMtNi42MDYtMS42NTlBMTMuOTggMTMuOTggMCAwIDEgNi4wMjkgMTkuMTVDNi4zNyAxMy4zMDMgMTAuMzc3IDguMjQ1IDE2IDYuNTdjMy41MjctMS4wNjMgNy41ODktLjYzMiAxMC44NDIgMS4yMDhBMTQuMDE1IDE0LjAxNSAwIDAgMSAzNCAxOS45OTRabS0xNS4zNDMtNy4yNzItLjY1OC0uNzUzYy0xLjEyLjk3OC0xLjk5MiAyLjAxNy0zLjAxIDMuNTg2bC44MzguNTQ0Yy45NjUtMS40ODUgMS43ODQtMi40NjQgMi44My0zLjM3N1ptLTEuODQ1IDcuNDMxYzIuMjk2Ljc4OCA0LjI5OSAyLjA0NyA2LjMwNSAzLjk2bC42OS0uNzIyYy0yLjExMy0yLjAxOC00LjIzMy0zLjM0Ny02LjY3LTQuMTg0bC0uMzI1Ljk0NlptNy4wMTEtNi44MjhjMS44NzYgMi44NjIgMi45MzMgNi4wMDUgMy4xNCA5LjM0bC0uOTk4LjA2MWMtLjE5Ni0zLjE1OC0xLjE5OC02LjEzNi0yLjk3OC04Ljg1MmwuODM2LS41NDlaIiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-cloudwatch",
+      "name": "aws-cloudwatch",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjQjAwODREIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGNEY4QiIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0iTTI3LjYzIDI0LjEyNGMwLTEuOTAzLTEuNTgtMy40NTItMy41MjItMy40NTItMS45NDMgMC0zLjUyMyAxLjU0OS0zLjUyMyAzLjQ1MiAwIDEuOTA0IDEuNTggMy40NTIgMy41MjMgMy40NTIgMS45NDIgMCAzLjUyMi0xLjU0OCAzLjUyMi0zLjQ1MlptMS4wMDYgMGMwIDIuNDQ3LTIuMDMyIDQuNDM5LTQuNTI4IDQuNDM5LTIuNDk3IDAtNC41My0xLjk5Mi00LjUzLTQuNDM5czIuMDMzLTQuNDM4IDQuNTMtNC40MzhjMi40OTYgMCA0LjUyOCAxLjk5MSA0LjUyOCA0LjQzOFptNC4yNzYgNi41NzktMy4zODctMi45OWMtLjI4OS40MTgtLjYzLjc5My0xLjAwOCAxLjEzM2wzLjM2NyAyLjk3NmEuNzgxLjc4MSAwIDAgMCAxLjA4NS0uMDU2Ljc0NS43NDUgMCAwIDAtLjA1Ny0xLjA2M1ptLTguODA0LTEuMTU0YzMuMDUxIDAgNS41MzUtMi40MzMgNS41MzUtNS40MjUgMC0yLjk5MS0yLjQ4NC01LjQyNC01LjUzNS01LjQyNC0zLjA1MiAwLTUuNTM2IDIuNDMzLTUuNTM2IDUuNDI0IDAgMi45OTIgMi40ODQgNS40MjUgNS41MzYgNS40MjVabTkuNDc4LjQyMmExLjcyIDEuNzIgMCAwIDEgLjEzIDIuNDU1IDEuNzkgMS43OSAwIDAgMS0xLjMyLjU3NGMtLjQyMyAwLS44NDctLjE0Ny0xLjE4NS0uNDQ1bC0zLjQ5NC0zLjA4OWE2LjU5MiA2LjU5MiAwIDAgMS0zLjYxIDEuMDdjLTMuNjA2IDAtNi41NDEtMi44NzctNi41NDEtNi40MTJzMi45MzUtNi40MSA2LjU0Mi02LjQxYzMuNjA3IDAgNi41NDEgMi44NzUgNi41NDEgNi40MSAwIC45NjgtLjIyNiAxLjg4My0uNjIgMi43MDdsMy41NTcgMy4xNFptLTIyLjk5NC01LjM1NGg0Ljk2di45ODdoLTQuOTY2Yy0uNTU3LS4wMDYtMS4xNTYtLjIwNi0xLjc4Ni0uNTk2LTEuMDQ0LS42MzQtMi44LTIuMTI3LTIuOC00Ljk3MyAwLTMuNDQyIDIuNDEtNC43MDYgMy44MTItNS4xNWE3LjI2NSA3LjI2NSAwIDAgMS0uMDE2LS40OTJjMC0yLjgwNCAxLjk0Mi01LjcxNCA0LjUxNS02Ljc2NSAzLjAxMy0xLjIzNyA2LjIwMy0uNjIzIDguNTMxIDEuNjM4YTguNDU2IDguNDU2IDAgMCAxIDEuNzg2IDIuNTYzIDMuNDA0IDMuNDA0IDAgMCAxIDIuMTc3LS43ODdjMS41NiAwIDMuMzE5IDEuMTY1IDMuNjI2IDMuNzEzQzMxLjg4NyAxNS4wOCAzNSAxNi4yMyAzNSAyMC4wNzVjMCAxLjY1My0uNTY3IDIuOTktMS42ODcgMy45NzJsLS42NzItLjczM2MuODk4LS43ODggMS4zNTMtMS44NzggMS4zNTMtMy4yMzggMC0zLjM4Mi0yLjg4OC00LjIyMy00LjEzLTQuNDI3YS41LjUgMCAwIDEtLjMzLS4yMDcuNDg2LjQ4NiAwIDAgMS0uMDgtLjM3OGMtLjE0Ny0yLjA3NC0xLjQzOC0zLjAzNi0yLjY1LTMuMDM2LS43NTYgMC0xLjQ2Ni4zNjEtMS45NDcuOTlhLjUxMy41MTMgMCAwIDEtLjQ3Ny4xOTQuNS41IDAgMCAxLS4zOTgtLjMyYy0uNDMzLTEuMTcyLTEuMDU0LTIuMTU2LTEuODQ3LTIuOTI1LTIuMDMyLTEuOTczLTQuODEyLTIuNTA4LTcuNDM3LTEuNDMtMi4xODQuODk0LTMuODk1IDMuNDY1LTMuODk1IDUuODU2IDAgLjI2OC4wMTYuNTM2LjA0OC43OTRhLjQ4Ni40ODYgMCAwIDEtLjEyMi4zODcuNTEuNTEgMCAwIDEtLjI5LjE2Yy0xLjI5Ny4zMjctMy40MzMgMS4zMi0zLjQzMyA0LjMwMSAwIDIuMjUgMS4yNjYgMy40OTIgMi4zMjcgNC4xMzguNDczLjI5Mi44OTYuNDQgMS4yNi40NDRaIiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-cognito",
+      "name": "aws-cognito",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjQkQwODE2IiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGNTI1MiIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0iTTkgMTdoNnYtMUg5djFabTIyLTRWOS4zYzAtLjcxNy0uNDY1LTEuMy0xLjAzNy0xLjNIOC4wMzdDNy40NzUgOCA3IDguNTk2IDcgOS4zVjEzaDExVjkuNWEuNS41IDAgMCAxIC41LS41aDExYS41LjUgMCAwIDEgLjUuNVYxM2gxWm0tOSAxYzAgMS4xMDQuODk3IDIgMiAyczItLjg5NiAyLTJjMC0xLjEwMy0uODk3LTItMi0ycy0yIC44OTctMiAyWm05IDBoLTF2NWgtMXYtOUgxOXY4LjY5NmE1LjUyIDUuNTIgMCAwIDEgMy4wOTctMi4zOTZBMi45ODEgMi45ODEgMCAwIDEgMjEgMTRjMC0xLjY1NCAxLjM0Ni0zIDMtM3MzIDEuMzQ2IDMgM2MwIC45NjYtLjQ2NyAxLjgxNy0xLjE3NyAyLjM2NiAxLjIxOS40MjEgMi4yODUgMS4yNDMgMi45NTggMi4zNTRsLS44NTUuNTE4YTQuNTk1IDQuNTk1IDAgMCAwLTIuNjMzLTIuMDIgMy4zNyAzLjM3IDAgMCAxLTIuODM2IDBBNC41NDIgNC41NDIgMCAwIDAgMTkuMjE2IDIxSDIzdjFoLTQuNWEuNS41IDAgMCAxLS41LS41VjE0SDd2OS43MDFDNyAyNC40MDUgNy40NzUgMjUgOC4wMzcgMjVIMjF2MUg4LjAzN0M2LjkxNCAyNiA2IDI0Ljk2OSA2IDIzLjcwMVY5LjNDNiA4LjAzMiA2LjkxNCA3IDguMDM3IDdoMjEuOTI2QzMxLjA4NiA3IDMyIDguMDMyIDMyIDkuM1YyMWgtLjk5OUwzMSAxNFptMiAxNGMwIDIuNzU3LTIuMjQzIDUtNSA1cy01LTIuMjQzLTUtNWMwLTIuNzU2IDIuMjQzLTUgNS01czUgMi4yNDQgNSA1Wm0xIDBjMC0zLjMwOC0yLjY5MS02LTYtNnMtNiAyLjY5Mi02IDZjMCAzLjMwOSAyLjY5MSA2IDYgNnM2LTIuNjkxIDYtNlptLTYuMTM4IDEuODYyIDMuNzE0LTMuNzEzLS43MDctLjcwNy0zLjM2IDMuMzYtMS41MTQtMS41MTQtLjcwNy43MDcgMS44NjcgMS44NjdhLjUuNSAwIDAgMCAuNzA3IDBaTTE0IDIwaDJ2LTFoLTJ2MVptLTUgMGg0di0xSDl2MVoiIGZpbGw9IiNGRkYiLz48L2c+PC9zdmc+",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-dynamodb",
+      "name": "aws-dynamodb",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjMkUyN0FEIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iIzUyN0ZGRiIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0iTTI2LjA2NiAzMS4wMTl2LTIuODY2Yy0xLjUyNiAxLjMwOC00LjY5NCAyLjE3LTguNTM4IDIuMTctMy44NDcgMC03LjAxNS0uODYzLTguNTQxLTIuMTcydjIuODYzYzAgMS40MTEgMy41MDggMi45ODQgOC41NCAyLjk4NCA1LjAyNyAwIDguNTMxLTEuNTcgOC41NC0yLjk4Wm0uMDAxLTguMTc1Ljk4Ny0uMDA2di4wMDZjMCAuNjI1LS4zMTIgMS4yMDctLjkwNiAxLjc0Mi43MjYuNjUzLjkwNiAxLjI5NC45MDYgMS43NWwtLjAwMS4wMDh2NC42N2MwIDIuMjcyLTQuMDk0IDMuOTg2LTkuNTI1IDMuOTg2LTUuNDAzIDAtOS40OC0xLjY5Ni05LjUyMy0zLjk1MSAwLS4wMS0uMDA1LS4wMTYtLjAwNS0uMDI1di00LjY5bC4wMDItLjAwOGMuMDAyLS40NTQuMTgzLTEuMDkuOS0xLjczNy0uNzE2LS42NS0uODk3LTEuMjg0LS45MDEtMS43MzRMOCAyMi44NXYtNC42OWwuMDAyLS4wMDdjLjAwMi0uNDU1LjE4NC0xLjA5LjkwMi0xLjczOC0uNzE4LS42NS0uOS0xLjI4My0uOTAzLTEuNzM0TDggMTQuNjc1di00LjY5YzAtLjAwNi4wMDMtLjAwOS4wMDMtLjAxNEM4LjAyMyA3LjcwNiAxMi4xMDkgNiAxNy41MjggNmMyLjYwOCAwIDUuMTE0LjQzIDYuODc0IDEuMTc3bC0uMzgxLjkyNWMtMS42NDMtLjctNC4wMS0xLjEtNi40OTMtMS4xLTUuMDMzIDAtOC41NCAxLjU3My04LjU0IDIuOTg0IDAgMS40MTMgMy41MDcgMi45ODYgOC41NCAyLjk4Ni4xMzguMDAxLjI2OCAwIC40MDMtLjAwNmwuMDQgMWMtLjE0OC4wMDgtLjI5Ni4wMDgtLjQ0My4wMDgtMy44NDcgMC03LjAxNS0uODYzLTguNTQxLTIuMTcydjIuODc0Yy4wMDYuNTQ1LjU0MyAxLjAyLjk5MiAxLjMyMiAxLjM0OC44OSAzLjc2MyAxLjQ5NiA2LjQ1NCAxLjYyMmwtLjA0NyAxYy0yLjcyMy0uMTI2LTUuMTEtLjcxMi02LjY0NS0xLjYwOC0uMzg0LjI5NS0uNzUzLjY5Mi0uNzUzIDEuMTUgMCAxLjQxMSAzLjUwNyAyLjk4NCA4LjU0IDIuOTg0LjQ5NiAwIC45OC0uMDE3IDEuNDUzLS4wNWwuMDcyLjk5OGMtLjQ5Ni4wMzYtMS4wMDYuMDU0LTEuNTI1LjA1NC0zLjg0NyAwLTcuMDE1LS44NjItOC41NDEtMi4xNzF2Mi44NjFjLjAwNi41NTguNTQyIDEuMDMzLjk5MiAxLjMzNCAxLjU0IDEuMDE4IDQuNDM0IDEuNjUgNy41NDkgMS42NWguMjE5djEuMDAzaC0uMjJjLTMuMTY1IDAtNi4wMjktLjYxMi03Ljc4NS0xLjY0MS0uMzg0LjI5NS0uNzU0LjY5My0uNzU0IDEuMTUyIDAgMS40MTEgMy41MDcgMi45ODQgOC41NCAyLjk4NCA1LjAyNCAwIDguNTI3LTEuNTY3IDguNTM4LTIuOTc4VjI2LjMzM2MwLS40NTUtLjM2Ny0uODUtLjc0OS0xLjE0NS0uMjQzLjE0My0uNTA1LjI4LS44MDEuNDA2bC0uMzgyLS45MjJjLjM2Mi0uMTU2LjY3OC0uMzIzLjkzOS0uNS40NTMtLjMwNi45OTQtLjc4Ni45OTQtMS4zMjhabTUuMjg4LTguMzU1aC0zLjI4M2EuNDkxLjQ5MSAwIDAgMS0uNC0uMjEuNTA2LjUwNiAwIDAgMS0uMDY3LS40NTJsMS40NTUtNC4zNDhoLTYuNTI4bC0zLjEyMSA2LjAxMmgzLjE2OWEuNDkuNDkgMCAwIDEgLjM5Mi4xOTcuNTA1LjUwNSAwIDAgMSAuMDg0LjQzNmwtMi43MTggMTAuMTA4IDExLjAxNy0xMS43NDNabTEuNTEtLjE1NUwxOS43MDUgMjguMzZhLjQ5My40OTMgMCAwIDEtLjYuMDkuNTA1LjUwNSAwIDAgMS0uMjMzLS41NjhsMy4wNjMtMTEuMzloLTMuMzQyYS40OTIuNDkyIDAgMCAxLS40MjMtLjI0Mi41MDUuNTA1IDAgMCAxLS4wMTQtLjQ5MmwzLjY0Mi03LjAxM2EuNDkzLjQ5MyAwIDAgMSAuNDM2LS4yNjdoNy41MTVjLjE2IDAgLjMwOS4wNzguNDAxLjIwOWEuNTEuNTEgMCAwIDEgLjA2Ni40NTNsLTEuNDU1IDQuMzQ3aDMuNzQ2Yy4xOTggMCAuMzc2LjEyLjQ1NC4zMDRhLjUxLjUxIDAgMCAxLS4wOTYuNTQzWk05LjcyOCAzMS4wNGMuNTcxLjMzMiAxLjI3LjYyNiAyLjA3OS44N2wuMjgxLS45NmMtLjczNC0uMjIyLTEuMzYzLS40ODQtMS44NjktLjc3OWwtLjQ5MS44NjlabTIuMDc5LTcuMjMyLjI4MS0uOTZjLS43MzItLjIyMS0xLjM2LS40ODQtMS44NjktLjc4bC0uNDkxLjg3Yy41NzMuMzM0IDEuMjczLjYyNyAyLjA3OS44N1ptLTIuMDgtOC45NzQuNDkyLS44NjhjLjUwNS4yOTQgMS4xMzUuNTU4IDEuODcuNzhsLS4yODIuOTZjLS44MS0uMjQ0LTEuNTA4LS41MzgtMi4wOC0uODcyWiIgZmlsbD0iI0ZGRiIvPjwvZz48L3N2Zz4=",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-lambda",
+      "name": "aws-lambda",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjQzg1MTFCIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0Y5MCIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0iTTE0LjM4NiAzM0g4LjI3bDYuNzYzLTE0LjQyNiAzLjA2NCA2LjQ0TDE0LjM4NyAzM1ptMS4wODUtMTUuNzk4YS40OS40OSAwIDAgMC0uNDQyLS4yODJoLS4wMDJhLjQ5My40OTMgMCAwIDAtLjQ0MS4yODVsLTcuNTM4IDE2LjA4YS41MDcuNTA3IDAgMCAwIC4wMjguNDgyYy4wOS4xNDUuMjQ3LjIzMy40MTUuMjMzaDcuMjA2Yy4xOSAwIC4zNjMtLjExMS40NDUtLjI4NmwzLjk0NC04LjQ4OWEuNTA4LjUwOCAwIDAgMC0uMDAyLS40MzJsLTMuNjEzLTcuNTkxWk0zMi4wMTggMzNoLTUuODgybC05LjQ3LTIwLjcxMWEuNDkxLjQ5MSAwIDAgMC0uNDQ0LS4yODlIMTIuMzdsLjAwNS01aDcuNTQ5bDkuNDI0IDIwLjcxYy4wOC4xNzcuMjU2LjI5LjQ0Ni4yOWgyLjIyNHY1Wm0uNDktNmgtMi40TDIwLjY4NCA2LjI5YS40OTIuNDkyIDAgMCAwLS40NDYtLjI5aC04LjM1M2EuNDk2LjQ5NiAwIDAgMC0uNDkxLjVsLS4wMDYgNmMwIC4xMzIuMDUyLjI1OS4xNDQuMzU0YS40ODguNDg4IDAgMCAwIC4zNDcuMTQ2aDQuMDMybDkuNDY4IDIwLjcxMWMuMDguMTc2LjI1NC4yODkuNDQ1LjI4OWg2LjY4NmEuNDk1LjQ5NSAwIDAgMCAuNDkxLS41di02YzAtLjI3Ni0uMjE5LS41LS40OTEtLjVaIiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-route-53",
+      "name": "aws-route-53",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjNEQyN0E4IiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ExNjZGRiIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0iTTI0LjAyNCAyMC4zMTRjLjM0My4zMTcuNTE0Ljc0LjUxNCAxLjI3MiAwIC41OC0uMjA4IDEuMDQyLS42MjQgMS4zODgtLjQxNi4zNDUtLjk3Ny41MTgtMS42OC41MThhNC4xMTIgNC4xMTIgMCAwIDEtMS42NDctLjM1NHYtLjcxYy42NDMuMjE0IDEuMTkzLjMyIDEuNjQ4LjMyLjQ0OCAwIC43OTQtLjEwMSAxLjAzNi0uMzAyLjI0Mi0uMi4zNjMtLjQ4OC4zNjMtLjg2IDAtLjcxNS0uNDUyLTEuMDcyLTEuMzU1LTEuMDcyYTguMTMgOC4xMyAwIDAgMC0uODQyLjA0NHYtLjU4NWwxLjg2LTIuMDNoLTIuNjIydi0uNzI2aDMuNjA3di43bC0xLjgyNiAxLjkzMmEuNDQ3LjQ0NyAwIDAgMSAuMDg5LS4wMDloLjA4OGMuNTg0IDAgMS4wNDguMTU5IDEuMzkxLjQ3NG0tNS4xNDctLjE1NGMuMzU5LjMzNi41NC44LjU0IDEuMzkgMCAuNTgtLjIxIDEuMDQ5LS42MyAxLjQwNS0uNDIuMzU4LS45NzIuNTM3LTEuNjU2LjUzN2E0LjA5IDQuMDkgMCAwIDEtMS42OTItLjM1NHYtLjcxYy42NTUuMjE0IDEuMjE2LjMyIDEuNjgzLjMyLjQ0OCAwIC43OTMtLjEwMiAxLjAzMi0uMzA2LjIzOS0uMjA0LjM2LS40OTguMzYtLjg4MiAwLS40Mi0uMTEzLS43MjUtLjMzOC0uOTEzLS4yMjQtLjE4OS0uNTktLjI4NC0xLjA5OS0uMjg0LS4zNjYgMC0uODIzLjAzLTEuMzczLjA5di0uNTg3bC4xNjktMi42NWgzLjIzM3YuNzI3aC0yLjQ4OWwtLjExNiAxLjhjLjMyNi0uMDYuNjE4LS4wOS44NzgtLjA5LjYzOCAwIDEuMTM4LjE3IDEuNDk4LjUwN202LjY1MyA2LjQ2MmMtMi4yNDIuNDAzLTQuMjA3IDEuMzEzLTUuNTMgMi4wNTktMS4zMjMtLjc0Ni0zLjI4OC0xLjY1Ni01LjUzLTIuMDYtLjYyNy0uMTEyLTMuNzU1LS43NjQtMy43NTUtMi41NTggMC0uODM2LjMwMS0xLjM5Mi44NzctMi4zODUuNjk2LTEuMiAxLjU2Mi0yLjY5MyAxLjU2Mi00Ljg0OCAwLTEuNTI4LS4zOTktMi45OTYtMS4xODctNC4zNjhsLjI1LS4zMDZjMi42MSAxLjI5MyA1LjUzMyAxLjExOCA3Ljc4My0uMzA0IDIuMjUgMS40MjEgNS4xNzMgMS41OTcgNy43ODMuMzA0bC4yNS4zMDZjLS43ODggMS4zNzItMS4xODggMi44NC0xLjE4OCA0LjM2OCAwIDIuMTU1Ljg2NiAzLjY0OCAxLjU2MyA0Ljg0OC41NzYuOTkzLjg3NiAxLjU0OS44NzYgMi4zODUgMCAxLjc5NC0zLjEyNyAyLjQ0Ni0zLjc1NCAyLjU1OW0yLjMxMi05Ljc5MmMwLTEuNDU0LjQxLTIuODQ5IDEuMjItNC4xNDZhLjUwMi41MDIgMCAwIDAtLjAzNi0uNThsLS43MjYtLjg5M2EuNDk3LjQ5NyAwIDAgMC0uNjMtLjEyM2MtMS4xMzQuNjI3LTIuMzE5Ljk0NS0zLjUxOC45NDUtMS40NDggMC0yLjcxNC0uMzktMy44NjgtMS4xOWEuNTAyLjUwMiAwIDAgMC0uNTY4IDBjLTEuMTU1LjgtMi40MiAxLjE5LTMuODY4IDEuMTktMS4yIDAtMi4zODQtLjMxOC0zLjUyLS45NDVhLjQ5NS40OTUgMCAwIDAtLjYyOC4xMjNsLS43MjYuODkzYS41LjUgMCAwIDAtLjAzNi41OGMuODA5IDEuMjk3IDEuMjE5IDIuNjkyIDEuMjE5IDQuMTQ2IDAgMS44ODctLjc5MSAzLjI1LTEuNDI4IDQuMzQ3LS42MjYgMS4wOC0xLjAxMSAxLjc5OC0xLjAxMSAyLjg4NiAwIDIuNTI0IDMuNTAyIDMuMzQ4IDQuNTc1IDMuNTQgMi4yNDYuNDA0IDQuMjA3IDEuMzU2IDUuNDU2IDIuMDg0YS40OTMuNDkzIDAgMCAwIC41MDIgMGMxLjI1LS43MjggMy4yMS0xLjY4IDUuNDU1LTIuMDgzIDEuMDc0LS4xOTMgNC41NzUtMS4wMTcgNC41NzUtMy41NDEgMC0xLjA4OC0uMzg0LTEuODA2LTEuMDEtMi44ODYtLjYzNy0xLjA5Ni0xLjQyOS0yLjQ2LTEuNDI5LTQuMzQ3TTI2LjAxIDI5LjI5N2MtMi44MjIuNTA3LTUuMTkgMi4wMTYtNi4wMSAyLjU4OC0uODItLjU3Mi0zLjE4OC0yLjA4LTYuMDEtMi41ODgtMS40MDYtLjI1Mi01Ljk5Mi0xLjM3Ni01Ljk5Mi01LjIzNCAwLTEuNjA2LjYzMS0yLjY5NiAxLjI0NC0zLjc1LjU4Ny0xLjAxMyAxLjE5NS0yLjA2IDEuMTk1LTMuNDgzIDAtMi4yMTctMS4yNjUtMy43OTEtMS45MTMtNC40NTIuNjc2LS44MjEgMi4zMTQtMi44MTggMy4xNDctMy44OSAxLjI2MyAxLjE4IDIuNzI4IDEuODI0IDQuMTc3IDEuODI0IDEuNjEgMCAyLjk0Mi0uNjUgNC4xNTItMi4wMzYgMS4yMSAxLjM4NyAyLjU0MyAyLjAzNiA0LjE1MiAyLjAzNiAxLjQ0OSAwIDIuOTE0LS42NDMgNC4xNzYtMS44MjQuODMzIDEuMDcyIDIuNDcyIDMuMDY5IDMuMTQ4IDMuODktLjY0OS42Ni0xLjkxMyAyLjIzNS0xLjkxMyA0LjQ1MiAwIDEuNDIzLjYwOCAyLjQ3IDEuMTk1IDMuNDgzLjYxMiAxLjA1NCAxLjI0NCAyLjE0NCAxLjI0NCAzLjc1IDAgMy44NTgtNC41ODcgNC45ODItNS45OTIgNS4yMzRtNS42MTEtOS40ODVjLS41Ny0uOTgtMS4wNi0xLjgyOC0xLjA2LTIuOTgyIDAtMi40MyAxLjg5Mi00LjAwNCAxLjkxMi00LjAyYS41MDMuNTAzIDAgMCAwIC4wNy0uNzA1Yy0uMDMtLjAzNy0zLjA2Ni0zLjcxNi0zLjc1OS00LjY2OGEuNDk3LjQ5NyAwIDAgMC0uNzY4LS4wNDdjLTEuMTYgMS4yNC0yLjUzMiAxLjkyNC0zLjg2NCAxLjkyNC0xLjQ3MSAwLTIuNjMtLjY1Ni0zLjc1Ni0yLjEyOGEuNTE2LjUxNiAwIDAgMC0uNzkzIDBjLTEuMTI2IDEuNDcyLTIuMjg1IDIuMTI4LTMuNzU1IDIuMTI4LTEuMzMyIDAtMi43MDQtLjY4My0zLjg2NC0xLjkyNGEuNDk3LjQ5NyAwIDAgMC0uNzY4LjA0N2MtLjY5My45NTItMy43MjggNC42My0zLjc2IDQuNjY4YS41MDIuNTAyIDAgMCAwIC4wNzIuNzA1Yy4wMTkuMDE2IDEuOTExIDEuNTc1IDEuOTExIDQuMDIgMCAxLjE1NC0uNDkgMi4wMDEtMS4wNjEgMi45ODJDNy43MzIgMjAuOTI2IDcgMjIuMTg4IDcgMjQuMDYyYzAgMy4xMjcgMi41NDYgNS40NTEgNi44MTMgNi4yMTcgMy4xOS41NzQgNS44NTcgMi41OTcgNS44ODMgMi42MTdhLjQ5OS40OTkgMCAwIDAgLjYwOCAwYy4wMjYtLjAyIDIuNjk0LTIuMDQzIDUuODgzLTIuNjE3QzMwLjQ1MyAyOS41MTMgMzMgMjcuMTkgMzMgMjQuMDYzYzAtMS44NzUtLjczMi0zLjEzNy0xLjM3OS00LjI1IiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-simple-notification-service",
+      "name": "aws-simple-notification-service",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjQjAwODREIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGNEY4QiIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0iTTcuMDEgMjAuMDc4YTEuMSAxLjEgMCAwIDEgMS4xMDUtMS4wOTMgMS4xIDEuMSAwIDAgMSAxLjEwNCAxLjA5MyAxLjEgMS4xIDAgMCAxLTEuMTA0IDEuMDkzIDEuMSAxLjEgMCAwIDEtMS4xMDUtMS4wOTNaTTIwLjc3NiAzM0MxNC44MTMgMzMgOS42NDUgMjguMzc1IDguNDcgMjIuMTM2YTIuMSAyLjEgMCAwIDAgMS42OS0xLjU1OGgyLjk0OXYtMWgtMi45NWEyLjEwNCAyLjEwNCAwIDAgMC0xLjY1My0xLjU1NEM5LjcyIDEyLjI1MiAxNC44MzggOCAyMC43NzYgOGMyLjkzMyAwIDUuMzU0LjY0MyA3LjE5NCAxLjkxMWwuNTc1LS44MjFDMjYuNTM0IDcuNzAzIDIzLjkyIDcgMjAuNzc2IDdjLTYuNTEgMC0xMi4xMDQgNC43MjYtMTMuMzA4IDExLjA5NkM2LjYyIDE4LjM2OCA2IDE5LjE0OSA2IDIwLjA3OGMwIC45MTYuNjAyIDEuNjg4IDEuNDMxIDEuOTcxQzguNTkxIDI4Ljg5NCAxNC4yNCAzNCAyMC43NzYgMzRjMy4yODUgMCA2Ljc4OC0xLjY2NyA4Ljc4Ni0zLjA5NGwtLjU5LS44MTFDMjYuOTQ3IDMxLjU0MSAyMy42MjcgMzMgMjAuNzc3IDMzWk0xNC43OSAxOC4yNDJjMS4xMTEuMjc0IDIuNTIzLjMyMSAzLjM0My4zMjEuODMzIDAgMi4yNzEtLjA0NyAzLjQwMi0uMzJsLTIuNDAxIDUuMDE0YS41MDcuNTA3IDAgMCAwLS4wNDguMjE1djIuMzI0bC0xLjk1Ny45MTV2LTMuMjM5YS41MTQuNTE0IDAgMCAwLS4wNDQtLjIwNmwtMi4yOTUtNS4wMjRabTMuMzQzLTEuNzU3YzIuMzE0IDAgMy41NTQuMzExIDMuOTUxLjUyLS40MTcuMjM0LTEuNzQ1LjU1OC0zLjk1LjU1OC0yLjE4NCAwLTMuNDgzLS4zMjctMy44NzMtLjU1OC4zNy0uMjA2IDEuNTgyLS41MiAzLjg3Mi0uNTJabS0xLjc4IDExLjQzOGEuNTExLjUxMSAwIDAgMCAuNDg2LjAzbDIuOTY4LTEuMzg4YS41LjUgMCAwIDAgLjI4OC0uNDUydi0yLjUyOWwyLjkwOS02LjA3NGEuODA2LjgwNiAwIDAgMCAuMTg5LS41MWMwLTEuMjUyLTIuNzUxLTEuNTE1LTUuMDYtMS41MTUtMi4yNjYgMC00Ljk2OS4yNjMtNC45NjkgMS41MTUgMCAuMTkuMDY3LjM1NS4xOC41MDJsMi43NzUgNi4wNzdWMjcuNWMwIC4xNzIuMDg4LjMzMS4yMzUuNDIzWk0zMC44NzcgMjdhMS4xIDEuMSAwIDAgMSAxLjEwNCAxLjA5MyAxLjEgMS4xIDAgMCAxLTEuMTA0IDEuMDkzIDEuMSAxLjEgMCAwIDEtMS4xMDQtMS4wOTNBMS4xIDEuMSAwIDAgMSAzMC44NzYgMjdabTAtMTYuMDNhMS4xIDEuMSAwIDAgMSAxLjEwNCAxLjA5MyAxLjEgMS4xIDAgMCAxLTEuMTA0IDEuMDkzIDEuMSAxLjEgMCAwIDEtMS4xMDQtMS4wOTMgMS4xIDEuMSAwIDAgMSAxLjEwNC0xLjA5M1ptMS4wMSA4LjAxNWExLjEgMS4xIDAgMCAxIDEuMTA0IDEuMDkzIDEuMSAxLjEgMCAwIDEtMS4xMDQgMS4wOTMgMS4xIDEuMSAwIDAgMS0xLjEwNC0xLjA5MyAxLjEgMS4xIDAgMCAxIDEuMTA0LTEuMDkzWm0tNC42MDcgMS41OTNoMi41NjFhMi4xMDggMi4xMDggMCAwIDAgMi4wNDYgMS41OTNBMi4xMDYgMi4xMDYgMCAwIDAgMzQgMjAuMDc4YTIuMTA2IDIuMTA2IDAgMCAwLTIuMTE0LTIuMDkzYy0uOTkyIDAtMS44MTguNjgxLTIuMDQ2IDEuNTkzSDI3LjI4di03LjAxNWgxLjU1MWEyLjEwOCAyLjEwOCAwIDAgMCAyLjA0NiAxLjU5MyAyLjEwNiAyLjEwNiAwIDAgMCAyLjExNC0yLjA5MyAyLjEwNiAyLjEwNiAwIDAgMC0yLjExNC0yLjA5M2MtLjk5MSAwLTEuODE4LjY4MS0yLjA0NiAxLjU5M2gtMi4wNTZhLjUwMi41MDIgMCAwIDAtLjUwNS41djcuNTE1aC0zLjA2MXYxaDMuMDYxdjcuNTE1YzAgLjI3Ny4yMjYuNS41MDUuNWgyLjA1NmEyLjEwOCAyLjEwOCAwIDAgMCAyLjA0NiAxLjU5MyAyLjEwNiAyLjEwNiAwIDAgMCAyLjExNC0yLjA5M0EyLjEwNiAyLjEwNiAwIDAgMCAzMC44NzYgMjZjLS45OTEgMC0xLjgxOC42ODEtMi4wNDYgMS41OTNIMjcuMjh2LTcuMDE1WiIgZmlsbD0iI0ZGRiIvPjwvZz48L3N2Zz4=",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-simple-queue-service",
+      "name": "aws-simple-queue-service",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjQjAwODREIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGNEY4QiIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0ibTE0LjM0MiAyMi4zNSAxLjUwNS0xLjQ0NGEuNTAxLjUwMSAwIDAgMCAuMDEzLS43MDhsLTEuNTA1LTEuNTU1LS43Mi42OTUuNjc2LjdoLTIuMzJ2Ljk5OWgyLjI3NGwtLjYxNy41OTIuNjk0LjcyWm0xMi4wMTYuMDAzIDEuNTUtMS40NTNhLjUuNSAwIDAgMCAuMDExLS43MTdsLTEuNTUtMS41NDYtLjcwOC43MDcuNjk0LjY5NEgyNC4wMXYuOTk5SDI2LjNsLS42MjcuNTg4LjY4Ni43MjhabS04Ljc3IDEuMDA4YTYuNDU4IDYuNDU4IDAgMCAxIDIuNDE3LS40NjdjLjg0MiAwIDEuNjY1LjE2MyAyLjQxNi40NjctLjY2OS0xLjc3MS0uNjY5LTMuOTcxIDAtNS43NDItMS41MDIuNjA3LTMuMzMxLjYwNy00LjgzMyAwIC42NjkgMS43Ny42NjkgMy45NyAwIDUuNzQyWm0tMS45NDQgMS45OGEuNDk0LjQ5NCAwIDAgMSAwLS43MDdjMS45NC0xLjkzNiAxLjk0LTYuMzUyIDAtOC4yODlhLjQ5NC40OTQgMCAwIDEgMC0uNzA2LjUwMi41MDIgMCAwIDEgLjcwOSAwYy45MjEuOTIgMi4yNTIgMS40NDcgMy42NTIgMS40NDcgMS40IDAgMi43MzEtLjUyOCAzLjY1My0xLjQ0N2EuNTAyLjUwMiAwIDAgMSAuODU0LjM1NGMwIC4xMjgtLjA1LjI1NS0uMTQ2LjM1Mi0xLjk0MiAxLjkzNy0xLjk0MiA2LjM1MyAwIDguMjlhLjUwMS41MDEgMCAwIDEtLjcwOC43MDZjLS45MjItLjkyLTIuMjUzLTEuNDQ3LTMuNjUzLTEuNDQ3cy0yLjczMS41MjctMy42NTIgMS40NDdhLjUwMi41MDIgMCAwIDEtLjcwOSAwWm0xNi44OTgtNS45MDVhMS41NjIgMS41NjIgMCAwIDAtMS4xMDYtLjQ1NiAxLjU1OCAxLjU1OCAwIDAgMC0xLjEwNSAyLjY2MmMuNjEuNjA4IDEuNjAxLjYwOCAyLjIxMSAwYTEuNTYgMS41NiAwIDAgMCAwLTIuMjA2Wm0uNzA4IDIuOTEzYTIuNTYgMi41NiAwIDAgMS0xLjgxNC43NDkgMi41NiAyLjU2IDAgMCAxLTEuODEzLTQuMzY5YzEtLjk5NyAyLjYyOC0uOTk3IDMuNjI3IDAgMSAuOTk5IDEgMi42MjIgMCAzLjYyWk05LjY3IDE5LjQ0N2ExLjU2MiAxLjU2MiAwIDAgMC0xLjEwNi0uNDU2IDEuNTYgMS41NiAwIDAgMC0xLjEwNSAyLjY2MiAxLjU2IDEuNTYgMCAxIDAgMi4yMS0yLjIwNlptLjcwOCAyLjkxMmEyLjU2IDIuNTYgMCAwIDEtMS44MTQuNzQ5QTIuNTU5IDIuNTU5IDAgMCAxIDYuNzUgMTguNzRjMS0uOTk3IDIuNjI3LS45OTcgMy42MjcgMCAxIC45OTkgMSAyLjYyMiAwIDMuNjJabTE3LjA1NyA2LjU1MUExMC41MTQgMTAuNTE0IDAgMCAxIDE5Ljk1NyAzMmExMC41MSAxMC41MSAwIDAgMS03LjQ3NS0zLjA5Yy0xLjMxNi0xLjMxMi0yLjA3NC0yLjQ0LTIuNTM3LTMuNzc0bC0uOTQ3LjMyN2MuNTEgMS40NjYgMS4zNjUgMi43NDcgMi43NzYgNC4xNTRBMTEuNTA2IDExLjUwNiAwIDAgMCAxOS45NTcgMzNjMy4wOTMgMCA2LTEuMjAxIDguMTg1LTMuMzgzIDEuMTQtMS4xMzkgMi4yNzktMi40MyAyLjg3LTQuMTU2bC0uOTQ4LS4zMjNjLS41MjUgMS41MzItMS41NzUgMi43MTktMi42MyAzLjc3MlpNOS45NDUgMTUuODZsLS45NDctLjMyOGMuNTEyLTEuNDY3IDEuMzY4LTIuNzQ5IDIuNzc4LTQuMTU2IDQuNTEtNC41IDExLjg1LTQuNTAyIDE2LjM2MiAwIDEuMDggMS4wNzcgMi4yNjYgMi40MTQgMi44NzQgNC4xNTZsLS45NDguMzI4Yy0uNTQtMS41NS0xLjYzNS0yLjc4LTIuNjM0LTMuNzc3YTEwLjUwOCAxMC41MDggMCAwIDAtNy40NzMtMy4wODcgMTAuNTA4IDEwLjUwOCAwIDAgMC03LjQ3MiAzLjA4N2MtMS4yOTggMS4yOTUtMi4wODEgMi40Ni0yLjU0IDMuNzc3WiIgZmlsbD0iI0ZGRiIvPjwvZz48L3N2Zz4=",
+      "isIsometric": false,
+      "collection": "aws"
+    },
+    {
+      "id": "aws-simple-storage-service",
+      "name": "aws-simple-storage-service",
+      "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjMUI2NjBGIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iIzZDQUUzRSIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJ1cmwoI2EpIi8+PHBhdGggZD0ibTMwLjUzMiAyMS4zOTEuMTk3LTEuNDU5YzIuMDkyIDEuMiAyLjEzNSAxLjY5NCAyLjEzNCAxLjcwOC0uMDA0LjAwMy0uMzU0LjI4My0yLjMzLS4yNDlabS0uOTY4LS4yODhjLTIuODQyLS44OTctNi42Ni0yLjU3Mi04Ljg0LTMuNTk5IDAtLjAwNy4wMDMtLjAxMy4wMDMtLjAyIDAtLjY2My0uNTQtMS4yMDMtMS4yMDMtMS4yMDNzLTEuMjAzLjU0LTEuMjAzIDEuMjAzYzAgLjY2NC41NCAxLjIwMyAxLjIwMyAxLjIwMy4yOSAwIC41NDYtLjExNi43NTQtLjI4NyAxLjI3LjU5NCA1Ljc5NyAyLjY3NiA5LjE1IDMuNzEzTDI4LjI1IDMwLjg1YzAgLjg2Ni0zLjY3NCAyLjE1LTguNzQ5IDIuMTUtNS4wNzUgMC04Ljc0OS0xLjI4NC04Ljc1NC0yLjIxNmwtMi40NjMtMTguMjJDMTAuNDU4IDE0LjE1NCAxNS4wNzQgMTUgMTkuNSAxNXM5LjA0My0uODQ1IDExLjIxOC0yLjQzN2wtMS4xNTQgOC41NFpNOC4wMDQgMTAuNDlDOC4wMzEgOS42MSAxMi4xMDMgNyAxOS41IDdjNy4zOTUgMCAxMS40NyAyLjYxIDExLjUgMy40OXYuMTEzQzMwLjgxIDEyLjIzMSAyNi4xMzcgMTQgMTkuNSAxNFM4LjIxIDEyLjIzMSA4LjAxOCAxMC42MDRsLS4wMTUtLjExNVpNMzIgMTAuNUMzMiA4LjY2NSAyNy4xMzEgNiAxOS41IDYgMTEuODcgNiA3IDguNjY1IDcgMTAuNXYuMDY3TDkuNzUxIDMwLjg1YzAgMi4wNDYgNS4wMjIgMy4xNSA5Ljc1IDMuMTUgNC43MjUgMCA5Ljc0OC0xLjEwNCA5Ljc0My0zLjA4M2wxLjE1Mi04LjUyN2MuODIxLjIxNCAxLjQ4NS4zMjggMS45OTYuMzI4LjU5MyAwIC45OTQtLjE0NCAxLjIzNi0uNDMzYS45NzUuOTc1IDAgMCAwIC4yMTctLjgzYy0uMTM3LS43MzktMS4wNDgtMS41MzYtMi45NTUtMi41ODVsLS4wMi4wMjZMMzIgMTAuNTY3VjEwLjVaIiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==",
+      "isIsometric": false,
+      "collection": "aws"
+    }
+  ],
+  "colors": [
+    {
+      "id": "color1",
+      "value": "#a5b8f3"
+    },
+    {
+      "id": "color2",
+      "value": "#bbadfb"
+    },
+    {
+      "id": "color3",
+      "value": "#f4eb8e"
+    },
+    {
+      "id": "color4",
+      "value": "#f0aca9"
+    },
+    {
+      "id": "color5",
+      "value": "#fad6ac"
+    },
+    {
+      "id": "color6",
+      "value": "#a8dc9d"
+    },
+    {
+      "id": "color7",
+      "value": "#b3e5e3"
+    }
+  ],
+  "views": [
+    {
+      "id": "aws",
+      "kind": "iso",
+      "name": "AWS",
+      "placements": [
+        {
+          "object": "route53",
+          "tile": {
+            "x": -14,
+            "y": 0
+          }
+        },
+        {
+          "object": "cloudfront",
+          "tile": {
+            "x": -10,
+            "y": 0
+          }
+        },
+        {
+          "object": "site",
+          "tile": {
+            "x": -10,
+            "y": 5
+          }
+        },
+        {
+          "object": "cognito",
+          "tile": {
+            "x": -6,
+            "y": -5
+          },
+          "group": "api-layer"
+        },
+        {
+          "object": "apigw",
+          "tile": {
+            "x": -6,
+            "y": 0
+          },
+          "group": "api-layer"
+        },
+        {
+          "object": "orders-fn",
+          "tile": {
+            "x": -1,
+            "y": -3
+          },
+          "group": "api-layer"
+        },
+        {
+          "object": "payments-fn",
+          "tile": {
+            "x": -1,
+            "y": 3
+          },
+          "group": "api-layer"
+        },
+        {
+          "object": "orders-db",
+          "tile": {
+            "x": 4,
+            "y": -3
+          }
+        },
+        {
+          "object": "events",
+          "tile": {
+            "x": 4,
+            "y": 3
+          },
+          "group": "async"
+        },
+        {
+          "object": "email-queue",
+          "tile": {
+            "x": 8,
+            "y": 3
+          },
+          "group": "async"
+        },
+        {
+          "object": "notify-fn",
+          "tile": {
+            "x": 12,
+            "y": 3
+          },
+          "group": "async"
+        },
+        {
+          "object": "cloudwatch",
+          "tile": {
+            "x": 8,
+            "y": -7
+          }
+        }
+      ],
+      "connectors": [
+        {
+          "id": "aws-link-1",
+          "anchors": [
+            {
+              "id": "aws-link-1-a",
+              "ref": {
+                "object": "route53"
+              }
+            },
+            {
+              "id": "aws-link-1-b",
+              "ref": {
+                "object": "cloudfront"
+              }
+            }
+          ],
+          "direction": "START_TO_END"
+        },
+        {
+          "id": "aws-link-2",
+          "anchors": [
+            {
+              "id": "aws-link-2-a",
+              "ref": {
+                "object": "cloudfront"
+              }
+            },
+            {
+              "id": "aws-link-2-b",
+              "ref": {
+                "object": "site"
+              }
+            }
+          ],
+          "description": "Static assets",
+          "direction": "START_TO_END"
+        },
+        {
+          "id": "aws-link-3",
+          "anchors": [
+            {
+              "id": "aws-link-3-a",
+              "ref": {
+                "object": "cloudfront"
+              }
+            },
+            {
+              "id": "aws-link-3-b",
+              "ref": {
+                "object": "apigw"
+              }
+            }
+          ],
+          "description": "/api/*",
+          "direction": "START_TO_END"
+        },
+        {
+          "id": "aws-link-4",
+          "anchors": [
+            {
+              "id": "aws-link-4-a",
+              "ref": {
+                "object": "apigw"
+              }
+            },
+            {
+              "id": "aws-link-4-b",
+              "ref": {
+                "object": "cognito"
+              }
+            }
+          ],
+          "description": "Authorise",
+          "style": "DOTTED",
+          "direction": "START_TO_END"
+        },
+        {
+          "id": "aws-link-5",
+          "anchors": [
+            {
+              "id": "aws-link-5-a",
+              "ref": {
+                "object": "apigw"
+              }
+            },
+            {
+              "id": "aws-link-5-b",
+              "ref": {
+                "object": "orders-fn"
+              }
+            }
+          ],
+          "direction": "START_TO_END"
+        },
+        {
+          "id": "aws-link-6",
+          "anchors": [
+            {
+              "id": "aws-link-6-a",
+              "ref": {
+                "object": "apigw"
+              }
+            },
+            {
+              "id": "aws-link-6-b",
+              "ref": {
+                "object": "payments-fn"
+              }
+            }
+          ],
+          "direction": "START_TO_END"
+        },
+        {
+          "id": "aws-link-7",
+          "anchors": [
+            {
+              "id": "aws-link-7-a",
+              "ref": {
+                "object": "orders-fn"
+              }
+            },
+            {
+              "id": "aws-link-7-b",
+              "ref": {
+                "object": "orders-db"
+              }
+            }
+          ],
+          "description": "Read/write",
+          "direction": "BOTH"
+        },
+        {
+          "id": "aws-link-8",
+          "anchors": [
+            {
+              "id": "aws-link-8-a",
+              "ref": {
+                "object": "payments-fn"
+              }
+            },
+            {
+              "id": "aws-link-8-b",
+              "ref": {
+                "object": "orders-db"
+              }
+            }
+          ],
+          "description": "Update status",
+          "direction": "START_TO_END"
+        },
+        {
+          "id": "aws-link-9",
+          "anchors": [
+            {
+              "id": "aws-link-9-a",
+              "ref": {
+                "object": "payments-fn"
+              }
+            },
+            {
+              "id": "aws-link-9-b",
+              "ref": {
+                "object": "events"
+              }
+            }
+          ],
+          "description": "OrderPaid",
+          "direction": "START_TO_END",
+          "glyph": "bolt",
+          "animated": true
+        },
+        {
+          "id": "aws-link-10",
+          "anchors": [
+            {
+              "id": "aws-link-10-a",
+              "ref": {
+                "object": "events"
+              }
+            },
+            {
+              "id": "aws-link-10-b",
+              "ref": {
+                "object": "email-queue"
+              }
+            }
+          ],
+          "direction": "START_TO_END",
+          "glyph": "envelope"
+        },
+        {
+          "id": "aws-link-11",
+          "anchors": [
+            {
+              "id": "aws-link-11-a",
+              "ref": {
+                "object": "email-queue"
+              }
+            },
+            {
+              "id": "aws-link-11-b",
+              "ref": {
+                "object": "notify-fn"
+              }
+            }
+          ],
+          "direction": "START_TO_END"
+        }
+      ],
+      "textBoxes": [
+        {
+          "id": "aws-note-1",
+          "tile": {
+            "x": 8,
+            "y": -10
+          },
+          "content": "Monitoring (all functions)"
+        }
+      ],
+      "groups": [
+        {
+          "id": "api-layer",
+          "name": "API layer",
+          "color": "#fad6ac"
+        },
+        {
+          "id": "async",
+          "name": "Async processing",
+          "color": "#b3e5e3"
+        }
+      ]
+    }
+  ]
+}

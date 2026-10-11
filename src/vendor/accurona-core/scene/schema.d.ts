@@ -1,7 +1,7 @@
 import { z } from 'zod';
 export declare const SCENE_FORMAT = "accurona-scene";
-export declare const SCENE_VERSION = 1;
-export declare const SCENE_SCHEMA_URL = "https://cdn.jsdelivr.net/npm/@accurona/core@0/schema/scene-v1.json";
+export declare const SCENE_VERSION = 2;
+export declare const SCENE_SCHEMA_URL = "https://cdn.jsdelivr.net/npm/@accurona/core@0/schema/scene-v2.json";
 export declare const SCENE_LIMITS: {
     readonly OBJECTS: 10000;
     readonly CONNECTIONS: 10000;
@@ -125,6 +125,8 @@ export declare const floorSchema: z.ZodObject<{
         layer: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>;
 }, z.core.$strict>;
+export declare const MOUNT_FROM: readonly ["floor", "ceiling", "surface"];
+export declare const FACING: readonly ["up", "down"];
 export declare const planPlacementSchema: z.ZodObject<{
     object: z.ZodString;
     floor: z.ZodString;
@@ -134,8 +136,15 @@ export declare const planPlacementSchema: z.ZodObject<{
     mirror: z.ZodOptional<z.ZodObject<{
         x: z.ZodOptional<z.ZodBoolean>;
         y: z.ZodOptional<z.ZodBoolean>;
+        z: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>;
+    mountFrom: z.ZodOptional<z.ZodEnum<{
+        floor: "floor";
+        ceiling: "ceiling";
+        surface: "surface";
+    }>>;
     mountMm: z.ZodOptional<z.ZodNumber>;
+    mountOn: z.ZodOptional<z.ZodString>;
     size: z.ZodOptional<z.ZodObject<{
         w: z.ZodOptional<z.ZodNumber>;
         d: z.ZodOptional<z.ZodNumber>;
@@ -176,8 +185,15 @@ export declare const planViewSchema: z.ZodObject<{
         mirror: z.ZodOptional<z.ZodObject<{
             x: z.ZodOptional<z.ZodBoolean>;
             y: z.ZodOptional<z.ZodBoolean>;
+            z: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>;
+        mountFrom: z.ZodOptional<z.ZodEnum<{
+            floor: "floor";
+            ceiling: "ceiling";
+            surface: "surface";
+        }>>;
         mountMm: z.ZodOptional<z.ZodNumber>;
+        mountOn: z.ZodOptional<z.ZodString>;
         size: z.ZodOptional<z.ZodObject<{
             w: z.ZodOptional<z.ZodNumber>;
             d: z.ZodOptional<z.ZodNumber>;
@@ -484,8 +500,15 @@ export declare const viewSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
         mirror: z.ZodOptional<z.ZodObject<{
             x: z.ZodOptional<z.ZodBoolean>;
             y: z.ZodOptional<z.ZodBoolean>;
+            z: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>;
+        mountFrom: z.ZodOptional<z.ZodEnum<{
+            floor: "floor";
+            ceiling: "ceiling";
+            surface: "surface";
+        }>>;
         mountMm: z.ZodOptional<z.ZodNumber>;
+        mountOn: z.ZodOptional<z.ZodString>;
         size: z.ZodOptional<z.ZodObject<{
             w: z.ZodOptional<z.ZodNumber>;
             d: z.ZodOptional<z.ZodNumber>;
@@ -643,7 +666,7 @@ export declare const colorSchema: z.ZodObject<{
 export declare const sceneShapeSchema: z.ZodObject<{
     $schema: z.ZodOptional<z.ZodString>;
     format: z.ZodLiteral<"accurona-scene">;
-    version: z.ZodLiteral<1>;
+    version: z.ZodLiteral<2>;
     id: z.ZodString;
     title: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodString>;
@@ -723,8 +746,15 @@ export declare const sceneShapeSchema: z.ZodObject<{
             mirror: z.ZodOptional<z.ZodObject<{
                 x: z.ZodOptional<z.ZodBoolean>;
                 y: z.ZodOptional<z.ZodBoolean>;
+                z: z.ZodOptional<z.ZodBoolean>;
             }, z.core.$strict>>;
+            mountFrom: z.ZodOptional<z.ZodEnum<{
+                floor: "floor";
+                ceiling: "ceiling";
+                surface: "surface";
+            }>>;
             mountMm: z.ZodOptional<z.ZodNumber>;
+            mountOn: z.ZodOptional<z.ZodString>;
             size: z.ZodOptional<z.ZodObject<{
                 w: z.ZodOptional<z.ZodNumber>;
                 d: z.ZodOptional<z.ZodNumber>;
@@ -886,11 +916,15 @@ export declare const sceneShapeSchema: z.ZodObject<{
         label: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>;
 }, z.core.$strict>;
-/** A whole scene: its structure, and every id reference resolving. */
-export declare const sceneSchema: z.ZodObject<{
+/**
+ * A whole scene: its structure, and every id reference resolving. An older
+ * version is migrated forward first, so what it returns is always the
+ * current version.
+ */
+export declare const sceneSchema: z.ZodPreprocess<z.ZodObject<{
     $schema: z.ZodOptional<z.ZodString>;
     format: z.ZodLiteral<"accurona-scene">;
-    version: z.ZodLiteral<1>;
+    version: z.ZodLiteral<2>;
     id: z.ZodString;
     title: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodString>;
@@ -970,8 +1004,15 @@ export declare const sceneSchema: z.ZodObject<{
             mirror: z.ZodOptional<z.ZodObject<{
                 x: z.ZodOptional<z.ZodBoolean>;
                 y: z.ZodOptional<z.ZodBoolean>;
+                z: z.ZodOptional<z.ZodBoolean>;
             }, z.core.$strict>>;
+            mountFrom: z.ZodOptional<z.ZodEnum<{
+                floor: "floor";
+                ceiling: "ceiling";
+                surface: "surface";
+            }>>;
             mountMm: z.ZodOptional<z.ZodNumber>;
+            mountOn: z.ZodOptional<z.ZodString>;
             size: z.ZodOptional<z.ZodObject<{
                 w: z.ZodOptional<z.ZodNumber>;
                 d: z.ZodOptional<z.ZodNumber>;
@@ -1132,7 +1173,7 @@ export declare const sceneSchema: z.ZodObject<{
         url: z.ZodOptional<z.ZodString>;
         label: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>;
-}, z.core.$strict>;
+}, z.core.$strict>, unknown>;
 export type Scene = z.infer<typeof sceneShapeSchema>;
 export type SceneObject = z.infer<typeof sceneObjectSchema>;
 export type Port = z.infer<typeof portSchema>;
@@ -1155,3 +1196,5 @@ export type Group = z.infer<typeof groupSchema>;
 export type Layer = z.infer<typeof layerSchema>;
 export type Icon = z.infer<typeof iconSchema>;
 export type Color = z.infer<typeof colorSchema>;
+export type MountFrom = (typeof MOUNT_FROM)[number];
+export type Facing = (typeof FACING)[number];

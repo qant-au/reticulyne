@@ -24,7 +24,7 @@ const expectValid = (scene: Scene) => {
 const building = (): Scene => {
   return {
     format: 'accurona-scene',
-    version: 1,
+    version: 2,
     id: 'hq',
     objects: [
       { id: 'ap-1', element: 'wifi-ap' },

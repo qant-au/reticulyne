@@ -356,7 +356,7 @@ describe('getScene and loadModel with a scene', () => {
     const api = mount();
     const scene: Scene = {
       format: 'accurona-scene',
-      version: 1,
+      version: 2,
       id: 'loaded',
       title: 'Loaded',
       objects: [{ id: 'x', name: 'X' }],

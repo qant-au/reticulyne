@@ -16,7 +16,10 @@ export function isSceneDocument(value) {
         value.format === SCENE_FORMAT);
 }
 const describe = (path, message) => path.length ? `${path.map(String).join('.')}: ${message}` : message;
-/** Validates an already-parsed value as a scene. */
+/**
+ * Validates an already-parsed value as a scene. An older version is migrated
+ * forward (by sceneSchema), so the result is always the current version.
+ */
 export function validateScene(value) {
     if (isSceneDocument(value)) {
         const version = value.version;

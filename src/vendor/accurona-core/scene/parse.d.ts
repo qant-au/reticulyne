@@ -13,7 +13,10 @@ export type SceneResult = {
     ok: false;
     errors: string[];
 };
-/** Validates an already-parsed value as a scene. */
+/**
+ * Validates an already-parsed value as a scene. An older version is migrated
+ * forward (by sceneSchema), so the result is always the current version.
+ */
 export declare function validateScene(value: unknown): SceneResult;
 /** Parses and validates scene file text. */
 export declare function parseScene(text: string): SceneResult;

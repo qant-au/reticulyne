@@ -227,20 +227,40 @@ const endObject = (anchor: SceneAnchor | undefined) => {
 
 /**
  * The scene's connections with the model's in place of Reticulyne's own.
- * A connection between two of the model's items is Reticulyne's:
- * it is replaced by the model's copy, or dropped when the model no longer
- * has it. Any other connection (to an object on a plan, say) is kept. The
+ * A connection between two items that were both in a diagram when the
+ * scene was opened is Reticulyne's: it is replaced by the model's copy, or
+ * dropped when the model no longer has it. Any other connection (to an
+ * object on a plan, or to one placed from the plan since) is kept. The
  * fields Reticulyne does not edit (ports, kind, props, links) are kept
  * from the opened scene while the ends are unchanged.
  */
 const mergeConnections = (
   scene: Scene,
-  model: Model
+  model: Model,
+  openedScene: Scene
 ): SceneConnection[] | undefined => {
+  // Only these were loaded into the model; a connection to an object placed
+  // from the plan after opening never was, so the model lacking it is not a
+  // deletion.
+  const loaded = new Set(
+    (openedScene.views ?? [])
+      .filter((view) => {
+        return view.kind !== 'plan';
+      })
+      .flatMap((view) => {
+        return (view.placements ?? []).map((p) => {
+          return p.object;
+        });
+      })
+  );
   const itemIds = new Set(
-    model.items.map((item) => {
-      return item.id;
-    })
+    model.items
+      .map((item) => {
+        return item.id;
+      })
+      .filter((id) => {
+        return loaded.has(id);
+      })
   );
   const objectIds = new Set(
     scene.objects.map((object) => {
@@ -266,9 +286,8 @@ const mergeConnections = (
   const written = new Set<string>();
   const merged = (scene.connections ?? []).flatMap((c) => {
     const ours = itemIds.has(c.from) && itemIds.has(c.to);
-    if (!ours) return [c];
     const next = edited.get(c.id);
-    if (!next) return [];
+    if (!next) return ours ? [] : [c];
     written.add(c.id);
     return [toScene(next, c)];
   });
@@ -286,7 +305,7 @@ const mergeConnections = (
 export const sceneFromModel = (model: Model, context: SceneContext): Scene => {
   const scene = mergeScene(context.opened, modelToSceneUpdate(model, context));
   if (scene.description === undefined) delete scene.description;
-  const merged = mergeConnections(scene, model);
+  const merged = mergeConnections(scene, model, context.opened);
   if (merged) scene.connections = merged;
   else delete scene.connections;
   const connections = new Map(

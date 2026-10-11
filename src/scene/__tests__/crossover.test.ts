@@ -123,6 +123,22 @@ describe('crossover', () => {
     ).toHaveLength(1);
   });
 
+  test('save: a device placed from the plan keeps its connection to a diagram item', () => {
+    const scene: Scene = {
+      ...building(),
+      connections: [{ id: 'c-ap-cam', from: 'ap-1', to: 'cam-1' }]
+    };
+    const { model, context } = sceneToModel(scene);
+    // Not loaded: cam-1 is not in a diagram yet.
+    expect(model.connections).toBeUndefined();
+    model.items.push({ ...objectTemplate(scene.objects[1], []), id: 'cam-1' });
+    model.views[0].items.push({ id: 'cam-1', tile: { x: 2, y: 0 } });
+
+    const saved = sceneFromModel(model, context);
+    expectValid(saved);
+    expect(saved.connections).toEqual(scene.connections);
+  });
+
   test('save: taking a plan device out of the diagram leaves it on the plan', () => {
     const { model, context } = sceneToModel(building());
     model.items = [];

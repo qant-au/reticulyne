@@ -14,6 +14,20 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-11
+
+### Changed
+
+- **Scene format version 2.** The vendored Accurona core moves to scene version 2, which adds mounting (`mountFrom`: floor, ceiling or another item, with `mountOn`) and facing (`mirror.z`) to plan placements. Reticulyne does not draw a plan, so it keeps those fields as they were opened; a version 1 file opens as before and is saved as version 2. A file from a newer scene version is refused rather than misread.
+
+### Added
+
+- **Four sample diagrams** in `samples/`: an office network, a three-tier web app, an AWS serverless API and a two-floor building, saved as scene files with their icons embedded. They are in the repository, not the npm package.
+
+### Fixed
+
+- **A device placed from the floor plan keeps its connections.** A connection between it and an item already in the diagram was dropped on the next save, because it had never been loaded into the diagram; only connections whose ends were both in a diagram when the scene was opened are Reticulyne's to drop.
+
 ## [0.6.1] - 2026-10-01
 
 0.6.0 was tagged but never published: its release stopped at the changelog check. 0.6.1 carries everything listed for it, plus the fixes below.

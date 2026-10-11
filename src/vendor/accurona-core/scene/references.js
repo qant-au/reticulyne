@@ -105,6 +105,40 @@ export function checkReferences(scene) {
             }
             checkLayer(p.layer, pPath);
         });
+        // 'surface' stands on another object placed on the same floor of this
+        // view, never in a cycle; mountOn means nothing with any other mountFrom.
+        const floorOf = new Map((view.placements ?? []).map((p) => [p.object, p.floor]));
+        const support = new Map((view.placements ?? []).map((p) => [p.object, p.mountOn]));
+        (view.placements ?? []).forEach((p, i) => {
+            const pPath = [...path, 'placements', i];
+            if (p.mountFrom === 'surface' && p.mountOn === undefined) {
+                add('A surface mount needs mountOn', [...pPath, 'mountOn']);
+                return;
+            }
+            if (p.mountOn === undefined)
+                return;
+            if (p.mountFrom !== 'surface') {
+                add('mountOn is only for mountFrom "surface"', [...pPath, 'mountOn']);
+                return;
+            }
+            if (floorOf.get(p.mountOn) !== p.floor) {
+                add(`Object "${p.mountOn}" is not placed on floor "${p.floor}"`, [
+                    ...pPath,
+                    'mountOn'
+                ]);
+                return;
+            }
+            const seen = new Set([p.object]);
+            let next = p.mountOn;
+            while (next !== undefined) {
+                if (seen.has(next)) {
+                    add(`Object "${p.object}" stands on itself`, [...pPath, 'mountOn']);
+                    break;
+                }
+                seen.add(next);
+                next = support.get(next);
+            }
+        });
     }
     function checkDiagram(view, path) {
         const groups = unique(view.groups, 'group', [...path, 'groups']);

@@ -12,6 +12,7 @@ export declare function hasRedacted(scene: Scene): boolean;
  *   begin with is kept.
  * - A connector that ends on an object no longer placed in its view, or on an anchor of a removed
  *   connector, is removed; a placement fixed into a removed wall keeps its
- *   position and loses the `attach`.
+ *   position and loses the `attach`; one standing on a removed placement
+ *   loses its `mountOn` and stands on the floor.
  */
 export declare function redactScene(scene: Scene): Scene;

@@ -111,7 +111,7 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
     const onSave = jest.fn();
     const opened: Scene = {
       format: 'accurona-scene',
-      version: 1,
+      version: 2,
       id: 'hq',
       title: 'Head office',
       objects: [

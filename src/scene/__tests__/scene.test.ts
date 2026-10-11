@@ -1,4 +1,8 @@
-import { validateScene, type Scene } from 'src/vendor/accurona-core';
+import {
+  validateScene,
+  type PlanView,
+  type Scene
+} from 'src/vendor/accurona-core';
 import { model as fixtureModel } from 'src/fixtures/model';
 import { modelSchema } from 'src/schemas/model';
 import type { Model } from 'src/types';
@@ -22,7 +26,7 @@ const expectValid = (scene: Scene) => {
 const richScene = (): Scene => {
   return {
     format: 'accurona-scene',
-    version: 1,
+    version: 2,
     id: 'hq',
     title: 'Head office',
     units: 'm',
@@ -149,7 +153,7 @@ describe('sceneToModel', () => {
   test('an object with no name gets an empty one; a title defaults', () => {
     const scene: Scene = {
       format: 'accurona-scene',
-      version: 1,
+      version: 2,
       id: 's',
       objects: [{ id: 'x' }],
       views: [
@@ -170,6 +174,38 @@ describe('sceneToModel', () => {
 describe('scene -> model -> scene', () => {
   test('round-trips, keeping what Reticulyne does not show', () => {
     const opened = richScene();
+    const { model, context } = sceneToModel(opened);
+    const saved = sceneFromModel(model, context);
+    expectValid(saved);
+    expect(saved).toEqual(opened);
+  });
+
+  test('keeps a plan view’s mounting and facing (scene version 2) as it was', () => {
+    const opened = richScene();
+    const plan = opened.views![0] as PlanView;
+    plan.floors[0].wallHeightMm = 2400;
+    plan.placements = [
+      { object: 'door', floor: 'g', x: 500, y: 0 },
+      {
+        object: 'sw',
+        floor: 'g',
+        x: 500,
+        y: 0,
+        mountFrom: 'surface',
+        mountOn: 'door',
+        mountMm: 0
+      },
+      {
+        object: 'ap',
+        floor: 'g',
+        x: 300,
+        y: 300,
+        mountFrom: 'ceiling',
+        mountMm: -90,
+        mirror: { z: true }
+      }
+    ];
+    expectValid(opened);
     const { model, context } = sceneToModel(opened);
     const saved = sceneFromModel(model, context);
     expectValid(saved);
@@ -528,7 +564,7 @@ describe('readScene', () => {
 test('a file keeps only the icons its objects use and the uploaded ones', () => {
   const scene: Scene = {
     format: 'accurona-scene',
-    version: 1,
+    version: 2,
     id: 's',
     objects: [{ id: 'a', name: 'A', icon: 'used' }],
     icons: [

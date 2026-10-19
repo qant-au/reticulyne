@@ -2,7 +2,8 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 // Reticulyne stands alone: no other project's name appears in its code,
-// tests, docs, samples or scripts. CHANGELOG.md is history and is not
+// tests, docs, samples or scripts, and the project it was forked from is
+// named only to credit it. CHANGELOG.md is history and is not
 // checked. The names are written split so this file does not match itself.
 
 const root = join(__dirname, '../..');
@@ -15,7 +16,13 @@ const FILES = [
   'eslint.config.js',
   'jest.config.js'
 ];
-const NAMES = new RegExp(['accu' + 'rona', 'axono' + 'metra'].join('|'), 'i');
+const NAMES = new RegExp(
+  ['accu' + 'rona', 'axono' + 'metra', 'iso' + 'pack'].join('|'),
+  'i'
+);
+// The project Reticulyne was forked from is named only to credit it.
+const UPSTREAM = new RegExp('iso' + 'flow', 'i');
+const CREDITS = ['README.md', 'SECURITY.md'];
 const SKIP = new Set(['node_modules', 'vendor']);
 
 const walk = (dir: string): string[] => {
@@ -45,6 +52,23 @@ test('no other project is named', () => {
         return NAMES.test(line) ? [`${file}:${i + 1}: ${line.trim()}`] : [];
       });
   });
+  expect(offending).toEqual([]);
+});
+
+test('the upstream project is named only in the credits', () => {
+  const offending = files
+    .filter((file) => {
+      return !CREDITS.includes(file);
+    })
+    .flatMap((file) => {
+      return readFileSync(join(root, file), 'utf8')
+        .split('\n')
+        .flatMap((line, i) => {
+          return UPSTREAM.test(line)
+            ? [`${file}:${i + 1}: ${line.trim()}`]
+            : [];
+        });
+    });
   expect(offending).toEqual([]);
 });
 

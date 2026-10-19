@@ -26,7 +26,7 @@ test('renders a connector between two placed icons', async ({ page }) => {
 
   await page.addInitScript(() => {
     // Self-contained fixture: two icons (with inline data: SVGs so we
-    // don't depend on the isopack bundles), two view items placing
+    // don't depend on the bundled icons), two view items placing
     // them on adjacent tiles, and one connector linking the two
     // via anchor refs.
     const tinyIconSvg =

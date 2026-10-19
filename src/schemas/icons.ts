@@ -21,8 +21,7 @@ export const iconSchema = z
     // Cap URL length so a malformed `data:` URL in a third-party
     // diagram can't be megabytes of base64 swallowing memory before
     // any download attempt. ICON_URL_MAX is generous: an 8kb data:
-    // URL holds a ~6kb SVG, larger than almost any single-icon glyph
-    // in the bundled isopacks.
+    // URL holds a ~6kb SVG, larger than almost any single-icon glyph.
     //
     // Restrict the scheme (SEC-01): http(s):, blob:, relative paths, and
     // image-only data: URIs. Blocks javascript:/file:/data:text/html so a

@@ -113,7 +113,7 @@ interface Port {
   symbol, so the object needs nothing else to be drawn. A floor planner can read the same
   id for its plan drawing and real size. Element ids are never renamed once shipped, which
   is why a scene can store them.
-- **`icon`** covers things the library does not have: a Reticulyne isopack icon or an
+- **`icon`** covers things the library does not have: an icon from another pack or an
   uploaded image. An object with an `icon` and no `element` can be drawn in diagram
   views, and in a plan view only as a symbol.
 - **Doors and windows are not in the library yet.** Until they are, `element` may also

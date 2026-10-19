@@ -25,7 +25,7 @@ import { parseJson, type Scene } from 'src/core';
 // itself runs zod safeParse on the payload).
 //
 // A malformed file also goes to the host's onValidationError when one is
-// set (upstream isoflow #22): without it an embedder had no way to tell
+// set: without it an embedder had no way to tell
 // the user why Open did nothing. The issue is synthetic, since zod never
 // saw the payload.
 //

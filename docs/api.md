@@ -96,9 +96,8 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 | `'LINK.GITHUB'` | on | External link button — opens this fork's GitHub repo (`https://github.com/qant-au/reticulyne`). |
 | `'VERSION'` | on | Shows the running package version. |
 
-The `'LINK.DISCORD'` identifier from earlier versions has been removed in v4.0.0 — it
-only ever pointed at upstream `markmanx/isoflow`'s Discord, and the fork no longer
-surfaces upstream-project branding. Consumers that previously opted in with
+The `'LINK.DISCORD'` identifier from earlier versions has been removed in v4.0.0.
+Consumers that previously opted in with
 `mainMenuOptions: ['LINK.DISCORD', ...]` will see a TypeScript error and should drop the
 identifier.
 

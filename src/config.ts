@@ -158,10 +158,8 @@ export const INITIAL_SCENE_STATE = {
 };
 // Default-on menu items. LINK.GITHUB is included because the package.json
 // repository URL now points at this fork (https://github.com/qant-au/reticulyne),
-// so the link goes to the live source — no upstream-leak risk. LINK.DISCORD
-// was removed entirely under FEA4-03: the only Discord channel that ever
-// lived in this menu was upstream markmanx/isoflow's, and the fork
-// deliberately carries no upstream-project branding.
+// so the link goes to the live source. LINK.DISCORD was removed entirely
+// under FEA4-03: Reticulyne has no Discord channel.
 export const MAIN_MENU_OPTIONS: MainMenuOptions = [
   'ACTION.OPEN',
   'ACTION.NEW_FROM_TEMPLATE',

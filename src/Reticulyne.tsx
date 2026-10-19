@@ -793,6 +793,17 @@ const useReticulyne = () => {
   const historyActions = useHistoryStore((state) => {
     return state.actions;
   });
+  // Pending pulse clean-ups, cleared on unmount so none outlives the editor.
+  const pulseTimers = useRef(new Set<ReturnType<typeof setTimeout>>());
+  useEffect(() => {
+    const timers = pulseTimers.current;
+    return () => {
+      timers.forEach((timer) => {
+        clearTimeout(timer);
+      });
+      timers.clear();
+    };
+  }, []);
   const Connector = useMemo(() => {
     type Patch = Partial<
       Pick<
@@ -890,7 +901,8 @@ const useReticulyne = () => {
           }
         }
       });
-      setTimeout(() => {
+      const timer = setTimeout(() => {
+        pulseTimers.current.delete(timer);
         const next = sceneStoreActions.get();
         const overlay = next.connectorOverlays[id];
         if (overlay?.pulseExpiresAt === expiresAt) {
@@ -899,6 +911,7 @@ const useReticulyne = () => {
           sceneStoreActions.set({ connectorOverlays: rest });
         }
       }, durationMs);
+      pulseTimers.current.add(timer);
     };
 
     return {

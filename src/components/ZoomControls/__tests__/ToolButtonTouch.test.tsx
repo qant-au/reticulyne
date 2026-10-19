@@ -10,7 +10,7 @@ import {
 } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material';
 import { createReticulyneTheme } from 'src/styles/theme';
-import { ToolButton } from 'src/vendor/accurona-ui';
+import { ToolButton } from 'src/kit';
 
 // Sweep 2026-09-30 (A06, 390px): after a tap on "Flat 2D view" its tooltip
 // stayed up. A tap fires a compatibility mouseover and never a mouseleave.

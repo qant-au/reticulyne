@@ -5,7 +5,7 @@ import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { getTilePosition } from 'src/utils';
 import { templateToInitialData, type DiagramTemplate } from 'src/templates';
 import type { Coords } from 'src/types';
-import { AppDialog } from 'src/vendor/accurona-ui';
+import { AppDialog } from 'src/kit';
 
 // "New from template". Picking one replaces the diagram, the
 // same as Open does with a file.

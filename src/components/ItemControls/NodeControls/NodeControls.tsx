@@ -11,7 +11,7 @@ import { useModelItem } from 'src/hooks/useModelItem';
 import { Icons } from '../IconSelectionControls/Icons';
 import { NodeSettings } from './NodeSettings/NodeSettings';
 import { TopologyWarnings } from '../components/TopologySection';
-import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
+import { Panel, PanelHeader, PanelSection } from 'src/kit';
 
 interface Props {
   id: string;

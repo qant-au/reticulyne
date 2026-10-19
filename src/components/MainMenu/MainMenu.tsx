@@ -36,7 +36,7 @@ import {
   ToolButton,
   ToolMenu,
   type ToolMenuItem
-} from 'src/vendor/accurona-ui';
+} from 'src/kit';
 
 interface Props {
   /**

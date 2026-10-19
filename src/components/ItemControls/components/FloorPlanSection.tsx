@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Stack, Typography } from '@mui/material';
 import { objectPlaces } from 'src/core';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 
 /** A plan position in metres, as a person reads it off a drawing. */

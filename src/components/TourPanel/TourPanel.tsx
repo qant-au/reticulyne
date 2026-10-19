@@ -6,7 +6,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import { useTour } from 'src/hooks/useTour';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
-import { Surface } from 'src/vendor/accurona-ui';
+import { Surface } from 'src/kit';
 
 // The tour's narration panel, bottom centre above the title strip.
 // While a tour runs it shows the step count, the node's name (or the step's

@@ -1,6 +1,6 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutlined';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { Surface, ToolButton } from 'src/vendor/accurona-ui';
+import { Surface, ToolButton } from 'src/kit';
 
 export const HelpButton = () => {
   const uiStateActions = useUiStateStore((state) => {

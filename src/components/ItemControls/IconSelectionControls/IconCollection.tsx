@@ -4,7 +4,7 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import ChevronUpIcon from '@mui/icons-material/ExpandLess';
 import { Icon as IconI } from 'src/types';
 import { IconGrid } from './IconGrid';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 
 interface Props {
   id?: string;

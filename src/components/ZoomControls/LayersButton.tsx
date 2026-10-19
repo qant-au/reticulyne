@@ -21,7 +21,7 @@ import { useModelStore } from 'src/stores/modelStore';
 import { NAME_MAX } from 'src/schemas/common';
 import { LAYERS_MAX } from 'src/schemas/layer';
 import { hasRedactedContent } from 'src/utils';
-import { Surface, ToolButton } from 'src/vendor/accurona-ui';
+import { Surface, ToolButton } from 'src/kit';
 
 // Each row's leading icon (or Base's blank) sits in this column.
 const ICON_COLUMN = {

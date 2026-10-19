@@ -18,7 +18,7 @@ import { useModelStore } from 'src/stores/modelStore';
 import { catalogueTemplate } from 'src/scene/crossover';
 import { accuronaElement, schematicIcons } from 'src/catalogue/place';
 import type { CatalogueItem } from 'src/catalogue/schema';
-import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
+import { Panel, PanelHeader, PanelSection } from 'src/kit';
 
 interface Props {
   /** Header text. */

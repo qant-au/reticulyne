@@ -5,7 +5,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { groupChain, groupMatchingSelection } from 'src/utils';
 import type { ItemReference } from 'src/types';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 import { shortcutHint } from 'src/core';
 import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 

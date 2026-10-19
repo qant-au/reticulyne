@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Autocomplete, Button, TextField, Typography } from '@mui/material';
-import { AppDialog } from 'src/vendor/accurona-ui';
+import { AppDialog } from 'src/kit';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelStore } from 'src/stores/modelStore';
 import { useScene } from 'src/hooks/useScene';

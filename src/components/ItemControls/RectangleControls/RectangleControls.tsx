@@ -8,7 +8,7 @@ import { HexField } from './HexField';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
 import { LayerSection } from '../components/LayerSection';
-import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
+import { Panel, PanelHeader, PanelSection } from 'src/kit';
 
 const inlineSectionLabel = {
   color: 'text.secondary',

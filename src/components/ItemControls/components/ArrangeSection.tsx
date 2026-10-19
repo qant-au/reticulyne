@@ -9,7 +9,7 @@ import {
   sortByPosition
 } from 'src/utils';
 import type { ItemReference } from 'src/types';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 
 // align / distribute for a multi-selection, along the tile
 // axes (see src/utils/arrange.ts). Each button is disabled, with the

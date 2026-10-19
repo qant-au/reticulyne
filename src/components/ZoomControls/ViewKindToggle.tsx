@@ -6,7 +6,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
 import { scrollKeepingCentre } from 'src/utils';
 import type { Projection } from 'src/types';
-import { Surface, ToolButton } from 'src/vendor/accurona-ui';
+import { Surface, ToolButton } from 'src/kit';
 
 // Switch the current view between the isometric drawing and the
 // flat, Visio-style 2D one. Both draw the same tiles, so nothing moves in

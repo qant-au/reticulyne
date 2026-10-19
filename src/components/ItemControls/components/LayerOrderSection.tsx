@@ -5,7 +5,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useScene } from 'src/hooks/useScene';
 import { ItemReference, LayerOrderingAction } from 'src/types';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 import { shortcutHint } from 'src/core';
 import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 

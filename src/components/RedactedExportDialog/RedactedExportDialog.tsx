@@ -6,7 +6,7 @@ import {
   Stack,
   Typography
 } from '@mui/material';
-import { AppDialog } from 'src/vendor/accurona-ui';
+import { AppDialog } from 'src/kit';
 import { useDownloadJson } from 'src/components/MainMenu/useExportJson';
 import { useDownloadPdf } from 'src/components/MainMenu/useExportPdf';
 

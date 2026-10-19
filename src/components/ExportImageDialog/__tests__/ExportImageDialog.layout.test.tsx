@@ -93,7 +93,13 @@ test('while the preview renders, the loader has its size and the buttons are the
     ui!.actions.setDialog('EXPORT_IMAGE');
   });
 
-  const dialog = await screen.findByRole('dialog', { name: 'Export as image' });
+  // The dialog is lazily loaded; the first test in the file pays for
+  // compiling it, which took over findBy's default second on CI runners.
+  const dialog = await screen.findByRole(
+    'dialog',
+    { name: 'Export as image' },
+    { timeout: 10_000 }
+  );
   const loader = await screen.findByTestId('export-image-loading');
   expect(dialog.contains(loader)).toBe(true);
   // The preview's box: the diagram's width and aspect, not a fixed 500x300.
@@ -119,9 +125,11 @@ test('the Background color button opens a labelled picker and the colour survive
   act(() => {
     ui!.actions.setDialog('EXPORT_IMAGE');
   });
-  const input = (await screen.findByLabelText('Background color', {
-    selector: 'input'
-  })) as HTMLInputElement;
+  const input = (await screen.findByLabelText(
+    'Background color',
+    { selector: 'input' },
+    { timeout: 10_000 }
+  )) as HTMLInputElement;
   expect(input.type).toBe('color');
   expect(input.tabIndex).toBe(-1);
   const button = screen.getByRole('button', { name: /^Background color #/ });

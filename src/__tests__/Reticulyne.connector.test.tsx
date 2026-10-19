@@ -200,4 +200,32 @@ describe('useReticulyne().Connector (QUA-07)', () => {
       jest.useRealTimers();
     }
   });
+
+  test('unmounting clears a pending pulse timer', () => {
+    // jsdom has no scrollTo; without it the editor's error boundary
+    // replaces the tree and the probe's instance is already unmounted.
+    if (!Element.prototype.scrollTo) {
+      Element.prototype.scrollTo = () => {};
+    }
+    jest.useFakeTimers();
+    const setSpy = jest.spyOn(global, 'setTimeout');
+    const clearSpy = jest.spyOn(global, 'clearTimeout');
+    try {
+      const api = renderHarness();
+      act(() => {
+        api().Connector.pulse('connector1', { durationMs: 60_000 });
+      });
+      const call = setSpy.mock.calls.findIndex((args) => {
+        return args[1] === 60_000;
+      });
+      expect(call).toBeGreaterThanOrEqual(0);
+      const timer = setSpy.mock.results[call].value;
+      cleanup();
+      expect(clearSpy).toHaveBeenCalledWith(timer);
+    } finally {
+      setSpy.mockRestore();
+      clearSpy.mockRestore();
+      jest.useRealTimers();
+    }
+  });
 });

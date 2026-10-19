@@ -75,11 +75,9 @@ export {
   type ObjectPlace
 } from './scene/crossover';
 export {
-  AXONOMETRA_BINDINGS,
-  AXONOMETRA_WALK_KEYS,
   DIFFERENCES,
   RETICULYNE_BINDINGS,
-  SHARED_BINDINGS,
+  EXCALIDRAW_BINDINGS,
   formatBinding,
   formatChord,
   formatDifferences,
@@ -96,15 +94,7 @@ export {
   type KeyLike,
   type KeymapOptions,
   type KeymapSection,
-  type KeymapTool,
   type ResolveOptions,
   type ShortcutRow,
   type ShortcutSection
 } from './keymap';
-export {
-  LEGACY_COLLECTION,
-  LEGACY_ICON_PREFIX,
-  LEGACY_SCENE_FORMATS,
-  currentIconId,
-  isLegacySceneFormat
-} from './scene/legacy';

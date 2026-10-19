@@ -1,9 +1,6 @@
-// The shared keymap, as data plus the matching rules, so Axonometra and
-// Reticulyne bind the same keys and list them the same way in their `?`
-// dialogs. docs/keymap.md is the specification; these tables are it in code,
-// and the two change together.
-
-export type KeymapTool = 'axonometra' | 'reticulyne';
+// The keymap, as data plus the matching rules, aligned with Excalidraw's so
+// someone can move between the two without retraining. docs/keymap.md is the
+// specification; these tables are it in code, and the two change together.
 
 export type KeymapSection = 'Tools' | 'View' | 'Edit' | 'Pointer and touch';
 
@@ -98,10 +95,10 @@ const gesture = (
 
 const ARROWS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
 
-// The shared set, both tools. Rows marked "where built" in the spec are here
-// too; a tool that has not built the feature passes its action in `omit`, and
-// the key stays unbound rather than going to anything else.
-export const SHARED_BINDINGS: readonly Binding[] = [
+// The bindings Reticulyne shares with Excalidraw. Rows marked "where built"
+// in the spec are here too; until the feature is built its action is passed
+// in `omit`, and the key stays unbound rather than going to anything else.
+export const EXCALIDRAW_BINDINGS: readonly Binding[] = [
   {
     action: 'select',
     label: 'Select',
@@ -378,8 +375,8 @@ export const SHARED_BINDINGS: readonly Binding[] = [
   gesture('context-menu', 'Context menu', 'Right-click')
 ];
 
-// Reticulyne's own tools. A row whose action is already shared adds its
-// chords to the shared row as aliases.
+// Reticulyne's own tools. A row whose action is already in the Excalidraw
+// set adds its chords to that row as aliases.
 export const RETICULYNE_BINDINGS: readonly Binding[] = [
   {
     action: 'rectangle',
@@ -516,62 +513,11 @@ export const RETICULYNE_BINDINGS: readonly Binding[] = [
   )
 ];
 
-export const AXONOMETRA_BINDINGS: readonly Binding[] = [
-  {
-    action: 'wall',
-    label: 'Wall',
-    section: 'Tools',
-    chords: [k('l'), c('Digit6')],
-    editing: true
-  },
-  {
-    action: 'window',
-    label: 'Window',
-    section: 'Tools',
-    chords: [k('w')],
-    editing: true
-  },
-  {
-    action: 'door',
-    label: 'Door',
-    section: 'Tools',
-    chords: [k('d')],
-    editing: true
-  },
-  {
-    action: 'measure',
-    label: 'Measure',
-    section: 'Tools',
-    chords: [k('m')],
-    editing: false
-  },
-  {
-    action: 'save',
-    label: 'Save',
-    section: 'Edit',
-    chords: [mod('s')],
-    editing: true
-  },
-  gesture('edit-length', "Edit a wall's length", 'Double-click the wall', true)
-];
-
-// Walk mode in Axonometra's 3D view has its own keys, handled by the 3D view
-// while it has focus; listed so the `?` dialog can show them.
-export const AXONOMETRA_WALK_KEYS: readonly { keys: string; label: string }[] =
-  [
-    { keys: 'W A S D, arrow keys', label: 'Move' },
-    { keys: 'Q, E', label: 'Turn' },
-    { keys: 'Page Up, Page Down', label: 'Change storey' }
-  ];
-
-// Bindings each tool leaves out on purpose (deliberate divergences, not
+// Bindings Reticulyne leaves out on purpose (deliberate divergences, not
 // features waiting to be built).
-const DIVERGENT: Record<KeymapTool, readonly string[]> = {
-  reticulyne: ['eraser'],
-  axonometra: []
-};
+const DIVERGENT: readonly string[] = ['eraser'];
 
-const DIFFERENCES_SHARED: readonly Difference[] = [
+const DIFFERENCES_COMMON: readonly Difference[] = [
   {
     excalidraw: 'O, 4',
     action: 'ellipse',
@@ -612,18 +558,18 @@ const DIFFERENCES_SHARED: readonly Difference[] = [
     excalidraw: '{shift} + H, {shift} + V',
     action: 'flip',
     here: 'unbound',
-    why: 'Isometric items are not symmetric, and a floor plan object is rotated, not mirrored.'
+    why: 'Isometric items are not symmetric.'
   },
   {
     excalidraw: 'Tab, {shift} + Tab',
     action: 'change shape type',
-    here: 'Reticulyne: Select the next / previous object; Axonometra: unbound',
+    here: 'Select the next / previous object',
     why: 'No free-form shapes; the keyboard needs a way to reach each object.'
   },
   {
     excalidraw: '{mod} + Arrow keys, {alt} + Arrow keys',
     action: 'create and walk a flowchart',
-    here: 'Reticulyne: {mod} + Arrow keys is Pan the view, {alt} + ↑ / ↓ is Show the floor above / below; the rest unbound',
+    here: '{mod} + Arrow keys is Pan the view, {alt} + ↑ / ↓ is Show the floor above / below; the rest unbound',
     why: 'Flowcharting.'
   },
   {
@@ -646,94 +592,60 @@ const DIFFERENCES_SHARED: readonly Difference[] = [
   }
 ];
 
-export const DIFFERENCES: Record<KeymapTool, readonly Difference[]> = {
-  reticulyne: [
-    {
-      excalidraw: 'D, 3',
-      action: 'diamond',
-      here: 'unbound',
-      why: 'No free-form shapes.'
-    },
-    ...DIFFERENCES_SHARED.slice(0, 2),
-    {
-      excalidraw: 'L, 6',
-      action: 'line',
-      here: 'unbound',
-      why: 'Reticulyne draws connectors, not lines.'
-    },
-    {
-      excalidraw: 'E, 0',
-      action: 'eraser',
-      here: 'unbound',
-      why: 'Reticulyne deletes a selection instead.'
-    },
-    {
-      excalidraw: 'F',
-      action: 'frame',
-      here: 'Fit to view',
-      why: 'No frames; F was already fit.'
-    },
-    {
-      excalidraw: 'I',
-      action: 'eye-dropper',
-      here: 'Add item',
-      why: 'No colour picking from the canvas.'
-    },
-    {
-      excalidraw: 'S, G',
-      action: 'stroke, background colour',
-      here: 'S is Select; G unbound',
-      why: 'Colour is set in the properties panel.'
-    },
-    ...DIFFERENCES_SHARED.slice(2)
-  ],
-  axonometra: [
-    {
-      excalidraw: 'D, 3',
-      action: 'diamond',
-      here: 'D is door; 3 unbound',
-      why: 'No free-form shapes, so its letter goes to the object a floor planner reaches for most.'
-    },
-    ...DIFFERENCES_SHARED.slice(0, 2),
-    { excalidraw: 'F', action: 'frame', here: 'unbound', why: 'No frames.' },
-    {
-      excalidraw: 'I',
-      action: 'eye-dropper',
-      here: 'unbound',
-      why: 'No colour picking from the canvas.'
-    },
-    {
-      excalidraw: 'S, G',
-      action: 'stroke, background colour',
-      here: 'unbound',
-      why: 'Colour is set in the properties panel.'
-    },
-    ...DIFFERENCES_SHARED.slice(2),
-    {
-      excalidraw: 'Page Up / Page Down',
-      action: 'scroll the canvas',
-      here: 'walk mode: change storey',
-      why: 'Only while walking in 3D.'
-    }
-  ]
-};
+// Where Reticulyne differs from Excalidraw, for the `?` dialog.
+export const DIFFERENCES: readonly Difference[] = [
+  {
+    excalidraw: 'D, 3',
+    action: 'diamond',
+    here: 'unbound',
+    why: 'No free-form shapes.'
+  },
+  ...DIFFERENCES_COMMON.slice(0, 2),
+  {
+    excalidraw: 'L, 6',
+    action: 'line',
+    here: 'unbound',
+    why: 'Reticulyne draws connectors, not lines.'
+  },
+  {
+    excalidraw: 'E, 0',
+    action: 'eraser',
+    here: 'unbound',
+    why: 'Reticulyne deletes a selection instead.'
+  },
+  {
+    excalidraw: 'F',
+    action: 'frame',
+    here: 'Fit to view',
+    why: 'No frames; F was already fit.'
+  },
+  {
+    excalidraw: 'I',
+    action: 'eye-dropper',
+    here: 'Add item',
+    why: 'No colour picking from the canvas.'
+  },
+  {
+    excalidraw: 'S, G',
+    action: 'stroke, background colour',
+    here: 'S is Select; G unbound',
+    why: 'Colour is set in the properties panel.'
+  },
+  ...DIFFERENCES_COMMON.slice(2)
+];
 
 export interface KeymapOptions {
-  // Shared actions the tool has not built yet ("where built" rows).
+  // Excalidraw actions not built yet ("where built" rows).
   omit?: readonly string[];
 }
 
-// The full binding list for one tool: the shared set, less what the tool
-// leaves out, with its own rows added. A tool row whose action is shared adds
-// its chords to the shared row, and its label replaces the shared one, so the
-// `?` dialog uses the names on that tool's own toolbar.
-export const keymapFor = (
-  tool: KeymapTool,
-  options: KeymapOptions = {}
-): Binding[] => {
-  const own = tool === 'reticulyne' ? RETICULYNE_BINDINGS : AXONOMETRA_BINDINGS;
-  const skip = new Set([...DIVERGENT[tool], ...(options.omit ?? [])]);
-  const result: Binding[] = SHARED_BINDINGS.filter((b) => {
+// The full binding list: the Excalidraw set, less what Reticulyne leaves
+// out, with its own rows added. An own row whose action is in the Excalidraw
+// set adds its chords to that row, and its label replaces it, so the `?`
+// dialog uses the names on Reticulyne's own toolbar.
+export const keymapFor = (options: KeymapOptions = {}): Binding[] => {
+  const skip = new Set([...DIVERGENT, ...(options.omit ?? [])]);
+  const result: Binding[] = EXCALIDRAW_BINDINGS.filter((b) => {
     return !skip.has(b.action);
   }).map((b) => {
     return {
@@ -741,7 +653,7 @@ export const keymapFor = (
       chords: [...b.chords]
     };
   });
-  for (const binding of own) {
+  for (const binding of RETICULYNE_BINDINGS) {
     const shared = result.find((b) => {
       return b.action === binding.action;
     });
@@ -894,7 +806,7 @@ export const formatKeyNames = (
     .join(mac ? '⌥' : 'Alt');
 };
 
-// A tool's differences from Excalidraw with their key names formatted.
+// The differences from Excalidraw with their key names formatted.
 export const formatDifferences = (
   differences: readonly Difference[],
   platform: 'mac' | 'other' = isMacLike() ? 'mac' : 'other'
@@ -957,7 +869,7 @@ const SECTION_ORDER: readonly KeymapSection[] = [
   'Pointer and touch'
 ];
 
-// A tool's bindings grouped for the `?` dialog, in the spec's section order.
+// The bindings grouped for the `?` dialog, in the spec's section order.
 export const shortcutSections = (
   bindings: readonly Binding[],
   platform?: 'mac' | 'other'

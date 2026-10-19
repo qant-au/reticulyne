@@ -40,7 +40,7 @@ const isControl = (target: EventTarget | null) => {
 // built" that Reticulyne has not built stay unbound: Q (keep tool), align,
 // and Ctrl/Cmd+Enter (there is no point-editing mode for connectors). Lock
 // is bound.
-export const KEYMAP = keymapFor('reticulyne', {
+export const KEYMAP = keymapFor({
   omit: [
     'keep-tool',
     'edit-geometry',
@@ -59,7 +59,7 @@ const LAYER_ORDER = {
 } as const;
 
 // FEA5-02: keyboard shortcuts. The bindings are the keymap in
-// src/core/keymap.ts, aligned with Axonometra's; this hook maps each action
+// src/core/keymap.ts, aligned with Excalidraw's; this hook maps each action
 // to what it does here.
 //
 // Editing bindings fire only in EDITABLE mode; selecting, panning, zoom,

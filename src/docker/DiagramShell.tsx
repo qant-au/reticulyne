@@ -344,11 +344,18 @@ export const DiagramShell = ({
   // The baseline is the first model the editor reports after a load: the
   // loaded data and the normalised model differ in shape (defaults filled
   // in), so fingerprinting the data itself would read as unsaved at once.
-  const savedPrint = useRef('');
-  const latestPrint = useRef('');
+  // The models are kept, not their fingerprints, and compared only when a
+  // diagram is left: fingerprinting on every edit stringified the whole
+  // diagram each time. The editor's models are immutable, so the same
+  // object means no change.
+  const savedModel = useRef<Model | null>(null);
+  const latestModel = useRef<Model | null>(null);
   const baselinePending = useRef(true);
   const isDirty = () => {
-    return latestPrint.current !== savedPrint.current;
+    const latest = latestModel.current;
+    const saved = savedModel.current;
+    if (latest === saved || !latest || !saved) return false;
+    return fingerprint(latest) !== fingerprint(saved);
   };
 
   const show = (next: Current) => {
@@ -373,7 +380,7 @@ export const DiagramShell = ({
   };
 
   // Saves are scenes. The editor builds each one from the model it last
-  // reported, so that model's fingerprint is what is now saved.
+  // reported, so that model is what is now saved.
   const onSave = useCallback(
     async (scene: Scene) => {
       try {
@@ -384,7 +391,7 @@ export const DiagramShell = ({
         throw e;
       }
       store.setCurrent(current.id);
-      savedPrint.current = latestPrint.current;
+      savedModel.current = latestModel.current;
       setEntries(store.list());
       setError(null);
     },
@@ -392,10 +399,10 @@ export const DiagramShell = ({
   );
 
   const onModelUpdated = useCallback((model: Model) => {
-    latestPrint.current = fingerprint(model);
+    latestModel.current = model;
     if (baselinePending.current) {
       baselinePending.current = false;
-      savedPrint.current = latestPrint.current;
+      savedModel.current = model;
     }
     setTitle(model.title);
   }, []);

@@ -5,12 +5,17 @@
 const path = require('path');
 const { merge } = require('webpack-merge');
 const base = require('./base.config.js');
+const { isDrawingsImport } = require('./drawings.js');
 
 module.exports = merge(base, {
   mode: 'production',
   entry: {
     'index': './src/Reticulyne.tsx',
-    '/standaloneExports': './src/standaloneExports.ts'
+    '/standaloneExports': './src/standaloneExports.ts',
+    // The built-in drawings (1.3 MB of SVG) as their own module, which both
+    // entries require through the external below instead of each carrying a
+    // copy.
+    drawings: './src/icons/drawings.ts'
   },
   // Emit separate `.map` files alongside the bundle.  Webpack appends a
   // `//# sourceMappingURL=...` comment to each emitted .js, so a
@@ -61,7 +66,10 @@ module.exports = merge(base, {
     // object form above matches only the bare names, so React 19's JSX
     // runtime was compiled into dist and emitted elements a React 18
     // host (peer range >=18) rejects.
-    ({ request }, callback) => {
+    ({ request, context }, callback) => {
+      if (isDrawingsImport(request, context)) {
+        return callback(null, 'commonjs ./drawings.js');
+      }
       if (
         /^react(-dom)?\//.test(request) ||
         /^@mui\//.test(request) ||

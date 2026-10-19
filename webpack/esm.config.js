@@ -7,6 +7,7 @@
 const path = require('path');
 const { merge } = require('webpack-merge');
 const base = require('./base.config.js');
+const { isDrawingsImport } = require('./drawings.js');
 
 // The same packages prod.config.js leaves to the host: React (and its
 // subpaths, such as the JSX runtime), MUI, Emotion and Zustand.
@@ -20,7 +21,9 @@ module.exports = merge(base, {
   mode: 'production',
   entry: {
     index: './src/Reticulyne.tsx',
-    standaloneExports: './src/standaloneExports.ts'
+    standaloneExports: './src/standaloneExports.ts',
+    // As in prod.config.js: one copy of the drawings, imported by both entries.
+    drawings: './src/icons/drawings.ts'
   },
   devtool: 'source-map',
   experiments: { outputModule: true },
@@ -33,7 +36,10 @@ module.exports = merge(base, {
   },
   externalsType: 'module',
   externals: [
-    ({ request }, callback) => {
+    ({ request, context }, callback) => {
+      if (isDrawingsImport(request, context)) {
+        return callback(null, 'module ./drawings.mjs');
+      }
       if (shared(request)) return callback(null, 'module ' + request);
       callback();
     }

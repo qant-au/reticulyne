@@ -90,6 +90,13 @@ production `npm audit` and tarball-contents checks pass. A published version can
 withdrawn, so a bad release is fixed forward with the next patch, and the changelog
 says which version to avoid.
 
+Repository rulesets back this up:
+
+- `main` cannot be force-pushed or deleted, by anyone.
+- A pull request into `main` needs the CI `build` check to pass. Maintainers (repository
+  admins) may push to `main` directly.
+- Only maintainers can create, move or delete a `v*` tag, so only they can start a release.
+
 ## Licence
 
 MIT. See [LICENSE](LICENSE).

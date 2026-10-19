@@ -177,7 +177,7 @@ describe('crossover', () => {
       return o.id === 'sw1';
     })!;
     expect(sw1).toMatchObject({
-      name: 'PoE switch (8-port)',
+      name: 'PoE Switch (8-Port)',
       element: 'network-switch',
       icon: 'reticulyne-network-switch',
       links: [{ source: 'reticulyne', ref: 'poe-switch-8' }]

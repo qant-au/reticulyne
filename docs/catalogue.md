@@ -284,7 +284,7 @@ high-level interface is:
 ```json
 {
   "id": "rs485-ethernet-gateway",
-  "name": "RS-485 to Ethernet gateway",
+  "name": "RS-485 to Ethernet Gateway",
   "family": "serial",
   "ports": [
     { "id": "rs485", "medium": "rs-485", "role": "through", "protocols": ["modbus-rtu"] },
@@ -309,11 +309,11 @@ object rather than to a port).
 { "id": "internet", "name": "Internet", "family": "virtual", "virtual": true,
   "ports": [ { "id": "wan{1..8}", "medium": "ethernet-copper", "role": "hub" } ] },
 
-{ "id": "vpn-tunnel", "name": "VPN tunnel", "family": "virtual", "virtual": true,
+{ "id": "vpn-tunnel", "name": "VPN Tunnel", "family": "virtual", "virtual": true,
   "ports": [ { "id": "a", "medium": "ip-tunnel", "protocols": ["wireguard"] },
              { "id": "b", "medium": "ip-tunnel", "protocols": ["wireguard"] } ] },
 
-{ "id": "cloud-service", "name": "Cloud service", "family": "virtual", "virtual": true,
+{ "id": "cloud-service", "name": "Cloud Service", "family": "virtual", "virtual": true,
   "ports": [ { "id": "tunnel", "medium": "ip-tunnel" }, { "id": "public", "medium": "ethernet-copper" } ] }
 ]
 ```
@@ -326,7 +326,7 @@ without a special medium; the role lifts the one-connection limit.
 An item that has a drawing names it:
 
 ```json
-{ "id": "wifi-ap-ceiling", "name": "Wi-Fi access point", "family": "wireless",
+{ "id": "wifi-ap-ceiling", "name": "Wi-Fi Access Point", "family": "wireless",
   "drawing": "wifi-ap",
   "ports": [
     { "id": "eth1", "medium": "ethernet-copper", "capabilities": ["poe-pd"] },
@@ -409,23 +409,23 @@ Catalogue items used:
 
 ```json
 [
-  { "id": "n2k-tee-4way", "name": "NMEA 2000 4-way tee", "family": "marine-vehicle",
+  { "id": "n2k-tee-4way", "name": "NMEA 2000 4-Way Tee", "family": "marine-vehicle",
     "ports": [
       { "id": "in",  "name": "Backbone in",  "medium": "nmea-2000", "gender": "female", "role": "backbone" },
       { "id": "out", "name": "Backbone out", "medium": "nmea-2000", "gender": "male",   "role": "backbone" },
       { "id": "drop{1..4}", "name": "Drop {n}", "medium": "nmea-2000", "gender": "female", "role": "drop" }
     ] },
-  { "id": "n2k-tee", "name": "NMEA 2000 tee", "family": "marine-vehicle",
+  { "id": "n2k-tee", "name": "NMEA 2000 Tee", "family": "marine-vehicle",
     "ports": [
       { "id": "in",   "medium": "nmea-2000", "gender": "female", "role": "backbone" },
       { "id": "out",  "medium": "nmea-2000", "gender": "male",   "role": "backbone" },
       { "id": "drop", "medium": "nmea-2000", "gender": "female", "role": "drop" }
     ] },
-  { "id": "n2k-terminator-male", "name": "NMEA 2000 terminator (male)", "family": "marine-vehicle",
+  { "id": "n2k-terminator-male", "name": "NMEA 2000 Terminator (Male)", "family": "marine-vehicle",
     "ports": [ { "id": "t", "medium": "nmea-2000", "gender": "male", "role": "backbone", "capabilities": ["terminator"] } ] },
-  { "id": "n2k-terminator-female", "name": "NMEA 2000 terminator (female)", "family": "marine-vehicle",
+  { "id": "n2k-terminator-female", "name": "NMEA 2000 Terminator (Female)", "family": "marine-vehicle",
     "ports": [ { "id": "t", "medium": "nmea-2000", "gender": "female", "role": "backbone", "capabilities": ["terminator"] } ] },
-  { "id": "n2k-power-injector", "name": "NMEA 2000 power injector", "family": "marine-vehicle",
+  { "id": "n2k-power-injector", "name": "NMEA 2000 Power Injector", "family": "marine-vehicle",
     "ports": [
       { "id": "n2k",   "medium": "nmea-2000", "gender": "male", "capabilities": ["bus-power"] },
       { "id": "dc-in", "medium": "power-dc", "connector": "wire", "capabilities": ["power-in"] }
@@ -443,7 +443,7 @@ Catalogue items used:
       { "id": "eth1", "medium": "ethernet-copper", "name": "Marine network" },
       { "id": "dc-in", "medium": "power-dc", "capabilities": ["power-in"] }
     ] },
-  { "id": "gps-receiver", "name": "GPS receiver", "family": "marine-vehicle",
+  { "id": "gps-receiver", "name": "GPS Receiver", "family": "marine-vehicle",
     "ports": [ { "id": "n2k", "medium": "nmea-2000", "gender": "male", "protocols": ["nmea-2000"], "props": { "len": 1 } } ] }
 ]
 ```
@@ -496,7 +496,7 @@ cable and a single tee in its place, and terminate after that:
 The gateway item:
 
 ```json
-{ "id": "engine-gateway", "name": "Engine gateway (J1939 to NMEA 2000)", "family": "marine-vehicle",
+{ "id": "engine-gateway", "name": "Engine Gateway (J1939 to NMEA 2000)", "family": "marine-vehicle",
   "ports": [
     { "id": "n2k",   "medium": "nmea-2000", "gender": "male", "protocols": ["nmea-2000"] },
     { "id": "j1939", "medium": "j1939", "connector": "deutsch-dt", "protocols": ["j1939"], "capabilities": ["terminator"] }
@@ -542,7 +542,7 @@ terminated at the gateway and at the ECU; the gateway is simply an item with a p
       "ports": [ { "id": "loop", "kind": "fire-loop", "props": { "role": "through", "capabilities": "isolator" } } ] },
     { "id": "mcp1", "name": "Manual call point", "element": "manual-call-point",
       "ports": [ { "id": "loop", "kind": "fire-loop", "props": { "role": "through" } } ] },
-    { "id": "gw", "name": "RS-485 to Ethernet gateway",
+    { "id": "gw", "name": "RS-485 to Ethernet Gateway",
       "links": [ { "source": "reticulyne", "ref": "rs485-ethernet-gateway" } ],
       "ports": [ { "id": "rs485", "kind": "rs-485", "props": { "role": "through", "capabilities": "terminator" } },
                  { "id": "eth1",  "kind": "ethernet-copper" } ] }

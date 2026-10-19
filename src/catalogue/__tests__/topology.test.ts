@@ -61,7 +61,7 @@ describe('pickPorts', () => {
         [sw, ap],
         [...taken, conn('c2', 'sw', again!.fromPort, 'ap', 'eth1')]
       )
-    ).toEqual(['Wi-Fi access point: port eth1 takes one connection; it has 2']);
+    ).toEqual(['Wi-Fi Access Point: port eth1 takes one connection; it has 2']);
   });
 
   test('associates a wireless client with a hub, not another client', () => {

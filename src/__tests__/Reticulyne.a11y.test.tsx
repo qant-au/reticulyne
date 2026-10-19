@@ -405,7 +405,7 @@ describe('the catalogue palette', () => {
       fireEvent.change(search, { target: { value: 'PoE switch' } });
     });
     const tile = screen
-      .getByAltText('Icon PoE switch (8-port)')
+      .getByAltText('Icon PoE Switch (8-Port)')
       .closest('button')!;
     act(() => {
       fireEvent.click(tile);
@@ -414,7 +414,7 @@ describe('the catalogue palette', () => {
       return !['a', 'b'].includes(item.id);
     })!;
     expect(added).toMatchObject({
-      name: 'PoE switch (8-port)',
+      name: 'PoE Switch (8-Port)',
       element: 'network-switch',
       links: [{ source: 'reticulyne', ref: 'poe-switch-8' }]
     });
@@ -452,7 +452,7 @@ describe('the catalogue palette', () => {
       fireEvent.change(search, { target: { value: 'PoE switch' } });
     });
     const tile = screen
-      .getByAltText('Icon PoE switch (8-port)')
+      .getByAltText('Icon PoE Switch (8-Port)')
       .closest('button')!;
     act(() => {
       fireEvent.mouseDown(tile);

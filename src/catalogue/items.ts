@@ -25,7 +25,7 @@ export const ITEMS: CatalogueItem[] = [
   // --- Ethernet and IP ------------------------------------------------
   {
     id: 'network-switch-24',
-    name: 'Network switch (24-port)',
+    name: 'Network Switch (24-Port)',
     family: 'ethernet',
     drawing: 'network-switch',
     ports: [
@@ -36,7 +36,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'poe-switch-8',
-    name: 'PoE switch (8-port)',
+    name: 'PoE Switch (8-Port)',
     family: 'ethernet',
     drawing: 'network-switch',
     ports: [
@@ -75,7 +75,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'nbn-modem',
-    name: 'NBN modem',
+    name: 'NBN Modem',
     family: 'ethernet',
     drawing: 'modem-nbn',
     ports: [
@@ -134,7 +134,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'ip-phone',
-    name: 'IP phone',
+    name: 'IP Phone',
     family: 'ethernet',
     drawing: 'ip-phone',
     ports: [
@@ -149,7 +149,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'data-outlet',
-    name: 'Data outlet',
+    name: 'Data Outlet',
     family: 'ethernet',
     drawing: 'data-outlet',
     ports: [
@@ -164,7 +164,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'floor-box',
-    name: 'Floor box',
+    name: 'Floor Box',
     family: 'ethernet',
     drawing: 'floor-box',
     ports: [
@@ -186,7 +186,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'fibre-termination-cabinet',
-    name: 'Fibre termination cabinet',
+    name: 'Fibre Termination Cabinet',
     family: 'ethernet',
     drawing: 'odf-panel',
     ports: [
@@ -208,7 +208,7 @@ export const ITEMS: CatalogueItem[] = [
   // --- Wireless -------------------------------------------------------
   {
     id: 'wifi-ap-ceiling',
-    name: 'Wi-Fi access point',
+    name: 'Wi-Fi Access Point',
     family: 'wireless',
     drawing: 'wifi-ap',
     ports: [
@@ -220,7 +220,7 @@ export const ITEMS: CatalogueItem[] = [
   // --- Serial and field bus -------------------------------------------
   {
     id: 'rs485-ethernet-gateway',
-    name: 'RS-485 to Ethernet gateway',
+    name: 'RS-485 to Ethernet Gateway',
     family: 'serial',
     ports: [
       {
@@ -237,7 +237,7 @@ export const ITEMS: CatalogueItem[] = [
   // --- Marine and vehicle ---------------------------------------------
   {
     id: 'n2k-tee-4way',
-    name: 'NMEA 2000 4-way tee',
+    name: 'NMEA 2000 4-Way Tee',
     family: 'marine-vehicle',
     ports: [
       {
@@ -265,7 +265,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'n2k-tee',
-    name: 'NMEA 2000 tee',
+    name: 'NMEA 2000 Tee',
     family: 'marine-vehicle',
     ports: [
       {
@@ -293,7 +293,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'n2k-terminator-male',
-    name: 'NMEA 2000 terminator (male)',
+    name: 'NMEA 2000 Terminator (Male)',
     family: 'marine-vehicle',
     ports: [
       {
@@ -307,7 +307,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'n2k-terminator-female',
-    name: 'NMEA 2000 terminator (female)',
+    name: 'NMEA 2000 Terminator (Female)',
     family: 'marine-vehicle',
     ports: [
       {
@@ -321,7 +321,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'n2k-power-injector',
-    name: 'NMEA 2000 power injector',
+    name: 'NMEA 2000 Power Injector',
     family: 'marine-vehicle',
     ports: [
       {
@@ -373,7 +373,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'gps-receiver',
-    name: 'GPS receiver',
+    name: 'GPS Receiver',
     family: 'marine-vehicle',
     ports: [
       {
@@ -387,7 +387,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'engine-gateway',
-    name: 'Engine gateway (J1939 to NMEA 2000)',
+    name: 'Engine Gateway (J1939 to NMEA 2000)',
     family: 'marine-vehicle',
     ports: [
       {
@@ -409,7 +409,7 @@ export const ITEMS: CatalogueItem[] = [
   // --- Security and access --------------------------------------------
   {
     id: 'ip-camera-dome',
-    name: 'IP camera (dome)',
+    name: 'IP Camera (Dome)',
     family: 'security',
     drawing: 'cctv-dome',
     ports: [
@@ -423,7 +423,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'ip-camera-bullet',
-    name: 'IP camera (bullet)',
+    name: 'IP Camera (Bullet)',
     family: 'security',
     drawing: 'cctv-bullet',
     ports: [
@@ -437,7 +437,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'ip-camera-ptz',
-    name: 'IP camera (PTZ)',
+    name: 'IP Camera (PTZ)',
     family: 'security',
     drawing: 'cctv-ptz',
     ports: [
@@ -452,7 +452,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'ip-camera-fisheye',
-    name: 'IP camera (fisheye)',
+    name: 'IP Camera (Fisheye)',
     family: 'security',
     drawing: 'cctv-fisheye',
     ports: [
@@ -466,7 +466,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'nvr-8',
-    name: 'NVR (8-channel PoE)',
+    name: 'NVR (8-Channel PoE)',
     family: 'security',
     drawing: 'nvr',
     ports: [
@@ -484,7 +484,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'alarm-panel',
-    name: 'Alarm panel',
+    name: 'Alarm Panel',
     family: 'security',
     drawing: 'alarm-panel',
     ports: [
@@ -507,7 +507,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'alarm-keypad',
-    name: 'Alarm keypad',
+    name: 'Alarm Keypad',
     family: 'security',
     drawing: 'alarm-keypad',
     ports: [
@@ -516,7 +516,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'pir-sensor',
-    name: 'PIR sensor',
+    name: 'PIR Sensor',
     family: 'security',
     drawing: 'pir-sensor',
     ports: [
@@ -526,7 +526,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'door-contact',
-    name: 'Door contact (reed switch)',
+    name: 'Door Contact (Reed Switch)',
     family: 'security',
     drawing: 'door-contact',
     ports: [
@@ -535,7 +535,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'glass-break',
-    name: 'Glass-break detector',
+    name: 'Glass-Break Detector',
     family: 'security',
     drawing: 'glass-break',
     ports: [
@@ -545,13 +545,13 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'eol-resistor',
-    name: 'End-of-line resistor',
+    name: 'End-of-Line Resistor',
     family: 'security',
     ports: [{ id: 'eol', medium: 'dry-contact', capabilities: ['eol'] }]
   },
   {
     id: 'card-reader',
-    name: 'Card reader',
+    name: 'Card Reader',
     family: 'security',
     drawing: 'card-reader',
     ports: [
@@ -562,14 +562,14 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'exit-button',
-    name: 'Exit button',
+    name: 'Exit Button',
     family: 'security',
     drawing: 'exit-button',
     ports: [{ id: 'rex', name: 'Request to exit', medium: 'dry-contact' }]
   },
   {
     id: 'maglock',
-    name: 'Magnetic lock',
+    name: 'Magnetic Lock',
     family: 'security',
     drawing: 'maglock',
     ports: [
@@ -579,7 +579,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'intercom',
-    name: 'IP intercom',
+    name: 'IP Intercom',
     family: 'security',
     drawing: 'intercom',
     ports: [
@@ -589,7 +589,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'siren-strobe',
-    name: 'Siren and strobe',
+    name: 'Siren and Strobe',
     family: 'security',
     drawing: 'siren-strobe',
     ports: [
@@ -617,7 +617,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'speed-gate',
-    name: 'Speed gate lane',
+    name: 'Speed Gate Lane',
     family: 'security',
     drawing: 'speed-gate',
     ports: [
@@ -632,7 +632,7 @@ export const ITEMS: CatalogueItem[] = [
   // --- Fire -----------------------------------------------------------
   {
     id: 'fire-panel-2-loop',
-    name: 'Fire panel (2-loop)',
+    name: 'Fire Panel (2-Loop)',
     family: 'fire',
     drawing: 'fire-panel',
     ports: [
@@ -662,7 +662,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'smoke-detector',
-    name: 'Smoke detector (addressable)',
+    name: 'Smoke Detector (Addressable)',
     family: 'fire',
     drawing: 'smoke-detector',
     ports: [
@@ -676,7 +676,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'heat-detector',
-    name: 'Heat detector (addressable)',
+    name: 'Heat Detector (Addressable)',
     family: 'fire',
     drawing: 'heat-detector',
     ports: [
@@ -690,7 +690,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'manual-call-point',
-    name: 'Manual call point (addressable)',
+    name: 'Manual Call Point (Addressable)',
     family: 'fire',
     drawing: 'manual-call-point',
     ports: [
@@ -704,7 +704,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'fire-isolator',
-    name: 'Loop isolator module',
+    name: 'Loop Isolator Module',
     family: 'fire',
     ports: [
       {
@@ -717,7 +717,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'gas-suppression-cylinder',
-    name: 'Gas suppression cylinder',
+    name: 'Gas Suppression Cylinder',
     family: 'fire',
     drawing: 'fire-suppression',
     ports: [
@@ -740,7 +740,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'wall-display',
-    name: 'Wall display',
+    name: 'Wall Display',
     family: 'av',
     drawing: 'display-wall-55',
     ports: [
@@ -767,7 +767,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'monitor-ultrawide',
-    name: 'Monitor (ultrawide)',
+    name: 'Monitor (Ultrawide)',
     family: 'av',
     drawing: 'monitor-34-ultrawide',
     ports: [
@@ -785,7 +785,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'kvm-console-cart',
-    name: 'KVM console cart',
+    name: 'KVM Console Cart',
     family: 'av',
     drawing: 'kvm-console',
     ports: [
@@ -801,7 +801,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'video-bar',
-    name: 'Video bar',
+    name: 'Video Bar',
     family: 'av',
     drawing: 'video-bar',
     ports: [
@@ -813,7 +813,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'ceiling-speaker-100v',
-    name: 'Ceiling speaker (100 V)',
+    name: 'Ceiling Speaker (100 V)',
     family: 'av',
     drawing: 'speaker-ceiling',
     ports: [
@@ -829,7 +829,7 @@ export const ITEMS: CatalogueItem[] = [
   // --- Power ----------------------------------------------------------
   {
     id: 'ups',
-    name: 'UPS (network managed)',
+    name: 'UPS (Network Managed)',
     family: 'power',
     drawing: 'ups-tower',
     ports: [
@@ -847,7 +847,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'ups-floor',
-    name: 'UPS (floor-standing, network managed)',
+    name: 'UPS (Floor-Standing, Network Managed)',
     family: 'power',
     drawing: 'ups-large',
     ports: [
@@ -871,7 +871,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'transfer-switch',
-    name: 'Transfer switch panel',
+    name: 'Transfer Switch Panel',
     family: 'power',
     drawing: 'ats-panel',
     ports: [
@@ -907,7 +907,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'standby-generator',
-    name: 'Standby generator',
+    name: 'Standby Generator',
     family: 'power',
     drawing: 'generator',
     ports: [
@@ -932,7 +932,7 @@ export const ITEMS: CatalogueItem[] = [
   // --- Building control -----------------------------------------------
   {
     id: 'crac-unit',
-    name: 'Precision air conditioner (CRAC)',
+    name: 'Precision Air Conditioner (CRAC)',
     family: 'building',
     drawing: 'crac-unit',
     ports: [
@@ -955,7 +955,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'in-row-cooler',
-    name: 'In-row cooler',
+    name: 'In-Row Cooler',
     family: 'building',
     drawing: 'in-row-cooler',
     ports: [
@@ -977,7 +977,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'exit-sign',
-    name: 'Exit sign (DALI-2)',
+    name: 'Exit Sign (DALI-2)',
     family: 'building',
     drawing: 'exit-sign',
     ports: [
@@ -993,7 +993,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'emergency-light',
-    name: 'Emergency light (DALI-2)',
+    name: 'Emergency Light (DALI-2)',
     family: 'building',
     drawing: 'emergency-light',
     ports: [
@@ -1018,7 +1018,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'vpn-tunnel',
-    name: 'VPN tunnel',
+    name: 'VPN Tunnel',
     family: 'virtual',
     virtual: true,
     ports: [
@@ -1028,7 +1028,7 @@ export const ITEMS: CatalogueItem[] = [
   },
   {
     id: 'cloud-service',
-    name: 'Cloud service',
+    name: 'Cloud Service',
     family: 'virtual',
     virtual: true,
     ports: [

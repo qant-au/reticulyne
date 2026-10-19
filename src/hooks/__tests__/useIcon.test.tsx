@@ -6,6 +6,7 @@ import { ReactNode } from 'react';
 import { ModelProvider, useModelStore } from 'src/stores/modelStore';
 import { useIcon } from '../useIcon';
 import { DEFAULT_ICON } from 'src/config';
+import type { Icon } from 'src/types';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return <ModelProvider>{children}</ModelProvider>;
@@ -72,5 +73,66 @@ describe('useIcon', () => {
     });
 
     expect(result.current.found.icon.id).toBe('icon-real');
+  });
+
+  describe('in the flat view', () => {
+    const withIcon = (icon: Icon) => {
+      const hook = renderHook(
+        () => {
+          const setModel = useModelStore((s) => {
+            return s.actions.set;
+          });
+          return {
+            setModel,
+            flat: useIcon('a', 'schematic'),
+            iso: useIcon('a')
+          };
+        },
+        { wrapper: Wrapper }
+      );
+      act(() => {
+        hook.result.current.setModel((state) => {
+          return { ...state, icons: [icon] };
+        });
+      });
+      return hook.result.current;
+    };
+
+    test('draws the flat drawing when the icon has one', () => {
+      const { flat, iso } = withIcon({
+        id: 'a',
+        name: 'A',
+        url: 'data:image/svg+xml,iso',
+        flatUrl: 'data:image/svg+xml,flat',
+        isIsometric: true
+      });
+      expect(flat.iconComponent?.props.url).toBe('data:image/svg+xml,flat');
+      expect(iso.iconComponent?.props.url).toBe('data:image/svg+xml,iso');
+    });
+
+    test('draws the main image when there is no flat drawing', () => {
+      const { flat } = withIcon({
+        id: 'a',
+        name: 'A',
+        url: 'data:image/svg+xml,only'
+      });
+      expect(flat.iconComponent?.props.url).toBe('data:image/svg+xml,only');
+    });
+
+    test('draws nothing when the icon has no image at all', () => {
+      const { flat } = withIcon({ id: 'a', name: 'A', url: '' });
+      expect(flat.iconComponent).toBeNull();
+    });
+
+    test('an icon with only a flat drawing still draws flat', () => {
+      const { flat, iso } = withIcon({
+        id: 'a',
+        name: 'A',
+        url: '',
+        flatUrl: 'data:image/svg+xml,flat'
+      });
+      expect(flat.iconComponent?.props.url).toBe('data:image/svg+xml,flat');
+      expect(iso.iconComponent).toBeNull();
+    });
   });
 });

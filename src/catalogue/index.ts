@@ -23,7 +23,6 @@ export {
   catalogueItemIcon,
   catalogueItemSymbol,
   itemToSceneObject,
-  schematicIconUrl,
   schematicIcons
 } from './place';
 export { ITEM_SYMBOLS } from './symbols';

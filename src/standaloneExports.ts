@@ -72,7 +72,6 @@ export {
   pickPorts,
   portCapacity,
   portRole,
-  schematicIconUrl,
   schematicIcons,
   topologyWarnings,
   validateCatalogue

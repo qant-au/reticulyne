@@ -55,6 +55,17 @@ test('stores a scene with only its own icons and the bundled ones it uses', () =
   expect(back.objects).toEqual(raw.objects);
 });
 
+test('a stored icon saved without a flat drawing takes the bundled one', () => {
+  const withFlat = [{ ...bundled[0], flatUrl: 'server-flat.svg' }, bundled[1]];
+  createDiagramStorage(localStorage, bundled).save('d1', scene('Old'));
+
+  const back = createDiagramStorage(localStorage, withFlat).load('d1')!;
+  const server = back.icons!.find((icon) => {
+    return icon.id === 'server';
+  });
+  expect(server?.flatUrl).toBe('server-flat.svg');
+});
+
 test('reads a diagram an older build stored as a Reticulyne model', () => {
   const legacy = model('Old');
   localStorage.setItem(

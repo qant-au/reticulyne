@@ -351,18 +351,25 @@ export const layerSchema = z.strictObject({
   visible: z.boolean().optional()
 });
 
+const iconUrl = z
+  .string()
+  .max(SCENE_LIMITS.ICON_URL)
+  .refine(
+    isAllowedIconUrl,
+    'An icon url is http(s):, blob:, a relative path or a data:image/ URI'
+  );
+
+// `url` is the icon's main image: its isometric drawing when `isIsometric`,
+// else a flat one laid onto the tile. `flatUrl` is the icon's flat (2D,
+// schematic) drawing, for the flat view; without one, the flat view draws
+// `url`.
 export const iconSchema = z.strictObject({
   id: idSchema,
   name,
-  url: z
-    .string()
-    .max(SCENE_LIMITS.ICON_URL)
-    .refine(
-      isAllowedIconUrl,
-      'An icon url is http(s):, blob:, a relative path or a data:image/ URI'
-    ),
+  url: iconUrl,
   collection: name.optional(),
-  isIsometric: z.boolean().optional()
+  isIsometric: z.boolean().optional(),
+  flatUrl: iconUrl.optional()
 });
 
 export const colorSchema = z.strictObject({ id: idSchema, value: hex });

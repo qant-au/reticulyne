@@ -80,29 +80,21 @@ front-on schematic as `flatUrl`. The icons are `reticulyne-<drawing id>`, filed 
 `Reticulyne`. The [catalogue](catalogue.md) items draw with them: an item names its drawing with
 `drawing`.
 
-## The bundled isopacks
+## Bringing your own icons
 
-> **The isopack icons were removed on 2026-10-19.** The five packs below are now empty, and the
-> samples, templates and examples use the built-in drawings instead. The isopack code and this
-> section go next.
+The built-in pack is the only one Reticulyne ships. To add your own icons (cloud-provider sets,
+your own equipment, a company's house style), build a pack:
 
-The repository also carries five icon collections under `src/vendor/isopacks/`. Each one is
-already pack-shaped (`{ id, name, icons }`), with an isometric `url` and no `flatUrl`:
+1. **Draw each icon twice** if you can: an isometric view for `url` and a flat, front-on view for
+   `flatUrl`. SVG works best. An icon with only `url` still works, and the flat view draws it as
+   it is.
+2. **Write the pack** as `{ id, name, version?, icons }`, giving every icon an `id` that starts
+   with the pack id (`acme-router`), a `name`, and its URLs.
+3. **Check it** with `validateIconPack(pack)`, which reports every problem rather than the first.
+4. **Load it** beside the built-in pack with `flattenPacks([BUILTIN_PACK, myPack])`, as in
+   [Loading packs](#loading-packs).
 
-- **isoflow**: general infrastructure icons (server, storage, switch and so on)¹
-- **aws**: Amazon Web Services
-- **azure**: Microsoft Azure
-- **gcp**: Google Cloud Platform
-- **kubernetes**: Kubernetes resource types
-
-¹ The general pack keeps its pre-rename id `isoflow` so diagrams saved before the
-Isoflow → Reticulyne rename still resolve their icons. Filter it with
-`iconCollections: { allow: ['isoflow'] }`.
-
-They power the [standalone Docker editor](docker.md) and the in-repo examples (see
-`src/examples/initialData.ts`), which load all five plus the built-in pack. They are not part of
-the published package; an application embedding `@reticulyne/editor` that wants the same
-cloud-provider icons supplies them as its own pack.
+Use only icons you have the right to use: many vendor icon sets carry their own licence terms.
 
 ## Packs installed in the Docker editor
 

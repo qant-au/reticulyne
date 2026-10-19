@@ -60,11 +60,10 @@ describe('SEC5-02 schema array + url bounds', () => {
     expect(iconsSchema.safeParse(exactlyOne).success).toBe(true);
   });
 
-  test('iconSchema accepts the bundled isoflow isopack URL size range', () => {
+  test('iconSchema accepts icon URLs of real pack sizes', () => {
     // Regression guard for the v4.0.2/v4.1.0 ICON_URL_MAX regression:
-    // the previous 8 KB cap rejected 16 icons in the bundled isoflow
-    // isopack (largest ~32 KB). 64 KB now covers all bundled packs
-    // with headroom for moderately larger illustrations.
+    // the previous 8 KB cap rejected real icons (largest ~32 KB). 64 KB
+    // covers them with headroom for moderately larger illustrations.
     const realisticBigUrl = `data:image/svg+xml;base64,${'A'.repeat(35_000)}`;
     expect(realisticBigUrl.length).toBeGreaterThan(8_192);
     expect(realisticBigUrl.length).toBeLessThan(SCHEMA_LIMITS.ICON_URL_MAX);

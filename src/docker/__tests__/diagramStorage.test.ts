@@ -9,7 +9,7 @@ import { createDiagramStorage, StorageFullError } from '../diagramStorage';
 
 // APP-01.
 const bundled = [
-  { id: 'server', name: 'Server', url: 'server.svg', collection: 'isoflow' },
+  { id: 'server', name: 'Server', url: 'server.svg', collection: 'Bundled' },
   { id: 'a&b', name: 'A and B', url: 'ab.svg', collection: 'aws' }
 ];
 const extra = bundled[1];

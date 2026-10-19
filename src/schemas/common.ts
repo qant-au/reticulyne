@@ -29,9 +29,9 @@ export const coords = z
 //   - ITEMS / VIEW_ITEMS: a 5k-node diagram is already at the upper
 //                   bound of legibility; doubling that gives headroom.
 //   - CONNECTORS / RECTANGLES / TEXT_BOXES: scales with items; matches.
-//   - ICONS:        a custom palette of a few hundred plus the bundled
-//                   isopacks (AWS alone is ~1.5k icons) tops out below
-//                   5k in practice.
+//   - ICONS:        the built-in pack plus a few large third-party packs
+//                   (a cloud provider's set runs to ~1.5k icons) tops out
+//                   below 5k in practice.
 //   - COLORS:       the colour picker UI breaks down well before 100.
 //   - ANCHORS:      a single connector with hundreds of waypoints is
 //                   already a UX failure; 100 is generous.
@@ -47,10 +47,9 @@ export const SCHEMA_LIMITS = {
   COLORS: 100,
   ANCHORS: 100,
   // Sized for `data:image/svg+xml;base64,...` URLs of moderately
-  // complex SVG illustrations. The bundled isoflow isopack ships
-  // 16 icons whose base64 payloads exceed 8 KB (the largest is
-  // ~32 KB), so 8 KB was too tight and rejected real data —
-  // 65 KB gives ~2× headroom over the current upper bound.
+  // complex SVG illustrations. Real icon packs carry base64 payloads
+  // well over 8 KB (~32 KB seen), so 8 KB was too tight and rejected
+  // real data. 65 KB gives ~2× headroom over that.
   ICON_URL_MAX: 65_536
 };
 

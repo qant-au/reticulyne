@@ -29,8 +29,7 @@ possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELO
 - **Icon packs.** Icons come in packs ([icon packs](docs/icon-packs.md)), and each
   icon can carry an isometric drawing and a flat one, so it looks right in both views.
   The package ships Reticulyne's own device drawings as the built-in pack
-  (`BUILTIN_PACK`); bring your own packs beside it. The standalone editor adds AWS,
-  Azure, GCP and Kubernetes collections plus the original Isoflow set.
+  (`BUILTIN_PACK`); bring your own packs beside it.
 - **Editor modes.** Fully editable, explore-only, or non-interactive, for editors,
   viewers and dashboards.
 - **One file format.** Diagrams open and save as the

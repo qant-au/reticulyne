@@ -5,7 +5,7 @@ import { TEMPLATES, templateToInitialData } from '../index';
 // every bundled template must load. Runs on every PR with
 // the rest of the unit suite.
 describe.each(TEMPLATES)('template "$name"', (template) => {
-  test('every icon it names is in the bundled isopacks', () => {
+  test('every icon it names is a bundled icon', () => {
     const known = new Set(
       icons.map((icon) => {
         return icon.id;

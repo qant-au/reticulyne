@@ -60,7 +60,7 @@ module.exports = merge(base, {
     // React subpaths (`react/jsx-runtime`, `react-dom/client`) too: the
     // object form above matches only the bare names, so React 19's JSX
     // runtime was compiled into dist and emitted elements a React 18
-    // host (peer range >=18) rejects — upstream isoflow #61 inverted.
+    // host (peer range >=18) rejects.
     ({ request }, callback) => {
       if (
         /^react(-dom)?\//.test(request) ||

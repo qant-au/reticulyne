@@ -39,7 +39,7 @@ export class StorageFullError extends Error {
   }
 }
 
-const isQuotaError = (e: unknown) => {
+export const isQuotaError = (e: unknown) => {
   return (
     e instanceof DOMException &&
     (e.name === 'QuotaExceededError' ||
@@ -124,8 +124,18 @@ export const createDiagramStorage = (
         ]
       } as T;
     }
+    // A legacy model's items name their icons too: renamed alike, or an
+    // item would name an icon the diagram no longer holds.
+    const items = Array.isArray(value.items)
+      ? value.items.map((item: unknown) => {
+          return isObject(item) && typeof item.icon === 'string'
+            ? { ...item, icon: currentIconId(item.icon) }
+            : item;
+        })
+      : value.items;
     return {
       ...value,
+      ...(items === undefined ? {} : { items }),
       icons: [
         ...bundledIcons,
         ...own.filter((icon) => {

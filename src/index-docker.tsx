@@ -169,11 +169,21 @@ const render = (storage: Storage | undefined, bundledIcons: Icon[]) => {
 
 // The local store opens before the editor does, so the last diagram and
 // the installed icon packs are there on the first render. Where IndexedDB
-// cannot be used (some private windows) the shell keeps diagrams in
-// localStorage, as older builds did.
+// cannot be used (some private windows), or does not answer within a few
+// seconds (an open some browsers leave hanging), the shell keeps diagrams in
+// localStorage, as older builds did, rather than leave the page blank.
+const LOCAL_STORE_TIMEOUT_MS = 5000;
+
 const boot = async () => {
   try {
-    const local = await openLocalStore();
+    const local = await Promise.race([
+      openLocalStore(),
+      new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('IndexedDB did not open in time.'));
+        }, LOCAL_STORE_TIMEOUT_MS);
+      })
+    ]);
     const installed = flattenPacks(local.packs.list());
     const bundledIds = new Set(
       icons.map((icon) => {

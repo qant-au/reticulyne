@@ -111,6 +111,21 @@ test('reads a diagram an older build stored as a Reticulyne model', () => {
   ).toEqual(['server', 'a_b', 'mine']);
 });
 
+// Code review 2026-10-19: a legacy model naming a built-in icon by its older
+// id lost the icon (its own copy renamed, its items not) and would not open.
+test('a legacy model naming a built-in icon by its older id still opens', () => {
+  const ap = { id: 'reticulyne-wifi-ap', name: 'Wi-Fi AP', url: 'ap.svg' };
+  const old = `${LEGACY_ICON_PREFIX}wifi-ap`;
+  const legacyModel = {
+    ...model('Old'),
+    icons: [{ ...ap, id: old }],
+    items: [{ id: 'a', name: 'A', icon: old }]
+  };
+  localStorage.setItem('reticulyne.diagram.old', JSON.stringify(legacyModel));
+  const back = createDiagramStorage(localStorage, [...bundled, ap]).load('old');
+  expect(back?.objects[0].icon).toBe('reticulyne-wifi-ap');
+});
+
 test('withBundledIcons puts the bundled icons back and changes nothing else', () => {
   const store = createDiagramStorage(localStorage, bundled);
   const own = scene('Mine');

@@ -5,7 +5,7 @@ import type { Connector, Model, ModelItem, View, ViewItem } from './model';
 import type { RendererProps } from './rendererProps';
 import type { SelectedRef, TourState, TourStep, Viewport } from './imperative';
 import type { DiagramTemplate } from 'src/templates';
-import type { Scene } from 'src/vendor/accurona-core';
+import type { Scene } from 'src/core';
 
 export type NodeIndicatorComponent = (props: {
   item: ModelItem;

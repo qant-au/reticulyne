@@ -1,4 +1,4 @@
-import { emptyScene, validateScene } from 'src/vendor/accurona-core';
+import { emptyScene, validateScene } from 'src/core';
 import { ISO_DRAWINGS } from 'src/vendor/accurona-iso';
 import { SCHEMATIC_DRAWINGS } from 'src/vendor/accurona-schematic';
 import { iconSchema } from 'src/schemas/icons';

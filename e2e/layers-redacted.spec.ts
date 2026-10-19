@@ -16,7 +16,7 @@ const icon = (hex: string) => {
 };
 
 const scene = {
-  format: 'accurona-scene',
+  format: 'reticulyne-scene',
   version: 1,
   id: 'e2e-layers',
   title: 'e2e layers',

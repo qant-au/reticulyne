@@ -8,7 +8,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { model as fixtureModel } from 'src/fixtures/model';
 import { fingerprintModel, performSave } from 'src/utils/save';
 import { freshSceneContext } from 'src/scene';
-import { validateScene } from 'src/vendor/accurona-core';
+import { validateScene } from 'src/core';
 import type { Model, SaveStatus, UiStateActions } from 'src/types';
 
 // save status, dirty tracking and opt-in auto-save.
@@ -77,7 +77,7 @@ describe('performSave', () => {
     const onSave = jest.fn();
     await performSave(onSave, fixtureModel, store());
     const scene = onSave.mock.calls[0][0];
-    expect(scene.format).toBe('accurona-scene');
+    expect(scene.format).toBe('reticulyne-scene');
     expect(validateScene(scene).ok).toBe(true);
     expect(scene.objects).toHaveLength(fixtureModel.items.length);
     expect(scene).not.toHaveProperty('items');

@@ -64,7 +64,7 @@ test('save two diagrams, switch between them, and reopen the last one', async ({
     const id = localStorage.getItem('reticulyne.current')!;
     return JSON.parse(localStorage.getItem(`reticulyne.diagram.${id}`)!);
   });
-  expect(stored.format).toBe('accurona-scene');
+  expect(stored.format).toBe('reticulyne-scene');
   expect(stored.title).toBe('Alpha');
   expect(stored).not.toHaveProperty('items');
 });
@@ -142,7 +142,7 @@ test('import opens a scene, keeping the parts Reticulyne does not show', async (
     mimeType: 'application/json',
     buffer: Buffer.from(
       JSON.stringify({
-        format: 'accurona-scene',
+        format: 'reticulyne-scene',
         version: 1,
         id: 'site',
         title: 'Imported site',

@@ -52,7 +52,7 @@ import {
 import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
 import { TEMPLATES } from 'src/templates';
-import { isSceneDocument, type Scene } from 'src/vendor/accurona-core';
+import { isSceneDocument, type Scene } from 'src/core';
 import { leanIcons, sceneFromModel, type LoadHints } from 'src/scene';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
 

@@ -1,4 +1,4 @@
-import { validateScene } from 'src/vendor/accurona-core';
+import { validateScene } from 'src/core';
 import { ITEMS } from 'src/catalogue/items';
 import { itemToSceneObject } from 'src/catalogue/place';
 import { freshSceneContext, sceneFromModel, sceneToModel } from 'src/scene';

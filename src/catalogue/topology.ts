@@ -1,4 +1,4 @@
-import type { Port } from 'src/vendor/accurona-core';
+import type { Port } from 'src/core';
 import { MEDIA } from './media';
 import type { Medium } from './schema';
 

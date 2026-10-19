@@ -25,7 +25,7 @@ import type {
 } from './model';
 import type { ItemReference, ConnectorPath } from './scene';
 import type { QueuedPatch, TourState, TourStep } from './imperative';
-import type { Scene as SceneDocument } from 'src/vendor/accurona-core';
+import type { Scene as SceneDocument } from 'src/core';
 import type { SceneContext } from 'src/scene/convert';
 import type { DiagramTemplate } from 'src/templates';
 import { DialogTypeEnum, type AnchorPosition } from './ui';

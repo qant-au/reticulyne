@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import type { ZodIssue } from 'zod';
 import type { InitialData, IconCollectionState, Model } from 'src/types';
-import type { Scene } from 'src/vendor/accurona-core';
+import type { Scene } from 'src/core';
 import {
   availableIcon,
   readScene,

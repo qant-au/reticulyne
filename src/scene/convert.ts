@@ -8,7 +8,7 @@ import {
   type Scene,
   type SceneObject,
   type SceneUpdate
-} from 'src/vendor/accurona-core';
+} from 'src/core';
 import type {
   Connection,
   Connector,

@@ -11,7 +11,7 @@ import { getTilePosition } from 'src/utils';
 import { MAX_ZOOM } from 'src/config';
 import { PATCH_FADE_ATTR, PATCH_FADE_MS } from 'src/hooks/usePatchApplier';
 import type { InitialData, UiStateActions } from 'src/types';
-import { validateScene, type Scene } from 'src/vendor/accurona-core';
+import { validateScene, type Scene } from 'src/core';
 
 // applyPatch and the typed imperative API (and its events), driven through a mounted <Reticulyne> as a host would.
 
@@ -355,7 +355,7 @@ describe('getScene and loadModel with a scene', () => {
   test('loadModel takes a scene, with view hints as options', () => {
     const api = mount();
     const scene: Scene = {
-      format: 'accurona-scene',
+      format: 'reticulyne-scene',
       version: 2,
       id: 'loaded',
       title: 'Loaded',

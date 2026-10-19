@@ -1,9 +1,5 @@
 import type { ZodIssue } from 'zod';
-import {
-  isSceneDocument,
-  sceneSchema,
-  type Scene
-} from 'src/vendor/accurona-core';
+import { isSceneDocument, sceneSchema, type Scene } from 'src/core';
 import { initialDataSchema } from 'src/schemas/model';
 import type { Model } from 'src/types/model';
 import {

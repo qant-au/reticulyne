@@ -28,7 +28,7 @@ import { useExportJson } from './useExportJson';
 import { useExportPdf } from './useExportPdf';
 import { useSaveModel } from './useSaveModel';
 import { useSectionVisibility } from './useSectionVisibility';
-import { shortcutHint } from 'src/vendor/accurona-core';
+import { shortcutHint } from 'src/core';
 import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 import {
   AppDialog,

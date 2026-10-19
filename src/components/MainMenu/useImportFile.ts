@@ -13,7 +13,7 @@ import type { ZodIssue } from 'zod';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import type { InitialData } from 'src/types';
-import { parseJson, type Scene } from 'src/vendor/accurona-core';
+import { parseJson, type Scene } from 'src/core';
 
 // Parse a string of imported JSON and hand the result to load(). On
 // malformed input, surface the failure through the same console-

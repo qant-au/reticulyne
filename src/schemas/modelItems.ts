@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { sceneObjectSchema } from 'src/vendor/accurona-core/scene/schema';
+import { sceneObjectSchema } from 'src/core/scene/schema';
 import { id, constrainedStrings, SCHEMA_LIMITS } from './common';
 
 // An object's element, props, ports and links ride on its model

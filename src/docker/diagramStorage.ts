@@ -3,7 +3,7 @@ import {
   parseJson,
   serializeScene,
   type Scene
-} from 'src/vendor/accurona-core';
+} from 'src/core';
 import { readScene, sceneSafeId } from 'src/scene';
 import type { Icon } from 'src/types';
 

@@ -6,7 +6,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useScene } from 'src/hooks/useScene';
 import { ItemReference, LayerOrderingAction } from 'src/types';
 import { PanelSection } from 'src/vendor/accurona-ui';
-import { shortcutHint } from 'src/vendor/accurona-core';
+import { shortcutHint } from 'src/core';
 import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 
 // the four layer actions, for one item or a whole selection

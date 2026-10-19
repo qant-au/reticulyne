@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Typography } from '@mui/material';
-import { placedOnlyElsewhere } from 'src/vendor/accurona-core';
+import { placedOnlyElsewhere } from 'src/core';
 import { PanelSection } from 'src/vendor/accurona-ui';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';

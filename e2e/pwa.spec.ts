@@ -73,6 +73,58 @@ test('after one visit the editor opens offline', async ({ page, context }) => {
   await expect(page).toHaveTitle(/Reticulyne/);
 });
 
+// A rebuild while a tab is open: the second tab is served a worker for a
+// different build (another cache name). It must wait, keeping the old
+// build's cache, so the first tab can still load its lazy chunks.
+test('a new build waits while another tab is on the old one', async ({
+  page,
+  context
+}) => {
+  await page.goto('/');
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+  const oldCaches = await page.evaluate(() => {
+    return caches.keys();
+  });
+  expect(oldCaches.length).toBeGreaterThan(0);
+
+  await context.route('**/sw.js', async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace(
+      /const CACHE = 'reticulyne-[^']*';/,
+      "const CACHE = 'reticulyne-next-build';"
+    );
+    await route.fulfill({ response, body });
+  });
+  const other = await context.newPage();
+  await other.goto('/');
+  await other.evaluate(async () => {
+    const registration = await navigator.serviceWorker.ready;
+    await registration.update();
+  });
+  await expect
+    .poll(() => {
+      return other.evaluate(async () => {
+        const registration = await navigator.serviceWorker.getRegistration();
+        return (
+          registration?.waiting !== null && registration?.waiting !== undefined
+        );
+      });
+    })
+    .toBe(true);
+
+  // The old build's cache is still there, and the first tab still opens a
+  // lazily loaded dialog with no network.
+  expect(await page.evaluate(() => caches.keys())).toEqual(
+    expect.arrayContaining(oldCaches)
+  );
+  await context.setOffline(true);
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: /Export as image/i }).click();
+  await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 });
+});
+
 test('Chrome reports the editor as installable', async ({ page, context }) => {
   await page.goto('/');
   await page.evaluate(async () => {

@@ -21,6 +21,7 @@ potentially breaking and read the release notes before upgrading.
 - **Built-in icon ids** are `reticulyne-<drawing id>` (collection `Reticulyne`).
 - **Catalogue items name their drawing** with `drawing: '<id>'` in place of a `links: [{ source: 'accurona', ref }]` cross-reference.
 - **A new set of built-in drawings, 323 in one style**, each with an isometric and a flat view. The earlier drawings keep their ids in the new style. The 15 catalogue items that had only a hand-drawn flat symbol now have a drawing of their own, so `ITEM_SYMBOLS` and `src/catalogue/symbols.ts` are gone. A virtual item gets its icon but still no `element`.
+- **The bundled isopack icons are removed.** The five packs in `src/vendor/isopacks` (Isoflow, AWS, Azure, GCP, Kubernetes) are empty, and the samples, templates and examples use the built-in drawings. The isopack code itself goes next.
 - **Exports renamed or removed:** `builtinIcons`, `BUILTIN_ICON_COLLECTION` and `catalogueItemDrawing` replace `accuronaIcons`, `ACCURONA_ICON_COLLECTION` and `accuronaElement`; `schematicIconUrl` is removed (the flat view reads `flatUrl`). The theme factory is `createKitTheme` / `kitThemeOptions` / `kitVars`.
 
 ### Added

@@ -13,7 +13,7 @@ import { VIEW_ITEM_DEFAULTS } from 'src/config';
 // starter diagrams for "New from template". A template holds
 // the drawing only; icons and colours come from the editor it is opened
 // in, so a host's own icon set and palette stay in charge. Node icons name
-// ids from the bundled isopacks (isoflow, aws, kubernetes); a host whose
+// built-in drawings (`reticulyne-<drawing id>`); a host whose
 // icon set lacks one gets that node without an icon rather than an error.
 
 export interface DiagramTemplate {
@@ -81,12 +81,42 @@ export const TEMPLATES: DiagramTemplate[] = [
     'Three-tier web app',
     'Users through a load balancer to two web servers, a cache and a database.',
     [
-      { id: 'users', name: 'Users', icon: 'user', x: -7, y: 0 },
-      { id: 'lb', name: 'Load balancer', icon: 'loadbalancer', x: -3, y: 0 },
-      { id: 'web-1', name: 'Web 1', icon: 'server', x: 1, y: -2 },
-      { id: 'web-2', name: 'Web 2', icon: 'server', x: 1, y: 2 },
-      { id: 'cache', name: 'Cache', icon: 'cache', x: 5, y: -2 },
-      { id: 'db', name: 'Database', icon: 'storage', x: 5, y: 2 }
+      { id: 'users', name: 'Users', icon: 'reticulyne-user', x: -7, y: 0 },
+      {
+        id: 'lb',
+        name: 'Load balancer',
+        icon: 'reticulyne-load-balancer',
+        x: -3,
+        y: 0
+      },
+      {
+        id: 'web-1',
+        name: 'Web 1',
+        icon: 'reticulyne-rack-server-1u',
+        x: 1,
+        y: -2
+      },
+      {
+        id: 'web-2',
+        name: 'Web 2',
+        icon: 'reticulyne-rack-server-1u',
+        x: 1,
+        y: 2
+      },
+      {
+        id: 'cache',
+        name: 'Cache',
+        icon: 'reticulyne-database-service',
+        x: 5,
+        y: -2
+      },
+      {
+        id: 'db',
+        name: 'Database',
+        icon: 'reticulyne-storage-array',
+        x: 5,
+        y: 2
+      }
     ],
     [
       ['users', 'lb'],
@@ -111,22 +141,46 @@ export const TEMPLATES: DiagramTemplate[] = [
     'AWS web application',
     'Route 53 and CloudFront in front of a load-balanced EC2 pair, with RDS and S3.',
     [
-      { id: 'dns', name: 'Route 53', icon: 'aws-route-53', x: -8, y: 0 },
-      { id: 'cdn', name: 'CloudFront', icon: 'aws-cloudfront', x: -4, y: 0 },
+      {
+        id: 'dns',
+        name: 'Route 53',
+        icon: 'reticulyne-dns-server',
+        x: -8,
+        y: 0
+      },
+      { id: 'cdn', name: 'CloudFront', icon: 'reticulyne-cdn', x: -4, y: 0 },
       {
         id: 'elb',
         name: 'Load balancer',
-        icon: 'aws-elastic-load-balancing',
+        icon: 'reticulyne-load-balancer',
         x: 0,
         y: 0
       },
-      { id: 'ec2-a', name: 'App A', icon: 'aws-ec2', x: 4, y: -2 },
-      { id: 'ec2-b', name: 'App B', icon: 'aws-ec2', x: 4, y: 2 },
-      { id: 'rds', name: 'RDS', icon: 'aws-rds', x: 8, y: 0 },
+      {
+        id: 'ec2-a',
+        name: 'App A',
+        icon: 'reticulyne-virtual-machine',
+        x: 4,
+        y: -2
+      },
+      {
+        id: 'ec2-b',
+        name: 'App B',
+        icon: 'reticulyne-virtual-machine',
+        x: 4,
+        y: 2
+      },
+      {
+        id: 'rds',
+        name: 'RDS',
+        icon: 'reticulyne-database-service',
+        x: 8,
+        y: 0
+      },
       {
         id: 's3',
         name: 'Static assets',
-        icon: 'aws-simple-storage-service',
+        icon: 'reticulyne-object-storage',
         x: -4,
         y: 4
       }
@@ -154,12 +208,18 @@ export const TEMPLATES: DiagramTemplate[] = [
     'Kubernetes service',
     'An ingress and service in front of three pods sharing a volume claim.',
     [
-      { id: 'ing', name: 'Ingress', icon: 'k8s-ing', x: -6, y: 0 },
-      { id: 'svc', name: 'Service', icon: 'k8s-svc', x: -2, y: 0 },
-      { id: 'pod-1', name: 'Pod 1', icon: 'k8s-pod', x: 2, y: -3 },
-      { id: 'pod-2', name: 'Pod 2', icon: 'k8s-pod', x: 2, y: 0 },
-      { id: 'pod-3', name: 'Pod 3', icon: 'k8s-pod', x: 2, y: 3 },
-      { id: 'pvc', name: 'Volume claim', icon: 'k8s-pvc', x: 6, y: 0 }
+      {
+        id: 'ing',
+        name: 'Ingress',
+        icon: 'reticulyne-load-balancer',
+        x: -6,
+        y: 0
+      },
+      { id: 'svc', name: 'Service', icon: 'reticulyne-api', x: -2, y: 0 },
+      { id: 'pod-1', name: 'Pod 1', icon: 'reticulyne-container', x: 2, y: -3 },
+      { id: 'pod-2', name: 'Pod 2', icon: 'reticulyne-container', x: 2, y: 0 },
+      { id: 'pod-3', name: 'Pod 3', icon: 'reticulyne-container', x: 2, y: 3 },
+      { id: 'pvc', name: 'Volume claim', icon: 'reticulyne-nas', x: 6, y: 0 }
     ],
     [
       ['ing', 'svc'],
@@ -184,14 +244,44 @@ export const TEMPLATES: DiagramTemplate[] = [
     'Office network',
     'Internet through a firewall and router to a switch, with desktops, a laptop, a printer and a file server.',
     [
-      { id: 'internet', name: 'Internet', icon: 'cloud', x: -8, y: 0 },
-      { id: 'fw', name: 'Firewall', icon: 'firewall', x: -4, y: 0 },
-      { id: 'router', name: 'Router', icon: 'router', x: 0, y: 0 },
-      { id: 'switch', name: 'Switch', icon: 'switch-module', x: 4, y: 0 },
-      { id: 'desk-1', name: 'Desktop', icon: 'desktop', x: 8, y: -4 },
-      { id: 'laptop', name: 'Laptop', icon: 'laptop', x: 8, y: 0 },
-      { id: 'printer', name: 'Printer', icon: 'printer', x: 8, y: 4 },
-      { id: 'files', name: 'File server', icon: 'server', x: 4, y: 4 }
+      {
+        id: 'internet',
+        name: 'Internet',
+        icon: 'reticulyne-cloud-service',
+        x: -8,
+        y: 0
+      },
+      { id: 'fw', name: 'Firewall', icon: 'reticulyne-firewall', x: -4, y: 0 },
+      { id: 'router', name: 'Router', icon: 'reticulyne-router', x: 0, y: 0 },
+      {
+        id: 'switch',
+        name: 'Switch',
+        icon: 'reticulyne-network-switch',
+        x: 4,
+        y: 0
+      },
+      {
+        id: 'desk-1',
+        name: 'Desktop',
+        icon: 'reticulyne-pc-tower',
+        x: 8,
+        y: -4
+      },
+      { id: 'laptop', name: 'Laptop', icon: 'reticulyne-laptop', x: 8, y: 0 },
+      {
+        id: 'printer',
+        name: 'Printer',
+        icon: 'reticulyne-printer',
+        x: 8,
+        y: 4
+      },
+      {
+        id: 'files',
+        name: 'File server',
+        icon: 'reticulyne-rack-server-1u',
+        x: 4,
+        y: 4
+      }
     ],
     [
       ['internet', 'fw'],

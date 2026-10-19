@@ -82,6 +82,10 @@ front-on schematic as `flatUrl`. The icons are `reticulyne-<drawing id>`, filed 
 
 ## The bundled isopacks
 
+> **The isopack icons were removed on 2026-10-19.** The five packs below are now empty, and the
+> samples, templates and examples use the built-in drawings instead. The isopack code and this
+> section go next.
+
 The repository also carries five icon collections under `src/vendor/isopacks/`. Each one is
 already pack-shaped (`{ id, name, icons }`), with an isometric `url` and no `flatUrl`:
 

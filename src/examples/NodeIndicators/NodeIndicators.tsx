@@ -28,9 +28,9 @@ const indicatorsInitialData: InitialData = {
   icons,
   colors,
   items: [
-    { id: 'primary', name: 'Primary', icon: 'storage' },
-    { id: 'replica', name: 'Replica', icon: 'storage' },
-    { id: 'archive', name: 'Archive', icon: 'storage' }
+    { id: 'primary', name: 'Primary', icon: 'reticulyne-storage-array' },
+    { id: 'replica', name: 'Replica', icon: 'reticulyne-storage-array' },
+    { id: 'archive', name: 'Archive', icon: 'reticulyne-storage-array' }
   ],
   views: [
     {

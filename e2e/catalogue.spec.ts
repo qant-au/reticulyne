@@ -58,7 +58,7 @@ test('an item with a built-in drawing keeps its ports, link and element', async 
   expect(object.ports?.length).toBeGreaterThan(0);
 });
 
-test('an item with no twin is drawn with its schematic symbol', async ({
+test('an item that had only a flat symbol is drawn with its own drawing', async ({
   page
 }) => {
   await dragFromCatalogue(page, 'RS-485', /^Icon RS-485/);
@@ -69,7 +69,8 @@ test('an item with no twin is drawn with its schematic symbol', async ({
   const scene = await exportScene(page);
   expect(scene.objects).toHaveLength(1);
   const [object] = scene.objects;
-  expect(object.icon).toBe('schematic-rs485-ethernet-gateway');
+  expect(object.icon).toBe('reticulyne-rs485-ethernet-gateway');
+  expect(object.element).toBe('rs485-ethernet-gateway');
   // The diagram carries the icon it refers to.
   expect(
     scene.icons.some((icon) => {

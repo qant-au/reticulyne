@@ -68,8 +68,10 @@ export const useInitialDataManager = ({
   // appears, the effect below picks up the pending id and applies the fit
   // with a real viewport size.
   const pendingFitToViewIdRef = useRef<string | null>(null);
-  const model = useModelStore((state) => {
-    return state;
+  // Only the actions: subscribing to the whole store re-rendered every
+  // caller (useReticulyne, useImportFile) on each model change.
+  const modelActions = useModelStore((state) => {
+    return state.actions;
   });
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -170,7 +172,7 @@ export const useInitialDataManager = ({
           return icon.id;
         })
       );
-      const current = model.actions.get().icons;
+      const current = modelActions.get().icons;
       const library = current.filter((icon) => {
         return (
           !loadedIds.has(icon.id) && icon.collection !== CUSTOM_ICON_COLLECTION
@@ -226,7 +228,7 @@ export const useInitialDataManager = ({
       prevInitialData.current = _initialData;
       // Fields the new model does not have are cleared, not kept from the
       // diagram that was open before.
-      model.actions.set({
+      modelActions.set({
         version: undefined,
         description: undefined,
         layers: undefined,
@@ -289,7 +291,7 @@ export const useInitialDataManager = ({
       setIsReady(true);
       return 'loaded';
     },
-    [changeView, model.actions, rendererEl, uiStateActions, historyActions]
+    [changeView, modelActions, rendererEl, uiStateActions, historyActions]
   );
 
   // BUG5-12: apply a deferred fit-to-view as soon as the Renderer
@@ -305,7 +307,7 @@ export const useInitialDataManager = ({
       if (!targetId) return true;
       const rect = rendererEl.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) return false;
-      const currentModel = model.actions.get();
+      const currentModel = modelActions.get();
       const view = currentModel.views.find((v) => {
         return v.id === targetId;
       });
@@ -337,12 +339,13 @@ export const useInitialDataManager = ({
     return () => {
       cancelAnimationFrame(raf);
     };
-  }, [rendererEl, model.actions, uiStateActions]);
+  }, [rendererEl, modelActions, uiStateActions]);
 
   const clear = useCallback(() => {
-    load({ ...INITIAL_DATA, icons: model.icons, colors: model.colors });
+    const { icons, colors } = modelActions.get();
+    load({ ...INITIAL_DATA, icons, colors });
     uiStateActions.resetUiState();
-  }, [load, model.icons, model.colors, uiStateActions]);
+  }, [load, modelActions, uiStateActions]);
 
   return {
     load,

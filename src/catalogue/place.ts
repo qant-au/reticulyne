@@ -13,6 +13,10 @@ export const ACCURONA_ICON_COLLECTION = 'Accurona';
 
 const ACCURONA_ICON_PREFIX = 'accurona-';
 
+const svgUrl = (svg: string) => {
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+};
+
 /** The Accurona element an item cross-references, if any. */
 export const accuronaElement = (item: Pick<CatalogueItem, 'links'>) => {
   return item.links?.find((link) => {
@@ -21,18 +25,21 @@ export const accuronaElement = (item: Pick<CatalogueItem, 'links'>) => {
 };
 
 /**
- * The isometric drawing of every Accurona element the catalogue
- * cross-references, as icons: pass them in `initialData.icons` so an item
- * with a twin draws with its element's isometric view.
+ * The drawings of every Accurona element the catalogue cross-references, as
+ * icons: pass them in `initialData.icons` so an item with a twin draws with
+ * its element's isometric view, and with its 2D schematic in the flat view.
  */
 export const accuronaIcons = (): Icon[] => {
   return Object.entries(ISO_DRAWINGS).map(([element, drawing]) => {
     return {
       id: `${ACCURONA_ICON_PREFIX}${element}`,
       name: drawing.name,
-      url: `data:image/svg+xml,${encodeURIComponent(drawing.svg)}`,
+      url: svgUrl(drawing.svg),
       collection: ACCURONA_ICON_COLLECTION,
-      isIsometric: true
+      isIsometric: true,
+      ...(element in SCHEMATIC_DRAWINGS
+        ? { flatUrl: svgUrl(SCHEMATIC_DRAWINGS[element].svg) }
+        : {})
     };
   });
 };
@@ -73,21 +80,6 @@ export const catalogueItemSymbol = (
     return SCHEMATIC_DRAWINGS[element].svg;
   }
   return ITEM_SYMBOLS[item.id];
-};
-
-/**
- * What a node draws with in the flat, schematic view: an Accurona
- * element's isometric drawing is swapped for that element's 2D schematic;
- * any other icon is drawn as it is.
- */
-export const schematicIconUrl = (icon: Pick<Icon, 'id' | 'url'>): string => {
-  if (icon.id.startsWith(ACCURONA_ICON_PREFIX)) {
-    const element = icon.id.slice(ACCURONA_ICON_PREFIX.length);
-    if (element in SCHEMATIC_DRAWINGS) {
-      return `data:image/svg+xml,${encodeURIComponent(SCHEMATIC_DRAWINGS[element].svg)}`;
-    }
-  }
-  return icon.url;
 };
 
 /**

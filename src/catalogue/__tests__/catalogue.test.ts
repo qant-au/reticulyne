@@ -12,7 +12,6 @@ import {
   catalogueItemSymbol,
   expandPorts,
   itemToSceneObject,
-  schematicIconUrl,
   schematicIcons,
   validateCatalogue,
   type Catalogue,
@@ -393,22 +392,19 @@ describe('itemToSceneObject', () => {
   });
 });
 
-describe('schematicIconUrl', () => {
-  it('swaps an Accurona element drawing for its 2D schematic', () => {
+describe('the flat drawing of an element icon', () => {
+  it('is carried on the icon as flatUrl', () => {
     const [element] = Object.keys(SCHEMATIC_DRAWINGS);
     const icon = accuronaIcons().find((i) => {
       return i.id === `accurona-${element}`;
     });
     expect(icon).toBeDefined();
-    expect(schematicIconUrl(icon!)).toBe(
+    expect(icon!.flatUrl).toBe(
       `data:image/svg+xml,${encodeURIComponent(SCHEMATIC_DRAWINGS[element].svg)}`
     );
   });
 
-  it('draws any other icon as it is', () => {
-    const icon = { id: 'isoflow-server', url: 'https://example.com/s.svg' };
-    expect(schematicIconUrl(icon)).toBe(icon.url);
-    const unknown = { id: 'accurona-no-such-element', url: 'x.svg' };
-    expect(schematicIconUrl(unknown)).toBe('x.svg');
+  it('is there for every element icon', () => {
+    for (const icon of accuronaIcons()) expect(icon.flatUrl).toBeTruthy();
   });
 });

@@ -4,7 +4,6 @@ import { IsometricIcon } from 'src/components/SceneLayers/Nodes/Node/IconTypes/I
 import { NonIsometricIcon } from 'src/components/SceneLayers/Nodes/Node/IconTypes/NonIsometricIcon';
 import { SchematicIcon } from 'src/components/SceneLayers/Nodes/Node/IconTypes/SchematicIcon';
 import { DEFAULT_ICON } from 'src/config';
-import { schematicIconUrl } from 'src/catalogue/place';
 import type { Projection } from 'src/types';
 
 export const useIcon = (
@@ -31,16 +30,19 @@ export const useIcon = (
   }, [icons, id]);
 
   const iconComponent = useMemo(() => {
-    // The flat view draws every node as a 2D symbol.
-    if (projection === 'schematic') {
-      const url = schematicIconUrl(icon);
-      return <SchematicIcon key={url} url={url} />;
-    }
+    // The flat view draws every node as a 2D symbol: the icon's flat
+    // drawing, else its main image.
+    const url =
+      projection === 'schematic' ? (icon.flatUrl ?? icon.url) : icon.url;
 
     // No drawing at all (an item with no icon): draw nothing rather than
     // an <img src="">, which resolves to the page itself - a broken image
     // that also broke every PDF and image capture of the canvas.
-    if (!icon.url) return null;
+    if (!url) return null;
+
+    if (projection === 'schematic') {
+      return <SchematicIcon key={url} url={url} />;
+    }
 
     if (!icon.isIsometric) {
       return <NonIsometricIcon icon={icon} />;

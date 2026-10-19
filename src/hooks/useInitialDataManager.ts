@@ -1,3 +1,4 @@
+import { fillFlatUrls } from 'src/icons/pack';
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import type { ZodIssue } from 'zod';
 import type { InitialData, IconCollectionState, Model } from 'src/types';
@@ -168,13 +169,16 @@ export const useInitialDataManager = ({
           return icon.id;
         })
       );
-      const library = model.actions.get().icons.filter((icon) => {
+      const current = model.actions.get().icons;
+      const library = current.filter((icon) => {
         return (
           !loadedIds.has(icon.id) && icon.collection !== CUSTOM_ICON_COLLECTION
         );
       });
+      // A file saved before icons carried a flat drawing still gets one.
+      const fileIcons = fillFlatUrls(loaded.icons, current);
       const icons = filterIconsByCollection(
-        [...loaded.icons, ...library],
+        [...fileIcons, ...library],
         iconCollectionsRef.current
       );
       // A device from the floor plan carries only its Accurona

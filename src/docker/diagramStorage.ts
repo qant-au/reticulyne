@@ -5,6 +5,7 @@ import {
   type Scene
 } from 'src/core';
 import { readScene, sceneSafeId } from 'src/scene';
+import { fillFlatUrls } from 'src/icons/pack';
 import type { Icon } from 'src/types';
 
 // APP-01: the Docker editor's diagrams, kept in the browser's localStorage.
@@ -107,7 +108,9 @@ export const createDiagramStorage = (
           ...bundled.filter((icon) => {
             return !ownIds.has(icon.id);
           }),
-          ...own
+          // An icon the diagram saved before icons carried flat drawings
+          // takes the bundled one's.
+          ...fillFlatUrls(own, bundled)
         ]
       } as T;
     }

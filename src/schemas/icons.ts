@@ -6,6 +6,14 @@ import {
   isAllowedIconUrl
 } from './common';
 
+const iconUrl = z
+  .string()
+  .max(SCHEMA_LIMITS.ICON_URL_MAX)
+  .refine(isAllowedIconUrl, {
+    message:
+      'Icon url must be http(s):, blob:, a relative path, or a data:image/{png,jpeg,gif,webp,svg+xml} URI'
+  });
+
 export const iconSchema = z
   .object({
     id,
@@ -20,12 +28,12 @@ export const iconSchema = z
     // image-only data: URIs. Blocks javascript:/file:/data:text/html so a
     // crafted diagram can't smuggle an executable URL into the <img src>
     // or the export-time SVG inliner.
-    url: z.string().max(SCHEMA_LIMITS.ICON_URL_MAX).refine(isAllowedIconUrl, {
-      message:
-        'Icon url must be http(s):, blob:, a relative path, or a data:image/{png,jpeg,gif,webp,svg+xml} URI'
-    }),
+    url: iconUrl,
     collection: constrainedStrings.name.optional(),
-    isIsometric: z.boolean().optional()
+    isIsometric: z.boolean().optional(),
+    // The flat (2D, schematic) drawing, for the flat view. Without one the
+    // flat view draws `url`.
+    flatUrl: iconUrl.optional()
   })
   .strict();
 

@@ -520,3 +520,60 @@ describe('useInitialDataManager', () => {
     expect(slot.current.getModel().colors).toEqual(savedColors);
   });
 });
+
+// Counts its own renders through a callback prop, as HookProbe does.
+const RenderCounter = ({ onRender }: { onRender: () => void }) => {
+  useInitialDataManager();
+  onRender();
+  return null;
+};
+
+const ModelSetter = ({
+  onCapture
+}: {
+  onCapture: (set: (model: Partial<Model>) => void) => void;
+}) => {
+  const actions = useModelStore((state) => {
+    return state.actions;
+  });
+  onCapture(actions.set);
+  return null;
+};
+
+describe('useInitialDataManager subscriptions', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('does not re-render its caller when the model changes', () => {
+    let renders = 0;
+    let set: ((model: Partial<Model>) => void) | null = null;
+    act(() => {
+      render(
+        <ModelProvider>
+          <SceneProvider>
+            <UiStateProvider>
+              <HistoryProvider>
+                <RenderCounter
+                  onRender={() => {
+                    renders += 1;
+                  }}
+                />
+                <ModelSetter
+                  onCapture={(s) => {
+                    set = s;
+                  }}
+                />
+              </HistoryProvider>
+            </UiStateProvider>
+          </SceneProvider>
+        </ModelProvider>
+      );
+    });
+    const before = renders;
+    act(() => {
+      set?.({ title: 'Changed' });
+    });
+    expect(renders).toBe(before);
+  });
+});

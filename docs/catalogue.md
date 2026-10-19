@@ -40,8 +40,10 @@ Three registries make up the catalogue:
 ## Relation to the drawings
 
 An item's look comes from a **drawing** (`src/icons/drawings.ts`): an isometric view and a flat
-schematic of a physical device. Drawings have **no ports**. Ports, media and protocols are defined
-only here.
+schematic of a physical device. The built-in drawings have **no ports**: the built-in items here
+hold them, because several items can share one drawing. An [icon pack](icon-packs.md#connection-detail)
+works the other way round: each pack icon is one device and can carry its own ports, which
+`packCatalogueItems(pack)` turns into items. Media and protocols are defined only here.
 
 An item names its drawing with `drawing`, and several items can share one (the 8-port and 24-port
 switches both draw as `network-switch`). A drawing no item names is still an icon in the library,

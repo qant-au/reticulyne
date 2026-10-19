@@ -38,9 +38,47 @@ type IconPack = {
   id: string;        // stable; the default collection of its icons
   name: string;
   version?: string;
-  icons: Icon[];     // ids unique within the pack
+  icons: PackIcon[]; // ids unique within the pack
+};
+
+// An icon, optionally with its connection detail.
+type PackIcon = Icon & {
+  family?: Family;          // palette section, as for a catalogue item
+  description?: string;
+  ports?: PortTemplate[];   // the device's ports, on the catalogue's media
+  props?: Record<string, string | number | boolean>;
 };
 ```
+
+### Connection detail
+
+A pack icon can carry the ports of the device it draws, so a pack brings its devices ready to
+connect, not only their pictures. The ports are written exactly as a catalogue item's
+([Ports](catalogue.md#ports-connector--medium--protocol)): a medium from the catalogue, and optionally a connector, gender,
+role, protocols and capabilities. An icon with ports needs a `family` (its palette section) and a
+kebab-case id.
+
+```json
+{
+  "id": "acme-sat-hotspot",
+  "name": "Acme Satellite Hotspot",
+  "url": "data:image/svg+xml,...",
+  "isIsometric": true,
+  "flatUrl": "data:image/svg+xml,...",
+  "family": "marine-vehicle",
+  "ports": [
+    { "id": "sat", "name": "Satellite link", "medium": "satellite", "role": "client" },
+    { "id": "wifi", "name": "Wi-Fi", "medium": "wi-fi", "role": "hub" },
+    { "id": "usb", "name": "USB", "medium": "usb", "connector": "usb-c" }
+  ]
+}
+```
+
+`validateIconPack` checks the ports against the catalogue's rules and reports each problem
+under `icons.<id>`. `packCatalogueItems(pack)` returns one catalogue item per icon with ports
+(the item's id and icon are the icon's id); pass them to `<Reticulyne catalogueItems>` and they
+join the palette after the built-in items. The connection detail stays in the pack: the icon a
+diagram stores is the plain icon record, and a placed device keeps its own copy of the ports.
 
 The package exports the helpers (from `@reticulyne/editor` and `@reticulyne/editor/standalone`):
 
@@ -48,7 +86,9 @@ The package exports the helpers (from `@reticulyne/editor` and `@reticulyne/edit
 |---|---|
 | `validateIconPack(value)` | Checks a parsed value against the pack schema (strict: unknown fields are refused) and that icon ids are unique. Returns `{ ok: true, pack }` or `{ ok: false, errors }`. |
 | `iconPackSchema` | The Zod schema behind it. |
-| `packIcons(pack)` | The pack's icons, each without a `collection` filed under the pack id. |
+| `packIcons(pack)` | The pack's icons as plain icon records (connection detail left out), each without a `collection` filed under the pack id. |
+| `packCatalogueItems(pack)` | A catalogue item for each icon with ports, for `<Reticulyne catalogueItems>`. |
+| `packIconSchema` | The Zod schema of one pack icon. |
 | `flattenPacks(packs)` | Every pack's icons as one `Icon[]` for `initialData.icons`; the first icon of an id wins. |
 | `fillFlatUrls(icons, library)` | Gives each icon with no `flatUrl` the one of the same id in `library`. |
 | `BUILTIN_PACK`, `builtinIcons()` | Reticulyne's own drawings, below. |
@@ -56,16 +96,19 @@ The package exports the helpers (from `@reticulyne/editor` and `@reticulyne/edit
 ## Loading packs
 
 ```tsx
-import Reticulyne, { BUILTIN_PACK, flattenPacks } from '@reticulyne/editor';
+import Reticulyne, { BUILTIN_PACK, flattenPacks, packCatalogueItems } from '@reticulyne/editor';
 import myPack from './my-pack.json';
 
-<Reticulyne initialData={{
-  title: 'Example scene',
-  icons: flattenPacks([BUILTIN_PACK, myPack]),
-  colors: [],
-  items: [],
-  views: [],
-}} />
+<Reticulyne
+  initialData={{
+    title: 'Example scene',
+    icons: flattenPacks([BUILTIN_PACK, myPack]),
+    colors: [],
+    items: [],
+    views: [],
+  }}
+  catalogueItems={packCatalogueItems(myPack)}
+/>
 ```
 
 The icons appear in the icon library, one section per collection, and can be dragged onto the
@@ -90,9 +133,11 @@ your own equipment, a company's house style), build a pack:
    it is.
 2. **Write the pack** as `{ id, name, version?, icons }`, giving every icon an `id` that starts
    with the pack id (`acme-router`), a `name`, and its URLs.
-3. **Check it** with `validateIconPack(pack)`, which reports every problem rather than the first.
-4. **Load it** beside the built-in pack with `flattenPacks([BUILTIN_PACK, myPack])`, as in
-   [Loading packs](#loading-packs).
+3. **Add the ports** of each device, if you want it in the palette ready to connect (see
+   [Connection detail](#connection-detail)).
+4. **Check it** with `validateIconPack(pack)`, which reports every problem rather than the first.
+5. **Load it** beside the built-in pack with `flattenPacks([BUILTIN_PACK, myPack])`, and its
+   devices with `packCatalogueItems(myPack)`, as in [Loading packs](#loading-packs).
 
 Use only icons you have the right to use: many vendor icon sets carry their own licence terms.
 

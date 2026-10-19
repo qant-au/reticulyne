@@ -56,6 +56,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       focusTextBoxId: null,
       announcement: { text: '', seq: 0 },
       templates: TEMPLATES,
+      catalogueItems: [],
       editingGroupId: null,
       hideRedacted: false,
       showOtherFloors: true,
@@ -250,6 +251,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setTemplates: (templates) => {
           set({ templates });
+        },
+        setCatalogueItems: (catalogueItems) => {
+          set({ catalogueItems });
         },
         setOnIconUpload: (onIconUpload) => {
           set({ onIconUpload });

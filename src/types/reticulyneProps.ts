@@ -5,6 +5,7 @@ import type { Connector, Model, ModelItem, View, ViewItem } from './model';
 import type { RendererProps } from './rendererProps';
 import type { SelectedRef, TourState, TourStep, Viewport } from './imperative';
 import type { DiagramTemplate } from 'src/templates';
+import type { CatalogueItem } from 'src/catalogue/schema';
 import type { Scene } from 'src/core';
 
 export type NodeIndicatorComponent = (props: {
@@ -131,6 +132,13 @@ export interface ReticulyneProps {
    * network). Pass your own to replace them; an empty array hides the entry.
    */
   templates?: DiagramTemplate[];
+  /**
+   * Catalogue items added to the palette after the built-in ones: devices
+   * with their ports, usually an icon pack's (`packCatalogueItems(pack)`).
+   * An item whose id a built-in item already has is left out. Each one draws
+   * with the icon it names, so pass the pack's icons in `initialData.icons`.
+   */
+  catalogueItems?: CatalogueItem[];
   /** 1.6: as `onNodeClick`, for a connector. */
   onConnectorClick?: (id: string) => void;
   /**

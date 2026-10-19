@@ -28,6 +28,7 @@ import type { QueuedPatch, TourState, TourStep } from './imperative';
 import type { Scene as SceneDocument } from 'src/core';
 import type { SceneContext } from 'src/scene/convert';
 import type { DiagramTemplate } from 'src/templates';
+import type { CatalogueItem } from 'src/catalogue/schema';
 import { DialogTypeEnum, type AnchorPosition } from './ui';
 import type {
   ConnectorIndicatorComponent,
@@ -375,6 +376,8 @@ export interface UiState {
   showOtherFloors: boolean;
   // 2.14: what "New from template" offers.
   templates: DiagramTemplate[];
+  // Catalogue items the host adds to the palette (an icon pack's devices).
+  catalogueItems: CatalogueItem[];
   // 2.3: where saving stands. See src/utils/save.ts.
   saveStatus: SaveStatus;
   // SEC-02: host-supplied validation-error callback, mirrored onto the
@@ -462,6 +465,7 @@ export interface UiStateActions {
   announce: (text: string) => void;
   setFocusTextBoxId: (id: string | null) => void;
   setTemplates: (templates: DiagramTemplate[]) => void;
+  setCatalogueItems: (items: CatalogueItem[]) => void;
   setEditingGroupId: (id: string | null) => void;
   setHideRedacted: (hideRedacted: boolean) => void;
   setShowOtherFloors: (showOtherFloors: boolean) => void;

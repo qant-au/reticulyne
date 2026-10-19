@@ -84,8 +84,11 @@ export {
   fillFlatUrls,
   flattenPacks,
   iconPackSchema,
+  packCatalogueItems,
   packIcons,
+  packIconSchema,
   validateIconPack,
+  type PackIcon,
   type IconPack,
   type IconPackResult
 } from 'src/icons/pack';

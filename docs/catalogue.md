@@ -92,6 +92,7 @@ interface Medium {
 | `lorawan` | LoRaWAN | wireless | wireless | | `internal`, `sma`, `n-type` | `lorawan` | device to one or more gateways |
 | `bluetooth` | Bluetooth | wireless | wireless | | `internal` | `bluetooth` | pairing |
 | `cellular` | Cellular | wireless | wireless | | `internal`, `sma`, `n-type`, `sim` | `ip` | |
+| `satellite` | Satellite | wireless | wireless | | `internal`, `n-type`, `tnc`, `sma` | `ip` | terminal, dish or hotspot (client) to a satellite (hub) |
 | `rs-232` | RS-232 | serial | point-to-point | | `db9`, `db25`, `rj45`, `terminal` | `modbus-rtu`, `ascii` | |
 | `rs-422` | RS-422 | serial | point-to-point | | `terminal`, `db9`, `rj45` | `modbus-rtu`, `ascii` | one driver, up to ten receivers: model extra receivers as a bus of `rs-485` if you need them |
 | `rs-485` | RS-485 | serial | bus | | `terminal`, `rj45`, `db9` | `modbus-rtu`, `bacnet-mstp`, `ascii` | termination both ends |

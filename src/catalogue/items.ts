@@ -216,6 +216,50 @@ export const ITEMS: CatalogueItem[] = [
     ]
   },
 
+  {
+    id: 'satellite-dish',
+    name: 'Satellite Dish',
+    drawing: 'satellite-dish',
+    family: 'wireless',
+    description: 'A small dish; its feed cable runs to a satellite modem.',
+    ports: [
+      {
+        id: 'sat',
+        name: 'Satellite link',
+        medium: 'satellite',
+        role: 'client'
+      },
+      { id: 'ifl', name: 'Feed to modem', medium: 'coax', connector: 'f-type' }
+    ]
+  },
+  {
+    id: 'satellite-terminal',
+    name: 'Satellite Terminal',
+    drawing: 'satellite-terminal',
+    family: 'wireless',
+    description: 'A flat-panel terminal (Starlink style) with its own modem.',
+    ports: [
+      {
+        id: 'sat',
+        name: 'Satellite link',
+        medium: 'satellite',
+        role: 'client'
+      },
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      dcIn
+    ]
+  },
+  {
+    id: 'satellite',
+    name: 'Satellite',
+    drawing: 'satellite',
+    family: 'wireless',
+    description:
+      'A satellite in orbit, for the link up from a terminal and back down.',
+    virtual: true,
+    ports: [{ id: 'beam', name: 'Beam', medium: 'satellite', role: 'hub' }]
+  },
+
   // --- Serial and field bus -------------------------------------------
   {
     id: 'rs485-ethernet-gateway',
@@ -412,6 +456,107 @@ export const ITEMS: CatalogueItem[] = [
         protocols: ['j1939'],
         capabilities: ['terminator']
       }
+    ]
+  },
+
+  {
+    id: 'outboard-motor',
+    name: 'Outboard Motor',
+    drawing: 'outboard-motor',
+    family: 'marine-vehicle',
+    description:
+      'Reports engine data on NMEA 2000, directly or through an engine gateway.',
+    ports: [
+      {
+        id: 'n2k',
+        medium: 'nmea-2000',
+        gender: 'male',
+        protocols: ['nmea-2000']
+      },
+      {
+        id: 'dc-out',
+        name: 'Charging output',
+        medium: 'power-dc',
+        capabilities: ['power-out']
+      }
+    ]
+  },
+  {
+    id: 'marine-satcom-dome',
+    name: 'Marine Satellite Dome',
+    drawing: 'marine-satcom-dome',
+    family: 'marine-vehicle',
+    description:
+      'A stabilised satellite antenna under a radome, with its below-deck unit.',
+    ports: [
+      {
+        id: 'sat',
+        name: 'Satellite link',
+        medium: 'satellite',
+        role: 'client'
+      },
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      dcIn
+    ]
+  },
+  {
+    id: 'satellite-hotspot',
+    name: 'Satellite Hotspot',
+    drawing: 'satellite-hotspot',
+    family: 'marine-vehicle',
+    description: 'A portable satellite hotspot (Iridium GO! style).',
+    ports: [
+      {
+        id: 'sat',
+        name: 'Satellite link',
+        medium: 'satellite',
+        role: 'client'
+      },
+      { id: 'wifi', name: 'Wi-Fi', medium: 'wi-fi', role: 'hub' },
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-c' },
+      dcIn
+    ]
+  },
+  {
+    id: 'satellite-hotspot-desktop',
+    name: 'Satellite Hotspot, Desktop',
+    drawing: 'satellite-hotspot-desktop',
+    family: 'marine-vehicle',
+    description: 'A fixed satellite hotspot (Iridium GO! Exec style).',
+    ports: [
+      {
+        id: 'sat',
+        name: 'Satellite link',
+        medium: 'satellite',
+        role: 'client'
+      },
+      { id: 'wifi', name: 'Wi-Fi', medium: 'wi-fi', role: 'hub' },
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-c' },
+      dcIn
+    ]
+  },
+  {
+    id: 'marine-data-hub',
+    name: 'Marine Data Hub',
+    drawing: 'marine-data-hub',
+    family: 'marine-vehicle',
+    description:
+      'Joins NMEA 2000 to the boat network and a satellite or cellular link (PredictWind DataHub style); its USB port connects straight to a satellite hotspot.',
+    ports: [
+      {
+        id: 'n2k',
+        medium: 'nmea-2000',
+        gender: 'male',
+        protocols: ['nmea-2000']
+      },
+      { id: 'wan', name: 'WAN', medium: 'ethernet-copper' },
+      { id: 'lan', name: 'LAN', medium: 'ethernet-copper' },
+      { id: 'wifi', name: 'Wi-Fi', medium: 'wi-fi', role: 'hub' },
+      { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-a' },
+      { id: 'gps', name: 'GPS antenna', medium: 'coax', connector: 'sma' },
+      { ...dcIn, connector: 'barrel' }
     ]
   },
 

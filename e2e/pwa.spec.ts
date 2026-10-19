@@ -73,9 +73,10 @@ test('after one visit the editor opens offline', async ({ page, context }) => {
   await expect(page).toHaveTitle(/Reticulyne/);
 });
 
-// A rebuild while a tab is open: the second tab is served a worker for a
-// different build (another cache name). It must wait, keeping the old
-// build's cache, so the first tab can still load its lazy chunks.
+// A rebuild while a tab is open: the second tab registers the worker under
+// another script URL, which installs a new worker for the same scope, as a
+// redeploy does. It must wait, keeping the old build's cache, so the first
+// tab can still load its lazy chunks.
 test('a new build waits while another tab is on the old one', async ({
   page,
   context
@@ -89,19 +90,11 @@ test('a new build waits while another tab is on the old one', async ({
   });
   expect(oldCaches.length).toBeGreaterThan(0);
 
-  await context.route('**/sw.js', async (route) => {
-    const response = await route.fetch();
-    const body = (await response.text()).replace(
-      /const CACHE = 'reticulyne-[^']*';/,
-      "const CACHE = 'reticulyne-next-build';"
-    );
-    await route.fulfill({ response, body });
-  });
   const other = await context.newPage();
   await other.goto('/');
   await other.evaluate(async () => {
-    const registration = await navigator.serviceWorker.ready;
-    await registration.update();
+    await navigator.serviceWorker.ready;
+    await navigator.serviceWorker.register('./sw.js?build=next');
   });
   await expect
     .poll(() => {

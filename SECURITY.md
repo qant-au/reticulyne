@@ -111,7 +111,7 @@ Tight by design. No inline scripts, no `eval`, no third-party CDN. It is defense
 
 ### `Strict-Transport-Security` (SEC-07)
 
-The image sends `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` on every response. **This header assumes HTTPS-only ingress** — the image is designed to run behind a TLS-terminating reverse proxy. If you knowingly serve the container over plain HTTP (e.g. a purely-internal deployment with no TLS anywhere), drop this header from [`docker/nginx.conf`](docker/nginx.conf), because once a browser has seen it, it will refuse plain-HTTP connections to that host for the `max-age` window. Because nginx replaces (does not merge) `add_header` inside a `location` block, the directive is repeated in the asset and `/index.html` blocks alongside the other security headers.
+The image sends `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` on every response. **This header assumes HTTPS-only ingress** — the image is designed to run behind a TLS-terminating reverse proxy. If you knowingly serve the container over plain HTTP (e.g. a purely-internal deployment with no TLS anywhere), drop this header from [`docker/nginx.conf`](docker/nginx.conf), because once a browser has seen it, it will refuse plain-HTTP connections to that host for the `max-age` window. Because nginx replaces (does not merge) `add_header` inside a `location` block, the directive is repeated in every block that sets its own headers (assets, `/index.html`, `/sw.js` and `/manifest.webmanifest`) alongside the other security headers.
 
 ### Embedders inheriting a strict CSP
 

@@ -97,6 +97,7 @@ The page loads no web fonts (the editor uses the system font stack); the CSP sti
 The editor image is a Progressive Web App (APP-02). Chrome and Edge on macOS, Windows, Linux and ChromeOS offer **Install** in the address bar, and the installed app opens in its own window, titled with the open diagram's name.
 
 - **A service worker is active** (`sw.js`). At install it caches every file the build emitted, so after one visit the editor opens with no network. Pages are fetched network-first, so a redeploy is picked up on the next load; the bundles themselves are cache-first, which is safe because their names are content-hashed.
+- **A redeploy reaches each tab on its next load**, because pages come from the network. The new service worker itself waits until every tab on the old build is closed before it takes over and deletes the old cache, so a tab left open on the old build keeps working, dialogs included.
 - **Service workers need HTTPS** (or `localhost`). Behind plain HTTP the worker is not registered and the editor behaves as before, online only.
 - **Diagrams are stored in the browser either way** (see Persistence), so an installed editor keeps working offline with its saved diagrams.
 - To remove it: uninstall the app, or clear site data for the editor's origin, which also deletes saved diagrams.

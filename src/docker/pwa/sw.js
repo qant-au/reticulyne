@@ -9,6 +9,10 @@
  * - Other same-origin files are cache-first. Their names carry a content
  *   hash, so a cached copy can never be stale.
  * - Cross-origin requests (Google Fonts) are left to the browser.
+ * - A new build's worker waits (no skipWaiting) until no tab is on the old
+ *   build. Activating at once deleted the old cache under a tab still
+ *   running that build, and its next lazy chunk (a dialog) was a 404.
+ *   Pages are network-first, so a reload still gets the new build.
  */
 /* global self, caches, fetch, URL, __PRECACHE__ */
 const CACHE = '__CACHE__';
@@ -19,7 +23,6 @@ self.addEventListener('install', (event) => {
     caches
       .open(CACHE)
       .then((cache) => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting())
   );
 });
 

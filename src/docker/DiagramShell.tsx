@@ -38,7 +38,7 @@ import {
   type DiagramEntry,
   type DiagramStorage
 } from './diagramStorage';
-import { Surface } from 'src/vendor/accurona-ui';
+import { Surface } from 'src/kit';
 
 // APP-01: the Docker editor as a small app. Diagrams live in this
 // browser's localStorage; a "Diagrams" menu at the top creates, imports,

@@ -6,7 +6,7 @@ import { toPx } from 'src/utils';
 import { MAX_ZOOM, MIN_ZOOM } from 'src/config';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
-import { Surface, ToolButton } from 'src/vendor/accurona-ui';
+import { Surface, ToolButton } from 'src/kit';
 import { ViewKindToggle } from './ViewKindToggle';
 import { LayersButton } from './LayersButton';
 

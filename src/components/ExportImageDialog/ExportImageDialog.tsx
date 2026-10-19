@@ -34,7 +34,7 @@ import { Reticulyne } from 'src/Reticulyne';
 import { Loader } from 'src/components/Loader/Loader';
 import { createReticulyneTheme } from 'src/styles/theme';
 import { ColorPicker } from 'src/components/ColorSelector/ColorPicker';
-import { AppDialog } from 'src/vendor/accurona-ui';
+import { AppDialog } from 'src/kit';
 
 interface Props {
   quality?: number;

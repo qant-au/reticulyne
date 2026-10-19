@@ -11,7 +11,7 @@ import ChevronRight from '@mui/icons-material/ChevronRight';
 import type { Size } from 'src/types/common';
 import { SaveStatusPill } from './SaveStatusPill';
 import { FloorSwitcher } from './FloorSwitcher';
-import { Surface } from 'src/vendor/accurona-ui';
+import { Surface } from 'src/kit';
 import { MIN_CANVAS_WIDTH as MINI_MAP_MIN_WIDTH } from 'src/components/MiniMap/MiniMap';
 
 interface AppPadding {

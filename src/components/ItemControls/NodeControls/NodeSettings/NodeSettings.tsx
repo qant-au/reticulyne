@@ -8,7 +8,7 @@ import { LayerSection } from '../../components/LayerSection';
 import { FloorLinksSection } from '../../components/FloorLinksSection';
 import { FloorPlanSection } from '../../components/FloorPlanSection';
 import { PropsPortsSection } from '../../components/PropsPortsSection';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 
 export type NodeUpdates = {
   model: Partial<ModelItem>;

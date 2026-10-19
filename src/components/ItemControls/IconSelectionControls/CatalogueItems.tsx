@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Typography } from '@mui/material';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 import { useModelStore } from 'src/stores/modelStore';
 import { ITEMS } from 'src/catalogue/items';
 import { catalogueItemSymbol, itemToSceneObject } from 'src/catalogue/place';

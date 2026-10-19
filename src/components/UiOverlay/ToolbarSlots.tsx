@@ -22,7 +22,7 @@ import { HelpButton } from 'src/components/HelpButton/HelpButton';
 import type { ToolName } from 'src/utils';
 import type { ItemControls } from 'src/types';
 import type { Size } from 'src/types/common';
-import { Surface } from 'src/vendor/accurona-ui';
+import { Surface } from 'src/kit';
 import { titleBarRaised } from './TitleBar';
 
 interface AppPadding {

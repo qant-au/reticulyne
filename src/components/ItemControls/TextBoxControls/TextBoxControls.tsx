@@ -17,7 +17,7 @@ import { NAME_MAX } from 'src/schemas/common';
 import { DeleteButton } from '../components/DeleteButton';
 import { LayerOrderSection } from '../components/LayerOrderSection';
 import { LayerSection } from '../components/LayerSection';
-import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
+import { Panel, PanelHeader, PanelSection } from 'src/kit';
 
 interface Props {
   id: string;

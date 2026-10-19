@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { getTilePosition, CoordsUtils, isLocked } from 'src/utils';
 import { useScene } from 'src/hooks/useScene';
-import { ContextMenu } from 'src/vendor/accurona-ui';
-import type { ContextMenuItem } from 'src/vendor/accurona-ui';
+import { ContextMenu } from 'src/kit';
+import type { ContextMenuItem } from 'src/kit';
 
 interface Props {
   anchorEl?: HTMLElement;

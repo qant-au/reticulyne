@@ -15,7 +15,7 @@ import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { floorStubs } from 'src/utils';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 
 // Connections from this item to items on other floors. Each is
 // drawn on both floors as a stub; here they are listed, added and removed.

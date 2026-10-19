@@ -27,7 +27,7 @@ import {
   ConnectionPortsSection,
   TopologyWarnings
 } from '../components/TopologySection';
-import { Panel, PanelSection } from 'src/vendor/accurona-ui';
+import { Panel, PanelSection } from 'src/kit';
 
 // User-facing labels for the connector-direction dropdown (FEA4-02).
 // All-caps to match the surrounding form controls and remove the

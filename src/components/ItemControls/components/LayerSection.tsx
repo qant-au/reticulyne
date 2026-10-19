@@ -3,7 +3,7 @@ import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { REDACTED_LAYER_ID } from 'src/utils';
 import type { ItemReference } from 'src/types';
-import { PanelSection } from 'src/vendor/accurona-ui';
+import { PanelSection } from 'src/kit';
 
 const BASE = '__base__';
 const MIXED = '__mixed__';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, TextField } from '@mui/material';
-import { AppDialog } from 'src/vendor/accurona-ui';
+import { AppDialog } from 'src/kit';
 import { useModelStore } from 'src/stores/modelStore';
 
 // rename the diagram from the main menu. Writes the model's

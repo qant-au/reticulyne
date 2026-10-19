@@ -10,7 +10,7 @@ import { LayerSection } from '../components/LayerSection';
 import { ArrangeSection } from '../components/ArrangeSection';
 import { GroupSection } from '../components/GroupSection';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
-import { Panel, PanelHeader, PanelSection } from 'src/vendor/accurona-ui';
+import { Panel, PanelHeader, PanelSection } from 'src/kit';
 
 const TYPE_LABELS: Record<ItemReference['type'], [string, string]> = {
   ITEM: ['node', 'nodes'],

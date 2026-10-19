@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { CloseButton } from 'src/vendor/accurona-ui';
+import { CloseButton } from 'src/kit';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { IconSelectionControls } from 'src/components/ItemControls/IconSelectionControls/IconSelectionControls';
 

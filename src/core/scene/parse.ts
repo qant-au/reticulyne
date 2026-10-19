@@ -5,7 +5,6 @@ import {
   sceneSchema,
   type Scene
 } from './schema';
-import { isLegacySceneFormat } from './legacy';
 
 // Reading and writing scene files. A scene that fails validation is refused
 // whole; nothing is half-loaded.
@@ -22,14 +21,13 @@ export function parseJson(text: string): unknown {
   });
 }
 
-/**
- * Whether a parsed value claims to be a scene (it may still be invalid). A
- * file under an older name of the format counts.
- */
+/** Whether a parsed value claims to be a scene (it may still be invalid). */
 export function isSceneDocument(value: unknown): boolean {
-  if (typeof value !== 'object' || value === null) return false;
-  const format = (value as { format?: unknown }).format;
-  return format === SCENE_FORMAT || isLegacySceneFormat(format);
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    (value as { format?: unknown }).format === SCENE_FORMAT
+  );
 }
 
 export type SceneResult =

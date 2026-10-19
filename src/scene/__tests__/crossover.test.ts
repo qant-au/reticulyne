@@ -13,7 +13,7 @@ import {
 } from 'src/scene';
 
 // A device on the floor plan and its node in a diagram are one
-// scene object. Axonometra writes only the element; Reticulyne draws it
+// scene object. A floor plan carries only the element; Reticulyne draws it
 // with the element's catalogue twin and keeps the plan on save.
 
 const expectValid = (scene: Scene) => {

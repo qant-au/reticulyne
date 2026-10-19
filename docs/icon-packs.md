@@ -80,9 +80,6 @@ front-on schematic as `flatUrl`. The icons are `reticulyne-<drawing id>`, filed 
 `Reticulyne`. The [catalogue](catalogue.md) items draw with them: an item names its drawing with
 `drawing`.
 
-Diagrams saved before this pack existed name these icons `accurona-<drawing id>`; they are read
-under the current ids.
-
 ## The bundled isopacks
 
 The repository also carries five icon collections under `src/vendor/isopacks/`. Each one is

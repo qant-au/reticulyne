@@ -3,11 +3,11 @@
  */
 import { render, cleanup, act } from '@testing-library/react';
 import Reticulyne from '../Reticulyne';
-import { LEGACY_ICON_PREFIX, LEGACY_SCENE_FORMATS } from 'src/core';
+import { SCENE_FORMAT } from 'src/core';
 import type { Model } from 'src/types';
 
-// Code review 2026-10-19: a file saved before icons carried flat drawings
-// took them only from the editor's previous library, which is empty the first
+// Code review 2026-10-19: a file whose built-in icons carry no flat drawing
+// took one only from the editor's previous library, which is empty the first
 // time an embedder mounts the editor, so its built-in devices drew their
 // isometric image in the flat view.
 
@@ -48,8 +48,8 @@ afterEach(() => {
   cleanup();
 });
 
-test('an older file opened on first mount draws its built-in devices flat', () => {
-  const router = `${LEGACY_ICON_PREFIX}router`;
+test('a file opened on first mount draws its built-in devices flat', () => {
+  const router = 'reticulyne-router';
   const onModelUpdated = jest.fn<void, [Model]>();
   act(() => {
     render(
@@ -57,7 +57,7 @@ test('an older file opened on first mount draws its built-in devices flat', () =
         onModelUpdated={onModelUpdated}
         initialData={
           {
-            format: LEGACY_SCENE_FORMATS[0],
+            format: SCENE_FORMAT,
             version: 2,
             id: 'old',
             objects: [{ id: 'r', name: 'Router', icon: router }],

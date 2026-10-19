@@ -17,8 +17,8 @@ potentially breaking and read the release notes before upgrading.
 ### Changed (breaking)
 
 - **Reticulyne stands alone.** The scene format, the shared widgets and the device drawings it carried as vendored copies of another project's builds are now its own source: `src/core` (the scene format, units, keymap), `src/kit` (dialogs, menus, panels, notifications, theme) and `src/icons` (the drawings and icon packs). Nothing is vendored from it any more, and `scripts/sync-accurona.mjs` is gone.
-- **The file format is the [Reticulyne scene format](docs/scene-format.md)**, `format: 'reticulyne-scene'`, still version 2, with its JSON Schema shipped as `dist/schema/scene-v2.json` (`$schema` points there). Files under the older name (`accurona-scene`) still open and are saved under the new one. Tools that know only the older name will not open files saved from now on.
-- **Built-in icon ids** are `reticulyne-<drawing id>` (collection `Reticulyne`). Diagrams that name the older `accurona-<drawing id>` ids are read under the new ones.
+- **The file format is the [Reticulyne scene format](docs/scene-format.md)**, `format: 'reticulyne-scene'`, still version 2, with its JSON Schema shipped as `dist/schema/scene-v2.json` (`$schema` points there). Files saved under the format's previous name no longer open (no compatibility is kept before 1.0).
+- **Built-in icon ids** are `reticulyne-<drawing id>` (collection `Reticulyne`).
 - **Catalogue items name their drawing** with `drawing: '<id>'` in place of a `links: [{ source: 'accurona', ref }]` cross-reference.
 - **Exports renamed or removed:** `builtinIcons`, `BUILTIN_ICON_COLLECTION` and `catalogueItemDrawing` replace `accuronaIcons`, `ACCURONA_ICON_COLLECTION` and `accuronaElement`; `schematicIconUrl` is removed (the flat view reads `flatUrl`). The theme factory is `createKitTheme` / `kitThemeOptions` / `kitVars`.
 
@@ -31,6 +31,7 @@ potentially breaking and read the release notes before upgrading.
 
 ### Changed
 
+- **The keymap is Reticulyne's alone**, aligned with Excalidraw's so a user can move between the two in either direction. `keymapFor()` takes no tool; the other tool's bindings, walk keys and differences are gone, `SHARED_BINDINGS` is `EXCALIDRAW_BINDINGS`, and `DIFFERENCES` is one list.
 - **The Docker editor keeps diagrams in IndexedDB**, not localStorage, with room for far more than 5 MB. Diagrams an older version kept in localStorage are copied across the first time, and left in place. A save is reported once it is on disk. Icon packs installed in the browser are kept beside them and added to the library at start-up (installing from the editor is planned). Where IndexedDB cannot be used, diagrams stay in localStorage.
 
 ### Fixed

@@ -1,5 +1,4 @@
 import {
-  currentIconId,
   isSceneDocument,
   parseJson,
   serializeScene,
@@ -97,15 +96,7 @@ export const createDiagramStorage = (
    */
   const withBundledIcons = <T>(value: T): T => {
     if (!isObject(value)) return value;
-    // Under their current ids, so a diagram's copy of a bundled icon saved
-    // under an older id is not doubled by the bundled one.
-    const own = ((Array.isArray(value.icons) ? value.icons : []) as Icon[]).map(
-      (icon) => {
-        return typeof icon?.id === 'string'
-          ? { ...icon, id: currentIconId(icon.id) }
-          : icon;
-      }
-    );
+    const own = (Array.isArray(value.icons) ? value.icons : []) as Icon[];
     if (isSceneDocument(value)) {
       const ownIds = new Set(
         own.map((icon) => {
@@ -124,18 +115,8 @@ export const createDiagramStorage = (
         ]
       } as T;
     }
-    // A legacy model's items name their icons too: renamed alike, or an
-    // item would name an icon the diagram no longer holds.
-    const items = Array.isArray(value.items)
-      ? value.items.map((item: unknown) => {
-          return isObject(item) && typeof item.icon === 'string'
-            ? { ...item, icon: currentIconId(item.icon) }
-            : item;
-        })
-      : value.items;
     return {
       ...value,
-      ...(items === undefined ? {} : { items }),
       icons: [
         ...bundledIcons,
         ...own.filter((icon) => {

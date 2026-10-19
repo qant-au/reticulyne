@@ -106,8 +106,7 @@ identifier.
 
 Reticulyne's file format is the [scene format](scene-format.md): one JSON document with a
 list of **objects** (each thing, once) and **views** that place them. Reticulyne draws the
-`iso` and `schematic` views; `plan` views belong to a floor planner such as
-[Axonometra](https://github.com/qant-au/axonometra), and are kept. Everything Reticulyne writes is a
+`iso` and `schematic` views; `plan` views, which a floor planner draws, are kept. Everything Reticulyne writes is a
 scene: `onSave`, Export as JSON, `getScene()` and the Docker editor's saved diagrams.
 
 - **Opening** a scene shows its `iso` and `schematic` views and the objects placed in

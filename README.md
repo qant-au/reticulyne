@@ -96,18 +96,6 @@ model is in [Embedding: security model](docs/embedding.md#security-model).
 To report a vulnerability, see [SECURITY.md](SECURITY.md). Please do not open a public
 issue for security reports.
 
-## A sibling project: Axonometra
-
-Reticulyne has a sibling, [Axonometra](https://github.com/qant-au/axonometra), an
-open-source floor planner with a 3D view. They are built to be used together:
-
-- **Axonometra** lays out physical space at true scale: rooms, racks, cameras, access
-  points and furniture.
-- **Reticulyne** draws how those things connect.
-
-Both draw their equipment from one shared element library, so a rack is the same rack,
-at the same size and in the same colours, in a floor plan and in a network diagram.
-
 ## Contributing
 
 Issues and pull requests are welcome.

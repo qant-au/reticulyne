@@ -66,6 +66,34 @@ test('a stored icon saved without a flat drawing takes the bundled one', () => {
   expect(server?.flatUrl).toBe('server-flat.svg');
 });
 
+test('a stored copy of a bundled icon under its older id is not doubled', () => {
+  const ap = {
+    id: 'reticulyne-wifi-ap',
+    name: 'Wi-Fi AP',
+    url: 'ap.svg',
+    flatUrl: 'ap-flat.svg'
+  };
+  localStorage.setItem(
+    'reticulyne.diagram.old',
+    JSON.stringify({
+      format: 'reticulyne-scene',
+      version: 2,
+      id: 'old',
+      objects: [{ id: 'a', icon: 'accurona-wifi-ap' }],
+      icons: [{ ...ap, id: 'accurona-wifi-ap', flatUrl: undefined }]
+    })
+  );
+  const back = createDiagramStorage(localStorage, [...bundled, ap]).load(
+    'old'
+  )!;
+  const aps = back.icons!.filter((icon) => {
+    return icon.id === 'reticulyne-wifi-ap';
+  });
+  expect(aps).toHaveLength(1);
+  expect(aps[0].flatUrl).toBe('ap-flat.svg');
+  expect(back.objects[0].icon).toBe('reticulyne-wifi-ap');
+});
+
 test('reads a diagram an older build stored as a Reticulyne model', () => {
   const legacy = model('Old');
   localStorage.setItem(

@@ -101,4 +101,8 @@ export {
   type ShortcutRow,
   type ShortcutSection
 } from './keymap';
-export { LEGACY_SCENE_FORMATS, isLegacySceneFormat } from './scene/legacy';
+export {
+  LEGACY_SCENE_FORMATS,
+  currentIconId,
+  isLegacySceneFormat
+} from './scene/legacy';

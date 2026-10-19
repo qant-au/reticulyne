@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { LENGTH_UNITS } from '../units';
-import { renameLegacyFormat } from './legacy';
+import { renameLegacy } from './legacy';
 import { migrateScene } from './migrate';
 import { checkReferences } from './references';
 
@@ -404,7 +404,7 @@ export const sceneSchema = z.preprocess(
   (value, ctx) => {
     const renamed =
       typeof value === 'object' && value !== null && !Array.isArray(value)
-        ? renameLegacyFormat(value as Record<string, unknown>, SCENE_FORMAT)
+        ? renameLegacy(value as Record<string, unknown>, SCENE_FORMAT)
         : value;
     const migrated = migrateScene(renamed);
     if ('scene' in migrated) return migrated.scene;

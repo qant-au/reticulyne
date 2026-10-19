@@ -55,16 +55,14 @@ export type { Scene, SceneResult } from 'src/core';
 
 // The catalogue (docs/catalogue.md): media, protocols and items with
 // ports, validation, the scene object a placed item becomes, and the
-// isometric drawings of the Accurona elements items cross-reference.
+// built-in icon pack: the isometric and flat drawings items draw with.
 // Plain data and functions, so safe to load without `window`.
 export {
   CATALOGUE,
   FAMILIES,
   FAMILY_NAMES,
-  ACCURONA_ICON_COLLECTION,
   SCHEMATIC_ICON_COLLECTION,
-  accuronaElement,
-  accuronaIcons,
+  catalogueItemDrawing,
   catalogueItemIcon,
   catalogueItemSymbol,
   expandPorts,
@@ -76,6 +74,20 @@ export {
   topologyWarnings,
   validateCatalogue
 } from 'src/catalogue';
+export {
+  BUILTIN_ICON_COLLECTION,
+  BUILTIN_PACK,
+  builtinIcons
+} from 'src/icons/builtin';
+export {
+  fillFlatUrls,
+  flattenPacks,
+  iconPackSchema,
+  packIcons,
+  validateIconPack,
+  type IconPack,
+  type IconPackResult
+} from 'src/icons/pack';
 export type {
   Capability,
   Catalogue,

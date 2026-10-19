@@ -1,13 +1,12 @@
 import { emptyScene, validateScene } from 'src/core';
-import { ISO_DRAWINGS } from 'src/vendor/accurona-iso';
-import { SCHEMATIC_DRAWINGS } from 'src/vendor/accurona-schematic';
+import { DRAWINGS } from 'src/icons/drawings';
+import { builtinIcons } from 'src/icons/builtin';
 import { iconSchema } from 'src/schemas/icons';
 import {
   CATALOGUE,
   ITEM_SYMBOLS,
   SCHEMATIC_ICON_COLLECTION,
-  accuronaElement,
-  accuronaIcons,
+  catalogueItemDrawing,
   catalogueItemIcon,
   catalogueItemSymbol,
   expandPorts,
@@ -33,7 +32,7 @@ describe('the built-in catalogue', () => {
   });
 
   it('covers the twins the spec names first', () => {
-    const twins = new Set(CATALOGUE.items.map(accuronaElement));
+    const twins = new Set(CATALOGUE.items.map(catalogueItemDrawing));
     for (const element of [
       'wifi-ap',
       'network-switch',
@@ -70,49 +69,56 @@ describe('the built-in catalogue', () => {
     ).toEqual(
       expect.arrayContaining(['internet', 'vpn-tunnel', 'cloud-service'])
     );
-    for (const item of virtual) expect(accuronaElement(item)).toBeUndefined();
+    for (const item of virtual)
+      expect(catalogueItemDrawing(item)).toBeUndefined();
   });
 
   it('draws every item with a twin with that element’s isometric view', () => {
     const linked = CATALOGUE.items.filter((item) => {
-      return accuronaElement(item) !== undefined;
+      return catalogueItemDrawing(item) !== undefined;
     });
     expect(linked.length).toBeGreaterThan(19);
     for (const item of linked) {
-      expect(catalogueItemIcon(item)).toBe(`accurona-${accuronaElement(item)}`);
+      expect(catalogueItemIcon(item)).toBe(
+        `reticulyne-${catalogueItemDrawing(item)}`
+      );
     }
-    // And the vendored drawings are exactly the ones referenced.
-    expect(Object.keys(ISO_DRAWINGS).sort()).toEqual(
-      [...new Set(linked.map(accuronaElement))].sort()
-    );
+    // And every drawing an item names exists.
+    for (const item of linked) {
+      expect([item.id, catalogueItemDrawing(item)! in DRAWINGS]).toEqual([
+        item.id,
+        true
+      ]);
+    }
   });
 });
 
-describe('accuronaIcons', () => {
-  it('are valid isometric icons, one per vendored drawing', () => {
-    const icons = accuronaIcons();
-    expect(icons).toHaveLength(Object.keys(ISO_DRAWINGS).length);
+describe('builtinIcons', () => {
+  it('are valid isometric icons with a flat drawing, one per drawing', () => {
+    const icons = builtinIcons();
+    expect(icons).toHaveLength(Object.keys(DRAWINGS).length);
     for (const icon of icons) {
       expect(iconSchema.safeParse(icon).success).toBe(true);
       expect(icon.isIsometric).toBe(true);
       expect(icon.url.startsWith('data:image/svg+xml,')).toBe(true);
+      expect(icon.flatUrl?.startsWith('data:image/svg+xml,')).toBe(true);
     }
     const ap = icons.find((icon) => {
-      return icon.id === 'accurona-wifi-ap';
+      return icon.id === 'reticulyne-wifi-ap';
     });
-    expect(ap?.collection).toBe('Accurona');
+    expect(ap?.collection).toBe('Reticulyne');
   });
 
   it('an item’s own icon wins over its twin', () => {
     expect(
       catalogueItemIcon({
         icon: 'mine',
-        links: [{ source: 'accurona', ref: 'wifi-ap' }]
+        drawing: 'wifi-ap'
       })
     ).toBe('mine');
     expect(
       catalogueItemIcon({
-        links: [{ source: 'accurona', ref: 'no-such-element' }]
+        drawing: 'no-such-drawing'
       })
     ).toBeUndefined();
   });
@@ -139,25 +145,21 @@ describe('schematic symbols', () => {
     ).toEqual([]);
   });
 
-  it('an item with a twin uses the schematic generated from its element', () => {
+  it('an item with a drawing uses its flat view', () => {
     const twinned = CATALOGUE.items.filter((item) => {
-      return accuronaElement(item);
+      return catalogueItemDrawing(item);
     });
     expect(twinned.length).toBeGreaterThan(0);
     for (const item of twinned) {
       expect(catalogueItemSymbol(item)).toBe(
-        SCHEMATIC_DRAWINGS[accuronaElement(item)!].svg
+        DRAWINGS[catalogueItemDrawing(item)!].flat
       );
     }
-    // And the vendored drawings are exactly the ones referenced.
-    expect(Object.keys(SCHEMATIC_DRAWINGS).sort()).toEqual(
-      Object.keys(ISO_DRAWINGS).sort()
-    );
   });
 
   it('are drawn by hand exactly for the items with no twin', () => {
     const untwinned = CATALOGUE.items.filter((item) => {
-      return !accuronaElement(item);
+      return !catalogueItemDrawing(item);
     });
     expect(Object.keys(ITEM_SYMBOLS).sort()).toEqual(
       untwinned
@@ -345,7 +347,7 @@ describe('itemToSceneObject', () => {
   it('copies ports, the twin and the item link onto the object', () => {
     const object = itemToSceneObject(find('poe-switch-8'), 'sw1');
     expect(object.element).toBe('network-switch');
-    expect(object.icon).toBe('accurona-network-switch');
+    expect(object.icon).toBe('reticulyne-network-switch');
     expect(object.links).toEqual([
       { source: 'reticulyne', ref: 'poe-switch-8' }
     ]);
@@ -383,28 +385,11 @@ describe('itemToSceneObject', () => {
 
   it('every item makes an object the scene format accepts', () => {
     const scene = emptyScene('s1', 'Catalogue');
-    scene.icons = accuronaIcons();
+    scene.icons = builtinIcons();
     scene.objects = CATALOGUE.items.map((item, i) => {
       return itemToSceneObject(item, `o${i}`);
     });
     const result = validateScene(scene);
     expect(result.ok ? [] : result).toEqual([]);
-  });
-});
-
-describe('the flat drawing of an element icon', () => {
-  it('is carried on the icon as flatUrl', () => {
-    const [element] = Object.keys(SCHEMATIC_DRAWINGS);
-    const icon = accuronaIcons().find((i) => {
-      return i.id === `accurona-${element}`;
-    });
-    expect(icon).toBeDefined();
-    expect(icon!.flatUrl).toBe(
-      `data:image/svg+xml,${encodeURIComponent(SCHEMATIC_DRAWINGS[element].svg)}`
-    );
-  });
-
-  it('is there for every element icon', () => {
-    for (const icon of accuronaIcons()) expect(icon.flatUrl).toBeTruthy();
   });
 });

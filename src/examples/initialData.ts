@@ -1,19 +1,11 @@
 import { Colors, Icons, InitialData } from 'src/Reticulyne';
-import { accuronaIcons } from 'src/catalogue';
-import { flattenCollections } from 'src/vendor/isopacks/utils';
+import { BUILTIN_PACK } from 'src/icons/builtin';
+import { flattenPacks } from 'src/icons/pack';
 import isoflowIsopack from 'src/vendor/isopacks/isoflow';
 import awsIsopack from 'src/vendor/isopacks/aws';
 import gcpIsopack from 'src/vendor/isopacks/gcp';
 import azureIsopack from 'src/vendor/isopacks/azure';
 import kubernetesIsopack from 'src/vendor/isopacks/kubernetes';
-
-const isopacks = flattenCollections([
-  isoflowIsopack,
-  awsIsopack,
-  azureIsopack,
-  gcpIsopack,
-  kubernetesIsopack
-]);
 
 export const colors: Colors = [
   {
@@ -46,9 +38,16 @@ export const colors: Colors = [
   }
 ];
 
-// The isometric drawings of the Accurona elements catalogue items
-// cross-reference, so a placed item draws as its physical twin.
-export const icons: Icons = [...isopacks, ...accuronaIcons()];
+// The bundled icon packs: the five vendored isopacks, then Reticulyne's own
+// drawings, which catalogue items draw with (isometric and flat).
+export const icons: Icons = flattenPacks([
+  isoflowIsopack,
+  awsIsopack,
+  azureIsopack,
+  gcpIsopack,
+  kubernetesIsopack,
+  BUILTIN_PACK
+]);
 
 export const initialData: InitialData = {
   title: 'Airport management software system',

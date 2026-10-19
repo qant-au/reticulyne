@@ -1,6 +1,6 @@
 import type { SceneObject } from 'src/core';
-import { ISO_DRAWINGS } from 'src/vendor/accurona-iso';
-import { SCHEMATIC_DRAWINGS } from 'src/vendor/accurona-schematic';
+import { drawingIconId, svgDataUrl } from 'src/icons/builtin';
+import { DRAWINGS } from 'src/icons/drawings';
 import type { Icon } from 'src/types/model';
 import { ITEMS } from './items';
 import { MEDIA } from './media';
@@ -8,58 +8,27 @@ import type { CatalogueItem, Medium } from './schema';
 import { ITEM_SYMBOLS } from './symbols';
 import { expandPorts } from './validate';
 
-/** The icon collection the Accurona isometric drawings are filed under. */
-export const ACCURONA_ICON_COLLECTION = 'Accurona';
-
-const ACCURONA_ICON_PREFIX = 'accurona-';
-
-const svgUrl = (svg: string) => {
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+/** The built-in drawing an item draws with, if any. */
+export const catalogueItemDrawing = (
+  item: Pick<CatalogueItem, 'drawing'>
+): string | undefined => {
+  return item.drawing;
 };
 
-/** The Accurona element an item cross-references, if any. */
-export const accuronaElement = (item: Pick<CatalogueItem, 'links'>) => {
-  return item.links?.find((link) => {
-    return link.source === 'accurona';
-  })?.ref;
-};
-
-/**
- * The drawings of every Accurona element the catalogue cross-references, as
- * icons: pass them in `initialData.icons` so an item with a twin draws with
- * its element's isometric view, and with its 2D schematic in the flat view.
- */
-export const accuronaIcons = (): Icon[] => {
-  return Object.entries(ISO_DRAWINGS).map(([element, drawing]) => {
-    return {
-      id: `${ACCURONA_ICON_PREFIX}${element}`,
-      name: drawing.name,
-      url: svgUrl(drawing.svg),
-      collection: ACCURONA_ICON_COLLECTION,
-      isIsometric: true,
-      ...(element in SCHEMATIC_DRAWINGS
-        ? { flatUrl: svgUrl(SCHEMATIC_DRAWINGS[element].svg) }
-        : {})
-    };
-  });
-};
-
-/** The icon of an Accurona element's isometric drawing, when there is one. */
+/** The built-in icon of a drawing, when there is that drawing. */
 export const elementIcon = (element: string | undefined) => {
-  return element && element in ISO_DRAWINGS
-    ? `${ACCURONA_ICON_PREFIX}${element}`
-    : undefined;
+  return element && element in DRAWINGS ? drawingIconId(element) : undefined;
 };
 
 /**
- * The icon an item draws with: its own `icon`, else its Accurona twin's
- * isometric view when that drawing is available, else none.
+ * The icon an item draws with: its own `icon`, else its built-in drawing's
+ * icon, else none.
  */
 export const catalogueItemIcon = (
-  item: Pick<CatalogueItem, 'icon' | 'links'>
+  item: Pick<CatalogueItem, 'icon' | 'drawing'>
 ): string | undefined => {
   if (item.icon) return item.icon;
-  return elementIcon(accuronaElement(item));
+  return elementIcon(item.drawing);
 };
 
 /** The icon collection the 2D schematic symbols are filed under. */
@@ -69,15 +38,14 @@ const SCHEMATIC_ICON_PREFIX = 'schematic-';
 
 /**
  * An item's 2D schematic symbol (the flat, Visio-style view) as SVG: its
- * Accurona twin's schematic, generated from the element's model, else the
- * symbol drawn for it in symbols.ts, else none.
+ * drawing's flat view, else the symbol drawn for it in symbols.ts, else
+ * none.
  */
 export const catalogueItemSymbol = (
-  item: Pick<CatalogueItem, 'id' | 'links'>
+  item: Pick<CatalogueItem, 'id' | 'drawing'>
 ): string | undefined => {
-  const element = accuronaElement(item);
-  if (element && element in SCHEMATIC_DRAWINGS) {
-    return SCHEMATIC_DRAWINGS[element].svg;
+  if (item.drawing && item.drawing in DRAWINGS) {
+    return DRAWINGS[item.drawing].flat;
   }
   return ITEM_SYMBOLS[item.id];
 };
@@ -94,7 +62,7 @@ export const schematicIcons = (items: CatalogueItem[] = ITEMS): Icon[] => {
           {
             id: `${SCHEMATIC_ICON_PREFIX}${item.id}`,
             name: item.name,
-            url: `data:image/svg+xml,${encodeURIComponent(svg)}`,
+            url: svgDataUrl(svg),
             collection: SCHEMATIC_ICON_COLLECTION,
             isIsometric: false
           }
@@ -108,8 +76,8 @@ export const schematicIcons = (items: CatalogueItem[] = ITEMS): Icon[] => {
  * are expanded and copied (each port's kind is its medium; connector,
  * gender, role, protocols and capabilities go in its props, lists as
  * comma-separated strings), the item is recorded as a 'reticulyne' link,
- * and an Accurona twin becomes the object's `element`, which is what puts
- * the same object on a floor plan.
+ * and its drawing becomes the object's `element`, which is what puts the
+ * same object on a floor plan.
  */
 export const itemToSceneObject = (
   item: CatalogueItem,
@@ -142,7 +110,7 @@ export const itemToSceneObject = (
       ...(Object.keys(props).length ? { props } : {})
     };
   });
-  const element = accuronaElement(item);
+  const element = item.drawing;
   const icon = catalogueItemIcon(item);
   return {
     id,

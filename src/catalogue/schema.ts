@@ -118,6 +118,8 @@ export const catalogueItemSchema = z.strictObject({
   family: z.enum(FAMILIES),
   description: z.string().max(2_000).optional(),
   icon: z.string().min(1).max(200).optional(),
+  // The built-in drawing (src/icons/drawings.ts) the item draws with.
+  drawing: z.string().min(1).max(200).optional(),
   virtual: z.boolean().optional(),
   ports: z.array(portTemplateSchema),
   props: scalarProps.optional(),

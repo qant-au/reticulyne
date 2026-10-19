@@ -16,10 +16,8 @@ export * from './schema';
 export { expandPorts, validateCatalogue } from './validate';
 export type { CatalogueIssue, CatalogueResult, ExpandedPort } from './validate';
 export {
-  ACCURONA_ICON_COLLECTION,
   SCHEMATIC_ICON_COLLECTION,
-  accuronaElement,
-  accuronaIcons,
+  catalogueItemDrawing,
   catalogueItemIcon,
   catalogueItemSymbol,
   itemToSceneObject,

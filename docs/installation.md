@@ -7,9 +7,8 @@ No token or registry setup is needed:
 npm install @reticulyne/editor
 ```
 
-It was published as `@qant-au/reticulyne` on GitHub Packages up to 0.3.0. Moving from
-there, change the dependency and the imports to `@reticulyne/editor`; the API is the one
-described in the [changelog](../CHANGELOG.md) for 0.4.0.
+It was published as `@qant-au/reticulyne` on GitHub Packages up to 0.3.0; see
+[Moving from `@qant-au/reticulyne`](#moving-from-qant-aureticulyne).
 
 To run the editor on its own instead, see [Standalone Docker](docker.md).
 
@@ -42,10 +41,11 @@ them in. If you're on npm 6 or you want explicit lockfile entries, install them 
 
 No CSS imports are required — styles are injected at runtime by Emotion.
 
-## Migrating from v2 (MUI v5 → v9)
+## Moving from `@qant-au/reticulyne`
 
-If you were on `@qant-au/reticulyne@2.x` (which had `@mui/material ^5.18.0` as a peer-dep),
-the upgrade to v3 requires bumping your MUI install too:
+Change the dependency and the imports to `@reticulyne/editor`; the API is the one
+described in the [changelog](../CHANGELOG.md) for 0.4.0. Every 0.x release needs MUI v9.
+If your application is still on an older MUI:
 
 1. `npm install @mui/material@^9 @mui/icons-material@^9` in your application.
 2. Run MUI's own codemods against your application source:
@@ -63,12 +63,6 @@ the upgrade to v3 requires bumping your MUI install too:
    for the full list of consumer-side breaking changes (slot/slotProps overhaul,
    removed `components`/`componentsProps` props, browser support narrowed to Chrome 117+,
    Firefox 121+, Safari 17.0+).
-
-## Migrating from v1
-
-If you were on `@qant-au/reticulyne@1.x` (which bundled MUI / Emotion / Zustand internally),
-follow the v2 install snippet above first to install all peer-deps, then follow the
-v2 → v3 migration above.
 
 ## Bundler
 

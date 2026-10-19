@@ -1,6 +1,5 @@
 // Production library build. Used by `npm run build`. Emits the
-// CommonJS bundles under `dist/` that get shipped in the GitHub-
-// Packages tarball.
+// CommonJS bundles under `dist/` that ship in the npm tarball.
 
 const path = require('path');
 const { merge } = require('webpack-merge');
@@ -64,8 +63,8 @@ module.exports = merge(base, {
     //
     // React subpaths (`react/jsx-runtime`, `react-dom/client`) too: the
     // object form above matches only the bare names, so React 19's JSX
-    // runtime was compiled into dist and emitted elements a React 18
-    // host (peer range >=18) rejects.
+    // runtime was compiled into dist, a second copy beside the host's
+    // (the peer range is >=19).
     ({ request, context }, callback) => {
       if (isDrawingsImport(request, context)) {
         return callback(null, 'commonjs ./drawings.js');

@@ -41,7 +41,7 @@ import {
 import { Surface } from 'src/kit';
 
 // APP-01: the Docker editor as a small app. Diagrams live in this
-// browser's localStorage; a "Diagrams" menu at the top creates, imports,
+// browser's IndexedDB (localStorage where IndexedDB cannot be used); a "Diagrams" menu at the top creates, imports,
 // switches and deletes them. Saving uses the editor's own save support
 // (the Save menu entry, the status pill, the leave-page warning), with
 // auto-save every 5 s once a diagram has a name. The library's own Open

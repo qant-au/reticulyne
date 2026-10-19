@@ -102,6 +102,8 @@ export {
   type ShortcutSection
 } from './keymap';
 export {
+  LEGACY_COLLECTION,
+  LEGACY_ICON_PREFIX,
   LEGACY_SCENE_FORMATS,
   currentIconId,
   isLegacySceneFormat

@@ -418,7 +418,7 @@ describe('the catalogue palette', () => {
       element: 'network-switch',
       links: [{ source: 'reticulyne', ref: 'poe-switch-8' }]
     });
-    // No Accurona drawings in this editor: the default block, not a
+    // No built-in drawings in this editor: the default block, not a
     // dangling icon id.
     expect(added.icon).toBeUndefined();
     expect(

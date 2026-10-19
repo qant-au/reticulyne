@@ -3,7 +3,7 @@
 > **Status: the data, the schema, the palette, port attachment and the topology warnings are built.**
 > The registries, the schema and the rules below are in `src/catalogue/` and exported from the
 > package (`CATALOGUE`, `validateCatalogue`, `expandPorts`, `itemToSceneObject`,
-> `accuronaIcons`, `catalogueItemIcon`, `pickPorts`, `topologyWarnings`). The icon library panel has a **Catalogue** section, one
+> `builtinIcons`, `catalogueItemIcon`, `pickPorts`, `topologyWarnings`). The icon library panel has a **Catalogue** section, one
 > fold per medium family (see [The palette](#the-palette)); placing an item creates the object
 > described in [How an item lands in a scene](#how-an-item-lands-in-a-scene), and the editor's
 > model item carries the object's `element`, `props`, `ports` and `links` so a save writes them
@@ -11,24 +11,24 @@
 > port on each (see [Attaching a connector](#attaching-a-connector)); a node's four "ports" on the
 > canvas are still the tile-edge hotspots used for connecting by drag.
 >
-> An item with an Accurona twin draws with the element's isometric view: `accuronaIcons()`
-> returns those drawings as icons (collection `Accurona`, ids `accurona-<element id>`), and
-> `catalogueItemIcon(item)` names the one an item uses. Only the drawings of cross-referenced
-> elements are vendored (`node scripts/sync-accurona.mjs` picks them from `src/catalogue/items.ts`).
+> An item that names a **drawing** draws with it. Reticulyne's drawings
+> (`src/icons/drawings.ts`) each have an isometric view and a flat, front-on schematic, and ship
+> as the built-in [icon pack](icon-packs.md): `builtinIcons()` returns them as icons (collection
+> `Reticulyne`, ids `reticulyne-<drawing id>`), each with the isometric view as `url` and the
+> schematic as `flatUrl`. `catalogueItemIcon(item)` names the one an item uses.
 >
 > Every built-in item also has a **2D schematic symbol** for the flat, Visio-style view:
 > `catalogueItemSymbol(item)` returns it as SVG, and `schematicIcons()` returns them as flat icons
-> (collection `Schematic`, ids `schematic-<item id>`). An item with a twin uses the schematic
-> Accurona generates from the element's model (`dist/schematic/<id>.svg`, vendored beside the
-> isometric drawings); an item with no twin has one drawn in `src/catalogue/symbols.ts`. A view
-> of kind `schematic` (the flat view) draws a node whose icon is `accurona-<element id>` with that
-> element's schematic; `schematicIconUrl(icon)` is the swap.
+> (collection `Schematic`, ids `schematic-<item id>`). An item with a drawing uses the drawing's
+> flat view; an item with none has one drawn in `src/catalogue/symbols.ts`. A view of kind
+> `schematic` (the flat view) draws each node with its icon's `flatUrl`, or its `url` when it has
+> no flat drawing.
 
 The **catalogue** is Reticulyne's list of the things a diagram connects: devices with ports, the
 passive parts that make up a bus (tees, terminators, power injectors), and virtual things that
 never appear on a floor plan (the internet, a cloud service, a VPN tunnel). It is plain data,
 validated by one schema, and a host can extend it the same way it supplies
-[isopacks](isopacks.md).
+[icon packs](icon-packs.md).
 
 Three registries make up the catalogue:
 
@@ -38,19 +38,17 @@ Three registries make up the catalogue:
 | **Protocols** | What is spoken over a medium | `modbus-rtu` on `rs-485` |
 | **Items** | What you drag onto the canvas, and which ports it has | `n2k-tee-4way`, `chartplotter` |
 
-## Relation to Accurona
+## Relation to the drawings
 
-[Accurona](https://github.com/qant-au/accurona) is the element library shared with Axonometra:
-physical things with a real size, a plan view and a 3D model. Accurona elements have **no ports**.
-Ports, media and protocols are defined only here.
+An item's look comes from a **drawing** (`src/icons/drawings.ts`): an isometric view and a flat
+schematic of a physical device. Drawings have **no ports**. Ports, media and protocols are defined
+only here.
 
-The two lists overlap (a Wi-Fi access point is both a physical element and a network device), and
-an entry that exists in both relates to the other by a free-form cross-reference. Neither schema
-depends on it: an Accurona element with no catalogue twin is fine, and so is a catalogue item with
-no element. See [Cross-reference to Accurona](#cross-reference-to-accurona).
+An item names its drawing with `drawing`, and several items can share one (the 8-port and 24-port
+switches both draw as `network-switch`). A drawing no item names is still an icon in the library,
+and an item with no drawing is fine. See [Drawings](#drawings).
 
-What the catalogue does **not** hold: dimensions, plan symbols, 3D models, materials. Those belong
-to Accurona.
+What the catalogue does **not** hold: dimensions, plan symbols, 3D models, materials.
 
 ## Media
 
@@ -159,7 +157,8 @@ interface CatalogueItem {
   virtual?: boolean;          // never physical, never on a floor plan
   ports: PortTemplate[];
   props?: Record<string, string | number | boolean>;  // defaults copied onto the placed object
-  links?: ExternalLink[];     // cross-references, e.g. { source: 'accurona', ref: 'wifi-ap' }
+  drawing?: string;           // built-in drawing id, e.g. 'wifi-ap'
+  links?: ExternalLink[];     // cross-references to other tools
 }
 ```
 
@@ -202,8 +201,7 @@ Rules the catalogue schema checks:
 - `poe-*` only on Ethernet media, `power-in`/`power-out` only on power media, `terminator` and
   `eol` only on bus media with the matching `termination`.
 - **An item needs at least one port that is not on a power medium, unless it is virtual.** Power
-  ports alone do not admit an item: otherwise every kettle and fridge in Accurona becomes a
-  palette entry. A UPS or a PDU qualifies because it has a network or serial port; a plain power
+  ports alone do not admit an item: otherwise every kettle and fridge becomes a palette entry. A UPS or a PDU qualifies because it has a network or serial port; a plain power
   board does not.
 
 ## Topology
@@ -302,7 +300,7 @@ An engine gateway (J1939 to NMEA 2000) and a KNX IP router are the same shape.
 
 Virtual items are things a network diagram needs that have no physical form: the internet, a
 cloud service, a SaaS application, a VPN tunnel, a VLAN. They carry `virtual: true`, are never
-placed on a floor plan, and have no Accurona twin. They are exempt from the power-port rule and
+placed on a floor plan, and have no drawing. They are exempt from the power-port rule and
 may have no ports at all (an item with no ports can still be the end of a connector drawn to the
 object rather than to a port).
 
@@ -323,24 +321,24 @@ object rather than to a port).
 The `internet` item's ports are `hub` ports on Ethernet so a router's WAN port can connect to it
 without a special medium; the role lifts the one-connection limit.
 
-## Cross-reference to Accurona
+## Drawings
 
-An item that has a physical twin names it with an external link:
+An item that has a drawing names it:
 
 ```json
 { "id": "wifi-ap-ceiling", "name": "Wi-Fi access point", "family": "wireless",
-  "links": [ { "source": "accurona", "ref": "wifi-ap" } ],
+  "drawing": "wifi-ap",
   "ports": [
     { "id": "eth1", "medium": "ethernet-copper", "capabilities": ["poe-pd"] },
     { "id": "radio", "medium": "wi-fi", "role": "hub" }
   ] }
 ```
 
-- The link is the scene format's `ExternalLink { source, ref }`. It is optional and **not
-  validated**: an unknown element id is not an error.
-- An item with a twin can borrow the element's isometric drawing instead of having its own icon,
-  and uses the element's generated 2D schematic as its symbol in the flat view.
-- 51 of the 66 built-in items have a twin. The 15 without one are the bus parts (tees,
+- `drawing` is optional and **not validated** against the drawings: an unknown id is not an
+  error, the item just draws without one.
+- An item with a drawing uses its isometric view instead of having its own icon, and its flat
+  view as the symbol in the flat view.
+- 51 of the 66 built-in items have a drawing. The 15 without one are the bus parts (tees,
   terminators, the power injector, the end-of-line resistor, the loop isolator), the two
   gateways, the marine devices and the virtual items.
 
@@ -353,15 +351,15 @@ so a scene opens and renders correctly without the catalogue that made it:
   the medium id. Its connector, gender, role, protocols and capabilities go in the port's `props`
   (lists as comma-separated strings, because props hold scalars only).
 - The item is recorded as `links: [{ source: 'reticulyne', ref: '<item id>' }]`.
-- If the item has an Accurona cross-reference, the object's `element` is set to that element id.
-  That is what lets the same object appear on an Axonometra floor plan: one object, two views.
+- If the item has a drawing, the object's `element` is set to that drawing id. That is what lets
+  the same object appear on a floor plan: one object, two views.
 - The item's `props` are copied as the object's starting props.
 - A connection's `kind` is the medium id; `fromPort` and `toPort` name the two ports. Topology is
   checked by the editor, never by the scene schema.
 
 ## The palette
 
-The palette is arranged by **medium family**, never by Accurona group:
+The palette is arranged by **medium family**, never by drawing:
 
 1. Ethernet and IP
 2. Wireless
@@ -594,5 +592,5 @@ None of `net`, `tun` or `svc` has an `element`: they never appear on a floor pla
 - **Keep cables as connections.** Put the length on the connection in millimetres; do not add a
   cable item.
 - **Use `props.network` on wireless ports** rather than drawing an association to every client.
-- **Cross-reference, do not copy.** If Accurona has the physical element, link to it and borrow
-  its drawing instead of adding a second icon.
+- **Reuse a drawing, do not copy it.** If a drawing of the device exists, name it in `drawing`
+  instead of adding a second icon.

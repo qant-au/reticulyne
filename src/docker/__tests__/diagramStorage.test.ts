@@ -4,7 +4,7 @@
 import { INITIAL_DATA } from 'src/config';
 import type { Model } from 'src/types';
 import { legacyModelToScene } from 'src/scene';
-import type { Scene } from 'src/core';
+import { LEGACY_ICON_PREFIX, type Scene } from 'src/core';
 import { createDiagramStorage, StorageFullError } from '../diagramStorage';
 
 // APP-01.
@@ -79,8 +79,8 @@ test('a stored copy of a bundled icon under its older id is not doubled', () => 
       format: 'reticulyne-scene',
       version: 2,
       id: 'old',
-      objects: [{ id: 'a', icon: 'accurona-wifi-ap' }],
-      icons: [{ ...ap, id: 'accurona-wifi-ap', flatUrl: undefined }]
+      objects: [{ id: 'a', icon: `${LEGACY_ICON_PREFIX}wifi-ap` }],
+      icons: [{ ...ap, id: `${LEGACY_ICON_PREFIX}wifi-ap`, flatUrl: undefined }]
     })
   );
   const back = createDiagramStorage(localStorage, [...bundled, ap]).load(

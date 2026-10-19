@@ -69,8 +69,8 @@ describe('PlaceIcon mode', () => {
       mode: {
         type: 'PLACE_ICON',
         showCursor: true,
-        id: 'accurona-wifi-ap',
-        object: { id: 'ap-1', name: 'AP east', icon: 'accurona-wifi-ap' }
+        id: 'reticulyne-wifi-ap',
+        object: { id: 'ap-1', name: 'AP east', icon: 'reticulyne-wifi-ap' }
       },
       mouse: { position: { screen: { x: 0, y: 0 }, tile: { x: 3, y: 5 } } }
     });
@@ -80,7 +80,7 @@ describe('PlaceIcon mode', () => {
     expect(state.scene.createModelItem).toHaveBeenCalledWith({
       id: 'ap-1',
       name: 'AP east',
-      icon: 'accurona-wifi-ap'
+      icon: 'reticulyne-wifi-ap'
     });
     expect(state.scene.createViewItem).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'ap-1', tile: { x: 3, y: 5 } })

@@ -7,7 +7,7 @@ export const LEGACY_SCENE_FORMATS: readonly string[] = ['accurona-scene'];
 
 // The built-in drawings' icons were `accurona-<drawing>`; they are
 // `reticulyne-<drawing>` (src/icons/builtin.ts).
-const LEGACY_ICON_PREFIX = 'accurona-';
+export const LEGACY_ICON_PREFIX = 'accurona-';
 const ICON_PREFIX = 'reticulyne-';
 
 type Doc = Record<string, unknown>;
@@ -34,15 +34,23 @@ const renameIcon = (value: unknown) => {
   return icon === value.icon ? value : { ...value, icon };
 };
 
+// ...and were filed under this collection, now 'Reticulyne'.
+export const LEGACY_COLLECTION = 'Accurona';
+const COLLECTION = 'Reticulyne';
+
 const renameIconRecord = (value: unknown) => {
   if (!isDoc(value) || typeof value.id !== 'string') return value;
   const id = currentIconId(value.id);
-  return id === value.id ? value : { ...value, id };
+  const collection =
+    value.collection === LEGACY_COLLECTION ? COLLECTION : value.collection;
+  return id === value.id && collection === value.collection
+    ? value
+    : { ...value, id, ...(collection === undefined ? {} : { collection }) };
 };
 
 /**
- * A copy of a scene document under the current names: the format, and the
- * icon ids in `icons` and in each object's `icon`. Anything else is left
+ * A copy of a scene document under the current names: the format, the icon
+ * ids and collection in `icons`, and the icon in each object's `icon`. Anything else is left
  * as it is, for the schema to judge.
  */
 export function renameLegacy(value: Doc, current: string): Doc {

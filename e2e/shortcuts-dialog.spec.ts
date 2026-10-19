@@ -1,7 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
 
 /**
- * The ? dialog (shared with Axonometra, from @accurona/ui): alternatives
+ * The ? dialog (from the kit, src/kit): alternatives
  * separated by "or", a chord's keys joined by "+", the toolbar's names,
  * and at phone width every key inside the dialog (BUG15-14).
  */

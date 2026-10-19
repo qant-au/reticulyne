@@ -4,7 +4,7 @@ import {
   type ThemeOptions
 } from '@mui/material';
 
-// The shared look of Axonometra and Reticulyne (decision D12: one UI library,
+// Reticulyne's look (decision D12: one UI library,
 // MUI, with the shared parts here). Started from Reticulyne's theme.
 
 export interface CustomThemeVars {

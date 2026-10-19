@@ -58,9 +58,9 @@ const LAYER_ORDER = {
   'send-to-back': 'SEND_TO_BACK'
 } as const;
 
-// FEA5-02: keyboard shortcuts. The bindings are the shared
-// keymap in @accurona/core (docs/keymap.md in Accurona), which Axonometra
-// binds too; this hook maps each action to what it does here.
+// FEA5-02: keyboard shortcuts. The bindings are the keymap in
+// src/core/keymap.ts, aligned with Axonometra's; this hook maps each action
+// to what it does here.
 //
 // Editing bindings fire only in EDITABLE mode; selecting, panning, zoom,
 // fit, find, the theme toggle and ? fire read-only too, as the spec rules.
@@ -294,7 +294,7 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
         }
       }
 
-      // The shared keymap (@accurona/core) decides which action a key is;
+      // The keymap (src/core/keymap.ts) decides which action a key is;
       // read-only drops every editing binding.
       const action = resolveAction(e, KEYMAP, {
         readOnly: !isEditable,

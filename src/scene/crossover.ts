@@ -87,7 +87,7 @@ export const objectTemplate = (
 /**
  * what a catalogue item becomes when it is placed, less its id:
  * `itemToSceneObject` (ports expanded and copied, the item recorded as a
- * 'reticulyne' link, its Accurona twin as the `element`) as a model item.
+ * 'reticulyne' link, its drawing as the `element`) as a model item.
  * The twin's drawing is used only when the editor has that icon.
  */
 export const catalogueTemplate = (

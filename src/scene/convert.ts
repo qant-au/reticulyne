@@ -23,7 +23,7 @@ import type {
 import { generateId } from 'src/utils/common';
 import { CUSTOM_ICON_COLLECTION } from 'src/utils/iconUpload';
 
-// Reticulyne's model <-> the Accurona scene format, the file format.
+// Reticulyne's model <-> the scene format, the file format.
 //
 // The editor works on its own Model. A scene is what it opens and saves:
 // on load the scene's iso and schematic views become Reticulyne views, and

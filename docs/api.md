@@ -104,10 +104,10 @@ identifier.
 
 ## The file format: scenes
 
-Reticulyne's file format is the [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md), shared with
-[Axonometra](https://github.com/qant-au/axonometra): one JSON document with a list of
-**objects** (each thing, once) and **views** that place them. Reticulyne draws the `iso`
-and `schematic` views; `plan` views are Axonometra's. Everything Reticulyne writes is a
+Reticulyne's file format is the [scene format](scene-format.md): one JSON document with a
+list of **objects** (each thing, once) and **views** that place them. Reticulyne draws the
+`iso` and `schematic` views; `plan` views belong to a floor planner such as
+[Axonometra](https://github.com/qant-au/axonometra), and are kept. Everything Reticulyne writes is a
 scene: `onSave`, Export as JSON, `getScene()` and the Docker editor's saved diagrams.
 
 - **Opening** a scene shows its `iso` and `schematic` views and the objects placed in
@@ -120,9 +120,9 @@ scene: `onSave`, Export as JSON, `getScene()` and the Docker editor's saved diag
 - **Isometric or flat.** A view's kind is its `kind`: `'iso'` (also when absent) or
   `'schematic'`, on the scene view and on the Reticulyne `View`. Both draw the same tile
   grid, so switching loses nothing. In an editable diagram the buttons beside the zoom
-  controls switch the current view, as an undoable edit. The flat view draws a node
-  whose icon is an Accurona twin (`accurona-<element id>`) with that element's 2D
-  schematic (`schematicIconUrl(icon)`), and any other icon flat, as it is.
+  controls switch the current view, as an undoable edit. The flat view draws each node
+  with its icon's flat drawing (`flatUrl`), or its main image (`url`) when it has none
+  (see [icon packs](icon-packs.md)).
 - **Legacy models** (`InitialData`, below) are read, never written. Opening one converts
   it to a scene with one `iso` view per Reticulyne view. Ids the scene format does not
   allow (`/^[A-Za-z0-9_-]{1,64}$/`) are rewritten, and a colour that is not `#rrggbb`
@@ -249,9 +249,11 @@ The package also re-exports from `src/standaloneExports.ts`:
 - Schemas from `src/schemas/` — `modelSchema`, plus item / view / connector schemas.
 - Types — `ReticulyneProps`, `InitialData`, and the full `Model` tree from `src/types/model.ts`.
 - Icon upload and templates: `readIconAsDataUrl`, `CUSTOM_ICON_COLLECTION`, `MAX_ICON_UPLOAD_BYTES`, `TEMPLATES` and `templateToInitialData`.
-- The [catalogue](catalogue.md): `CATALOGUE`, `validateCatalogue`, `expandPorts`, `itemToSceneObject`, `pickPorts`, `topologyWarnings`, `accuronaIcons`, `schematicIcons` and the rest of `src/catalogue/`, with its types.
-- The scene format — the `Scene` and `SceneResult` types, `validateScene`, `parseScene`,
-  `serializeScene` (from Accurona), and `legacyModelToScene` to convert a stored model.
+- The [catalogue](catalogue.md): `CATALOGUE`, `validateCatalogue`, `expandPorts`, `itemToSceneObject`, `pickPorts`, `topologyWarnings`, `catalogueItemDrawing`, `schematicIcons` and the rest of `src/catalogue/`, with its types.
+- [Icon packs](icon-packs.md): `BUILTIN_PACK`, `builtinIcons`, `BUILTIN_ICON_COLLECTION`, `validateIconPack`, `iconPackSchema`, `packIcons`, `flattenPacks`, `fillFlatUrls` and the `IconPack` type.
+- The [scene format](scene-format.md) — the `Scene` and `SceneResult` types, `SCENE_FORMAT`,
+  `SCENE_VERSION`, `SCENE_SCHEMA_URL`, `validateScene`, `parseScene`, `serializeScene`,
+  `redactScene`, and `legacyModelToScene` to convert a stored model.
 - Option maps, as **runtime values** (FEA-05): `EditorModeEnum`, `MainMenuOptionsEnum`,
   `ProjectionOrientationEnum`, `AnchorPositionOptions`, `DialogTypeEnum`,
   `LayerOrderingActionOptions`, `tileOriginOptions`, `ItemReferenceTypeOptions`. Each is an

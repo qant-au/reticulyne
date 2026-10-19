@@ -7,9 +7,9 @@ interface Props {
   onClose: () => void;
 }
 
-// The `?` list is the shared keymap's (@accurona/core), so it cannot drift
-// from the keys the handler binds; the dialog itself is @accurona/ui's, as
-// in Axonometra. Esc and ? close it too, but on a phone the backdrop left to
+// The `?` list is the keymap's (src/core/keymap.ts), so it cannot drift
+// from the keys the handler binds; the dialog itself is the kit's
+// (src/kit). Esc and ? close it too, but on a phone the backdrop left to
 // tap is a thin strip, so the header keeps its Close button.
 export const KeyboardShortcutsDialog = ({ onClose }: Props) => {
   const sections = useMemo(() => {

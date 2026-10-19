@@ -33,7 +33,7 @@ for the five bundled collections, copied verbatim:
 Plus `utils/index.js` (the `flattenCollections` helper) and `types.d.ts`.
 Every icon's image data is an inlined `data:image/svg+xml;base64,…` URI; the
 packs reference no external image origins. The `isoflow` pack id is preserved
-as-is for back-compat (see CHANGELOG / `docs/isopacks.md`), even though the
+as-is for back-compat (see CHANGELOG / `docs/icon-packs.md`), even though the
 project itself was renamed to Reticulyne.
 
 ## Local modifications

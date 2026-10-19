@@ -11,7 +11,7 @@ import type { Connector, Model } from 'src/types';
 // connection attached to a port on each; it lets go of it when its ends
 // move and takes it along when it is deleted.
 
-// Without the Accurona icon, which this model does not carry.
+// Without the built-in icon, which this model does not carry.
 const placed = (itemId: string, id: string) => {
   const item = objectToModelItem(
     itemToSceneObject(

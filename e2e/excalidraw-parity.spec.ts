@@ -152,7 +152,7 @@ test('UXA-05: the help dialog lists the gestures and the Excalidraw differences'
     page.getByText('Toggle light / dark', { exact: true })
   ).toBeVisible();
   await expect(page.getByText('Drag a copy', { exact: true })).toBeVisible();
-  // The differences are the shared keymap's table (@accurona/core).
+  // The differences are the keymap's table (src/core/keymap.ts).
   const differences = page.getByTestId('excalidraw-differences');
   await expect(differences).toContainText('D, 3 (diamond)');
   await expect(differences).toContainText('Reticulyne deletes a selection');

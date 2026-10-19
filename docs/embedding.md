@@ -169,7 +169,7 @@ The host page never sees these wheel events bubble — the renderer's wheel list
 
 The editor wires the conventions used by Figma, Miro, Excalidraw and tldraw. All shortcuts are window-level and are suppressed while focus is on a text input / textarea / contenteditable surface (e.g. an item-description editor), so they never collide with the host's own typing.
 
-The bindings are the **shared Accurona keymap**, the same one [Axonometra](https://github.com/qant-au/axonometra) binds, aligned with **Excalidraw's**, letter and number alike, so an operator moving between an Excalidraw canvas and this one is not retrained. The specification, with every deliberate difference from Excalidraw, is [Accurona's `docs/keymap.md`](https://github.com/qant-au/accurona/blob/main/docs/keymap.md); the `?` dialog lists the same table. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
+The bindings are aligned with **Excalidraw's**, letter and number alike, and with [Axonometra](https://github.com/qant-au/axonometra)'s, so an operator moving between an Excalidraw canvas and this one is not retrained. The specification, with every deliberate difference from Excalidraw, is [`docs/keymap.md`](keymap.md); the `?` dialog lists the same table. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
 
 **Tools.** Bare key, no modifier. Select and Hand work in `EXPLORABLE_READONLY` too; the drawing tools need `EDITABLE`.
 
@@ -444,10 +444,10 @@ Changing `iconCollections` at runtime re-applies the filter on the next load —
 
 ### The file format: scenes
 
-Reticulyne opens and saves the [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md), the file format it shares
-with [Axonometra](https://github.com/qant-au/axonometra). A scene lists each thing once as
-an **object**, and **views** place objects: Reticulyne draws the `iso` and `schematic`
-views, Axonometra the `plan` views. What `onSave` receives, what Export as JSON downloads
+Reticulyne opens and saves the [scene format](scene-format.md). A scene lists each thing once
+as an **object**, and **views** place objects: Reticulyne draws the `iso` and `schematic`
+views and keeps the `plan` views a floor planner such as
+[Axonometra](https://github.com/qant-au/axonometra) draws. What `onSave` receives, what Export as JSON downloads
 and what `getScene()` returns are all scenes.
 
 On save the edited diagram is merged into the scene that was opened, so a plan view,
@@ -484,7 +484,7 @@ the export ticks **Include redacted content**: put addresses and other sensitive
 notes there, and the copy you send out leaves them behind. A diagram with nothing on
 it exports exactly as before, with no extra question. The file the editor saves
 (`onSave`, the Docker image's own storage) is the working copy and always keeps it;
-`redactScene(scene)` in `@accurona/core` gives the redacted copy of any scene.
+`redactScene(scene)` gives the redacted copy of any scene.
 
 ### Floors and cross-floor connections
 

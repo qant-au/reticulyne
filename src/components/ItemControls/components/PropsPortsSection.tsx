@@ -25,7 +25,7 @@ import { useModelItem } from 'src/hooks/useModelItem';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import type { ModelItem } from 'src/types';
 import { PanelSection } from 'src/vendor/accurona-ui';
-import { SCENE_LIMITS } from 'src/vendor/accurona-core/scene/schema';
+import { SCENE_LIMITS } from 'src/core/scene/schema';
 
 // An object's props and ports as tables (docs/scene-format.md,
 // "Objects": props are flat scalars "so that every tool can show and edit it

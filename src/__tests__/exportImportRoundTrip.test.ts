@@ -4,7 +4,7 @@
 import { exportAsJSON } from 'src/utils/exportOptions';
 import { handleImportedJsonText } from 'src/components/MainMenu/useImportFile';
 import { model as fixtureModel } from 'src/fixtures/model';
-import { SCENE_SCHEMA_URL, type Scene } from 'src/vendor/accurona-core';
+import { SCENE_SCHEMA_URL, type Scene } from 'src/core';
 import {
   legacyModelToScene,
   readScene,
@@ -64,7 +64,7 @@ describe('JSON export → import round-trip (QUA-09)', () => {
     expect(blob.type).toContain('application/json');
     const json = await readBlobText(blob);
     const body = JSON.parse(json);
-    expect(body.format).toBe('accurona-scene');
+    expect(body.format).toBe('reticulyne-scene');
     expect(body.$schema).toBe(SCENE_SCHEMA_URL);
     expect(body).not.toHaveProperty('items');
 
@@ -85,7 +85,7 @@ describe('JSON export → import round-trip (QUA-09)', () => {
       const result = readScene(data);
       if (result.ok) imported = result.scene;
     });
-    expect(imported?.format).toBe('accurona-scene');
+    expect(imported?.format).toBe('reticulyne-scene');
     expect(imported?.objects).toHaveLength(fixtureModel.items.length);
   });
 

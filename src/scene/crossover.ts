@@ -1,4 +1,4 @@
-import type { SceneObject } from 'src/vendor/accurona-core';
+import type { SceneObject } from 'src/core';
 import { ISO_DRAWINGS } from 'src/vendor/accurona-iso';
 import { ITEMS } from 'src/catalogue/items';
 import {

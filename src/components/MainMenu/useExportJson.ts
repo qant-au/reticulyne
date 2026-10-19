@@ -22,7 +22,7 @@ import {
   modelFromModelStore
 } from 'src/utils';
 import { leanIcons, sceneFromModel } from 'src/scene/convert';
-import { redactScene } from 'src/vendor/accurona-core';
+import { redactScene } from 'src/core';
 
 /** Downloads the diagram's scene, with or without the Redacted layer. */
 export const useDownloadJson = () => {

@@ -3,7 +3,7 @@ import {
   SCENE_VERSION,
   isAllowedIconUrl,
   type Scene
-} from 'src/vendor/accurona-core';
+} from 'src/core';
 import type { Model } from 'src/types/model';
 import { generateId } from 'src/utils/common';
 import { REDACTED_LAYER_ID } from 'src/schemas/layer';

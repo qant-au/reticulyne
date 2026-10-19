@@ -39,16 +39,19 @@ export type { AnchorPosition, LayerOrderingAction } from 'src/types/ui';
 export { tileOriginOptions, ItemReferenceTypeOptions } from 'src/types/scene';
 export type { TileOrigin, ItemReferenceType } from 'src/types/scene';
 
-// The scene format, Reticulyne's file format (the Accurona scene format):
-// its type, and validation, parsing and writing for hosts that store or
-// check diagrams themselves. legacyModelToScene converts a model saved by
-// an older Reticulyne. Framework-free, so safe to load without `window`.
+// The scene format, Reticulyne's file format (docs/scene-format.md): its
+// type, and validation, parsing and writing for hosts that store or check
+// diagrams themselves. legacyModelToScene converts a model saved by an older
+// Reticulyne. Framework-free, so safe to load without `window`.
 export {
+  SCENE_FORMAT,
+  SCENE_SCHEMA_URL,
+  SCENE_VERSION,
   validateScene,
   parseScene,
   serializeScene
-} from 'src/vendor/accurona-core';
-export type { Scene, SceneResult } from 'src/vendor/accurona-core';
+} from 'src/core';
+export type { Scene, SceneResult } from 'src/core';
 
 // The catalogue (docs/catalogue.md): media, protocols and items with
 // ports, validation, the scene object a placed item becomes, and the

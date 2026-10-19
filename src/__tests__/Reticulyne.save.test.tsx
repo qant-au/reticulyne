@@ -10,7 +10,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Reticulyne from '../Reticulyne';
-import type { Scene } from 'src/vendor/accurona-core';
+import type { Scene } from 'src/core';
 
 // jsdom shims — copied from Reticulyne.smoke.test.tsx since the renderer
 // touches ResizeObserver and matchMedia on mount.
@@ -96,7 +96,7 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
 
     expect(onSave).toHaveBeenCalledTimes(1);
     const arg = onSave.mock.calls[0][0] as Scene;
-    expect(arg.format).toBe('accurona-scene');
+    expect(arg.format).toBe('reticulyne-scene');
     expect(arg.title).toBe('SaveTarget');
     expect(arg.views).toHaveLength(1);
     expect(arg.views?.[0]).toMatchObject({ id: 'v1', kind: 'iso' });
@@ -110,7 +110,7 @@ describe('FEA5-03 — onSave + ACTION.SAVE main-menu entry', () => {
     if (!Element.prototype.scrollTo) Element.prototype.scrollTo = () => {};
     const onSave = jest.fn();
     const opened: Scene = {
-      format: 'accurona-scene',
+      format: 'reticulyne-scene',
       version: 2,
       id: 'hq',
       title: 'Head office',

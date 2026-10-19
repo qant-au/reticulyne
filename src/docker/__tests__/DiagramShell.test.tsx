@@ -10,7 +10,7 @@ import {
 } from '@testing-library/react';
 import { INITIAL_DATA } from 'src/config';
 import { legacyModelToScene } from 'src/scene';
-import type { Scene } from 'src/vendor/accurona-core';
+import type { Scene } from 'src/core';
 import { DiagramShell } from '../DiagramShell';
 
 // The e2e hook (window.__RETICULYNE_E2E__) hands the shell its diagram.

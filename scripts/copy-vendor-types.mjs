@@ -9,7 +9,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const dist = resolve(root, 'dist');
-const packages = ['accurona-core', 'accurona-ui'];
+const packages = ['accurona-ui'];
 
 for (const name of packages) {
   const from = resolve(root, 'src/vendor', name);

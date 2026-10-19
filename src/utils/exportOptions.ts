@@ -3,7 +3,7 @@ import { jsPDF } from 'jspdf';
 import { Size } from '../types';
 import { sanitizeSvgDataUri } from './sanitizeSvgDataUri';
 import { isAllowedIconUrl } from '../schemas/common';
-import { serializeScene, type Scene } from '../vendor/accurona-core';
+import { serializeScene, type Scene } from 'src/core';
 
 // Host indicators (nodeIndicatorComponent, connectorIndicatorComponent)
 // are live host state, not the diagram, so no export draws them. The PNG

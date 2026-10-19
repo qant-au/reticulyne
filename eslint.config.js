@@ -66,7 +66,10 @@ module.exports = tseslint.config(
       'no-use-before-define': 'off',
       '@typescript-eslint/no-use-before-define': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
+      ],
       'no-unused-vars': 'off',
       'react/jsx-key': 'warn',
       // eslint-plugin-react-hooks v6+ React-Compiler-style analysis. Enforced

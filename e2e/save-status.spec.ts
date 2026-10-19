@@ -61,7 +61,7 @@ test('clean on load, dirty after an edit, Saving… then Saved', async ({
       }
     ).__RETICULYNE_E2E_SAVES__[0];
   });
-  expect(saved.format).toBe('accurona-scene');
+  expect(saved.format).toBe('reticulyne-scene');
   expect(saved.title).toBe('Edited');
   expect(saved).not.toHaveProperty('items');
 });

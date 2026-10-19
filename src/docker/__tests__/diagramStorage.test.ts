@@ -4,7 +4,7 @@
 import { INITIAL_DATA } from 'src/config';
 import type { Model } from 'src/types';
 import { legacyModelToScene } from 'src/scene';
-import type { Scene } from 'src/vendor/accurona-core';
+import type { Scene } from 'src/core';
 import { createDiagramStorage, StorageFullError } from '../diagramStorage';
 
 // APP-01.
@@ -41,7 +41,7 @@ test('stores a scene with only its own icons and the bundled ones it uses', () =
   store.save('d1', scene('Network'));
 
   const raw = JSON.parse(localStorage.getItem('reticulyne.diagram.d1')!);
-  expect(raw.format).toBe('accurona-scene');
+  expect(raw.format).toBe('reticulyne-scene');
   expect(raw.objects).toEqual([{ id: 'a', name: 'A', icon: 'server' }]);
   expect(raw.icons).toEqual([bundled[0], uploaded]);
 
@@ -62,7 +62,7 @@ test('reads a diagram an older build stored as a Reticulyne model', () => {
     JSON.stringify({ ...legacy, icons: [uploaded] })
   );
   const back = createDiagramStorage(localStorage, bundled).load('old')!;
-  expect(back.format).toBe('accurona-scene');
+  expect(back.format).toBe('reticulyne-scene');
   expect(back.id).toBe('old');
   expect(back.objects).toEqual([{ id: 'a', name: 'A', icon: 'server' }]);
   expect(
@@ -109,7 +109,7 @@ test('a scene naming a bundled icon it does not carry opens; an unknown one does
 test('an invalid stored diagram reads as null', () => {
   localStorage.setItem(
     'reticulyne.diagram.bad',
-    JSON.stringify({ format: 'accurona-scene', version: 1, id: 'bad' })
+    JSON.stringify({ format: 'reticulyne-scene', version: 1, id: 'bad' })
   );
   expect(createDiagramStorage(localStorage, bundled).load('bad')).toBeNull();
 });

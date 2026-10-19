@@ -12,7 +12,7 @@ jest.mock('src/stores/uiStateStore', () => {
   };
 });
 
-jest.mock('src/vendor/accurona-core', () => {
+jest.mock('src/core', () => {
   return {
     objectPlaces: () => {
       return [

@@ -1,4 +1,4 @@
-import { validateScene, type Scene } from 'src/vendor/accurona-core';
+import { validateScene, type Scene } from 'src/core';
 import { modelSchema } from 'src/schemas/model';
 import type { Model } from 'src/types';
 import {
@@ -20,7 +20,7 @@ const expectValid = (scene: Scene) => {
 // also patched to a door controller that is only on the plan (c2).
 const building = (): Scene => {
   return {
-    format: 'accurona-scene',
+    format: 'reticulyne-scene',
     version: 2,
     id: 'hq',
     objects: [

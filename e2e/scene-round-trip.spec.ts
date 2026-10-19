@@ -10,7 +10,7 @@ import { readFile } from 'node:fs/promises';
  * Import from file, and exported again.
  */
 const scene = {
-  format: 'accurona-scene',
+  format: 'reticulyne-scene',
   version: 1,
   id: 'round-trip',
   title: 'Round trip',

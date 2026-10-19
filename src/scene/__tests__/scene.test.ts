@@ -1,8 +1,4 @@
-import {
-  validateScene,
-  type PlanView,
-  type Scene
-} from 'src/vendor/accurona-core';
+import { validateScene, type PlanView, type Scene } from 'src/core';
 import { model as fixtureModel } from 'src/fixtures/model';
 import { modelSchema } from 'src/schemas/model';
 import type { Model } from 'src/types';
@@ -25,7 +21,7 @@ const expectValid = (scene: Scene) => {
 // ports and links, a connection, layers and a connector drawing it.
 const richScene = (): Scene => {
   return {
-    format: 'accurona-scene',
+    format: 'reticulyne-scene',
     version: 2,
     id: 'hq',
     title: 'Head office',
@@ -152,7 +148,7 @@ describe('sceneToModel', () => {
 
   test('an object with no name gets an empty one; a title defaults', () => {
     const scene: Scene = {
-      format: 'accurona-scene',
+      format: 'reticulyne-scene',
       version: 2,
       id: 's',
       objects: [{ id: 'x' }],
@@ -563,7 +559,7 @@ describe('readScene', () => {
 
 test('a file keeps only the icons its objects use and the uploaded ones', () => {
   const scene: Scene = {
-    format: 'accurona-scene',
+    format: 'reticulyne-scene',
     version: 2,
     id: 's',
     objects: [{ id: 'a', name: 'A', icon: 'used' }],

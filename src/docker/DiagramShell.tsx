@@ -32,7 +32,7 @@ import type {
   Model,
   ReticulyneProps
 } from 'src/types';
-import { parseJson, type Scene } from 'src/vendor/accurona-core';
+import { parseJson, type Scene } from 'src/core';
 import {
   createDiagramStorage,
   type DiagramEntry,

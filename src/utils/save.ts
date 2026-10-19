@@ -1,5 +1,5 @@
 import type { Model, SaveHandler, SaveStatus } from 'src/types';
-import { validateScene } from 'src/vendor/accurona-core';
+import { validateScene } from 'src/core';
 import {
   leanIcons,
   sceneFromModel,

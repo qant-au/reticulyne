@@ -18,7 +18,7 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { NAME_MAX, SCHEMA_LIMITS } from 'src/schemas/common';
-import { floorsOf } from 'src/vendor/accurona-core';
+import { floorsOf } from 'src/core';
 import {
   CUT_MIN_CHARS,
   ceilPx,

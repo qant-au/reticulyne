@@ -19,11 +19,7 @@ import { useTour } from 'src/hooks/useTour';
 import { useKeyboardPlacement } from 'src/hooks/useKeyboardPlacement';
 import { tourKeyAction } from './tourKeys';
 import type { ItemReference } from 'src/types';
-import {
-  isTypingTarget,
-  keymapFor,
-  resolveAction
-} from 'src/vendor/accurona-core';
+import { isTypingTarget, keymapFor, resolveAction } from 'src/core';
 
 const NUDGE_STEP = 1;
 const SHIFT_MULTIPLIER = 5;

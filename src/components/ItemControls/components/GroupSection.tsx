@@ -6,7 +6,7 @@ import { groupChain, groupMatchingSelection } from 'src/utils';
 import type { ItemReference } from 'src/types';
 import { ColorSelector } from 'src/components/ColorSelector/ColorSelector';
 import { PanelSection } from 'src/vendor/accurona-ui';
-import { shortcutHint } from 'src/vendor/accurona-core';
+import { shortcutHint } from 'src/core';
 import { KEYMAP } from 'src/interaction/useKeyboardShortcuts';
 
 // Keyed on the group and its saved name, so it starts over when either

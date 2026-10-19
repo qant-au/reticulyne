@@ -4,7 +4,7 @@ import { validateModel } from 'src/schemas/validation';
 import type { Model, View } from 'src/types';
 import type { State } from 'src/stores/reducers/types';
 import type { useScene } from 'src/hooks/useScene';
-import { validateScene } from 'src/vendor/accurona-core';
+import { validateScene } from 'src/core';
 import { sceneFromModel, sceneToModel, freshSceneContext } from 'src/scene';
 import { getItemAtTile, getItemsInBounds } from '../hitTest';
 import { hasLocked, isLocked } from '../lock';

@@ -6,7 +6,7 @@ import {
   KEYMAP,
   useKeyboardShortcuts
 } from 'src/interaction/useKeyboardShortcuts';
-import { formatBinding } from 'src/vendor/accurona-core';
+import { formatBinding } from 'src/core';
 import { useSpacePan } from 'src/interaction/useSpacePan';
 import { Grid } from 'src/components/Grid/Grid';
 import { Cursor } from 'src/components/Cursor/Cursor';

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { Box } from '@mui/material';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import type { InitialData } from 'src/types';
-import type { Scene } from 'src/vendor/accurona-core';
+import type { Scene } from 'src/core';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import type { EditorModeEnum } from 'src/types/common';
 import { icons, colors } from './examples/initialData';

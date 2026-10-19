@@ -1,4 +1,4 @@
-import { validateScene, type Scene } from 'src/vendor/accurona-core';
+import { validateScene, type Scene } from 'src/core';
 import { ITEMS } from 'src/catalogue/items';
 import {
   availableIcon,
@@ -23,7 +23,7 @@ const expectValid = (scene: Scene) => {
 
 const building = (): Scene => {
   return {
-    format: 'accurona-scene',
+    format: 'reticulyne-scene',
     version: 2,
     id: 'hq',
     objects: [

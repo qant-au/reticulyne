@@ -21,7 +21,7 @@ export const KeyboardShortcutsDialog = ({ onClose }: Props) => {
       onClose={onClose}
       title="Keyboard Shortcuts"
       sections={sections}
-      differences={formatDifferences(DIFFERENCES.reticulyne)}
+      differences={formatDifferences(DIFFERENCES)}
     />
   );
 };

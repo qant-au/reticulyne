@@ -4,7 +4,7 @@
 import { strict as assert } from 'node:assert';
 import {
   DIFFERENCES,
-  SHARED_BINDINGS,
+  EXCALIDRAW_BINDINGS,
   formatBinding,
   formatDifferences,
   formatChord,
@@ -28,22 +28,13 @@ const ev = (key, code = '', mods = {}) => {
   };
 };
 
-const reticulyne = keymapFor('reticulyne');
-const axonometra = keymapFor('axonometra');
+const reticulyne = keymapFor();
+const plain = keymapFor();
 
 test('tool letters and the number row', () => {
-  assert.equal(resolveAction(ev('v', 'KeyV'), axonometra), 'select');
-  assert.equal(
-    resolveAction(ev('V', 'KeyV'), axonometra),
-    'select',
-    'caps lock'
-  );
-  assert.equal(resolveAction(ev('1', 'Digit1'), axonometra), 'select');
-  assert.equal(resolveAction(ev('l', 'KeyL'), axonometra), 'wall');
-  assert.equal(resolveAction(ev('6', 'Digit6'), axonometra), 'wall');
-  assert.equal(resolveAction(ev('d', 'KeyD'), axonometra), 'door');
-  assert.equal(resolveAction(ev('e', 'KeyE'), axonometra), 'eraser');
-  assert.equal(resolveAction(ev('0', 'Digit0'), axonometra), 'eraser');
+  assert.equal(resolveAction(ev('v', 'KeyV'), plain), 'select');
+  assert.equal(resolveAction(ev('V', 'KeyV'), plain), 'select', 'caps lock');
+  assert.equal(resolveAction(ev('1', 'Digit1'), plain), 'select');
   assert.equal(resolveAction(ev('a', 'KeyA'), reticulyne), 'connector');
   assert.equal(resolveAction(ev('c', 'KeyC'), reticulyne), 'connector');
   assert.equal(
@@ -63,50 +54,41 @@ test('deliberate divergences stay unbound', () => {
   assert.equal(resolveAction(ev('0', 'Digit0'), reticulyne), null);
   assert.equal(resolveAction(ev('l', 'KeyL'), reticulyne), null);
   assert.equal(resolveAction(ev('d', 'KeyD'), reticulyne), null);
-  assert.equal(resolveAction(ev('f', 'KeyF'), axonometra), null);
 });
 
 test('omit leaves a where-built row unbound', () => {
-  const map = keymapFor('axonometra', { omit: ['group', 'keep-tool'] });
+  const map = keymapFor({ omit: ['group', 'keep-tool'] });
   assert.equal(resolveAction(ev('g', 'KeyG', { ctrlKey: true }), map), null);
   assert.equal(resolveAction(ev('q', 'KeyQ'), map), null);
   assert.equal(
-    resolveAction(ev('g', 'KeyG', { ctrlKey: true }), axonometra),
+    resolveAction(ev('g', 'KeyG', { ctrlKey: true }), plain),
     'group'
   );
 });
 
 test('modifiers must match exactly', () => {
   assert.equal(
-    resolveAction(ev('v', 'KeyV', { ctrlKey: true }), axonometra),
+    resolveAction(ev('v', 'KeyV', { ctrlKey: true }), plain),
     'paste'
   );
   assert.equal(
-    resolveAction(ev('v', 'KeyV', { metaKey: true }), axonometra),
+    resolveAction(ev('v', 'KeyV', { metaKey: true }), plain),
     'paste'
   );
   assert.equal(
-    resolveAction(ev('V', 'KeyV', { shiftKey: true }), axonometra),
+    resolveAction(ev('V', 'KeyV', { shiftKey: true }), plain),
     null,
     'Shift+V is flip, unbound'
   );
+  assert.equal(resolveAction(ev('ArrowLeft', 'ArrowLeft'), plain), 'nudge');
   assert.equal(
-    resolveAction(ev('ArrowLeft', 'ArrowLeft'), axonometra),
+    resolveAction(ev('ArrowLeft', 'ArrowLeft', { shiftKey: true }), plain),
     'nudge'
-  );
-  assert.equal(
-    resolveAction(ev('ArrowLeft', 'ArrowLeft', { shiftKey: true }), axonometra),
-    'nudge'
-  );
-  assert.equal(
-    resolveAction(ev('ArrowLeft', 'ArrowLeft', { ctrlKey: true }), axonometra),
-    null,
-    'Ctrl+arrow is flowchart, unbound'
   );
   assert.equal(
     resolveAction(
       ev('ArrowLeft', 'ArrowLeft', { ctrlKey: true, shiftKey: true }),
-      axonometra
+      plain
     ),
     'align-left'
   );
@@ -114,33 +96,24 @@ test('modifiers must match exactly', () => {
 
 test('undo, redo and Ctrl+Y (Ctrl only)', () => {
   assert.equal(
-    resolveAction(ev('z', 'KeyZ', { metaKey: true }), axonometra),
+    resolveAction(ev('z', 'KeyZ', { metaKey: true }), plain),
     'undo'
   );
   assert.equal(
-    resolveAction(
-      ev('Z', 'KeyZ', { metaKey: true, shiftKey: true }),
-      axonometra
-    ),
+    resolveAction(ev('Z', 'KeyZ', { metaKey: true, shiftKey: true }), plain),
     'redo'
   );
   assert.equal(
-    resolveAction(ev('y', 'KeyY', { ctrlKey: true }), axonometra),
+    resolveAction(ev('y', 'KeyY', { ctrlKey: true }), plain),
     'redo'
   );
-  assert.equal(
-    resolveAction(ev('y', 'KeyY', { metaKey: true }), axonometra),
-    null
-  );
+  assert.equal(resolveAction(ev('y', 'KeyY', { metaKey: true }), plain), null);
 });
 
 test('Alt chords match the physical key', () => {
   // On macOS, Option+Shift+D types a character, not "d".
   assert.equal(
-    resolveAction(
-      ev('Î', 'KeyD', { altKey: true, shiftKey: true }),
-      axonometra
-    ),
+    resolveAction(ev('Î', 'KeyD', { altKey: true, shiftKey: true }), plain),
     'toggle-theme'
   );
   assert.equal(
@@ -159,10 +132,6 @@ test('Alt + Up / Down change floor in Reticulyne; a bare arrow still nudges', ()
     'floor-down'
   );
   assert.equal(resolveAction(ev('ArrowUp', 'ArrowUp'), reticulyne), 'nudge');
-  assert.equal(
-    resolveAction(ev('ArrowUp', 'ArrowUp', { altKey: true }), axonometra),
-    null
-  );
 });
 
 test('keyboard access in Reticulyne: Tab walks objects, Ctrl/Cmd + arrow pans, Shift+F10 opens the menu', () => {
@@ -199,50 +168,37 @@ test('keyboard access in Reticulyne: Tab walks objects, Ctrl/Cmd + arrow pans, S
     }),
     null
   );
-  assert.equal(
-    resolveAction(ev('Tab', 'Tab'), axonometra),
-    null,
-    'Reticulyne only'
-  );
   assert.equal(formatChord({ key: 'ContextMenu' }, 'other'), 'Menu');
 });
 
 test('zoom keys and fit', () => {
   assert.equal(
-    resolveAction(ev('=', 'Equal', { ctrlKey: true }), axonometra),
+    resolveAction(ev('=', 'Equal', { ctrlKey: true }), plain),
     'zoom-in'
   );
   assert.equal(
-    resolveAction(
-      ev('+', 'Equal', { ctrlKey: true, shiftKey: true }),
-      axonometra
-    ),
+    resolveAction(ev('+', 'Equal', { ctrlKey: true, shiftKey: true }), plain),
     'zoom-in'
   );
   assert.equal(
-    resolveAction(ev('-', 'Minus', { metaKey: true }), axonometra),
+    resolveAction(ev('-', 'Minus', { metaKey: true }), plain),
     'zoom-out'
   );
   assert.equal(
-    resolveAction(ev('0', 'Digit0', { ctrlKey: true }), axonometra),
+    resolveAction(ev('0', 'Digit0', { ctrlKey: true }), plain),
     'zoom-reset'
-  );
-  assert.equal(
-    resolveAction(ev('=', 'Equal'), axonometra),
-    null,
-    'bare = is a Reticulyne alias'
   );
   assert.equal(resolveAction(ev('=', 'Equal'), reticulyne), 'zoom-in');
   assert.equal(
-    resolveAction(ev('!', 'Digit1', { shiftKey: true }), axonometra),
+    resolveAction(ev('!', 'Digit1', { shiftKey: true }), plain),
     'fit-all'
   );
   assert.equal(
-    resolveAction(ev('@', 'Digit2', { shiftKey: true }), axonometra),
+    resolveAction(ev('@', 'Digit2', { shiftKey: true }), plain),
     'fit-selection'
   );
   assert.equal(
-    resolveAction(ev('?', 'Slash', { shiftKey: true }), axonometra),
+    resolveAction(ev('?', 'Slash', { shiftKey: true }), plain),
     'help'
   );
 });
@@ -266,27 +222,23 @@ test('both forms of the ordering keys', () => {
 test('read-only drops editing bindings, keeps viewing ones', () => {
   const ro = { readOnly: true };
   assert.equal(
-    resolveAction(ev('z', 'KeyZ', { ctrlKey: true }), axonometra, ro),
+    resolveAction(ev('z', 'KeyZ', { ctrlKey: true }), plain, ro),
     null
   );
-  assert.equal(resolveAction(ev('Delete', 'Delete'), axonometra, ro), null);
-  assert.equal(resolveAction(ev('l', 'KeyL'), axonometra, ro), null);
-  assert.equal(resolveAction(ev('h', 'KeyH'), axonometra, ro), 'hand');
-  assert.equal(resolveAction(ev('v', 'KeyV'), axonometra, ro), 'select');
+  assert.equal(resolveAction(ev('Delete', 'Delete'), plain, ro), null);
+  assert.equal(resolveAction(ev('l', 'KeyL'), plain, ro), null);
+  assert.equal(resolveAction(ev('h', 'KeyH'), plain, ro), 'hand');
+  assert.equal(resolveAction(ev('v', 'KeyV'), plain, ro), 'select');
   assert.equal(
-    resolveAction(ev('f', 'KeyF', { ctrlKey: true }), axonometra, ro),
+    resolveAction(ev('f', 'KeyF', { ctrlKey: true }), plain, ro),
     'find'
   );
   assert.equal(
-    resolveAction(ev('?', 'Slash', { shiftKey: true }), axonometra, ro),
+    resolveAction(ev('?', 'Slash', { shiftKey: true }), plain, ro),
     'help'
   );
   assert.equal(
-    resolveAction(
-      ev('Î', 'KeyD', { altKey: true, shiftKey: true }),
-      axonometra,
-      ro
-    ),
+    resolveAction(ev('Î', 'KeyD', { altKey: true, shiftKey: true }), plain, ro),
     'toggle-theme'
   );
 });
@@ -319,18 +271,13 @@ test('nothing fires while typing', () => {
   );
   assert.equal(isTypingTarget(null), false);
   assert.equal(
-    resolveAction(
-      ev('z', 'KeyZ', { ctrlKey: true, target: input }),
-      axonometra
-    ),
+    resolveAction(ev('z', 'KeyZ', { ctrlKey: true, target: input }), plain),
     null
   );
   assert.equal(
-    resolveAction(
-      ev('z', 'KeyZ', { ctrlKey: true, target: input }),
-      axonometra,
-      { typingGuard: false }
-    ),
+    resolveAction(ev('z', 'KeyZ', { ctrlKey: true, target: input }), plain, {
+      typingGuard: false
+    }),
     'undo'
   );
 });
@@ -342,10 +289,10 @@ test('matchChord: a code chord ignores the character', () => {
   );
 });
 
-test('no two bindings in a tool share a chord', () => {
+test('no two bindings share a chord', () => {
   for (const [tool, map] of [
     ['reticulyne', reticulyne],
-    ['axonometra', axonometra]
+    ['plain', plain]
   ]) {
     const actions = map.map((b) => {
       return b.action;
@@ -387,11 +334,10 @@ test('formatting for menus and the ? dialog', () => {
     'Ctrl + ]'
   );
   assert.equal(formatChord({ key: 'Escape' }, 'other'), 'Esc');
-  const zoomIn = SHARED_BINDINGS.find((b) => {
+  const zoomIn = EXCALIDRAW_BINDINGS.find((b) => {
     return b.action === 'zoom-in';
   });
   assert.deepEqual(formatBinding(zoomIn, 'other'), ['Ctrl + =']);
-  assert.equal(shortcutHint(axonometra, 'wall', 'other'), 'L');
   assert.equal(shortcutHint(reticulyne, 'select', 'other'), 'V');
   // A hint reads as the dialog draws the chord, + between keys everywhere.
   assert.equal(shortcutHint(reticulyne, 'group', 'mac'), '⌘ + G');
@@ -442,7 +388,7 @@ test('every pointer row has its own label, and add-on-tile names its keys', () =
     'Double-click an empty tile',
     'I then Enter'
   ]);
-  for (const tool of ['reticulyne', 'axonometra']) {
+  for (const tool of ['reticulyne', 'plain']) {
     const labels = keymapFor(tool)
       .filter((b) => {
         return b.section === 'Pointer and touch';
@@ -464,15 +410,16 @@ test("Reticulyne's right-click row is the object menu: empty canvas has none", (
   });
   assert.equal(row.label, "Open an object's menu");
   assert.deepEqual(formatBinding(row, 'other'), ['Right-click an object']);
-  const shared = axonometra.find((b) => {
+  // The Excalidraw row it takes over keeps its own name.
+  const shared = EXCALIDRAW_BINDINGS.find((b) => {
     return b.action === 'context-menu';
   });
   assert.equal(shared.label, 'Context menu');
 });
 
 test('the differences use the row names and the platform key names', () => {
-  const mac = formatDifferences(DIFFERENCES.reticulyne, 'mac');
-  const other = formatDifferences(DIFFERENCES.reticulyne, 'other');
+  const mac = formatDifferences(DIFFERENCES, 'mac');
+  const other = formatDifferences(DIFFERENCES, 'other');
   assert.equal(
     mac.find((d) => {
       return d.action === 'frame';
@@ -492,7 +439,7 @@ test('the differences use the row names and the platform key names', () => {
   }
 });
 
-test("a tool's own label names a shared row as its toolbar does", () => {
+test('an own label names an Excalidraw row as the toolbar does', () => {
   const label = (bindings, action) => {
     return bindings.find((b) => {
       return b.action === action;
@@ -506,33 +453,28 @@ test("a tool's own label names a shared row as its toolbar does", () => {
     }).chords,
     [{ key: 'h' }]
   );
-  assert.equal(label(axonometra, 'hand'), 'Hand (pan)');
-  assert.equal(label(axonometra, 'fit-all'), 'Fit everything');
+  assert.equal(label(EXCALIDRAW_BINDINGS, 'hand'), 'Hand (pan)');
+  assert.equal(label(EXCALIDRAW_BINDINGS, 'fit-all'), 'Fit everything');
 });
 
-test('each tool has a differences list', () => {
+test('the differences list names the deliberate divergences', () => {
   assert.ok(
-    DIFFERENCES.reticulyne.some((d) => {
+    DIFFERENCES.some((d) => {
       return d.action === 'eraser';
     })
   );
-  assert.ok(
-    DIFFERENCES.axonometra.some((d) => {
-      return d.here.includes('door');
-    })
-  );
 });
 
-test('shortcutSections groups a tool in the spec order', () => {
-  const sections = shortcutSections(axonometra, 'other');
+test('shortcutSections groups the bindings in the spec order', () => {
+  const sections = shortcutSections(plain, 'other');
   assert.deepEqual(
     sections.map((s) => {
       return s.title;
     }),
     ['Tools', 'View', 'Edit', 'Pointer and touch']
   );
-  const wall = sections[0].rows.find((r) => {
-    return r.label === 'Wall';
+  const rectangle = sections[0].rows.find((r) => {
+    return r.label === 'Rectangle';
   });
-  assert.deepEqual(wall.keys, ['L', '6']);
+  assert.ok(rectangle.keys.includes('R'));
 });

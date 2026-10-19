@@ -181,9 +181,9 @@ export const useInitialDataManager = ({
         [...fileIcons, ...library],
         iconCollectionsRef.current
       );
-      // A device from the floor plan carries only its Accurona
-      // element; it draws with that element's catalogue twin, when the
-      // editor has the twin's icon.
+      // A device from the floor plan carries only its `element`; it
+      // draws with that element's catalogue twin, when the editor has the
+      // twin's icon.
       const objects = new Map(
         read.scene.objects.map((object) => {
           return [object.id, object];

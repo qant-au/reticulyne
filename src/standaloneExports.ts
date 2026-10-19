@@ -49,6 +49,7 @@ export {
   SCENE_VERSION,
   validateScene,
   parseScene,
+  redactScene,
   serializeScene
 } from 'src/core';
 export type { Scene, SceneResult } from 'src/core';

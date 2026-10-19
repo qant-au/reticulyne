@@ -39,7 +39,7 @@ export const connectorGlyphOptions = [
 ] as const;
 
 // The edge of an item's tile a connector end leaves by, named by
-// the grid direction it faces (as in the Accurona scene format). Only
+// the grid direction it faces (as in the scene format). Only
 // meaningful with `item`; absent, the end docks on the tile's centre.
 export const anchorSideOptions = ['+X', '-X', '+Y', '-Y'] as const;
 

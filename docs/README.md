@@ -12,8 +12,8 @@ covers the quick highlights; everything below is the depth.
 
 - [API reference](api.md) — every prop on `<Reticulyne>`, plus the `useReticulyne()` imperative hook.
 - [Embedding contract](embedding.md) — deeper notes on editor modes, container sizing, callback identity, security model, host-managed save, and side effects on import.
-- [Isopacks](isopacks.md) — what an isopack is, the bundled collections, and how to bring your own.
-- [Catalogue](catalogue.md) - specification: items, ports as connector + medium + protocol, each medium's topology, virtual items, and the cross-reference to Accurona.
+- [Icon packs](icon-packs.md) — the icon and pack shapes (an isometric and a flat drawing per icon), the built-in pack, the bundled isopacks, and how to bring your own.
+- [Catalogue](catalogue.md) - specification: items, ports as connector + medium + protocol, each medium's topology, virtual items, and the drawings items draw with.
 
 ## Deployment
 

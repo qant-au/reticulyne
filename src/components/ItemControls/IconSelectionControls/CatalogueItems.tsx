@@ -28,8 +28,8 @@ const matches = (item: CatalogueItem, needle: string) => {
 };
 
 // Reticulyne's catalogue as palette sections, one per medium family
-// (docs/catalogue.md "The palette"). A tile shows the item's Accurona twin
-// when the editor has that drawing, else its 2D schematic symbol.
+// (docs/catalogue.md "The palette"). A tile shows the item's built-in
+// drawing when the editor has its icon, else its 2D schematic symbol.
 export const CatalogueItems = ({ filter, onMouseDown, onClick }: Props) => {
   const icons = useModelStore((state) => {
     return state.icons;

@@ -14,6 +14,29 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **Reticulyne stands alone.** The scene format, the shared widgets and the device drawings it carried as vendored copies of another project's builds are now its own source: `src/core` (the scene format, units, keymap), `src/kit` (dialogs, menus, panels, notifications, theme) and `src/icons` (the drawings and icon packs). Nothing is vendored from it any more, and `scripts/sync-accurona.mjs` is gone.
+- **The file format is the [Reticulyne scene format](docs/scene-format.md)**, `format: 'reticulyne-scene'`, still version 2, with its JSON Schema shipped as `dist/schema/scene-v2.json` (`$schema` points there). Files under the older name (`accurona-scene`) still open and are saved under the new one. Tools that know only the older name will not open files saved from now on.
+- **Built-in icon ids** are `reticulyne-<drawing id>` (collection `Reticulyne`). Diagrams that name the older `accurona-<drawing id>` ids are read under the new ones.
+- **Catalogue items name their drawing** with `drawing: '<id>'` in place of a `links: [{ source: 'accurona', ref }]` cross-reference.
+- **Exports renamed or removed:** `builtinIcons`, `BUILTIN_ICON_COLLECTION` and `catalogueItemDrawing` replace `accuronaIcons`, `ACCURONA_ICON_COLLECTION` and `accuronaElement`; `schematicIconUrl` is removed (the flat view reads `flatUrl`). The theme factory is `createKitTheme` / `kitThemeOptions` / `kitVars`.
+
+### Added
+
+- **Icons carry a flat drawing.** An icon may have `flatUrl`, its flat (2D) drawing, beside `url`; the flat view draws it, and falls back to `url`. It is in the model, the scene format and the JSON Schema. A diagram saved before this takes the flat drawing of the library icon with the same id.
+- **Icon packs** ([docs/icon-packs.md](docs/icon-packs.md)): `IconPack { id, name, version?, icons }`, with `validateIconPack`, `iconPackSchema`, `packIcons`, `flattenPacks` and `fillFlatUrls`. The device drawings ship as `BUILTIN_PACK`, each with an isometric and a flat view.
+- `SCENE_FORMAT`, `SCENE_VERSION`, `SCENE_SCHEMA_URL` and `redactScene` are exported.
+- The keymap specification is in this repository: [docs/keymap.md](docs/keymap.md).
+
+### Changed
+
+- **The Docker editor keeps diagrams in IndexedDB**, not localStorage, with room for far more than 5 MB. Diagrams an older version kept in localStorage are copied across the first time, and left in place. A save is reported once it is on disk. Icon packs installed in the browser are kept beside them and added to the library at start-up (installing from the editor is planned). Where IndexedDB cannot be used, diagrams stay in localStorage.
+
+### Fixed
+
+- In the flat view, an icon with no image drew an `<img src="">`; it now draws nothing, as the isometric view does.
+
 ## [0.7.0] - 2026-10-11
 
 ### Changed

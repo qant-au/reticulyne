@@ -21,7 +21,9 @@ const allowedInDist = [
   /\.m?js$/,
   /\.m?js\.map$/,
   /\.d\.ts$/,
-  /\.m?js\.LICENSE\.txt$/
+  /\.m?js\.LICENSE\.txt$/,
+  // The scene format's JSON Schema, which a scene's `$schema` points at.
+  /^dist\/schema\/scene-v\d+\.json$/
 ];
 
 const offenders = files.filter((p) => {

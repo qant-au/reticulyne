@@ -26,15 +26,16 @@ possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELO
   `Alt` + `Up` / `Down`. The other floors are drawn faintly above and below the one on
   show, and a link between items on different floors is drawn on each as a stub that
   names the other floor and takes you there.
-- **Bring your own icons.** Icon collections are plain `Icon[]` arrays
-  ([isopacks](docs/isopacks.md)). The component ships no icons of its own; the
-  standalone editor comes with AWS, Azure, GCP and Kubernetes collections plus the
-  original Isoflow set.
+- **Icon packs.** Icons come in packs ([icon packs](docs/icon-packs.md)), and each
+  icon can carry an isometric drawing and a flat one, so it looks right in both views.
+  The package ships Reticulyne's own device drawings as the built-in pack
+  (`BUILTIN_PACK`); bring your own packs beside it. The standalone editor adds AWS,
+  Azure, GCP and Kubernetes collections plus the original Isoflow set.
 - **Editor modes.** Fully editable, explore-only, or non-interactive, for editors,
   viewers and dashboards.
-- **One file format, shared with Axonometra.** Diagrams open and save as the
-  [Accurona scene format](https://github.com/qant-au/accurona/blob/main/docs/scene-format.md): one JSON document of objects and the views that
-  place them. Reticulyne draws the isometric and schematic views, and keeps the floor
+- **One file format.** Diagrams open and save as the
+  [Reticulyne scene format](docs/scene-format.md): one JSON document of objects and the views that
+  place them, with a published JSON Schema. Reticulyne draws the isometric and schematic views, and keeps the floor
   plans, connections and object details it does not show when it saves. Files saved by
   older versions (Reticulyne models) still open, and are saved as scenes.
 - **Export.** JSON (the scene file), PNG, PDF and SVG (a flat vector SVG for Illustrator,
@@ -79,7 +80,8 @@ Supported browsers follow MUI v9: Chrome 117+, Edge 121+, Firefox 121+, Safari 1
 - [Quick start](docs/quickstart.md) - a minimal embed, container sizing, Next.js notes
 - [API reference](docs/api.md) - every prop, plus the `useReticulyne()` imperative hook
 - [Embedding contract](docs/embedding.md) - modes, host-managed save, callbacks, the security model
-- [Isopacks](docs/isopacks.md) - icon collections, bundled and your own
+- [Icon packs](docs/icon-packs.md) - icons with isometric and flat drawings, bundled and your own
+- [Scene format](docs/scene-format.md) - the file format
 - [Standalone Docker](docs/docker.md) - run the editor as a self-hosted app
 
 ## Security

@@ -1,4 +1,6 @@
 import {
+  LEGACY_COLLECTION,
+  LEGACY_ICON_PREFIX,
   LEGACY_SCENE_FORMATS,
   currentIconId,
   SCENE_FORMAT,
@@ -49,11 +51,15 @@ describe('icon ids saved under the older prefix', () => {
     version: 2,
     id: 'old',
     objects: [
-      { id: 'ap', icon: 'accurona-wifi-ap', element: 'wifi-ap' },
+      { id: 'ap', icon: `${LEGACY_ICON_PREFIX}wifi-ap`, element: 'wifi-ap' },
       { id: 'srv', icon: 'server' }
     ],
     icons: [
-      { id: 'accurona-wifi-ap', name: 'Wi-Fi AP', url: 'data:image/svg+xml,a' },
+      {
+        id: `${LEGACY_ICON_PREFIX}wifi-ap`,
+        name: 'Wi-Fi AP',
+        url: 'data:image/svg+xml,a'
+      },
       { id: 'server', name: 'Server', url: 'data:image/svg+xml,s' }
     ]
   };
@@ -71,12 +77,25 @@ describe('icon ids saved under the older prefix', () => {
         return object.icon;
       })
     ).toEqual(['reticulyne-wifi-ap', 'server']);
+    // Filed under the current collection, not the older one.
+    expect(
+      validateScene({
+        ...old,
+        icons: [
+          { ...old.icons[0], collection: LEGACY_COLLECTION },
+          old.icons[1]
+        ]
+      })
+    ).toMatchObject({
+      ok: true,
+      scene: { icons: [{ collection: 'Reticulyne' }, {}] }
+    });
     // The element is a drawing id, unchanged.
     expect(result.scene.objects[0].element).toBe('wifi-ap');
   });
 
   test('currentIconId leaves every other id alone', () => {
-    expect(currentIconId('accurona-nvr')).toBe('reticulyne-nvr');
+    expect(currentIconId(`${LEGACY_ICON_PREFIX}nvr`)).toBe('reticulyne-nvr');
     expect(currentIconId('reticulyne-nvr')).toBe('reticulyne-nvr');
     expect(currentIconId('aws-ec2')).toBe('aws-ec2');
   });

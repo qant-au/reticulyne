@@ -1,21 +1,21 @@
-# Accurona scene format
+# Reticulyne scene format
 
-**Status: specification, version 2.** This is the **native file format** of Accurona,
-[Axonometra](https://github.com/qant-au/axonometra) and
-[Reticulyne](https://github.com/qant-au/reticulyne): each saves and opens a scene as a
-plain `.json` file, not as an import or export target beside a format of its own.
-Both editors read and write it, and `@accurona/core` (`packages/core`) implements it.
+**Status: specification, version 2.** This is Reticulyne's **native file format**: it saves and
+opens a scene as a plain `.json` file, not as an import or export target beside a format of its
+own. `src/core` implements it.
 
-- **One schema.** A scene is validated by one [Zod 4](https://zod.dev) schema, defined
-  in the `@accurona/core` package and imported by Axonometra and Reticulyne. Neither
-  tool keeps a schema of its own. This document and that schema say the same thing:
-  the package's tests validate every example below.
-- **A JSON Schema for everyone else.** The build generates a JSON Schema (Draft
-  2020-12) from the Zod schema (`z.toJSONSchema()`), and each release publishes it, so a
-  scene can be validated in any language without Accurona's code. A file names it in
-  its [`$schema`](#top-level-shape) field.
-- **Element definitions are not scenes.** Accurona's element library stays library
-  source; a scene refers to its elements by id.
+- **One schema.** A scene is validated by one [Zod 4](https://zod.dev) schema, in
+  `src/core/scene/schema.ts`. This document and that schema say the same thing: the tests
+  validate every example below.
+- **A JSON Schema for everyone else.** The schema is also published as a JSON Schema (Draft
+  2020-12), generated from the Zod schema (`z.toJSONSchema()`) and shipped in the package as
+  `dist/schema/scene-v2.json`, so a scene can be validated in any language without Reticulyne's
+  code. A file names it in its [`$schema`](#top-level-shape) field.
+- **Drawings are not scenes.** Reticulyne's device drawings stay library source; a scene refers to
+  them by id.
+- **Older names.** Files written before the format had its own name carry
+  `format: 'accurona-scene'`, and their built-in icons are named `accurona-<drawing id>`. Both are
+  read as the current names, and written under them on the next save.
 
 One JSON document describes a floor plan, an isometric network diagram and a flat 2D
 (schematic) diagram of the same things, so that the tools open and save the same file,
@@ -40,7 +40,7 @@ Reticulyne already works this way for its own views (model `items`, placed by vi
 ```ts
 interface Scene {
   $schema?: string;         // URL of the published JSON Schema for this version
-  format: 'accurona-scene'; // fixed; identifies the file
+  format: 'reticulyne-scene'; // fixed; identifies the file
   version: 2;               // schema version, see Versioning
   id: Id;                   // this scene's own id
   title?: string;           // max 100; default 'Untitled'
@@ -60,7 +60,7 @@ A scene with `objects` and no `views` is valid: it says what exists and how it
 connects, and leaves the drawing to an editor (see [Writing a scene from code](#writing-a-scene-from-code)).
 
 - **`$schema`** points at the JSON Schema published for this version, in the form
-  `https://cdn.jsdelivr.net/npm/@accurona/core@<major>/schema/scene-v2.json`. It is
+  `https://cdn.jsdelivr.net/npm/@reticulyne/editor@<major>/dist/schema/scene-v2.json`. It is
   optional and never changes how a file is read; it lets an editor or a validator in any
   language find the schema. Editors write it on save.
 - **`units`** is how lengths are **shown and typed**, not how they are stored. Every
@@ -92,7 +92,7 @@ fine). Hand-written and generated scenes may use readable ones.
 ```ts
 interface SceneObject {
   id: Id;
-  element?: string;       // an Accurona element id, e.g. 'rack-600x1000-42u'
+  element?: string;       // a drawing or element id, e.g. 'rack-600x1000-42u'
   icon?: Id;              // an entry in `icons`, when there is no element
   name?: string;          // max 100; shown as the label
   description?: string;   // max 1000
@@ -111,11 +111,11 @@ interface Port {
 }
 ```
 
-- **`element`** is the usual case for a physical thing. An
-  [Accurona element](../README.md#elements) brings its real size, its plan drawing and
-  its 3D model, and its isometric view and 2D symbol where Reticulyne draws with it, so
-  the object needs nothing else to be drawn anywhere. Element ids are never renamed
-  once shipped, which is why a scene can store them.
+- **`element`** is the usual case for a physical thing: the id of one of Reticulyne's
+  [drawings](icon-packs.md#the-built-in-pack), which gives it an isometric view and a 2D
+  symbol, so the object needs nothing else to be drawn. A floor planner can read the same
+  id for its plan drawing and real size. Element ids are never renamed once shipped, which
+  is why a scene can store them.
 - **`icon`** covers things the library does not have: a Reticulyne isopack icon or an
   uploaded image. An object with an `icon` and no `element` can be drawn in diagram
   views, and in a plan view only as a symbol.
@@ -123,13 +123,12 @@ interface Port {
   name one of Axonometra's built-in wall fittings (`door`, `window` and the rest), so a
   plan can be carried in full.
 - An object with neither is drawn as a plain labelled box.
-- **Two catalogues.** Accurona's element library holds physical things; the things a
+- **Drawings and the catalogue.** The drawings are how physical things look; the things a
   diagram connects, including virtual ones that never appear on a floor plan, come from
-  Reticulyne's own catalogue, which is where ports, media and protocols are defined.
-  An object on both a floor plan and a diagram is still **one object**: its `id` is what
-  links the two views. The catalogues relate their entries by a free-form
-  cross-reference ([what belongs in the library](../README.md#what-belongs-in-the-library)),
-  which a scene never needs.
+  Reticulyne's [catalogue](catalogue.md), which is where ports, media and protocols are
+  defined. An object on both a floor plan and a diagram is still **one object**: its `id`
+  is what links the two views. A catalogue item names its drawing, which a scene never
+  needs.
 - **`props`** holds the facts about the thing: an IP address, a MAC, a serial number, a
   port count. Flat, and scalar values only, so that every tool can show and edit it as
   a table without knowing what the keys mean.
@@ -280,8 +279,7 @@ interface PlanPlacement {
 ```
 
 - **Every length is stored in millimetres**, as an integer wherever the value allows,
-  whatever the scene's `units` says. Accurona elements are authored in centimetres; an
-  editor reads an element's `size` and `mount` x 10. **Axes:** x runs right, y runs down
+  whatever the scene's `units` says. **Axes:** x runs right, y runs down
   the plan, z runs up. **Rotation** is clockwise in degrees, about the footprint centre.
 - **The footprint** is the element's `size.w` by `size.d`, unless `size` overrides it.
   An editor records the size it placed, as Axonometra does today, when the scene must
@@ -291,9 +289,8 @@ interface PlanPlacement {
 
 ### Mounting and facing (version 2)
 
-**Status: built.** In `@accurona/core` (schema, validation and the version 1
-migration), the element renderers (see the README, Mounting and facing), Axonometra
-(stored, edited, and drawn in plan, isometric and 3D) and Reticulyne (kept as found).
+**Status: built.** In `src/core` (schema, validation and the version 1 migration), and in
+Reticulyne, which keeps these fields as found.
 Version 1 has one number for height,
 `mountMm`, measured from the floor, and nothing for which way an item faces, so a
 downlight is placed at a fixed 2700 mm whatever the ceiling height, and a dome camera
@@ -373,8 +370,7 @@ placement's floor and `x`, `y` (to say where a device sits on the building). The
 fields therefore need nothing from it beyond validation, with one consequence: the
 schema is strict and a reader refuses a version newer than its own, so a Reticulyne
 build carrying a version 1 schema refuses a version 2 file outright (it does not drop the
-fields). Reticulyne takes the version 2 schema by re-syncing its copy of
-`@accurona/core` when the schema ships, and has nothing else to change.
+fields).
 
 ### Diagram views (`iso` and `schematic`)
 
@@ -494,7 +490,7 @@ listed.
 out of every export (image, PDF, SVG, shared link, JSON) unless the export explicitly
 opts in. It exists so a diagram can carry addresses and other sensitive notes in
 the working copy without them leaking into the copy that gets sent out.
-`redactScene(scene)` in `@accurona/core` gives that copy, still a valid scene: an object
+`redactScene(scene)` gives that copy, still a valid scene: an object
 whose every placement was redacted goes with it, as do the connections and connectors
 that end on it, a placement fixed into a redacted wall loses its `attach`, and one
 standing on a redacted placement loses its `mountOn` and stands on the floor.
@@ -509,13 +505,16 @@ interface Icon {
   name: string;           // max 100
   url: string;            // max 65,536; see Validation for the allowed schemes
   collection?: string;
-  isIsometric?: boolean;
+  isIsometric?: boolean;  // whether `url` is an isometric drawing
+  flatUrl?: string;       // max 65,536; the flat (2D) drawing, for schematic views
 }
 
 interface Color { id: Id; value: string } // #rrggbb
 ```
 
-These are Reticulyne's icon and colour entries unchanged.
+These are Reticulyne's icon and colour entries. An icon's `url` is what an `iso` view
+draws; a `schematic` view draws its `flatUrl`, or its `url` when it has none (see
+[icon packs](icon-packs.md)).
 
 ## Writing a scene from code
 
@@ -534,14 +533,14 @@ describing a network in words. So:
 ### Smallest valid scene
 
 ```json
-{ "format": "accurona-scene", "version": 2, "id": "empty", "objects": [] }
+{ "format": "reticulyne-scene", "version": 2, "id": "empty", "objects": [] }
 ```
 
 ### A network with no drawing yet
 
 ```json
 {
-  "format": "accurona-scene",
+  "format": "reticulyne-scene",
   "version": 2,
   "id": "branch-office",
   "title": "Branch office",
@@ -565,7 +564,7 @@ follows the ceiling if the wall height changes.
 
 ```json
 {
-  "format": "accurona-scene",
+  "format": "reticulyne-scene",
   "version": 2,
   "id": "comms-room",
   "objects": [
@@ -620,7 +619,7 @@ remote-management console and a network-monitoring console.
 
 ```json
 {
-  "format": "accurona-scene",
+  "format": "reticulyne-scene",
   "version": 2,
   "id": "hq",
   "title": "Head office",
@@ -685,12 +684,12 @@ remote-management console and a network-monitoring console.
 }
 ```
 
-## Crossover: one object in both editors
+## Crossover: one object in a plan and a diagram
 
-Axonometra draws the plan views and Reticulyne the diagram views of one scene, and
+A floor planner draws the plan views and Reticulyne the diagram views of one scene, and
 each keeps the other's views when it saves. An object placed in both is linked by
 its `id` and by nothing else, so the links are read straight out of the scene.
-`@accurona/core` reads them for both editors:
+`src/core` reads them:
 
 ```ts
 objectPlaces(scene, objectId): ObjectPlace[]
@@ -714,16 +713,14 @@ floorsOf(scene, objectIds): FloorLocation[]
   where its objects are: a diagram per storey maps to that storey, a diagram of a
   whole site maps to several floors, and a diagram of cloud services maps to none.
   Nothing has to be kept in step when a device moves floor.
-- **At catalogue level** the two libraries relate by the free-form cross-reference
-  (an entry in Reticulyne's catalogue linking `{ source: 'accurona', ref: '<element
-  id>' }`), so a plan object with an `element` can be drawn in a diagram with its
-  Reticulyne twin. The scene never stores that cross-reference.
+- **At catalogue level** a catalogue item names its drawing (`drawing: '<id>'`), so a
+  plan object with that `element` can be drawn in a diagram with its catalogue twin.
+  The scene never stores the catalogue item.
 
 ## Migrating from today's formats
 
 The scene format replaces the formats each project uses today: Axonometra's plan
-format (version 2), Reticulyne's model, and Accurona's own JSON and SVG output for
-drawings. The old formats are **read, never written**:
+format (version 2) and Reticulyne's model. The old formats are **read, never written**:
 
 - **On load**, an editor that is given a plan v2 file or a Reticulyne model converts
   it to a scene as below, and from then on works on the scene.
@@ -747,7 +744,7 @@ plan becomes one scene with one `plan` view.
 | `exteriorWalls` | `walls[].exterior` | |
 | `wallHeightM`, `elevationM` | `wallHeightMm`, `elevationMm` | x 1000 |
 | `furnitureArray[]` | one object + one placement each | object `id` = the furniture id as a string |
-| `texturePath` | `objects[].element` | it is already the Accurona element id, or a built-in wall fitting such as `door` |
+| `texturePath` | `objects[].element` | it is already the element id, or a built-in wall fitting such as `door` |
 | `width`, `height` (m) | `placements[].size.w`, `.d` (mm) | x 1000; Axonometra's `height` is depth, not how tall |
 | `heightM`, `mountM` | `size.h`, `mountMm` | x 1000 |
 | `x`, `y` | `x`, `y` | Axonometra stores the footprint's top-left corner, which is also the point it rotates about; the centre is that point plus the half-size rotated by `rotation`. Doors are also offset by the wall thickness at orientations 1 and 3, and the converter undoes it |
@@ -832,8 +829,8 @@ And no object is placed twice in one view.
 ## Versioning
 
 - `version` is a single integer. This document is version 2. The Zod schema in
-  `@accurona/core` and the JSON Schema generated from it are published per version
-  (`scene-v1.json`, `scene-v2.json`), so a file's `$schema` keeps pointing at the schema it was written
+  `src/core` and the JSON Schema generated from it are published per version
+  (`scene-v2.json`), so a file's `$schema` keeps pointing at the schema it was written
   against.
 - A new required field, a removed field, or a change to what a field means bumps the
   version, and adds a forward-only migration from the previous version.
@@ -845,13 +842,18 @@ And no object is placed twice in one view.
 - **Version 2** adds [mounting and facing](#mounting-and-facing-version-2): placement
   `mountFrom`, `mountOn` and `mirror.z`, and gives `mountMm` a meaning that depends on
   `mountFrom`. Its migration from version 1 is described there.
+- **The format name.** `reticulyne-scene` replaced `accurona-scene` at version 2, with no
+  change to the version number: the files are the same format, and older names are read as
+  the current ones. The icon `flatUrl` field arrived with the new name. A reader that knows
+  only the older name refuses a file with the new one outright, so it can never drop
+  `flatUrl` silently.
 
 ## Out of scope
 
 - **Editor state**: selection, tool, zoom, scroll position. A scene describes the
   drawing, not a session.
 - **The element library itself.** A scene refers to elements by id; their shapes,
-  sizes and drawings come from Accurona.
+  sizes and drawings come from the library.
 - **Anything product-specific.** Links to other tools are generic
   ([Links back to external tools](#links-back-to-external-tools)); a tool that wants
   more stores it in `props`.

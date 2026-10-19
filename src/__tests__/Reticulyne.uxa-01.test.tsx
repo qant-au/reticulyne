@@ -315,7 +315,7 @@ describe('UXA-01 — Excalidraw tool hotkey alignment', () => {
     });
   });
 
-  // The bindings now come from the shared keymap in Accurona.
+  // The bindings come from the keymap in src/core/keymap.ts.
   describe('shared keymap', () => {
     test('selecting and panning work read-only', () => {
       mount('EXPLORABLE_READONLY');

@@ -17,7 +17,7 @@ export function App() {
 ```
 
 This mounts a fully functional editor with an empty canvas. Without icons it is not
-particularly useful — see [isopacks.md](isopacks.md) for how to load icon collections.
+particularly useful — see [icon-packs.md](icon-packs.md) for how to load icon packs.
 
 ## Container sizing
 
@@ -40,7 +40,7 @@ without a remount.
 <Reticulyne
   initialData={{
     title: 'My diagram',
-    icons: [],     // see isopacks.md
+    icons: [],     // see icon-packs.md
     colors: [],
     items: [],
     views: [],
@@ -98,4 +98,4 @@ Then use `<ReticulyneDynamic />` from your pages or components.
 
 - [API reference](api.md) — props and the imperative hook.
 - [Embedding contract](embedding.md) — modes, container sizing, callback identity, security model.
-- [Isopacks](isopacks.md) — loading icon collections.
+- [Icon packs](icon-packs.md) — loading icon packs.

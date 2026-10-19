@@ -1,0 +1,5 @@
+# Refreshes the optional Graphify code index (graphify-out/, gitignored) in
+# the background after each commit. A no-op where graphify is not installed.
+if command -v graphify >/dev/null 2>&1; then
+  (graphify update . >/dev/null 2>&1 &)
+fi

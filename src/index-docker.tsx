@@ -3,12 +3,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Box } from '@mui/material';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import type { InitialData } from 'src/types';
+import type { Icon, InitialData } from 'src/types';
 import type { Scene } from 'src/core';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import type { EditorModeEnum } from 'src/types/common';
 import { icons, colors } from './examples/initialData';
+import { flattenPacks } from 'src/icons/pack';
 import { DiagramShell } from './docker/DiagramShell';
+import { openLocalStore } from './docker/store/localStore';
 
 // E2E test hook. The Playwright suite injects this global via
 // `page.addInitScript(...)` BEFORE navigation, so the docker editor
@@ -109,8 +111,8 @@ const enableAnimation =
   e2eConfig?.enableAnimation ??
   new URLSearchParams(window.location.search).get('animate') === '1';
 
-// APP-01: the editor runs inside the diagram shell (saved diagrams in
-// localStorage). The e2e hook's settings pass straight through to it.
+// APP-01: the editor runs inside the diagram shell (saved diagrams in the
+// browser's IndexedDB). The e2e hook's settings pass straight through to it.
 const editorProps = {
   editorMode,
   enableAnimation,
@@ -122,51 +124,78 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-// Default shell — the editor fills the viewport, matching the
-// production Docker deployment shape. The scrollParent branch wraps
-// the editor in an outer Box that's twice the viewport height with
-// overflow:auto, so the BUG5-09 e2e fixture can verify the wheel
-// listener's preventDefault keeps the outer Box's scroll position
-// pinned at zero while the user zooms the canvas.
-const Shell = scrollParent ? (
-  <Box
-    data-testid="scroll-parent"
-    sx={{ width: '100vw', height: '100vh', overflow: 'auto' }}
-  >
-    <Box sx={{ width: '100vw', height: '200vh' }}>
-      <Box sx={{ width: '100vw', height: '100vh' }}>
-        <DiagramShell
-          bundledIcons={icons}
-          colors={colors}
-          initialData={initialData}
-          editorProps={editorProps}
-        />
-      </Box>
-    </Box>
-  </Box>
-) : (
-  <Box sx={{ width: '100vw', height: '100vh' }}>
+const render = (storage: Storage | undefined, bundledIcons: Icon[]) => {
+  const diagramShell = (
     <DiagramShell
-      bundledIcons={icons}
+      bundledIcons={bundledIcons}
       colors={colors}
       initialData={initialData}
       editorProps={editorProps}
+      {...(storage ? { storage } : {})}
     />
-  </Box>
-);
+  );
+  // Default shell — the editor fills the viewport, matching the
+  // production Docker deployment shape. The scrollParent branch wraps
+  // the editor in an outer Box that's twice the viewport height with
+  // overflow:auto, so the BUG5-09 e2e fixture can verify the wheel
+  // listener's preventDefault keeps the outer Box's scroll position
+  // pinned at zero while the user zooms the canvas.
+  const Shell = scrollParent ? (
+    <Box
+      data-testid="scroll-parent"
+      sx={{ width: '100vw', height: '100vh', overflow: 'auto' }}
+    >
+      <Box sx={{ width: '100vw', height: '200vh' }}>
+        <Box sx={{ width: '100vw', height: '100vh' }}>{diagramShell}</Box>
+      </Box>
+    </Box>
+  ) : (
+    <Box sx={{ width: '100vw', height: '100vh' }}>{diagramShell}</Box>
+  );
 
-root.render(
-  <React.StrictMode>
-    <GlobalStyles
-      styles={{
-        body: {
-          margin: 0
-        }
-      }}
-    />
-    {Shell}
-  </React.StrictMode>
-);
+  root.render(
+    <React.StrictMode>
+      <GlobalStyles
+        styles={{
+          body: {
+            margin: 0
+          }
+        }}
+      />
+      {Shell}
+    </React.StrictMode>
+  );
+};
+
+// The local store opens before the editor does, so the last diagram and
+// the installed icon packs are there on the first render. Where IndexedDB
+// cannot be used (some private windows) the shell keeps diagrams in
+// localStorage, as older builds did.
+const boot = async () => {
+  try {
+    const local = await openLocalStore();
+    const installed = flattenPacks(local.packs.list());
+    const bundledIds = new Set(
+      icons.map((icon) => {
+        return icon.id;
+      })
+    );
+    render(local.storage, [
+      ...icons,
+      ...installed.filter((icon) => {
+        return !bundledIds.has(icon.id);
+      })
+    ]);
+  } catch (error) {
+    console.warn(
+      '[reticulyne] IndexedDB is not available; diagrams are kept in localStorage:',
+      error
+    );
+    render(undefined, icons);
+  }
+};
+
+void boot();
 
 // APP-02: offline support and install. Registered after load so it never
 // competes with the editor's first paint. Browsers only allow service

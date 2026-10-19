@@ -267,7 +267,11 @@ interface ShellProps {
   initialData?: Scene | InitialData;
   /** Passed through to <Reticulyne>; the e2e hook uses it. */
   editorProps?: Partial<ReticulyneProps>;
-  storage?: Storage;
+  /**
+   * Where diagrams are kept: the IndexedDB-backed store (whose `flush`
+   * reports a write that did not reach the disk), else localStorage.
+   */
+  storage?: Storage & { flush?: () => Promise<void> };
 }
 
 export const DiagramShell = ({
@@ -374,6 +378,7 @@ export const DiagramShell = ({
     async (scene: Scene) => {
       try {
         store.save(current.id, scene);
+        await storage.flush?.();
       } catch (e) {
         setError(e instanceof Error ? e.message : 'The diagram was not saved.');
         throw e;
@@ -383,7 +388,7 @@ export const DiagramShell = ({
       setEntries(store.list());
       setError(null);
     },
-    [store, current.id]
+    [store, storage, current.id]
   );
 
   const onModelUpdated = useCallback((model: Model) => {
@@ -399,7 +404,7 @@ export const DiagramShell = ({
     leave('Import a file', () => {
       file
         .text()
-        .then((text) => {
+        .then(async (text) => {
           let data: unknown;
           try {
             data = parseJson(text);
@@ -423,6 +428,7 @@ export const DiagramShell = ({
           // so it was missing from the list and gone after a reload.
           try {
             store.save(id, next);
+            await storage.flush?.();
           } catch (e) {
             setError(
               e instanceof Error ? e.message : 'The diagram was not saved.'
@@ -498,6 +504,9 @@ export const DiagramShell = ({
                 store.remove(id);
                 setEntries(store.list());
                 if (id === current.id) show(blank());
+                storage.flush?.().catch(() => {
+                  setError('The diagram could not be deleted from storage.');
+                });
               }
             });
           }}

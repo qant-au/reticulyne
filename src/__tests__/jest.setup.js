@@ -19,6 +19,16 @@ if (typeof globalThis.TextDecoder === 'undefined') {
   globalThis.TextDecoder = TextDecoder;
 }
 
+// fake-indexeddb (the Docker app's local store tests) clones every value
+// it stores with structuredClone, which browsers have and jsdom does not.
+// Node's v8 serializer is the same structured-clone algorithm.
+if (typeof globalThis.structuredClone === 'undefined') {
+  const { serialize, deserialize } = require('v8');
+  globalThis.structuredClone = (value) => {
+    return deserialize(serialize(value));
+  };
+}
+
 // React 18+ uses this flag to detect when act(...) is required
 // around state updates. @testing-library/react sets it on import,
 // but tests that exercise MUI components scheduling async timer

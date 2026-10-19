@@ -107,7 +107,7 @@ Tight by design. No inline scripts, no `eval`, no third-party CDN. It is defense
 ### `img-src 'self' data: blob:`
 
 - `data:` and `blob:` are required for the in-bundle SVG icon packs and for the export-to-PNG path (which renders into a `blob:` URL before downloading).
-- **Icon URL hardening (SEC-01):** independent of the CSP, `iconSchema.url` is scheme-restricted at validation time to `http(s):`, `blob:`, relative paths, and image-only `data:` URIs — `javascript:`, `file:`, and `data:text/html` are rejected. SVG icons inlined during SVG export are stripped of `<script>`, `<foreignObject>`, and `on*` handlers so an exported file opened from a `file:` origin can't execute embedded content.
+- **Icon URL hardening (SEC-01):** independent of the CSP, `iconSchema.url` is scheme-restricted at validation time to `http(s):`, `blob:`, relative paths, and image-only `data:` URIs — `javascript:`, `file:`, and `data:text/html` are rejected. SVG icons inlined during SVG export are stripped of `<script>`, `<foreignObject>`, `on*` handlers, attribute-rewriting SMIL (`<set>`, `<animate>`, `<animateTransform>`), `<style>`, and any `href`/`xlink:href` that is not a fragment, `http(s):` or `data:image/` URI. That is what an exported file carries if it is opened directly; inside the export each icon sits in an `<image href>`, which browsers render in image mode, with no script and no navigation, and that placement is what bounds anything the list misses.
 
 ### `Strict-Transport-Security` (SEC-07)
 

@@ -1,11 +1,33 @@
 // SEC-01: strip executable / embedding vectors from an SVG data URI before
-// it is inlined into an exported SVG. An exported SVG opened directly from
-// disk (file: origin) will execute embedded <script>, <foreignObject>
-// (which can host arbitrary HTML), and on* event handlers — so they are
-// removed here. Non-SVG data URIs (png/jpeg/gif/webp) carry no executable
-// surface and are returned unchanged.
+// it is inlined into an exported SVG. Removed: <script>, <foreignObject>
+// (which can host arbitrary HTML), on* event handlers, SMIL that can rewrite
+// an attribute (<set>, <animate>, <animateTransform>), <style>, and any
+// href that is not a fragment, http(s): or a data:image/ URI. The export
+// places each icon as <image href="data:...">, which a browser renders in
+// image mode with no script and no navigation; this pass is for the file
+// itself, read by anything else. Non-SVG data URIs (png/jpeg/gif/webp)
+// carry no executable surface and are returned unchanged.
 
 const SVG_DATA_PREFIX = 'data:image/svg+xml';
+
+const REMOVED_ELEMENTS = [
+  'script',
+  'foreignObject',
+  'set',
+  'animate',
+  'animateTransform',
+  'style'
+];
+
+const isSafeHref = (value: string): boolean => {
+  const v = value.trim().toLowerCase();
+  return (
+    v.startsWith('#') ||
+    v.startsWith('http:') ||
+    v.startsWith('https:') ||
+    v.startsWith('data:image/')
+  );
+};
 
 const base64ToUtf8 = (b64: string): string => {
   const bytes = Uint8Array.from(atob(b64), (c) => {
@@ -50,12 +72,23 @@ export const sanitizeSvgDataUri = (dataUri: string): string => {
   // the original URI (the export simply embeds opaque, non-executing data).
   if (doc.getElementsByTagName('parsererror').length > 0) return dataUri;
 
-  doc.querySelectorAll('script, foreignObject').forEach((el) => {
-    el.remove();
+  // By local name, so a prefixed or differently cased tag is caught too.
+  Array.from(doc.getElementsByTagName('*')).forEach((el) => {
+    if (
+      REMOVED_ELEMENTS.some((name) => {
+        return name.toLowerCase() === el.localName.toLowerCase();
+      })
+    ) {
+      el.remove();
+    }
   });
   doc.querySelectorAll('*').forEach((el) => {
     Array.from(el.attributes).forEach((attr) => {
-      if (/^on/i.test(attr.name)) el.removeAttribute(attr.name);
+      if (/^on/i.test(attr.name)) {
+        el.removeAttribute(attr.name);
+      } else if (attr.localName === 'href' && !isSafeHref(attr.value)) {
+        el.removeAttributeNode(attr);
+      }
     });
   });
 

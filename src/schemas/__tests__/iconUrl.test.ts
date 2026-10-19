@@ -32,6 +32,7 @@ describe('SEC-01 icon url allowlist', () => {
     test.each([
       'javascript:alert(1)',
       'javascript%3aalert(1)',
+      'vbscript%3amsgbox(1)',
       'data:text/html,<script>alert(1)</script>',
       'data:application/xml,<x/>',
       'file:///etc/passwd',

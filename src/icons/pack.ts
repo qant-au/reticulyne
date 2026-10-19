@@ -1,6 +1,13 @@
 import { z } from 'zod';
-import { constrainedStrings, id } from 'src/schemas/common';
-import { iconsSchema } from 'src/schemas/icons';
+import { MEDIA, PROTOCOLS } from 'src/catalogue/media';
+import {
+  FAMILIES,
+  portTemplateSchema,
+  type CatalogueItem
+} from 'src/catalogue/schema';
+import { validateCatalogue } from 'src/catalogue/validate';
+import { constrainedStrings, id, SCHEMA_LIMITS } from 'src/schemas/common';
+import { iconSchema } from 'src/schemas/icons';
 import type { Icon } from 'src/types/model';
 
 // An icon pack: a named, versioned set of icons that is installed as a
@@ -8,17 +15,60 @@ import type { Icon } from 'src/types/model';
 // third-party pack has the same shape. Each icon carries its main image
 // (`url`, isometric when `isIsometric`) and, optionally, its flat drawing
 // (`flatUrl`) for the flat view.
+//
+// A pack icon can also carry its connection detail: the ports the device
+// has, on the catalogue's media (docs/catalogue.md), with the palette
+// section it is filed under. Such an icon is also a catalogue item
+// (`packCatalogueItems`), so a third-party pack brings its devices with
+// their ports. The detail stays in the pack; the icon a diagram stores is
+// the plain icon record.
+
+export const packIconSchema = iconSchema.extend({
+  family: z.enum(FAMILIES).optional(),
+  description: z.string().max(2_000).optional(),
+  ports: z.array(portTemplateSchema).optional(),
+  props: z
+    .record(
+      z.string().min(1).max(200),
+      z.union([z.string().max(2_000), z.number(), z.boolean()])
+    )
+    .optional()
+});
 
 export const iconPackSchema = z
   .object({
     id,
     name: constrainedStrings.name,
     version: z.string().max(40).optional(),
-    icons: iconsSchema
+    icons: z.array(packIconSchema).max(SCHEMA_LIMITS.ICONS)
   })
   .strict();
 
+export type PackIcon = z.infer<typeof packIconSchema>;
 export type IconPack = z.infer<typeof iconPackSchema>;
+
+const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+/**
+ * The catalogue items a pack brings: one for each icon that has ports,
+ * drawing with that icon. The item's id is the icon's id.
+ */
+export const packCatalogueItems = (pack: IconPack): CatalogueItem[] => {
+  return pack.icons.flatMap((icon) => {
+    if (!icon.ports) return [];
+    return [
+      {
+        id: icon.id,
+        name: icon.name,
+        family: icon.family ?? 'ethernet',
+        ...(icon.description ? { description: icon.description } : {}),
+        icon: icon.id,
+        ports: icon.ports,
+        ...(icon.props ? { props: icon.props } : {})
+      }
+    ];
+  });
+};
 
 export type IconPackResult =
   { ok: true; pack: IconPack } | { ok: false; errors: string[] };
@@ -50,6 +100,36 @@ export const validateIconPack = (value: unknown): IconPackResult => {
       })
     };
   }
+  // Connection detail follows the catalogue's rules, on its media.
+  const errors: string[] = [];
+  for (const icon of result.data.icons) {
+    if (!icon.ports) continue;
+    if (!KEBAB.test(icon.id)) {
+      errors.push(
+        `icons.${icon.id}: an icon with ports needs a kebab-case id (a-z 0-9 and -)`
+      );
+    }
+    if (!icon.family) {
+      errors.push(`icons.${icon.id}: an icon with ports needs a family`);
+    }
+  }
+  if (errors.length) return { ok: false, errors };
+  const items = packCatalogueItems(result.data);
+  if (items.length) {
+    const checked = validateCatalogue({
+      media: MEDIA,
+      protocols: PROTOCOLS,
+      items
+    });
+    if (!checked.ok) {
+      return {
+        ok: false,
+        errors: checked.issues.map((issue) => {
+          return `${issue.path.replace(/^items\./, 'icons.')}: ${issue.message}`;
+        })
+      };
+    }
+  }
   return { ok: true, pack: result.data };
 };
 
@@ -59,7 +139,12 @@ export const validateIconPack = (value: unknown): IconPackResult => {
  * allow or deny a pack by its id.
  */
 export const packIcons = (pack: IconPack): Icon[] => {
-  return pack.icons.map((icon) => {
+  return pack.icons.map((packIcon) => {
+    const { family, description, ports, props, ...icon } = packIcon;
+    void family;
+    void description;
+    void ports;
+    void props;
     return icon.collection ? icon : { ...icon, collection: pack.id };
   });
 };

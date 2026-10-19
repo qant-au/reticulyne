@@ -6,6 +6,7 @@ import { BUILTIN_PACK } from '../builtin';
 import {
   fillFlatUrls,
   flattenPacks,
+  packCatalogueItems,
   packIcons,
   validateIconPack,
   type IconPack
@@ -149,5 +150,80 @@ describe('the built-in pack in iconCollections', () => {
     expect(
       filterIconsByCollection(icons, { allow: ['reticulyne'] })
     ).toHaveLength(icons.length);
+  });
+});
+
+describe('a pack icon with connection detail', () => {
+  const withPorts: IconPack = {
+    id: 'marine-extra',
+    name: 'Marine Extra',
+    icons: [
+      {
+        id: 'sat-hotspot',
+        name: 'Sat Hotspot',
+        url: iso,
+        isIsometric: true,
+        flatUrl: flat,
+        family: 'marine-vehicle',
+        description: 'A satellite hotspot',
+        ports: [
+          { id: 'sat', medium: 'satellite', role: 'client' },
+          { id: 'wifi', medium: 'wi-fi', role: 'hub' },
+          { id: 'usb', medium: 'usb', connector: 'usb-c' }
+        ]
+      },
+      { id: 'logo', name: 'Logo', url: flat }
+    ]
+  };
+
+  it('validates and becomes a catalogue item drawing with its icon', () => {
+    expect(validateIconPack(withPorts).ok).toBe(true);
+    const items = packCatalogueItems(withPorts);
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      id: 'sat-hotspot',
+      name: 'Sat Hotspot',
+      family: 'marine-vehicle',
+      icon: 'sat-hotspot',
+      description: 'A satellite hotspot'
+    });
+    expect(
+      items[0].ports.map((port) => {
+        return port.id;
+      })
+    ).toEqual(['sat', 'wifi', 'usb']);
+  });
+
+  it('keeps the connection detail out of the icon a diagram stores', () => {
+    const [icon] = packIcons(withPorts);
+    expect(icon).not.toHaveProperty('ports');
+    expect(icon).not.toHaveProperty('family');
+    expect(iconSchema.safeParse(icon).success).toBe(true);
+  });
+
+  it('refuses ports on a medium the catalogue does not have', () => {
+    const bad = structuredClone(withPorts);
+    bad.icons[0].ports = [{ id: 'x', medium: 'carrier-pigeon' }];
+    const result = validateIconPack(bad);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors.join(' ')).toMatch(
+        /icons\.sat-hotspot.*carrier-pigeon/
+      );
+    }
+  });
+
+  it('needs a family and a kebab-case id for an icon with ports', () => {
+    const bad = structuredClone(withPorts);
+    delete bad.icons[0].family;
+    bad.icons[0].id = 'Sat_Hotspot';
+    const result = validateIconPack(bad);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors).toEqual([
+        expect.stringMatching(/kebab-case id/),
+        expect.stringMatching(/needs a family/)
+      ]);
+    }
   });
 });

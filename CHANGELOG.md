@@ -20,7 +20,7 @@ potentially breaking and read the release notes before upgrading.
 - **The file format is the [Reticulyne scene format](docs/scene-format.md)**, `format: 'reticulyne-scene'`, still version 2, with its JSON Schema shipped as `dist/schema/scene-v2.json` (`$schema` points there). Files saved under the format's previous name no longer open (no compatibility is kept before 1.0).
 - **Built-in icon ids** are `reticulyne-<drawing id>` (collection `Reticulyne`).
 - **Catalogue items name their drawing** with `drawing: '<id>'` in place of a `links: [{ source: 'accurona', ref }]` cross-reference.
-- **A new set of built-in drawings, 323 in one style**, each with an isometric and a flat view. The earlier drawings keep their ids in the new style. The 15 catalogue items that had only a hand-drawn flat symbol now have a drawing of their own, so `ITEM_SYMBOLS` and `src/catalogue/symbols.ts` are gone. A virtual item gets its icon but still no `element`.
+- **A new set of built-in drawings, 329 in one style**, each with an isometric and a flat view. The earlier drawings keep their ids in the new style. The 15 catalogue items that had only a hand-drawn flat symbol now have a drawing of their own, so `ITEM_SYMBOLS` and `src/catalogue/symbols.ts` are gone. A virtual item gets its icon but still no `element`.
 - **The bundled third-party icon collections are removed** (Isoflow, AWS, Azure, GCP and Kubernetes, with `src/vendor/isopacks`). The built-in pack is the only one Reticulyne ships; the samples, templates and examples use it, and [docs/icon-packs.md](docs/icon-packs.md) says how to bring your own icons.
 - **Exports renamed or removed:** `builtinIcons`, `BUILTIN_ICON_COLLECTION` and `catalogueItemDrawing` replace `accuronaIcons`, `ACCURONA_ICON_COLLECTION` and `accuronaElement`; `schematicIconUrl` is removed (the flat view reads `flatUrl`). The theme factory is `createKitTheme` / `kitThemeOptions` / `kitVars`.
 
@@ -28,6 +28,8 @@ potentially breaking and read the release notes before upgrading.
 
 - **Icons carry a flat drawing.** An icon may have `flatUrl`, its flat (2D) drawing, beside `url`; the flat view draws it, and falls back to `url`. It is in the model, the scene format and the JSON Schema. A diagram saved before this takes the flat drawing of the library icon with the same id.
 - **Icon packs** ([docs/icon-packs.md](docs/icon-packs.md)): `IconPack { id, name, version?, icons }`, with `validateIconPack`, `iconPackSchema`, `packIcons`, `flattenPacks` and `fillFlatUrls`. The device drawings ship as `BUILTIN_PACK`, each with an isometric and a flat view.
+- **Pack icons can carry their connection detail.** A pack icon may list its device's `ports` (on the catalogue's media), with a palette `family`, `description` and `props`; `validateIconPack` checks them against the catalogue's rules. `packCatalogueItems(pack)` turns them into catalogue items and the new `catalogueItems` prop adds those to the palette, so a third-party pack brings its devices ready to connect. The icon a diagram stores is still the plain icon record.
+- **Satellite communications:** a `satellite` medium, and catalogue items with drawings for a Satellite Dish, Satellite Terminal (flat panel), Satellite (in orbit, for the link up and back), Marine Satellite Dome, Satellite Hotspot (portable and desktop) and Marine Data Hub, plus an Outboard Motor item. 329 drawings.
 - `SCENE_FORMAT`, `SCENE_VERSION`, `SCENE_SCHEMA_URL` and `redactScene` are exported.
 - The keymap specification is in this repository: [docs/keymap.md](docs/keymap.md).
 

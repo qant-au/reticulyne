@@ -52,6 +52,10 @@ import {
 import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
 import { TEMPLATES } from 'src/templates';
+import type { CatalogueItem } from 'src/catalogue/schema';
+
+// A stable default, so the effect below does not run on every render.
+const NO_CATALOGUE_ITEMS: CatalogueItem[] = [];
 import { isSceneDocument, type Scene } from 'src/core';
 import { leanIcons, sceneFromModel, type LoadHints } from 'src/scene';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
@@ -80,6 +84,7 @@ const App = ({
   onIconUpload,
   onDiagramReplaced,
   templates = TEMPLATES,
+  catalogueItems = NO_CATALOGUE_ITEMS,
   iconCollections,
   onSave,
   autoSaveDebounce = false,
@@ -178,6 +183,10 @@ const App = ({
   useEffect(() => {
     uiStateActions.setTemplates(templates);
   }, [templates, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setCatalogueItems(catalogueItems);
+  }, [catalogueItems, uiStateActions]);
 
   // 1.5: patches held back by a drag or a draw land when it ends.
   usePatchQueueFlush();

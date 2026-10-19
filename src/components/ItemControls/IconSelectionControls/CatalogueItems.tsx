@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Typography } from '@mui/material';
 import { PanelSection } from 'src/kit';
 import { useModelStore } from 'src/stores/modelStore';
+import { useUiStateStore } from 'src/stores/uiStateStore';
 import { ITEMS } from 'src/catalogue/items';
 import { catalogueItemSymbol, itemToSceneObject } from 'src/catalogue/place';
 import { FAMILIES, FAMILY_NAMES } from 'src/catalogue/schema';
@@ -34,6 +35,23 @@ export const CatalogueItems = ({ filter, onMouseDown, onClick }: Props) => {
   const icons = useModelStore((state) => {
     return state.icons;
   });
+  const extraItems = useUiStateStore((state) => {
+    return state.catalogueItems;
+  });
+  // The built-in items, then the host's; a built-in id is never replaced.
+  const items = useMemo(() => {
+    const builtIn = new Set(
+      ITEMS.map((item) => {
+        return item.id;
+      })
+    );
+    return [
+      ...ITEMS,
+      ...extraItems.filter((item) => {
+        return !builtIn.has(item.id);
+      })
+    ];
+  }, [extraItems]);
 
   const tiles = useMemo(() => {
     const urls = new Map(
@@ -41,7 +59,7 @@ export const CatalogueItems = ({ filter, onMouseDown, onClick }: Props) => {
         return [icon.id, icon.url];
       })
     );
-    return ITEMS.map((item) => {
+    return items.map((item) => {
       const icon = availableIcon(itemToSceneObject(item, item.id), icons);
       const symbol = catalogueItemSymbol(item);
       const url =
@@ -59,7 +77,7 @@ export const CatalogueItems = ({ filter, onMouseDown, onClick }: Props) => {
         } satisfies Icon
       };
     });
-  }, [icons]);
+  }, [icons, items]);
 
   const byTile = useMemo(() => {
     return new Map(

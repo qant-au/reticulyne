@@ -1,5 +1,9 @@
 # Vendored icon packs (`src/vendor/isopacks`)
 
+> **Emptied 2026-10-19.** Every icon was removed from the five packs; each file now exports its
+> `id` and `name` with `icons: []`. The provenance below describes what was here. The isopack
+> code and this folder are removed next.
+
 Reticulyne previously depended on the `@isoflow/isopacks` npm package for
 its bundled icon collections. The compiled distribution files were copied
 in-tree to remove the external dependency (the package is pre-1.0 and shares

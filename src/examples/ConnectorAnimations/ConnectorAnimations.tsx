@@ -14,9 +14,9 @@ const animationsInitialData: InitialData = {
   icons,
   colors,
   items: [
-    { id: 'client', name: 'Client', icon: 'office' },
-    { id: 'service', name: 'Service', icon: 'function-module' },
-    { id: 'store', name: 'Store', icon: 'storage' }
+    { id: 'client', name: 'Client', icon: 'reticulyne-office' },
+    { id: 'service', name: 'Service', icon: 'reticulyne-serverless-function' },
+    { id: 'store', name: 'Store', icon: 'reticulyne-storage-array' }
   ],
   views: [
     {

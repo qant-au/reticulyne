@@ -17,8 +17,8 @@ const pulseInitialData: InitialData = {
   icons,
   colors,
   items: [
-    { id: 'producer', name: 'Producer', icon: 'office' },
-    { id: 'consumer', name: 'Consumer', icon: 'storage' }
+    { id: 'producer', name: 'Producer', icon: 'reticulyne-office' },
+    { id: 'consumer', name: 'Consumer', icon: 'reticulyne-storage-array' }
   ],
   views: [
     {

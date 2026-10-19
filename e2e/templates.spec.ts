@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 
 /**
  * "New from template" replaces the diagram with a starter,
- * using the editor's own icon set (the Docker default: every isopack).
+ * using the editor's own icon set (the Docker default: the built-in drawings).
  */
 test('start a diagram from the Kubernetes template', async ({ page }) => {
   await page.goto('/');
@@ -25,7 +25,7 @@ test('start a diagram from the Kubernetes template', async ({ page }) => {
   expect(model.objects).toHaveLength(6);
   expect(
     model.objects.every((i: { icon?: string }) => {
-      return i.icon?.startsWith('k8s-');
+      return i.icon?.startsWith('reticulyne-');
     })
   ).toBe(true);
   expect(model.views[0].connectors).toHaveLength(7);

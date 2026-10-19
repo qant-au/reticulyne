@@ -47,9 +47,9 @@ const dashboardInitialData: InitialData = {
   icons,
   colors,
   items: [
-    { id: 'web', name: 'Web frontend', icon: 'office' },
-    { id: 'api', name: 'API service', icon: 'function-module' },
-    { id: 'db', name: 'Database', icon: 'storage' }
+    { id: 'web', name: 'Web frontend', icon: 'reticulyne-office' },
+    { id: 'api', name: 'API service', icon: 'reticulyne-serverless-function' },
+    { id: 'db', name: 'Database', icon: 'reticulyne-storage-array' }
   ],
   views: [
     {

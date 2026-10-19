@@ -138,7 +138,7 @@ test('import opens a file as a new diagram, saved straight away', async ({
     buffer: Buffer.from(
       JSON.stringify({
         title: 'Imported net',
-        items: [{ id: 'a', name: 'Edge router', icon: 'router' }],
+        items: [{ id: 'a', name: 'Edge router', icon: 'reticulyne-router' }],
         icons: [],
         colors: [{ id: 'c', value: '#999999' }],
         views: [

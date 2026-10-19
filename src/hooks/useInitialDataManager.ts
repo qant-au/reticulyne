@@ -1,3 +1,4 @@
+import { BUILTIN_PACK } from 'src/icons/builtin';
 import { fillFlatUrls } from 'src/icons/pack';
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import type { ZodIssue } from 'zod';
@@ -175,8 +176,13 @@ export const useInitialDataManager = ({
           !loadedIds.has(icon.id) && icon.collection !== CUSTOM_ICON_COLLECTION
         );
       });
-      // A file saved before icons carried a flat drawing still gets one.
-      const fileIcons = fillFlatUrls(loaded.icons, current);
+      // A file saved before icons carried a flat drawing still gets one:
+      // the library's, else the built-in drawing of that id, which is there
+      // even when the host passed no library (the first load).
+      const fileIcons = fillFlatUrls(loaded.icons, [
+        ...current,
+        ...BUILTIN_PACK.icons
+      ]);
       const icons = filterIconsByCollection(
         [...fileIcons, ...library],
         iconCollectionsRef.current

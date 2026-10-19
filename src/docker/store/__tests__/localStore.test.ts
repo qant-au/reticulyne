@@ -72,6 +72,100 @@ describe('diagrams', () => {
     await expect(storage.flush()).rejects.toBeInstanceOf(StorageFullError);
     await expect(storage.flush()).resolves.toBeUndefined();
   });
+
+  // Code review 2026-10-19: a failed save left the diagram and its index
+  // entry in the cache, so it looked saved for the rest of the session.
+  test('a failed save is rolled back: the diagram is neither listed nor opened', async () => {
+    const { storage } = await openLocalStore({ factory, legacy: null });
+    const diagrams = createDiagramStorage(storage, []);
+    jest
+      .mocked(transactionDone)
+      .mockRejectedValueOnce(new DOMException('full', 'QuotaExceededError'));
+    diagrams.save('d1', { ...emptyScene('d1'), title: 'Lost' });
+    await expect(storage.flush()).rejects.toBeInstanceOf(StorageFullError);
+    expect(diagrams.list()).toEqual([]);
+    expect(diagrams.load('d1')).toBeNull();
+  });
+
+  test('a diagram and its index entry are written in one transaction', async () => {
+    const { storage } = await openLocalStore({ factory, legacy: null });
+    const calls = jest.mocked(transactionDone).mock.calls.length;
+    createDiagramStorage(storage, []).save('d1', emptyScene('d1'));
+    await storage.flush();
+    expect(jest.mocked(transactionDone).mock.calls.length - calls).toBe(1);
+  });
+
+  // Code review 2026-10-19: one failure slot for the whole store reported an
+  // earlier, unrelated failed write against the next save.
+  test('a write that failed earlier is not reported against a later save', async () => {
+    const { storage } = await openLocalStore({ factory, legacy: null });
+    jest
+      .mocked(transactionDone)
+      .mockRejectedValueOnce(new DOMException('full', 'QuotaExceededError'));
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {
+      return undefined;
+    });
+    storage.setItem('reticulyne.current', 'x');
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    storage.setItem('reticulyne.diagram.d1', '{}');
+    await expect(storage.flush()).resolves.toBeUndefined();
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  // Code review 2026-10-19: each tab cached the index at start-up, so one
+  // tab's save dropped the diagram another tab had saved since.
+  test('a diagram saved in another tab survives this tab’s next save', async () => {
+    const original = globalThis.BroadcastChannel;
+    // jsdom has none; Node's is the same API, across instances in-process.
+    // Each one made is closed after, or it holds the test process open.
+    const { BroadcastChannel: NodeChannel } = jest.requireActual<
+      typeof import('node:worker_threads')
+    >('node:worker_threads');
+    const made: { close(): void }[] = [];
+    class Tracked extends NodeChannel {
+      constructor(name: string) {
+        super(name);
+        made.push(this);
+      }
+    }
+    globalThis.BroadcastChannel = Tracked as unknown as typeof BroadcastChannel;
+    try {
+      const tabA = await openLocalStore({ factory, legacy: null });
+      const tabB = await openLocalStore({ factory, legacy: null });
+      const a = createDiagramStorage(tabA.storage, []);
+      const b = createDiagramStorage(tabB.storage, []);
+
+      b.save('rack', { ...emptyScene('rack'), title: 'Rack' });
+      await tabB.storage.flush();
+      // The other tab hears of the save.
+      for (let i = 0; i < 50 && a.list().length === 0; i += 1) {
+        await new Promise((resolve) => {
+          setTimeout(resolve, 10);
+        });
+      }
+
+      expect(a.list()).toHaveLength(1);
+
+      a.save('desk', { ...emptyScene('desk'), title: 'Desk' });
+      await tabA.storage.flush();
+
+      const reopened = await openLocalStore({ factory, legacy: null });
+      expect(
+        createDiagramStorage(reopened.storage, [])
+          .list()
+          .map((entry) => {
+            return entry.name;
+          })
+          .sort()
+      ).toEqual(['Desk', 'Rack']);
+    } finally {
+      for (const channel of made) channel.close();
+      globalThis.BroadcastChannel = original;
+    }
+  });
 });
 
 describe('moving off localStorage', () => {
@@ -101,6 +195,36 @@ describe('moving off localStorage', () => {
     const again = await openLocalStore({ factory, legacy: localStorage });
     expect(createDiagramStorage(again.storage, []).list()).toEqual([]);
   });
+});
+
+// Code review 2026-10-19: diagrams saved to localStorage in a later session
+// that fell back to it (IndexedDB unavailable that time) were never copied.
+test('a diagram saved to localStorage after the first copy is copied next time', async () => {
+  createDiagramStorage(localStorage, []).save(
+    'old',
+    { ...emptyScene('old'), title: 'Old' },
+    1
+  );
+  const first = await openLocalStore({ factory, legacy: localStorage });
+  createDiagramStorage(first.storage, []).remove('old');
+  await first.storage.flush();
+
+  // A session that fell back to localStorage saves a new diagram.
+  createDiagramStorage(localStorage, []).save(
+    'floor-2',
+    { ...emptyScene('floor-2'), title: 'Floor 2' },
+    Date.now() + 1000
+  );
+
+  const again = await openLocalStore({ factory, legacy: localStorage });
+  const diagrams = createDiagramStorage(again.storage, []);
+  // The new one is copied; the one deleted here does not come back.
+  expect(
+    diagrams.list().map((entry) => {
+      return entry.name;
+    })
+  ).toEqual(['Floor 2']);
+  expect(diagrams.load('floor-2')?.title).toBe('Floor 2');
 });
 
 describe('icon packs', () => {

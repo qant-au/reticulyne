@@ -39,7 +39,13 @@ export const openDatabase = (
       upgrade(request.result);
     };
     request.onsuccess = () => {
-      resolve(request.result);
+      const db = request.result;
+      // A newer build opening the database with a higher version waits on
+      // every open connection; this one steps aside rather than block it.
+      db.onversionchange = () => {
+        db.close();
+      };
+      resolve(db);
     };
     request.onerror = () => {
       reject(request.error);

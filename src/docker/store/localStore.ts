@@ -3,7 +3,7 @@ import {
   type IconPack,
   type IconPackResult
 } from 'src/icons/pack';
-import { StorageFullError } from '../diagramStorage';
+import { isQuotaError, StorageFullError } from '../diagramStorage';
 import { openDatabase, readEntries, transactionDone } from './idb';
 
 // The Docker app's local store, in the browser's IndexedDB: the saved
@@ -13,23 +13,37 @@ import { openDatabase, readEntries, transactionDone } from './idb';
 //
 // Diagrams keep the key scheme diagramStorage.ts defines, in a `kv` store,
 // behind a Storage-shaped cache: everything is read into memory when the
-// app starts, so reads stay synchronous, and each write goes through to
-// IndexedDB. `flush()` waits for the writes and reports a failed one, which
-// is how a save learns it did not reach the disk.
+// app starts, so reads stay synchronous, and writes go through to
+// IndexedDB.
+// - Writes made in the same turn (a diagram and the index that lists it)
+//   are one transaction, so they reach the disk together or not at all. A
+//   batch that fails is rolled back in the cache too, so the editor never
+//   lists or opens what is not on disk.
+// - `flush()` waits for the writes so far and rejects if one of them failed,
+//   which is how a save learns it did not reach the disk.
+// - Other tabs are told of each committed batch (BroadcastChannel) and
+//   update their cache, so one tab's save is not undone by another's stale
+//   copy of the index.
 //
 // The first time it opens, it copies the diagrams an older build kept in
-// localStorage. Those keys are left where they are, so going back to an
-// older build still finds them.
+// localStorage, and leaves them there for an older build to find. Later, it
+// copies again any diagram saved to localStorage after that, in a session
+// where IndexedDB could not be used.
 
 export const DB_NAME = 'reticulyne';
 const DB_VERSION = 1;
 const KV = 'kv';
 const PACKS = 'packs';
 const KEY_PREFIX = 'reticulyne.';
+const INDEX_KEY = 'reticulyne.diagrams';
+const diagramKey = (id: string) => {
+  return `reticulyne.diagram.${id}`;
+};
 export const MIGRATED_KEY = 'reticulyne.migrated-from-local-storage';
+export const CHANNEL = 'reticulyne-local-store';
 
 export interface PersistentStorage extends Storage {
-  /** Waits for every write so far; rejects if one failed. */
+  /** Waits for every write so far; rejects if one of them failed. */
   flush(): Promise<void>;
 }
 
@@ -46,30 +60,81 @@ export interface LocalStore {
   packs: PackStore;
 }
 
-const isQuotaError = (e: unknown) => {
-  return (
-    e instanceof DOMException &&
-    (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED')
-  );
-};
+type Change = [key: string, value: string | null];
+
+interface Batch {
+  changes: Map<string, string | null>;
+  // What the cache held for each key before this batch, for a rollback.
+  before: Map<string, string | null>;
+}
 
 const createStorage = (
   db: IDBDatabase,
   entries: Map<string, string>
 ): PersistentStorage => {
-  const pending = new Set<Promise<void>>();
-  let failure: unknown = null;
+  const channel =
+    typeof BroadcastChannel === 'undefined'
+      ? null
+      : new BroadcastChannel(CHANNEL);
+  channel?.addEventListener('message', (event: MessageEvent<Change[]>) => {
+    for (const [key, value] of event.data) {
+      if (value === null) entries.delete(key);
+      else entries.set(key, value);
+    }
+  });
 
-  const write = (run: (store: IDBObjectStore) => void) => {
+  let queued: Batch | null = null;
+  // Each committing batch's outcome: null, or the error it failed with.
+  const committing = new Set<Promise<unknown>>();
+
+  const set = (key: string, value: string | null) => {
+    if (value === null) entries.delete(key);
+    else entries.set(key, value);
+  };
+
+  const commit = (batch: Batch) => {
     const tx = db.transaction(KV, 'readwrite');
-    run(tx.objectStore(KV));
-    const done = transactionDone(tx).catch((e: unknown) => {
-      failure ??= e;
+    const store = tx.objectStore(KV);
+    for (const [key, value] of batch.changes) {
+      if (value === null) store.delete(key);
+      else store.put(value, key);
+    }
+    const outcome = transactionDone(tx).then(
+      () => {
+        channel?.postMessage([...batch.changes]);
+        return null;
+      },
+      (e: unknown) => {
+        // Roll the cache back, for each key nothing has written since.
+        for (const [key, value] of batch.changes) {
+          if ((entries.get(key) ?? null) === value) {
+            set(key, batch.before.get(key) ?? null);
+          }
+        }
+        console.warn('[reticulyne] a write to the local store failed:', e);
+        return e;
+      }
+    );
+    committing.add(outcome);
+    void outcome.finally(() => {
+      committing.delete(outcome);
     });
-    pending.add(done);
-    void done.finally(() => {
-      pending.delete(done);
-    });
+  };
+
+  const write = (key: string, value: string | null) => {
+    if (!queued) {
+      const batch: Batch = { changes: new Map(), before: new Map() };
+      queued = batch;
+      queueMicrotask(() => {
+        queued = null;
+        commit(batch);
+      });
+    }
+    if (!queued.before.has(key)) {
+      queued.before.set(key, entries.get(key) ?? null);
+    }
+    queued.changes.set(key, value);
+    set(key, value);
   };
 
   return {
@@ -83,29 +148,23 @@ const createStorage = (
       return entries.get(key) ?? null;
     },
     setItem(key: string, value: string) {
-      entries.set(key, String(value));
-      write((store) => {
-        store.put(String(value), key);
-      });
+      write(key, String(value));
     },
     removeItem(key: string) {
-      entries.delete(key);
-      write((store) => {
-        store.delete(key);
-      });
+      write(key, null);
     },
     clear() {
-      entries.clear();
-      write((store) => {
-        store.clear();
-      });
+      for (const key of [...entries.keys()]) write(key, null);
     },
     async flush() {
-      await Promise.all([...pending]);
-      if (failure === null) return;
-      const e = failure;
-      failure = null;
-      throw isQuotaError(e) ? new StorageFullError() : e;
+      // Lets this turn's batch start committing first.
+      await Promise.resolve();
+      const outcomes = await Promise.all([...committing]);
+      const failure = outcomes.find((outcome) => {
+        return outcome !== null;
+      });
+      if (failure === undefined) return;
+      throw isQuotaError(failure) ? new StorageFullError() : failure;
     }
   };
 };
@@ -145,10 +204,83 @@ const createPackStore = (db: IDBDatabase, installed: IconPack[]): PackStore => {
   };
 };
 
+interface IndexEntry {
+  id: string;
+  name: string;
+  updatedAt: number;
+}
+
+const readIndex = (text: string | null | undefined): IndexEntry[] => {
+  try {
+    const value: unknown = JSON.parse(text ?? '[]');
+    return Array.isArray(value)
+      ? value.filter((entry): entry is IndexEntry => {
+          return (
+            typeof entry?.id === 'string' &&
+            typeof entry?.updatedAt === 'number'
+          );
+        })
+      : [];
+  } catch {
+    return [];
+  }
+};
+
 /**
- * Opens the local store, copying an older build's localStorage diagrams in
- * the first time. Rejects when IndexedDB cannot be used (some private
- * windows); the caller falls back to localStorage.
+ * What to copy from localStorage on the first open: every `reticulyne.*`
+ * key the store does not have.
+ */
+const firstCopy = (legacy: Storage, entries: Map<string, string>): Change[] => {
+  const copied: Change[] = [];
+  for (let i = 0; i < legacy.length; i += 1) {
+    const key = legacy.key(i);
+    const value = key === null ? null : legacy.getItem(key);
+    if (key?.startsWith(KEY_PREFIX) && value !== null && !entries.has(key)) {
+      copied.push([key, value]);
+    }
+  }
+  return copied;
+};
+
+/**
+ * What to copy on a later open: the diagrams saved to localStorage after the
+ * first copy (in a session that fell back to it) and newer than the store's
+ * own, with their index entries. Older localStorage diagrams are not copied
+ * again, so one deleted here does not come back.
+ */
+const laterCopy = (
+  legacy: Storage,
+  entries: Map<string, string>,
+  since: number
+): Change[] => {
+  const ours = readIndex(entries.get(INDEX_KEY));
+  const byId = new Map(
+    ours.map((entry) => {
+      return [entry.id, entry];
+    })
+  );
+  const newer = readIndex(legacy.getItem(INDEX_KEY)).filter((entry) => {
+    const own = byId.get(entry.id);
+    return (
+      entry.updatedAt > since &&
+      (!own || entry.updatedAt > own.updatedAt) &&
+      legacy.getItem(diagramKey(entry.id)) !== null
+    );
+  });
+  if (!newer.length) return [];
+  for (const entry of newer) byId.set(entry.id, entry);
+  return [
+    ...newer.map((entry): Change => {
+      return [diagramKey(entry.id), legacy.getItem(diagramKey(entry.id))];
+    }),
+    [INDEX_KEY, JSON.stringify([...byId.values()])]
+  ];
+};
+
+/**
+ * Opens the local store, copying an older build's localStorage diagrams in.
+ * Rejects when IndexedDB cannot be used (some private windows); the caller
+ * falls back to localStorage.
  */
 export const openLocalStore = async ({
   factory = window.indexedDB,
@@ -174,26 +306,25 @@ export const openLocalStore = async ({
     }
   }
 
-  if (!entries.has(MIGRATED_KEY)) {
-    const copied: [string, string][] = [];
-    if (legacy) {
-      for (let i = 0; i < legacy.length; i += 1) {
-        const key = legacy.key(i);
-        const value = key === null ? null : legacy.getItem(key);
-        if (
-          key?.startsWith(KEY_PREFIX) &&
-          value !== null &&
-          !entries.has(key)
-        ) {
-          copied.push([key, value]);
-        }
-      }
-    }
-    copied.push([MIGRATED_KEY, new Date().toISOString()]);
+  const migrated = entries.get(MIGRATED_KEY);
+  const copied: Change[] =
+    migrated === undefined
+      ? [
+          ...(legacy ? firstCopy(legacy, entries) : []),
+          [MIGRATED_KEY, new Date().toISOString()]
+        ]
+      : legacy
+        ? laterCopy(legacy, entries, Date.parse(migrated) || 0)
+        : [];
+  if (copied.length) {
     const tx = db.transaction(KV, 'readwrite');
-    for (const [key, value] of copied) tx.objectStore(KV).put(value, key);
+    for (const [key, value] of copied) {
+      if (value !== null) tx.objectStore(KV).put(value, key);
+    }
     await transactionDone(tx);
-    for (const [key, value] of copied) entries.set(key, value);
+    for (const [key, value] of copied) {
+      if (value !== null) entries.set(key, value);
+    }
   }
 
   const installed = (await readEntries<IconPack>(db, PACKS)).flatMap(

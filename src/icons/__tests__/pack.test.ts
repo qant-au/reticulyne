@@ -1,6 +1,8 @@
 import { emptyScene, serializeScene, validateScene } from 'src/core';
 import { sceneFromModel, sceneToModel } from 'src/scene';
 import { iconSchema } from 'src/schemas/icons';
+import { filterIconsByCollection } from 'src/utils/common';
+import { BUILTIN_PACK } from '../builtin';
 import {
   fillFlatUrls,
   flattenPacks,
@@ -133,5 +135,19 @@ describe('the flat drawing in the file format', () => {
     const { model, context } = sceneToModel(result.scene);
     expect(model.icons[0].flatUrl).toBe(flat);
     expect(sceneFromModel(model, context).icons?.[0].flatUrl).toBe(flat);
+  });
+});
+
+describe('the built-in pack in iconCollections', () => {
+  // Its collection is 'Reticulyne' and its id 'reticulyne': the filter
+  // ignores case, so the pack is allowed or denied by its id as documented.
+  test('is denied and allowed by its id', () => {
+    const icons = flattenPacks([BUILTIN_PACK]);
+    expect(filterIconsByCollection(icons, { deny: ['reticulyne'] })).toEqual(
+      []
+    );
+    expect(
+      filterIconsByCollection(icons, { allow: ['reticulyne'] })
+    ).toHaveLength(icons.length);
   });
 });

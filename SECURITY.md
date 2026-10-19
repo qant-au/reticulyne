@@ -79,6 +79,12 @@ The following `npm audit` advisories are knowingly carried in the published pack
 - **Severity (audit):** none reported, but pre-1.0 and no upstream release since 2022 — any future advisory has no patch path.
 - **Status:** **closed by `SEC-04`.** Replaced by an in-tree A* implementation at `src/vendor/pathfinder/` with the minimal subset Reticulyne exercised (Grid + Manhattan A* with 8-directional movement). Provenance and closure criterion are recorded in [`src/vendor/pathfinder/VENDOR.md`](src/vendor/pathfinder/VENDOR.md). The `@types/pathfinding` typing dep and the dedicated `pathfindingMock.js` Jest shim — only there to paper over the package's CommonJS interop — were removed at the same time.
 
+### `GHSA-vfj7-8cjw-p6xm`: `braces`, stack exhaustion on deeply nested patterns
+
+- **Severity (audit):** high, in the full `npm audit` only. `npm audit --omit=dev` (the CI gate) is clean.
+- **Reach:** dev tooling only. `braces@3.0.3` comes in through `nodemon` (chokidar), `tsc-alias` (globby, fast-glob, micromatch) and `webpack-dev-server` (http-proxy-middleware, micromatch), which together make up the ten entries `npm audit` lists. None of them ships in `dist/`, and they only expand the repository's own glob patterns, never untrusted input.
+- **Status:** **accepted 2026-10-19, no fix exists.** The advisory covers every `braces` release, including the latest (3.0.3). The fix npm suggests (`npm audit fix --force`) downgrades `nodemon` to 1.x, which is worse. Revisit when `braces` publishes a fixed release, then add an `overrides` entry.
+
 ### Source maps in the published package (SEC-05)
 
 The tarball ships `dist/*.js.map` deliberately. The repository is public and MIT-licensed, so the maps disclose nothing that the source does not, and they give embedders readable stack traces. `scripts/check-pack-contents.mjs` (run by CI and before every publish) allows only bundles, their maps, type declarations and webpack's licence banners inside `dist/`, so nothing else can ride along unnoticed.

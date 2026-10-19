@@ -211,7 +211,7 @@ test('serializeScene writes $schema first and refuses an invalid scene', () => {
   }, /invalid scene/);
 });
 
-// A plan view, owned by Axonometra, beside Reticulyne's diagram.
+// A plan view, owned by a floor planner, beside Reticulyne's diagram.
 const shared = () => {
   const s = base();
   s.objects.push({ id: 'sofa', element: 'sofa-3', props: { colour: 'grey' } });
@@ -284,7 +284,7 @@ test('merge keeps views and object fields the editor does not own', () => {
 
 test('merge deletes an object the editor removed, unless placed elsewhere', () => {
   const opened = shared();
-  // Axonometra deletes the sofa and A from its plan.
+  // The floor planner deletes the sofa and A from its plan.
   const merged = mergeScene(opened, {
     viewKinds: ['plan'],
     views: [

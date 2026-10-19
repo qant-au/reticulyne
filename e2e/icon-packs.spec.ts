@@ -3,8 +3,8 @@ import { readFile } from 'node:fs/promises';
 
 /**
  * The local icon system: built-in icons carry an isometric and a flat
- * drawing, a file saved before that (under the older format and icon
- * names) still draws both, an icon pack installed in this browser's
+ * drawing, a file whose built-in icons carry no flat drawing still draws
+ * both, an icon pack installed in this browser's
  * IndexedDB is in the library, and diagrams an older build kept in
  * localStorage are moved into IndexedDB. Fixtures are injected via
  * `window.__RETICULYNE_E2E__` (Docker entry only, see src/index-docker.tsx).
@@ -101,13 +101,12 @@ test('a built-in device draws its isometric view, then its flat one', async ({
   expect(flat).toMatch(/^data:image\/svg\+xml,/);
 });
 
-test('a file saved under the older format and icon names draws both views', async ({
+test('a file whose built-in icons carry no flat drawing draws both views', async ({
   page
 }) => {
   const fixture = JSON.parse(
     await readFile(`${__dirname}/fixtures/export-icons-scene.json`, 'utf8')
   );
-  expect(fixture.format).not.toBe('reticulyne-scene');
   await hook(page, fixture);
   await page.goto('/');
   await expect(page.getByRole('application')).toBeVisible();
@@ -122,7 +121,7 @@ test('a file saved under the older format and icon names draws both views', asyn
 
   await toFlat(page);
   // The file's icons carry no flat drawing; the built-in ones of the same
-  // (renamed) ids supply it, so no node draws its isometric image flat.
+  // ids supply it, so no node draws its isometric image flat.
   await expect
     .poll(async () => {
       const flat = await images.evaluateAll((els) => {
@@ -190,11 +189,11 @@ test('diagrams an older build kept in localStorage move to IndexedDB', async ({
 }) => {
   await page.addInitScript(() => {
     const scene = {
-      format: 'accurona-scene',
+      format: 'reticulyne-scene',
       version: 2,
       id: 'old',
       title: 'From localStorage',
-      objects: [{ id: 'a', name: 'Device A', icon: 'accurona-router' }],
+      objects: [{ id: 'a', name: 'Device A', icon: 'reticulyne-router' }],
       views: [
         {
           id: 'v',

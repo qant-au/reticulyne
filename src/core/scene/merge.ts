@@ -2,8 +2,8 @@ import type { Connection, Icon, Scene, SceneObject, View } from './schema';
 
 // Saving without losing what an editor does not understand.
 //
-// Axonometra draws plan views; Reticulyne draws iso and schematic views. Each
-// opens the whole scene but edits only its own part, so on save it hands over
+// A floor planner draws plan views; Reticulyne draws iso and schematic views.
+// Each opens the whole scene but edits only its own part, so on save it hands over
 // its part and this merges it back into the scene it opened: the other
 // editor's views, the object fields it does not show (props, ports, links),
 // the connections and anything else stay as they were.

@@ -21,7 +21,7 @@ export interface FloorPlanObject {
   template: Omit<ModelItem, 'id'>;
 }
 
-// Devices placed on the floor plan (in Axonometra) that no diagram
+// Devices placed on a floor plan view of the scene that no diagram
 // view has yet. Placing one keeps its object id, so the node in the diagram
 // and the device on the plan are the same object.
 export const FloorPlanObjects = ({

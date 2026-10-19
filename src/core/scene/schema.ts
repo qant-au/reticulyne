@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { LENGTH_UNITS } from '../units';
-import { renameLegacy } from './legacy';
 import { migrateScene } from './migrate';
 import { checkReferences } from './references';
 
@@ -402,11 +401,7 @@ export const sceneShapeSchema = z.strictObject({
  */
 export const sceneSchema = z.preprocess(
   (value, ctx) => {
-    const renamed =
-      typeof value === 'object' && value !== null && !Array.isArray(value)
-        ? renameLegacy(value as Record<string, unknown>, SCENE_FORMAT)
-        : value;
-    const migrated = migrateScene(renamed);
+    const migrated = migrateScene(value);
     if ('scene' in migrated) return migrated.scene;
     for (const issue of migrated.issues) {
       ctx.addIssue({
@@ -415,7 +410,7 @@ export const sceneSchema = z.preprocess(
         path: issue.path
       });
     }
-    return renamed;
+    return value;
   },
   sceneShapeSchema.superRefine((scene, ctx) => {
     for (const issue of checkReferences(scene as Scene)) {

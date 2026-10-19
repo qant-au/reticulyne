@@ -13,9 +13,6 @@ own. `src/core` implements it.
   code. A file names it in its [`$schema`](#top-level-shape) field.
 - **Drawings are not scenes.** Reticulyne's device drawings stay library source; a scene refers to
   them by id.
-- **Older names.** Files written before the format had its own name carry
-  `format: 'accurona-scene'`, and their built-in icons are named `accurona-<drawing id>`. Both are
-  read as the current names, and written under them on the next save.
 
 One JSON document describes a floor plan, an isometric network diagram and a flat 2D
 (schematic) diagram of the same things, so that the tools open and save the same file,
@@ -120,8 +117,8 @@ interface Port {
   uploaded image. An object with an `icon` and no `element` can be drawn in diagram
   views, and in a plan view only as a symbol.
 - **Doors and windows are not in the library yet.** Until they are, `element` may also
-  name one of Axonometra's built-in wall fittings (`door`, `window` and the rest), so a
-  plan can be carried in full.
+  name a floor planner's own wall fittings (`door`, `window` and the rest), so a plan can
+  be carried in full.
 - An object with neither is drawn as a plain labelled box.
 - **Drawings and the catalogue.** The drawings are how physical things look; the things a
   diagram connects, including virtual ones that never appear on a floor plan, come from
@@ -232,8 +229,8 @@ the id of its placement, and connectors and groups refer to placements by object
 
 ### Plan views
 
-A plan view is a building: floors, walls, and objects placed at true scale. This is
-Axonometra's view.
+A plan view is a building: floors, walls, and objects placed at true scale. A floor
+planner draws it; Reticulyne keeps it, and reads where its devices are.
 
 ```ts
 interface PlanView extends ViewBase {
@@ -282,8 +279,8 @@ interface PlanPlacement {
   whatever the scene's `units` says. **Axes:** x runs right, y runs down
   the plan, z runs up. **Rotation** is clockwise in degrees, about the footprint centre.
 - **The footprint** is the element's `size.w` by `size.d`, unless `size` overrides it.
-  An editor records the size it placed, as Axonometra does today, when the scene must
-  not change if the element library does.
+  An editor records the size it placed when the scene must not change if the element
+  library does.
 - **`attach`** fixes the placement into a wall of the same floor. The placement's `x`
   and `y` still say where along the wall it sits.
 
@@ -356,8 +353,8 @@ either way: facing never moves the underside.
 forward migration:
 
 - A placement with `mountMm` and no `mountFrom` gets `mountFrom: 'floor'`, so a stored
-  height keeps meaning exactly what it meant. Axonometra writes `mountMm` on every
-  placement it saves, so an Axonometra file opens with every item where it was.
+  height keeps meaning exactly what it meant, so a file whose editor wrote `mountMm` on
+  every placement opens with every item where it was.
 - A placement with no `mountMm` is left as it is: in version 1 it already followed the
   element's `mount`, and in version 2 it follows the element's `mount` and `mountFrom`.
 - Facing is not pinned. A version 1 placement has no `mirror.z`, so it takes the
@@ -717,43 +714,17 @@ floorsOf(scene, objectIds): FloorLocation[]
   plan object with that `element` can be drawn in a diagram with its catalogue twin.
   The scene never stores the catalogue item.
 
-## Migrating from today's formats
+## Migrating from Reticulyne's model
 
-The scene format replaces the formats each project uses today: Axonometra's plan
-format (version 2) and Reticulyne's model. The old formats are **read, never written**:
+The scene format replaces the model older versions of Reticulyne saved. The model is
+**read, never written**:
 
-- **On load**, an editor that is given a plan v2 file or a Reticulyne model converts
-  it to a scene as below, and from then on works on the scene.
-- **On save**, it writes only the scene format. There is no "save as plan v2" or "save
-  as Reticulyne model", and no round trip back to either.
+- **On load**, a Reticulyne model is converted to a scene as below, and from then on the
+  editor works on the scene.
+- **On save**, it writes only the scene format. There is no "save as Reticulyne model",
+  and no round trip back.
 - **Exports are separate and unchanged.** Exporting a drawing as SVG, PDF or PNG is
   output, not a file format, and works as it does today.
-
-### Axonometra plan (version 2)
-
-The plan format is described in Axonometra's
-[PLAN-FORMAT.md](https://github.com/qant-au/axonometra/blob/main/PLAN-FORMAT.md). A
-plan becomes one scene with one `plan` view.
-
-| Axonometra | Scene | Note |
-|---|---|---|
-| `floors[i]` | `views[0].floors[i]` | `id` generated (`floor-0`, `floor-1`...), since Axonometra floors have none |
-| `wallNodes[].id` (number) | `nodes[].id` (string) | the number as a string |
-| `wallNodes[].x`, `.y` | `nodes[].x`, `.y` | x 10: Axonometra editor units are cm |
-| `wallNodeLinks` (adjacency list) | `walls[]` | one wall per unordered node pair; `id` = `w-<a>-<b>` with `a < b` |
-| `exteriorWalls` | `walls[].exterior` | |
-| `wallHeightM`, `elevationM` | `wallHeightMm`, `elevationMm` | x 1000 |
-| `furnitureArray[]` | one object + one placement each | object `id` = the furniture id as a string |
-| `texturePath` | `objects[].element` | it is already the element id, or a built-in wall fitting such as `door` |
-| `width`, `height` (m) | `placements[].size.w`, `.d` (mm) | x 1000; Axonometra's `height` is depth, not how tall |
-| `heightM`, `mountM` | `size.h`, `mountMm` | x 1000 |
-| `x`, `y` | `x`, `y` | Axonometra stores the footprint's top-left corner, which is also the point it rotates about; the centre is that point plus the half-size rotated by `rotation`. Doors are also offset by the wall thickness at orientations 1 and 3, and the converter undoes it |
-| `rotation` (radians) | `rotation` (degrees) | x 180 / pi; both clockwise |
-| `orientation` 0 / 1 / 2 / 3 | `mirror` none / `{x}` / `{x, y}` / `{y}` | each step flips one axis in place |
-| `attachedToLeft`, `attachedToRight` | `attach.wall` | the wall between the two nodes |
-| `zIndex` | none | derived from mount height and placement order when drawn |
-| `furnitureId`, `wallNodeId` counters | none | ids are strings; an editor keeps its own counters |
-| `units` | `units` | unchanged; absent is `mm` in both |
 
 ### Reticulyne model
 
@@ -842,11 +813,6 @@ And no object is placed twice in one view.
 - **Version 2** adds [mounting and facing](#mounting-and-facing-version-2): placement
   `mountFrom`, `mountOn` and `mirror.z`, and gives `mountMm` a meaning that depends on
   `mountFrom`. Its migration from version 1 is described there.
-- **The format name.** `reticulyne-scene` replaced `accurona-scene` at version 2, with no
-  change to the version number: the files are the same format, and older names are read as
-  the current ones. The icon `flatUrl` field arrived with the new name. A reader that knows
-  only the older name refuses a file with the new one outright, so it can never drop
-  `flatUrl` silently.
 
 ## Out of scope
 

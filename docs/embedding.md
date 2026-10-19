@@ -169,7 +169,7 @@ The host page never sees these wheel events bubble — the renderer's wheel list
 
 The editor wires the conventions used by Figma, Miro, Excalidraw and tldraw. All shortcuts are window-level and are suppressed while focus is on a text input / textarea / contenteditable surface (e.g. an item-description editor), so they never collide with the host's own typing.
 
-The bindings are aligned with **Excalidraw's**, letter and number alike, and with [Axonometra](https://github.com/qant-au/axonometra)'s, so an operator moving between an Excalidraw canvas and this one is not retrained. The specification, with every deliberate difference from Excalidraw, is [`docs/keymap.md`](keymap.md); the `?` dialog lists the same table. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
+The bindings are aligned with **Excalidraw's**, letter and number alike, so someone moving between an Excalidraw canvas and this one, in either direction, is not retrained. The specification, with every deliberate difference from Excalidraw, is [`docs/keymap.md`](keymap.md); the `?` dialog lists the same table. Excalidraw's free-form tools — diamond (`D`), ellipse (`O`), line (`L`), freedraw (`P`), eraser (`E`) — have no equivalent on a tile-based isometric grid and are deliberately left unbound.
 
 **Tools.** Bare key, no modifier. Select and Hand work in `EXPLORABLE_READONLY` too; the drawing tools need `EDITABLE`.
 
@@ -446,8 +446,7 @@ Changing `iconCollections` at runtime re-applies the filter on the next load —
 
 Reticulyne opens and saves the [scene format](scene-format.md). A scene lists each thing once
 as an **object**, and **views** place objects: Reticulyne draws the `iso` and `schematic`
-views and keeps the `plan` views a floor planner such as
-[Axonometra](https://github.com/qant-au/axonometra) draws. What `onSave` receives, what Export as JSON downloads
+views and keeps the `plan` views a floor planner draws. What `onSave` receives, what Export as JSON downloads
 and what `getScene()` returns are all scenes.
 
 On save the edited diagram is merged into the scene that was opened, so a plan view,

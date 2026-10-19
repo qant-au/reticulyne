@@ -4,7 +4,6 @@ import { builtinIcons } from 'src/icons/builtin';
 import { iconSchema } from 'src/schemas/icons';
 import {
   CATALOGUE,
-  ITEM_SYMBOLS,
   SCHEMATIC_ICON_COLLECTION,
   catalogueItemDrawing,
   catalogueItemIcon,
@@ -58,7 +57,7 @@ describe('the built-in catalogue', () => {
     }
   });
 
-  it('has the virtual items, none with a twin', () => {
+  it('has the virtual items', () => {
     const virtual = CATALOGUE.items.filter((item) => {
       return item.virtual;
     });
@@ -69,8 +68,6 @@ describe('the built-in catalogue', () => {
     ).toEqual(
       expect.arrayContaining(['internet', 'vpn-tunnel', 'cloud-service'])
     );
-    for (const item of virtual)
-      expect(catalogueItemDrawing(item)).toBeUndefined();
   });
 
   it('draws every item with a twin with that element’s isometric view', () => {
@@ -157,17 +154,15 @@ describe('schematic symbols', () => {
     }
   });
 
-  it('are drawn by hand exactly for the items with no twin', () => {
+  it('every built-in item has a drawing', () => {
     const untwinned = CATALOGUE.items.filter((item) => {
       return !catalogueItemDrawing(item);
     });
-    expect(Object.keys(ITEM_SYMBOLS).sort()).toEqual(
-      untwinned
-        .map((item) => {
-          return item.id;
-        })
-        .sort()
-    );
+    expect(
+      untwinned.map((item) => {
+        return item.id;
+      })
+    ).toEqual([]);
   });
 
   it('are well-formed SVG', () => {
@@ -362,7 +357,7 @@ describe('itemToSceneObject', () => {
 
   it('writes lists as comma-separated props and keeps port props', () => {
     const plotter = itemToSceneObject(find('chartplotter'), 'mfd');
-    expect(plotter.element).toBeUndefined();
+    expect(plotter.element).toBe('chartplotter');
     expect(
       plotter.ports?.find((p) => {
         return p.id === 'n2k';
@@ -377,10 +372,10 @@ describe('itemToSceneObject', () => {
     expect(hdmi?.props?.protocols).toBe('hdmi,cec');
   });
 
-  it('gives a virtual item no element', () => {
+  it('gives a virtual item its icon but no element', () => {
     const net = itemToSceneObject(find('internet'), 'net');
     expect(net.element).toBeUndefined();
-    expect(net.icon).toBeUndefined();
+    expect(net.icon).toBe('reticulyne-internet');
   });
 
   it('every item makes an object the scene format accepts', () => {

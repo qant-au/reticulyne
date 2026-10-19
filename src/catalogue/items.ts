@@ -5,8 +5,7 @@ import type { CatalogueItem } from './schema';
 // examples in docs/catalogue.md, and virtual items.
 //
 // `drawing` names the item's drawing in src/icons/drawings.ts, which gives
-// it an isometric icon and a flat schematic. An item with no drawing has its
-// schematic drawn in symbols.ts.
+// it an isometric icon and a flat schematic. Every built-in item has one.
 
 const acIn = {
   id: 'ac-in',
@@ -221,6 +220,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'rs485-ethernet-gateway',
     name: 'RS-485 to Ethernet Gateway',
+    drawing: 'rs485-ethernet-gateway',
     family: 'serial',
     ports: [
       {
@@ -238,6 +238,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'n2k-tee-4way',
     name: 'NMEA 2000 4-Way Tee',
+    drawing: 'n2k-tee-4way',
     family: 'marine-vehicle',
     ports: [
       {
@@ -266,6 +267,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'n2k-tee',
     name: 'NMEA 2000 Tee',
+    drawing: 'n2k-tee',
     family: 'marine-vehicle',
     ports: [
       {
@@ -294,6 +296,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'n2k-terminator-male',
     name: 'NMEA 2000 Terminator (Male)',
+    drawing: 'n2k-terminator-male',
     family: 'marine-vehicle',
     ports: [
       {
@@ -308,6 +311,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'n2k-terminator-female',
     name: 'NMEA 2000 Terminator (Female)',
+    drawing: 'n2k-terminator-female',
     family: 'marine-vehicle',
     ports: [
       {
@@ -322,6 +326,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'n2k-power-injector',
     name: 'NMEA 2000 Power Injector',
+    drawing: 'n2k-power-injector',
     family: 'marine-vehicle',
     ports: [
       {
@@ -336,6 +341,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'chartplotter',
     name: 'Chartplotter',
+    drawing: 'chartplotter',
     family: 'marine-vehicle',
     ports: [
       {
@@ -358,6 +364,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'marine-radar',
     name: 'Radar',
+    drawing: 'marine-radar',
     family: 'marine-vehicle',
     ports: [
       {
@@ -374,6 +381,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'gps-receiver',
     name: 'GPS Receiver',
+    drawing: 'gps-receiver',
     family: 'marine-vehicle',
     ports: [
       {
@@ -388,6 +396,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'engine-gateway',
     name: 'Engine Gateway (J1939 to NMEA 2000)',
+    drawing: 'engine-gateway',
     family: 'marine-vehicle',
     ports: [
       {
@@ -546,6 +555,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'eol-resistor',
     name: 'End-of-Line Resistor',
+    drawing: 'eol-resistor',
     family: 'security',
     ports: [{ id: 'eol', medium: 'dry-contact', capabilities: ['eol'] }]
   },
@@ -705,6 +715,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'fire-isolator',
     name: 'Loop Isolator Module',
+    drawing: 'fire-isolator',
     family: 'fire',
     ports: [
       {
@@ -1012,6 +1023,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'internet',
     name: 'Internet',
+    drawing: 'internet',
     family: 'virtual',
     virtual: true,
     ports: [{ id: 'wan{1..8}', medium: 'ethernet-copper', role: 'hub' }]
@@ -1019,6 +1031,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'vpn-tunnel',
     name: 'VPN Tunnel',
+    drawing: 'vpn-tunnel',
     family: 'virtual',
     virtual: true,
     ports: [
@@ -1029,6 +1042,7 @@ export const ITEMS: CatalogueItem[] = [
   {
     id: 'cloud-service',
     name: 'Cloud Service',
+    drawing: 'cloud-service',
     family: 'virtual',
     virtual: true,
     ports: [

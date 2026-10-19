@@ -5,7 +5,6 @@ import type { Icon } from 'src/types/model';
 import { ITEMS } from './items';
 import { MEDIA } from './media';
 import type { CatalogueItem, Medium } from './schema';
-import { ITEM_SYMBOLS } from './symbols';
 import { expandPorts } from './validate';
 
 /** The built-in drawing an item draws with, if any. */
@@ -38,8 +37,7 @@ const SCHEMATIC_ICON_PREFIX = 'schematic-';
 
 /**
  * An item's 2D schematic symbol (the flat, Visio-style view) as SVG: its
- * drawing's flat view, else the symbol drawn for it in symbols.ts, else
- * none.
+ * drawing's flat view, else none.
  */
 export const catalogueItemSymbol = (
   item: Pick<CatalogueItem, 'id' | 'drawing'>
@@ -47,7 +45,7 @@ export const catalogueItemSymbol = (
   if (item.drawing && item.drawing in DRAWINGS) {
     return DRAWINGS[item.drawing].flat;
   }
-  return ITEM_SYMBOLS[item.id];
+  return undefined;
 };
 
 /**
@@ -110,7 +108,8 @@ export const itemToSceneObject = (
       ...(Object.keys(props).length ? { props } : {})
     };
   });
-  const element = item.drawing;
+  // A virtual item never appears on a floor plan, so it has no element.
+  const element = item.virtual ? undefined : item.drawing;
   const icon = catalogueItemIcon(item);
   return {
     id,

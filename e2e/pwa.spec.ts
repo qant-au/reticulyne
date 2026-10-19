@@ -40,6 +40,18 @@ test('the worker is never cached; the bundles are hashed and immutable', async (
   expect(main.headers()['cache-control']).toContain('immutable');
 });
 
+test('every location block sends the full security header set', async ({
+  request
+}) => {
+  const page = await request.get('/');
+  expect(page.headers()['permissions-policy']).toContain('camera=()');
+  const sw = await request.get('/sw.js');
+  expect(sw.headers()['content-security-policy']).toContain(
+    "default-src 'self'"
+  );
+  expect(sw.headers()['permissions-policy']).toContain('camera=()');
+});
+
 test('after one visit the editor opens offline', async ({ page, context }) => {
   await page.goto('/');
   await page.evaluate(async () => {

@@ -80,6 +80,16 @@ export const MEDIA: Medium[] = [
     protocols: ['ip']
   },
   {
+    // A link to a satellite: a terminal, dish or hotspot is a client of the
+    // satellite it talks to, so a diagram can show the path up and back.
+    id: 'satellite',
+    name: 'Satellite',
+    family: 'wireless',
+    topology: 'wireless',
+    connectors: ['internal', 'n-type', 'tnc', 'sma'],
+    protocols: ['ip']
+  },
+  {
     id: 'rs-232',
     name: 'RS-232',
     family: 'serial',
@@ -288,7 +298,11 @@ const ETHERNET = ['ethernet-copper', 'ethernet-fibre'];
 const SERIAL = ['rs-232', 'rs-422', 'rs-485'];
 
 export const PROTOCOLS: Protocol[] = [
-  { id: 'ip', name: 'IP', media: [...ETHERNET, 'wi-fi', 'cellular'] },
+  {
+    id: 'ip',
+    name: 'IP',
+    media: [...ETHERNET, 'wi-fi', 'cellular', 'satellite']
+  },
   { id: 'modbus-tcp', name: 'Modbus TCP', media: ETHERNET },
   { id: 'bacnet-ip', name: 'BACnet/IP', media: ETHERNET },
   { id: 'knx-ip', name: 'KNX IP', media: ETHERNET },

@@ -45,6 +45,56 @@ describe('sanitizeSvgDataUri', () => {
     expect(out).toContain('width');
   });
 
+  test.each([
+    ['href', '<a href="javascript:alert(1)"><rect/></a>'],
+    [
+      'xlink:href',
+      '<a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href=" JavaScript:alert(1)"><rect/></a>'
+    ],
+    ['a non-image data: href', '<use href="data:text/html,x"/><rect/>']
+  ])('strips an unsafe %s', (_, body) => {
+    const dirty = svgToDataUri(
+      `<svg xmlns="http://www.w3.org/2000/svg">${body}</svg>`
+    );
+    const out = decode(sanitizeSvgDataUri(dirty));
+    expect(out.toLowerCase()).not.toContain('javascript');
+    expect(out).not.toContain('data:text');
+    expect(out).toContain('<rect');
+  });
+
+  test('keeps fragment, https and data:image hrefs', () => {
+    const clean = svgToDataUri(
+      '<svg xmlns="http://www.w3.org/2000/svg"><use href="#a"/><image href="https://x.test/a.png"/><image href="data:image/png;base64,AA=="/><rect/></svg>'
+    );
+    const out = decode(sanitizeSvgDataUri(clean));
+    expect(out).toContain('href="#a"');
+    expect(out).toContain('href="https://x.test/a.png"');
+    expect(out).toContain('href="data:image/png;base64,AA=="');
+  });
+
+  test.each([
+    [
+      'set',
+      '<a><set attributeName="href" to="javascript:alert(1)"/><rect/></a>'
+    ],
+    [
+      'animate',
+      '<a><animate attributeName="href" values="javascript:alert(1)"/><rect/></a>'
+    ],
+    [
+      'animateTransform',
+      '<g><animateTransform attributeName="transform" type="rotate"/><rect/></g>'
+    ],
+    ['style', '<style>rect{fill:url(javascript:alert(1))}</style><rect/>']
+  ])('strips <%s>', (name, body) => {
+    const dirty = svgToDataUri(
+      `<svg xmlns="http://www.w3.org/2000/svg">${body}</svg>`
+    );
+    const out = decode(sanitizeSvgDataUri(dirty));
+    expect(out).not.toContain(`<${name}`);
+    expect(out).toContain('<rect');
+  });
+
   test('preserves a clean SVG', () => {
     const clean =
       '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="5" r="5"/></svg>';

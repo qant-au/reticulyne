@@ -33,7 +33,7 @@ npm install \
 setup. It was `@qant-au/reticulyne` on GitHub Packages up to 0.3.0
 ([`installation.md`](./installation.md)).
 
-It requires **MUI v9** (v2 required MUI v5). If your application already uses MUI v9 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and v1 → v2 → v3 migration notes.
+It requires **MUI v9** (every 0.x release has). If your application already uses MUI v9 / Emotion / Zustand, you share a single copy at runtime — no duplicate providers, no double Emotion CacheProvider, no version-drift hazards. See [`installation.md`](./installation.md#peer-dependencies) for the exact tested version ranges and the note on moving from `@qant-au/reticulyne`.
 
 ## Component props (`<Reticulyne>`)
 
@@ -163,7 +163,7 @@ Mouse-wheel and trackpad input map onto canvas operations the same way modern ed
 
 The host page never sees these wheel events bubble — the renderer's wheel listener calls `preventDefault()` on both branches, so embedders that mount `<Reticulyne>` inside a scrollable parent stay pinned (BUG5-09 guarantee).
 
-> **Behaviour change in v4.2.0**: Earlier releases zoomed on plain wheel and required the Hand tool to pan. From v4.2.0 onwards the modifier convention above is the default. The Hand tool still works for click-and-drag panning, so muscle-memory users keep their workflow.
+> **Behaviour since 0.1.0**: the code Reticulyne grew from zoomed on plain wheel and needed the Hand tool to pan. Every 0.x release uses the modifier convention above. The Hand tool still works for click-and-drag panning, so muscle-memory users keep their workflow.
 
 ## Keyboard shortcuts
 
@@ -414,7 +414,7 @@ The bottom-centre strip shows `"Project title › "` and the [floor switcher](#f
 
 ### Icon collections — `iconCollections`
 
-> **Note:** icons are not bundled with the library. They must be supplied by the host application via `initialData.icons`. Each icon can carry a `collection` name (e.g. `"AWS"`, `"Azure"`, `"my-app"`). The `iconCollections` prop lets you filter which collections reach the editor without pre-processing `initialData` yourself.
+> **Note:** the library ships one icon pack, `BUILTIN_PACK` (collection `"Reticulyne"`, an isometric and a flat drawing per icon, exported from `@reticulyne/editor/standalone`). Pass it, your own icons, or both, through `initialData.icons`; each icon can carry a `collection` name (e.g. `"Reticulyne"`, `"my-app"`). The `iconCollections` prop lets you filter which collections reach the editor without pre-processing `initialData` yourself.
 
 A saved or exported scene (Export as JSON, `onSave`, `getScene()`) carries only the icons its objects use and the ones uploaded into it (**My icons**), not the whole set you supplied. Loading a scene (`loadModel`, a new `initialData`) keeps the icons the editor already has beside the file's own, so the palette survives opening a file; the previous diagram's uploads are not carried over.
 
@@ -423,10 +423,10 @@ When omitted, every icon in `initialData.icons` passes through unchanged. Collec
 Changing `iconCollections` at runtime re-applies the filter on the next load — passing a new spec causes `<Reticulyne>` to re-run the model pipeline against the same `initialData` reference, so the filter actually takes effect without the host having to also rebuild `initialData`. Allow/deny array contents are compared by value, so an inline literal like `iconCollections={{ deny: ['AWS'] }}` is fine to pass on every render.
 
 ```tsx
-// Deny-list: keep everything except AWS and GCP icons
+// Deny-list: hide the built-in pack, keep the host's own icons
 <Reticulyne
   initialData={myData}
-  iconCollections={{ deny: ['AWS', 'GCP'] }}
+  iconCollections={{ deny: ['Reticulyne'] }}
 />
 
 // Allow-list: show only icons from your custom collection
@@ -608,7 +608,7 @@ A typical embedded deployment that shows only what the host needs:
   editorMode="EDITABLE"
   mainMenuOptions={['ACTION.SAVE', 'EXPORT.PDF', 'EXPORT.PNG']}
   showTitleBar={false}
-  iconCollections={{ deny: ['AWS', 'GCP', 'Azure', 'Kubernetes'] }}
+  iconCollections={{ allow: ['my-app'] }}
   onSave={(scene) => saveToBackend(scene)}
   onModelUpdated={(model) => updateLocalDraft(model)}
 />

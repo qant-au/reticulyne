@@ -1,8 +1,8 @@
 // 2D schematic symbols (the flat, Visio-style view) for the catalogue items
-// that have no Accurona twin. An item with a twin uses the schematic Accurona
-// generates from the element's model instead (src/vendor/accurona-schematic).
-// Same look as those: Accurona's palette, one line weight, a 40-unit box for
-// small parts and virtual things, a front view for devices.
+// that have no built-in drawing. An item with a drawing uses that drawing's
+// flat view instead (src/icons/drawings.ts). Same look as those: the same
+// palette, one line weight, a 40-unit box for small parts and virtual
+// things, a front view for devices.
 
 const OUTLINE = '#2b2b2b';
 const DETAIL = '#8a857c';
@@ -18,7 +18,7 @@ const svg = (viewBox: string, body: string) => {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" stroke-linejoin="round" stroke-linecap="round">${body}</svg>`;
 };
 
-// The rounded 40 × 40 frame Accurona gives wall and ceiling devices.
+// The rounded 40 × 40 frame the drawings give wall and ceiling devices.
 const frame = (fill = BODY) => {
   return `<rect x="0.5" y="0.5" width="39" height="39" rx="6" fill="${fill}" stroke="${OUTLINE}" stroke-width="1"/>`;
 };
@@ -54,7 +54,7 @@ const terminator = (male: boolean) => {
   );
 };
 
-/** Schematic SVG by catalogue item id, for the items with no Accurona twin. */
+/** Schematic SVG by catalogue item id, for the items with no built-in drawing. */
 export const ITEM_SYMBOLS: Record<string, string> = {
   // DIN-rail module: terminals along the top, RJ45 and LEDs on the front.
   'rs485-ethernet-gateway': svg(

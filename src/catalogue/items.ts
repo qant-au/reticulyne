@@ -1,17 +1,12 @@
-import type { CatalogueItem, CatalogueLink } from './schema';
+import type { CatalogueItem } from './schema';
 
-// The seed items: the network, AV, security and fire devices that have an
-// Accurona twin, the bus infrastructure and devices of the worked examples
-// in docs/catalogue.md, and virtual items.
+// The seed items: the network, AV, security and fire devices that have a
+// built-in drawing, the bus infrastructure and devices of the worked
+// examples in docs/catalogue.md, and virtual items.
 //
-// `twin(id)` is the cross-reference to an Accurona element. The vendoring
-// script (scripts/sync-accurona.mjs) reads these calls to pick which
-// isometric and schematic drawings to bring in, so keep each one a literal id.
-// An item with no twin has its schematic drawn in symbols.ts.
-
-const twin = (ref: string): CatalogueLink[] => {
-  return [{ source: 'accurona', ref }];
-};
+// `drawing` names the item's drawing in src/icons/drawings.ts, which gives
+// it an isometric icon and a flat schematic. An item with no drawing has its
+// schematic drawn in symbols.ts.
 
 const acIn = {
   id: 'ac-in',
@@ -32,7 +27,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'network-switch-24',
     name: 'Network switch (24-port)',
     family: 'ethernet',
-    links: twin('network-switch'),
+    drawing: 'network-switch',
     ports: [
       { id: 'eth{1..24}', name: 'Port {n}', medium: 'ethernet-copper' },
       { id: 'sfp{1..4}', name: 'SFP {n}', medium: 'ethernet-fibre' },
@@ -43,7 +38,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'poe-switch-8',
     name: 'PoE switch (8-port)',
     family: 'ethernet',
-    links: twin('network-switch'),
+    drawing: 'network-switch',
     ports: [
       {
         id: 'eth{1..8}',
@@ -59,7 +54,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'router',
     name: 'Router',
     family: 'ethernet',
-    links: twin('router'),
+    drawing: 'router',
     ports: [
       { id: 'wan', name: 'WAN', medium: 'ethernet-copper' },
       { id: 'lan{1..4}', name: 'LAN {n}', medium: 'ethernet-copper' },
@@ -70,7 +65,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'firewall',
     name: 'Firewall',
     family: 'ethernet',
-    links: twin('firewall'),
+    drawing: 'firewall',
     ports: [
       { id: 'wan', name: 'WAN', medium: 'ethernet-copper' },
       { id: 'lan{1..4}', name: 'LAN {n}', medium: 'ethernet-copper' },
@@ -82,7 +77,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'nbn-modem',
     name: 'NBN modem',
     family: 'ethernet',
-    links: twin('modem-nbn'),
+    drawing: 'modem-nbn',
     ports: [
       { id: 'wan', name: 'WAN', medium: 'ethernet-copper' },
       { id: 'lan{1..4}', name: 'LAN {n}', medium: 'ethernet-copper' },
@@ -94,7 +89,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'nas',
     name: 'NAS',
     family: 'ethernet',
-    links: twin('nas'),
+    drawing: 'nas',
     ports: [
       { id: 'eth{1..2}', name: 'LAN {n}', medium: 'ethernet-copper' },
       { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-a' },
@@ -105,7 +100,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'server',
     name: 'Server',
     family: 'ethernet',
-    links: twin('server-tower'),
+    drawing: 'server-tower',
     ports: [
       { id: 'eth{1..2}', name: 'LAN {n}', medium: 'ethernet-copper' },
       { id: 'mgmt', name: 'Management', medium: 'ethernet-copper' },
@@ -116,7 +111,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'desktop-pc',
     name: 'Desktop PC',
     family: 'ethernet',
-    links: twin('pc-tower'),
+    drawing: 'pc-tower',
     ports: [
       { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
       { id: 'wifi', name: 'Wi-Fi', medium: 'wi-fi', role: 'client' },
@@ -129,7 +124,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'laptop',
     name: 'Laptop',
     family: 'wireless',
-    links: twin('laptop'),
+    drawing: 'laptop',
     ports: [
       { id: 'wifi', name: 'Wi-Fi', medium: 'wi-fi', role: 'client' },
       { id: 'bt', name: 'Bluetooth', medium: 'bluetooth', role: 'peer' },
@@ -141,7 +136,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'ip-phone',
     name: 'IP phone',
     family: 'ethernet',
-    links: twin('ip-phone'),
+    drawing: 'ip-phone',
     ports: [
       {
         id: 'lan',
@@ -156,7 +151,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'data-outlet',
     name: 'Data outlet',
     family: 'ethernet',
-    links: twin('data-outlet'),
+    drawing: 'data-outlet',
     ports: [
       { id: 'jack', name: 'Jack', medium: 'ethernet-copper' },
       {
@@ -171,7 +166,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'floor-box',
     name: 'Floor box',
     family: 'ethernet',
-    links: twin('floor-box'),
+    drawing: 'floor-box',
     ports: [
       { id: 'data{1..2}', name: 'Data {n}', medium: 'ethernet-copper' },
       {
@@ -193,7 +188,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'fibre-termination-cabinet',
     name: 'Fibre termination cabinet',
     family: 'ethernet',
-    links: twin('odf-panel'),
+    drawing: 'odf-panel',
     ports: [
       {
         id: 'front{1..24}',
@@ -215,7 +210,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'wifi-ap-ceiling',
     name: 'Wi-Fi access point',
     family: 'wireless',
-    links: twin('wifi-ap'),
+    drawing: 'wifi-ap',
     ports: [
       { id: 'eth1', medium: 'ethernet-copper', capabilities: ['poe-pd'] },
       { id: 'radio', medium: 'wi-fi', role: 'hub' }
@@ -416,7 +411,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'ip-camera-dome',
     name: 'IP camera (dome)',
     family: 'security',
-    links: twin('cctv-dome'),
+    drawing: 'cctv-dome',
     ports: [
       {
         id: 'eth1',
@@ -430,7 +425,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'ip-camera-bullet',
     name: 'IP camera (bullet)',
     family: 'security',
-    links: twin('cctv-bullet'),
+    drawing: 'cctv-bullet',
     ports: [
       {
         id: 'eth1',
@@ -444,7 +439,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'ip-camera-ptz',
     name: 'IP camera (PTZ)',
     family: 'security',
-    links: twin('cctv-ptz'),
+    drawing: 'cctv-ptz',
     ports: [
       {
         id: 'eth1',
@@ -459,7 +454,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'ip-camera-fisheye',
     name: 'IP camera (fisheye)',
     family: 'security',
-    links: twin('cctv-fisheye'),
+    drawing: 'cctv-fisheye',
     ports: [
       {
         id: 'eth1',
@@ -473,7 +468,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'nvr-8',
     name: 'NVR (8-channel PoE)',
     family: 'security',
-    links: twin('nvr'),
+    drawing: 'nvr',
     ports: [
       { id: 'lan', name: 'LAN', medium: 'ethernet-copper' },
       {
@@ -491,7 +486,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'alarm-panel',
     name: 'Alarm panel',
     family: 'security',
-    links: twin('alarm-panel'),
+    drawing: 'alarm-panel',
     ports: [
       { id: 'zone{1..8}', name: 'Zone {n}', medium: 'dry-contact' },
       {
@@ -514,7 +509,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'alarm-keypad',
     name: 'Alarm keypad',
     family: 'security',
-    links: twin('alarm-keypad'),
+    drawing: 'alarm-keypad',
     ports: [
       { id: 'bus', name: 'Keypad bus', medium: 'rs-485', role: 'through' }
     ]
@@ -523,7 +518,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'pir-sensor',
     name: 'PIR sensor',
     family: 'security',
-    links: twin('pir-sensor'),
+    drawing: 'pir-sensor',
     ports: [
       { id: 'zone', name: 'Zone', medium: 'dry-contact', role: 'through' },
       { ...dcIn, connector: 'terminal' }
@@ -533,7 +528,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'door-contact',
     name: 'Door contact (reed switch)',
     family: 'security',
-    links: twin('door-contact'),
+    drawing: 'door-contact',
     ports: [
       { id: 'zone', name: 'Zone', medium: 'dry-contact', role: 'through' }
     ]
@@ -542,7 +537,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'glass-break',
     name: 'Glass-break detector',
     family: 'security',
-    links: twin('glass-break'),
+    drawing: 'glass-break',
     ports: [
       { id: 'zone', name: 'Zone', medium: 'dry-contact', role: 'through' },
       { ...dcIn, connector: 'terminal' }
@@ -558,7 +553,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'card-reader',
     name: 'Card reader',
     family: 'security',
-    links: twin('card-reader'),
+    drawing: 'card-reader',
     ports: [
       { id: 'wiegand', name: 'Wiegand', medium: 'wiegand' },
       { id: 'osdp', name: 'OSDP', medium: 'osdp', role: 'through' },
@@ -569,14 +564,14 @@ export const ITEMS: CatalogueItem[] = [
     id: 'exit-button',
     name: 'Exit button',
     family: 'security',
-    links: twin('exit-button'),
+    drawing: 'exit-button',
     ports: [{ id: 'rex', name: 'Request to exit', medium: 'dry-contact' }]
   },
   {
     id: 'maglock',
     name: 'Magnetic lock',
     family: 'security',
-    links: twin('maglock'),
+    drawing: 'maglock',
     ports: [
       { id: 'bond', name: 'Bond sensor', medium: 'dry-contact' },
       { ...dcIn, connector: 'terminal' }
@@ -586,7 +581,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'intercom',
     name: 'IP intercom',
     family: 'security',
-    links: twin('intercom'),
+    drawing: 'intercom',
     ports: [
       { id: 'eth1', medium: 'ethernet-copper', capabilities: ['poe-pd'] },
       { id: 'relay', name: 'Door relay', medium: 'dry-contact' }
@@ -596,7 +591,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'siren-strobe',
     name: 'Siren and strobe',
     family: 'security',
-    links: twin('siren-strobe'),
+    drawing: 'siren-strobe',
     ports: [
       { id: 'tamper', name: 'Tamper', medium: 'dry-contact', role: 'through' },
       {
@@ -612,7 +607,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'turnstile',
     name: 'Turnstile',
     family: 'security',
-    links: twin('turnstile'),
+    drawing: 'turnstile',
     ports: [
       { id: 'open-in', name: 'Open (entry)', medium: 'dry-contact' },
       { id: 'open-out', name: 'Open (exit)', medium: 'dry-contact' },
@@ -624,7 +619,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'speed-gate',
     name: 'Speed gate lane',
     family: 'security',
-    links: twin('speed-gate'),
+    drawing: 'speed-gate',
     ports: [
       { id: 'open-in', name: 'Open (entry)', medium: 'dry-contact' },
       { id: 'open-out', name: 'Open (exit)', medium: 'dry-contact' },
@@ -639,7 +634,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'fire-panel-2-loop',
     name: 'Fire panel (2-loop)',
     family: 'fire',
-    links: twin('fire-panel'),
+    drawing: 'fire-panel',
     ports: [
       {
         id: 'loop{1..2}-out',
@@ -669,7 +664,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'smoke-detector',
     name: 'Smoke detector (addressable)',
     family: 'fire',
-    links: twin('smoke-detector'),
+    drawing: 'smoke-detector',
     ports: [
       {
         id: 'loop',
@@ -683,7 +678,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'heat-detector',
     name: 'Heat detector (addressable)',
     family: 'fire',
-    links: twin('heat-detector'),
+    drawing: 'heat-detector',
     ports: [
       {
         id: 'loop',
@@ -697,7 +692,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'manual-call-point',
     name: 'Manual call point (addressable)',
     family: 'fire',
-    links: twin('manual-call-point'),
+    drawing: 'manual-call-point',
     ports: [
       {
         id: 'loop',
@@ -724,7 +719,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'gas-suppression-cylinder',
     name: 'Gas suppression cylinder',
     family: 'fire',
-    links: twin('fire-suppression'),
+    drawing: 'fire-suppression',
     ports: [
       { id: 'release', name: 'Release', medium: 'dry-contact' },
       { id: 'pressure', name: 'Low pressure', medium: 'dry-contact' }
@@ -736,7 +731,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'projector',
     name: 'Projector',
     family: 'av',
-    links: twin('projector'),
+    drawing: 'projector',
     ports: [
       { id: 'hdmi{1..2}', name: 'HDMI {n}', medium: 'hdmi' },
       { id: 'eth1', name: 'Control', medium: 'ethernet-copper' },
@@ -747,7 +742,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'wall-display',
     name: 'Wall display',
     family: 'av',
-    links: twin('display-wall-55'),
+    drawing: 'display-wall-55',
     ports: [
       {
         id: 'hdmi{1..3}',
@@ -763,7 +758,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'monitor',
     name: 'Monitor',
     family: 'av',
-    links: twin('monitor'),
+    drawing: 'monitor',
     ports: [
       { id: 'hdmi', name: 'HDMI', medium: 'hdmi' },
       { id: 'dp', name: 'DisplayPort', medium: 'displayport' },
@@ -774,7 +769,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'monitor-ultrawide',
     name: 'Monitor (ultrawide)',
     family: 'av',
-    links: twin('monitor-34-ultrawide'),
+    drawing: 'monitor-34-ultrawide',
     ports: [
       { id: 'hdmi', name: 'HDMI', medium: 'hdmi' },
       { id: 'dp', name: 'DisplayPort', medium: 'displayport' },
@@ -792,7 +787,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'kvm-console-cart',
     name: 'KVM console cart',
     family: 'av',
-    links: twin('kvm-console'),
+    drawing: 'kvm-console',
     ports: [
       { id: 'hdmi', name: 'Video in', medium: 'hdmi' },
       {
@@ -808,7 +803,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'video-bar',
     name: 'Video bar',
     family: 'av',
-    links: twin('video-bar'),
+    drawing: 'video-bar',
     ports: [
       { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
       { id: 'hdmi', name: 'HDMI out', medium: 'hdmi' },
@@ -820,7 +815,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'ceiling-speaker-100v',
     name: 'Ceiling speaker (100 V)',
     family: 'av',
-    links: twin('speaker-ceiling'),
+    drawing: 'speaker-ceiling',
     ports: [
       {
         id: 'line',
@@ -836,7 +831,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'ups',
     name: 'UPS (network managed)',
     family: 'power',
-    links: twin('ups-tower'),
+    drawing: 'ups-tower',
     ports: [
       { id: 'mgmt', name: 'Network card', medium: 'ethernet-copper' },
       { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-b' },
@@ -854,7 +849,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'ups-floor',
     name: 'UPS (floor-standing, network managed)',
     family: 'power',
-    links: twin('ups-large'),
+    drawing: 'ups-large',
     ports: [
       { id: 'mgmt', name: 'Network card', medium: 'ethernet-copper' },
       {
@@ -878,7 +873,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'transfer-switch',
     name: 'Transfer switch panel',
     family: 'power',
-    links: twin('ats-panel'),
+    drawing: 'ats-panel',
     ports: [
       {
         id: 'mgmt',
@@ -914,7 +909,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'standby-generator',
     name: 'Standby generator',
     family: 'power',
-    links: twin('generator'),
+    drawing: 'generator',
     ports: [
       {
         id: 'controller',
@@ -939,7 +934,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'crac-unit',
     name: 'Precision air conditioner (CRAC)',
     family: 'building',
-    links: twin('crac-unit'),
+    drawing: 'crac-unit',
     ports: [
       {
         id: 'eth1',
@@ -962,7 +957,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'in-row-cooler',
     name: 'In-row cooler',
     family: 'building',
-    links: twin('in-row-cooler'),
+    drawing: 'in-row-cooler',
     ports: [
       {
         id: 'eth1',
@@ -984,7 +979,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'exit-sign',
     name: 'Exit sign (DALI-2)',
     family: 'building',
-    links: twin('exit-sign'),
+    drawing: 'exit-sign',
     ports: [
       {
         id: 'dali',
@@ -1000,7 +995,7 @@ export const ITEMS: CatalogueItem[] = [
     id: 'emergency-light',
     name: 'Emergency light (DALI-2)',
     family: 'building',
-    links: twin('emergency-light'),
+    drawing: 'emergency-light',
     ports: [
       {
         id: 'dali',

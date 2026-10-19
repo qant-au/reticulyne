@@ -58,7 +58,7 @@ describe('crossover', () => {
     expect(twinOf('wifi-ap')?.id).toBeDefined();
     expect(twinOf('sofa')).toBeUndefined();
     expect(twinOf(undefined)).toBeUndefined();
-    expect(objectIcon({ element: 'wifi-ap' })).toBe('accurona-wifi-ap');
+    expect(objectIcon({ element: 'wifi-ap' })).toBe('reticulyne-wifi-ap');
     // An object's own icon wins over its twin's.
     expect(objectIcon({ icon: 'mine', element: 'wifi-ap' })).toBe('mine');
     expect(objectIcon({})).toBeUndefined();
@@ -69,18 +69,18 @@ describe('crossover', () => {
 
   test('an icon is given only when the editor has it', () => {
     const ap = { element: 'wifi-ap' };
-    expect(availableIcon(ap, [{ id: 'accurona-wifi-ap' }])).toBe(
-      'accurona-wifi-ap'
+    expect(availableIcon(ap, [{ id: 'reticulyne-wifi-ap' }])).toBe(
+      'reticulyne-wifi-ap'
     );
     expect(availableIcon(ap, [{ id: 'other' }])).toBeUndefined();
   });
 
   test('save: a device placed from the plan keeps its id, element, props and plan place', () => {
     const { model, context } = sceneToModel(building());
-    // The editor's library, as the host passes it (accuronaIcons()).
+    // The editor's library, as the host passes it (builtinIcons()).
     model.icons = [
       {
-        id: 'accurona-cctv-dome',
+        id: 'reticulyne-cctv-dome',
         name: 'Dome camera',
         url: 'https://example.com/d.svg',
         isIsometric: true
@@ -109,7 +109,7 @@ describe('crossover', () => {
       element: 'cctv-dome',
       props: { ip: '10.0.0.9' },
       name: objectName({ element: 'cctv-dome' }),
-      icon: 'accurona-cctv-dome'
+      icon: 'reticulyne-cctv-dome'
     });
     const plan = saved.views!.find((v) => {
       return v.kind === 'plan';
@@ -160,7 +160,7 @@ describe('crossover', () => {
     const { model } = sceneToModel(context.opened);
     model.icons = [
       {
-        id: 'accurona-network-switch',
+        id: 'reticulyne-network-switch',
         name: 'Network switch',
         url: 'https://example.com/s.svg',
         isIsometric: true
@@ -179,7 +179,7 @@ describe('crossover', () => {
     expect(sw1).toMatchObject({
       name: 'PoE switch (8-port)',
       element: 'network-switch',
-      icon: 'accurona-network-switch',
+      icon: 'reticulyne-network-switch',
       links: [{ source: 'reticulyne', ref: 'poe-switch-8' }]
     });
     expect(sw1.ports).toHaveLength(11);

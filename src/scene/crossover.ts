@@ -1,8 +1,7 @@
 import type { SceneObject } from 'src/core';
-import { ISO_DRAWINGS } from 'src/vendor/accurona-iso';
+import { DRAWINGS } from 'src/icons/drawings';
 import { ITEMS } from 'src/catalogue/items';
 import {
-  accuronaElement,
   catalogueItemIcon,
   elementIcon,
   itemToSceneObject
@@ -11,19 +10,18 @@ import type { CatalogueItem } from 'src/catalogue/schema';
 import type { ModelItem } from 'src/types/model';
 import { objectToModelItem } from './convert';
 
-// An object on a floor plan, drawn in a diagram. Axonometra writes
-// only the object's Accurona `element`; Reticulyne draws it with the
-// catalogue item that cross-references that element (its twin), else the
-// element's own isometric drawing.
+// An object on a floor plan, drawn in a diagram. A floor plan writes only
+// the object's `element`; Reticulyne draws it with the catalogue item whose
+// drawing that is (its twin), else with the drawing itself.
 
-/** The catalogue item that cross-references `element`, if any. */
+/** The catalogue item whose drawing is `element`, if any. */
 export const twinOf = (
   element: string | undefined,
   items: CatalogueItem[] = ITEMS
 ): CatalogueItem | undefined => {
   if (!element) return undefined;
   return items.find((item) => {
-    return accuronaElement(item) === element;
+    return item.drawing === element;
   });
 };
 
@@ -46,13 +44,13 @@ export const objectName = (
   if (object.name) return object.name;
   const { element } = object;
   if (!element) return 'Untitled';
-  return twinOf(element, items)?.name ?? ISO_DRAWINGS[element]?.name ?? element;
+  return twinOf(element, items)?.name ?? DRAWINGS[element]?.name ?? element;
 };
 
 /**
  * The icon to give an object in this editor: `objectIcon`, but only when
  * the editor has that icon. A scene may refer only to icons it carries, so
- * an icon the host did not supply (no Accurona drawings) is left off and
+ * an icon the host did not supply (no built-in drawings) is left off and
  * the node draws with the default block.
  */
 export const availableIcon = (

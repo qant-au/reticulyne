@@ -1,4 +1,5 @@
 import {
+  currentIconId,
   isSceneDocument,
   parseJson,
   serializeScene,
@@ -95,7 +96,15 @@ export const createDiagramStorage = (
    */
   const withBundledIcons = <T>(value: T): T => {
     if (!isObject(value)) return value;
-    const own = (Array.isArray(value.icons) ? value.icons : []) as Icon[];
+    // Under their current ids, so a diagram's copy of a bundled icon saved
+    // under an older id is not doubled by the bundled one.
+    const own = ((Array.isArray(value.icons) ? value.icons : []) as Icon[]).map(
+      (icon) => {
+        return typeof icon?.id === 'string'
+          ? { ...icon, id: currentIconId(icon.id) }
+          : icon;
+      }
+    );
     if (isSceneDocument(value)) {
       const ownIds = new Set(
         own.map((icon) => {

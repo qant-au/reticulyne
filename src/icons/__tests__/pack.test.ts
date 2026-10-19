@@ -62,12 +62,12 @@ describe('validateIconPack', () => {
 });
 
 describe('packIcons and flattenPacks', () => {
-  test('file an icon with no collection under the pack name', () => {
+  test('file an icon with no collection under the pack id', () => {
     expect(
       packIcons(pack).map((icon) => {
         return icon.collection;
       })
-    ).toEqual(['Network', 'Brands']);
+    ).toEqual(['network', 'Brands']);
   });
 
   test('keep the first icon of an id across packs', () => {

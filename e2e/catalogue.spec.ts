@@ -3,8 +3,8 @@ import { readFile } from 'node:fs/promises';
 
 /**
  * The catalogue in the icon library: an item placed from it becomes an
- * object with its ports and its catalogue link, drawn with its Accurona
- * twin, or with its 2D schematic symbol when it has no twin.
+ * object with its ports and its catalogue link, drawn with its built-in
+ * drawing, or with its 2D schematic symbol when it has none.
  */
 const exportScene = async (page: Page) => {
   await page.keyboard.press('Escape');
@@ -45,7 +45,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByTestId('icon-palette')).toBeVisible();
 });
 
-test('an item with an Accurona twin keeps its ports, link and element', async ({
+test('an item with a built-in drawing keeps its ports, link and element', async ({
   page
 }) => {
   await dragFromCatalogue(page, 'Turnstile', /^Icon Turnstile/);
@@ -53,7 +53,7 @@ test('an item with an Accurona twin keeps its ports, link and element', async ({
   expect(scene.objects).toHaveLength(1);
   const [object] = scene.objects;
   expect(object.element).toBe('turnstile');
-  expect(object.icon).toBe('accurona-turnstile');
+  expect(object.icon).toBe('reticulyne-turnstile');
   expect(object.links).toEqual([{ source: 'reticulyne', ref: 'turnstile' }]);
   expect(object.ports?.length).toBeGreaterThan(0);
 });

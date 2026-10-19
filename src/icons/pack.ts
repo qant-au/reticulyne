@@ -55,11 +55,12 @@ export const validateIconPack = (value: unknown): IconPackResult => {
 
 /**
  * A pack's icons, each filed under a collection: its own, else the pack's
- * name, so the icon library groups them by pack.
+ * id, so the icon library groups them by pack and `iconCollections` can
+ * allow or deny a pack by its id.
  */
 export const packIcons = (pack: IconPack): Icon[] => {
   return pack.icons.map((icon) => {
-    return icon.collection ? icon : { ...icon, collection: pack.name };
+    return icon.collection ? icon : { ...icon, collection: pack.id };
   });
 };
 

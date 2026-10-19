@@ -1,7 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
 
 /**
- * APP-01: the Docker editor keeps diagrams in localStorage, with a
+ * APP-01: the Docker editor keeps diagrams in IndexedDB, with a
  * Diagrams menu to create, switch, import and delete them.
  */
 const rename = async (page: Page, title: string) => {
@@ -17,6 +17,36 @@ const save = async (page: Page) => {
   // Scoped to the editor: a closing Diagrams menu (a portal) still holds
   // "Saved in this browser only.", and the page is usable while it fades.
   await expect(page.locator('#root').getByText(/^Saved/)).toBeVisible();
+};
+
+// Every key and value in the local store (IndexedDB, `kv`).
+const readStore = (page: Page) => {
+  return page.evaluate(() => {
+    return new Promise<Record<string, string>>((resolve, reject) => {
+      const open = indexedDB.open('reticulyne');
+      open.onerror = () => {
+        reject(open.error);
+      };
+      open.onsuccess = () => {
+        const tx = open.result.transaction('kv', 'readonly');
+        const keys = tx.objectStore('kv').getAllKeys();
+        const values = tx.objectStore('kv').getAll();
+        tx.oncomplete = () => {
+          const out: Record<string, string> = {};
+          keys.result.forEach((key, i) => {
+            out[String(key)] = values.result[i];
+          });
+          open.result.close();
+          resolve(out);
+        };
+      };
+    });
+  });
+};
+
+const storedCurrent = async (page: Page) => {
+  const store = await readStore(page);
+  return JSON.parse(store[`reticulyne.diagram.${store['reticulyne.current']}`]);
 };
 
 const diagrams = (page: Page) => {
@@ -52,18 +82,13 @@ test('save two diagrams, switch between them, and reopen the last one', async ({
   await titleBar(page, 'Alpha');
 
   // Only the diagram's own data is stored, not the ~4 MB of icon packs.
-  const size = await page.evaluate(() => {
-    return Object.keys(localStorage).reduce((n, k) => {
-      return n + (localStorage.getItem(k) ?? '').length;
-    }, 0);
-  });
+  const size = Object.values(await readStore(page)).reduce((n, v) => {
+    return n + v.length;
+  }, 0);
   expect(size).toBeLessThan(20_000);
 
   // Each diagram is stored as a scene, the file format.
-  const stored = await page.evaluate(() => {
-    const id = localStorage.getItem('reticulyne.current')!;
-    return JSON.parse(localStorage.getItem(`reticulyne.diagram.${id}`)!);
-  });
+  const stored = await storedCurrent(page);
   expect(stored.format).toBe('reticulyne-scene');
   expect(stored.title).toBe('Alpha');
   expect(stored).not.toHaveProperty('items');
@@ -170,10 +195,7 @@ test('import opens a scene, keeping the parts Reticulyne does not show', async (
   });
   await titleBar(page, 'Imported site');
   await expect(page.getByText('Edge router', { exact: true })).toBeVisible();
-  const stored = await page.evaluate(() => {
-    const id = localStorage.getItem('reticulyne.current')!;
-    return JSON.parse(localStorage.getItem(`reticulyne.diagram.${id}`)!);
-  });
+  const stored = await storedCurrent(page);
   expect(stored.views.map((v: { kind: string }) => v.kind)).toEqual([
     'plan',
     'schematic'

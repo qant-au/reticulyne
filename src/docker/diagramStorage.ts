@@ -9,12 +9,13 @@ import { readScene, sceneSafeId } from 'src/scene';
 import { fillFlatUrls } from 'src/icons/pack';
 import type { Icon } from 'src/types';
 
-// APP-01: the Docker editor's diagrams, kept in the browser's localStorage.
-// One key per diagram plus an index, so listing never parses every
+// APP-01: the Docker editor's diagrams, kept in a Storage: the IndexedDB
+// store (store/localStore.ts), or localStorage where IndexedDB cannot be
+// used. One key per diagram plus an index, so listing never parses every
 // diagram. Each diagram is stored as a scene (the file format). The
 // bundled icon packs are stripped on write and put back on read: they are
-// ~4 MB and identical in every diagram, and storing them would fill the
-// ~5 MB quota with a single save. A bundled icon an object uses is kept,
+// ~4 MB and identical in every diagram, and storing them would fill
+// localStorage's ~5 MB quota with a single save. A bundled icon an object uses is kept,
 // so the stored text is a valid scene on its own. Uploaded icons are the
 // diagram's own and are kept. Diagrams saved by older builds, as
 // Reticulyne models, are still read (and converted).

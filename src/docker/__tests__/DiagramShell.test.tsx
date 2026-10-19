@@ -11,6 +11,7 @@ import {
 import { INITIAL_DATA } from 'src/config';
 import { legacyModelToScene } from 'src/scene';
 import type { Scene } from 'src/core';
+import { StorageFullError } from '../diagramStorage';
 import { DiagramShell } from '../DiagramShell';
 
 // The e2e hook (window.__RETICULYNE_E2E__) hands the shell its diagram.
@@ -118,6 +119,37 @@ test('a hooked diagram naming an unknown icon says so instead of a blank page', 
   expect(
     screen.getByRole('application', { name: 'Diagram canvas' })
   ).toBeTruthy();
+});
+
+// The IndexedDB store keeps writes in memory and reports a failed one from
+// flush(): a save that did not reach the disk must say so, not look saved.
+test('a save the store could not write says so', async () => {
+  const storage = Object.assign(Object.create(localStorage) as Storage, {
+    getItem: localStorage.getItem.bind(localStorage),
+    setItem: localStorage.setItem.bind(localStorage),
+    removeItem: localStorage.removeItem.bind(localStorage),
+    flush: jest.fn().mockRejectedValue(new StorageFullError())
+  });
+  act(() => {
+    render(
+      <DiagramShell
+        bundledIcons={bundled}
+        colors={[{ id: 'c', value: '#000000' }]}
+        initialData={naming('server')}
+        storage={storage}
+      />
+    );
+  });
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: /main menu/i }));
+  });
+  await act(async () => {
+    fireEvent.click(screen.getByText('Save'));
+  });
+  expect(storage.flush).toHaveBeenCalled();
+  expect(screen.getByRole('alert').textContent).toMatch(
+    /Browser storage is full/
+  );
 });
 
 // Sweep 2026-09-30 (E38): closing, the Diagrams menu kept its invisible

@@ -19,8 +19,7 @@
 >
 > Every built-in item also has a **2D schematic symbol** for the flat, Visio-style view:
 > `catalogueItemSymbol(item)` returns it as SVG, and `schematicIcons()` returns them as flat icons
-> (collection `Schematic`, ids `schematic-<item id>`). An item with a drawing uses the drawing's
-> flat view; an item with none has one drawn in `src/catalogue/symbols.ts`. A view of kind
+> (collection `Schematic`, ids `schematic-<item id>`), each the flat view of the item's drawing. A view of kind
 > `schematic` (the flat view) draws each node with its icon's `flatUrl`, or its `url` when it has
 > no flat drawing.
 

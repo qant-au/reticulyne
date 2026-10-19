@@ -23,7 +23,6 @@ export {
   itemToSceneObject,
   schematicIcons
 } from './place';
-export { ITEM_SYMBOLS } from './symbols';
 export {
   pickPorts,
   portCapacity,

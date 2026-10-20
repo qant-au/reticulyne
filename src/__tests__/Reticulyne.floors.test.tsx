@@ -285,4 +285,16 @@ describe('other floors', () => {
     mount({ editorMode: 'NON_INTERACTIVE' });
     expect(screen.queryByTestId('other-floor-l1')).toBeNull();
   });
+
+  // rtl-065: the flat view draws the other floors too, flat.
+  test('drawn when the floor on show is flat', () => {
+    mount(
+      {},
+      {
+        ...building,
+        views: [{ ...building.views[0], kind: 'schematic' }, building.views[1]]
+      }
+    );
+    expect(screen.getByTestId('other-floor-l1')).toBeTruthy();
+  });
 });

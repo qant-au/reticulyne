@@ -88,6 +88,7 @@ interface Medium {
 |---|---|---|---|---|---|---|---|
 | `ethernet-copper` | Ethernet (copper) | ethernet | point-to-point | | `rj45`, `m12-x`, `m12-d`, `terminal` | `ip`, `modbus-tcp`, `bacnet-ip`, `knx-ip`, `dante`, `art-net`, `sacn`, `onvif` | PoE as a port capability |
 | `ethernet-fibre` | Ethernet (fibre) | ethernet | point-to-point | | `sfp`, `sfp-plus`, `qsfp`, `lc`, `sc`, `st` | as copper | |
+| `fibre-channel` | Fibre Channel | ethernet | point-to-point | | `sfp-plus`, `sfp`, `lc` | | the SAN fabric: servers, SAN switches, storage arrays, tape libraries |
 | `wi-fi` | Wi-Fi | wireless | wireless | | `internal`, `rp-sma`, `n-type` | `ip` | |
 | `zigbee` | Zigbee | wireless | wireless | | `internal` | `zigbee` | mesh |
 | `z-wave` | Z-Wave | wireless | wireless | | `internal` | `z-wave` | mesh |
@@ -112,11 +113,12 @@ interface Medium {
 | `fire-zone` | Fire zone (conventional) | fire | bus | | `terminal` | | radial circuit, end-of-line device |
 | `hdmi` | HDMI | av | point-to-point | | `hdmi-a`, `hdmi-mini`, `hdmi-micro` | `hdmi`, `cec` | |
 | `displayport` | DisplayPort | av | point-to-point | | `dp`, `mini-dp`, `usb-c` | `displayport` | |
-| `coax` | Coax | av | point-to-point | | `bnc`, `f-type`, `iec-tv`, `sma`, `n-type` | `analog-video`, `hd-tvi`, `hd-cvi`, `ahd`, `dvb-t`, `catv` | |
+| `coax` | Coax | av | point-to-point | | `bnc`, `f-type`, `iec-tv`, `sma`, `n-type`, `tnc`, `pl-259` | `analog-video`, `hd-tvi`, `hd-cvi`, `ahd`, `dvb-t`, `catv` | also antenna feeds: Wi-Fi, cellular, GPS, VHF |
+| `analog-audio` | Analogue audio | av | point-to-point | | `xlr-3`, `trs`, `rca`, `terminal` | | line and microphone level, one signal per cable |
 | `speaker-100v` | 100 V speaker line | av | bus | | `terminal` | | constant-voltage line, speakers in parallel |
 | `dmx512` | DMX512 | av | bus | `rs-485` | `xlr-5`, `xlr-3`, `rj45`, `terminal` | `dmx512`, `rdm` | daisy chain, termination at the end |
-| `power-ac` | Power (AC) | power | point-to-point | | `iec-c13`, `iec-c14`, `iec-c19`, `iec-c20`, `mains-socket`, `mains-plug`, `terminal` | | |
-| `power-dc` | Power (DC) | power | point-to-point | | `barrel`, `terminal`, `anderson`, `wire` | | |
+| `power-ac` | Power (AC) | power | point-to-point | | `iec-c13`, `iec-c14`, `iec-c19`, `iec-c20`, `mains-socket`, `mains-plug`, `terminal`, `type-2` | | `type-2` is the EV charging socket |
+| `power-dc` | Power (DC) | power | point-to-point | | `barrel`, `terminal`, `anderson`, `wire`, `mc4` | | `mc4` is the solar PV connector |
 | `ip-tunnel` | IP tunnel | virtual | point-to-point | | `none` | `ipsec`, `wireguard`, `openvpn` | logical, rides on any IP path |
 
 `termination` and `busPower` on the bus media:
@@ -340,9 +342,9 @@ An item that has a drawing names it:
   error, the item just draws without one.
 - An item with a drawing uses its isometric view instead of having its own icon, and its flat
   view as the symbol in the flat view.
-- 51 of the 66 built-in items have a drawing. The 15 without one are the bus parts (tees,
-  terminators, the power injector, the end-of-line resistor, the loop isolator), the two
-  gateways, the marine devices and the virtual items.
+- Every built-in item has a drawing (the test suite enforces it). Several items share one:
+  the 8-port and 24-port switches both draw as `network-switch`. A drawing with no item is
+  still an icon in the library: concepts, sites, passive parts and cables stay that way.
 
 ## How an item lands in a scene
 

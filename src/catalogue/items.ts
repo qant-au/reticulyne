@@ -4737,5 +4737,106 @@ export const ITEMS: CatalogueItem[] = [
     family: 'serial',
     drawing: 'webcam',
     ports: [{ id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-a' }]
+  },
+  // --- Fourth pass, 2026-10-20: legacy kit and cloud icons from references ---
+  {
+    id: 'fax-machine',
+    name: 'Fax Machine',
+    family: 'ethernet',
+    drawing: 'fax-machine',
+    ports: [
+      { id: 'eth1', name: 'LAN (fax over IP)', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'mains-plug' }
+    ]
+  },
+  {
+    id: 'flatbed-scanner',
+    name: 'Flatbed Scanner',
+    family: 'serial',
+    drawing: 'flatbed-scanner',
+    ports: [
+      { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-b' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'mainframe',
+    name: 'Mainframe',
+    family: 'ethernet',
+    drawing: 'mainframe',
+    ports: [
+      { id: 'eth{1..4}', name: 'LAN {n}', medium: 'ethernet-copper' },
+      { id: 'fc{1..4}', name: 'Fibre Channel {n}', medium: 'fibre-channel' },
+      { id: 'mgmt', name: 'Management', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'plotter',
+    name: 'Plotter',
+    family: 'ethernet',
+    drawing: 'plotter',
+    ports: [
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-b' },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'session-border-controller',
+    name: 'Session Border Controller',
+    family: 'ethernet',
+    drawing: 'session-border-controller',
+    ports: [
+      { id: 'inside', name: 'Inside (PBX)', medium: 'ethernet-copper' },
+      { id: 'outside', name: 'Outside (trunk)', medium: 'ethernet-copper' },
+      { id: 'mgmt', name: 'Management', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'sip-trunk',
+    name: 'SIP Trunk',
+    drawing: 'sip-trunk',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'trunk', name: 'Trunk', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'iot-hub',
+    name: 'IoT Hub',
+    drawing: 'iot-hub',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'device', name: 'Devices', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'backup-vault',
+    name: 'Backup Vault',
+    drawing: 'backup-vault',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      {
+        id: 'source',
+        name: 'Backup sources',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      }
+    ]
+  },
+  {
+    id: 'search-service',
+    name: 'Search Service',
+    drawing: 'search-service',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'client', name: 'Clients', medium: 'ethernet-copper', role: 'hub' }
+    ]
   }
 ];

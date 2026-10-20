@@ -4838,5 +4838,364 @@ export const ITEMS: CatalogueItem[] = [
     ports: [
       { id: 'client', name: 'Clients', medium: 'ethernet-copper', role: 'hub' }
     ]
+  },
+  // --- Fifth pass, 2026-10-20: AV, broadcast and life safety ---
+  {
+    id: 'tv-player',
+    name: 'Streaming TV Player',
+    family: 'av',
+    drawing: 'tv-player',
+    ports: [
+      { id: 'hdmi', name: 'HDMI out', medium: 'hdmi' },
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      { id: 'wifi', name: 'Wi-Fi', medium: 'wi-fi', role: 'client' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'hdmi-splitter',
+    name: 'HDMI Splitter',
+    family: 'av',
+    drawing: 'hdmi-splitter',
+    ports: [
+      { id: 'in', name: 'HDMI in', medium: 'hdmi' },
+      { id: 'out{1..4}', name: 'HDMI out {n}', medium: 'hdmi' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'iptv-encoder',
+    name: 'IPTV Encoder',
+    family: 'av',
+    drawing: 'iptv-encoder',
+    ports: [
+      { id: 'hdmi{1..2}', name: 'HDMI in {n}', medium: 'hdmi' },
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'iptv-decoder',
+    name: 'IPTV Decoder',
+    family: 'av',
+    drawing: 'iptv-decoder',
+    ports: [
+      { ...poeIn, name: 'LAN (PoE)' },
+      { id: 'hdmi', name: 'HDMI out', medium: 'hdmi' }
+    ]
+  },
+  {
+    id: 'hdmi-sdi-converter',
+    name: 'HDMI / SDI Converter',
+    family: 'av',
+    drawing: 'hdmi-sdi-converter',
+    ports: [
+      { id: 'hdmi', name: 'HDMI', medium: 'hdmi' },
+      { id: 'sdi', name: 'SDI', medium: 'coax', connector: 'bnc' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'sdi-fibre-converter',
+    name: 'SDI / Fibre Converter',
+    family: 'av',
+    drawing: 'sdi-fibre-converter',
+    ports: [
+      { id: 'sdi', name: 'SDI', medium: 'coax', connector: 'bnc' },
+      { id: 'fibre', name: 'Fibre', medium: 'ethernet-fibre', connector: 'lc' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'sdi-router',
+    name: 'SDI Router',
+    family: 'av',
+    drawing: 'sdi-router',
+    ports: [
+      { id: 'in{1..16}', name: 'SDI in {n}', medium: 'coax', connector: 'bnc' },
+      {
+        id: 'out{1..16}',
+        name: 'SDI out {n}',
+        medium: 'coax',
+        connector: 'bnc'
+      },
+      { id: 'mgmt', name: 'Control', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'video-mixer',
+    name: 'Video Mixer',
+    family: 'av',
+    drawing: 'video-mixer',
+    ports: [
+      { id: 'sdi{1..4}', name: 'SDI in {n}', medium: 'coax', connector: 'bnc' },
+      { id: 'hdmi{1..2}', name: 'HDMI in {n}', medium: 'hdmi' },
+      { id: 'pgm', name: 'Program out', medium: 'coax', connector: 'bnc' },
+      { id: 'eth1', name: 'Control', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'podcast-deck',
+    name: 'Podcast Deck',
+    family: 'av',
+    drawing: 'podcast-deck',
+    ports: [
+      {
+        id: 'mic{1..4}',
+        name: 'Mic {n}',
+        medium: 'analog-audio',
+        connector: 'xlr-3'
+      },
+      { id: 'usb-c', name: 'USB-C', medium: 'usb', connector: 'usb-c' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'microphone',
+    name: 'Microphone',
+    family: 'av',
+    drawing: 'microphone',
+    ports: [
+      { id: 'xlr', name: 'XLR', medium: 'analog-audio', connector: 'xlr-3' }
+    ]
+  },
+  {
+    id: 'broadcast-camera',
+    name: 'Broadcast Camera',
+    family: 'av',
+    drawing: 'broadcast-camera',
+    ports: [
+      { id: 'sdi', name: 'SDI out', medium: 'coax', connector: 'bnc' },
+      { id: 'eth1', name: 'Control', medium: 'ethernet-copper' },
+      { ...dcIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'audio-interface',
+    name: 'Audio Interface',
+    family: 'av',
+    drawing: 'audio-interface',
+    ports: [
+      {
+        id: 'mic{1..2}',
+        name: 'Mic {n}',
+        medium: 'analog-audio',
+        connector: 'xlr-3'
+      },
+      {
+        id: 'line{1..2}',
+        name: 'Line out {n}',
+        medium: 'analog-audio',
+        connector: 'trs'
+      },
+      { id: 'usb-c', name: 'USB-C', medium: 'usb', connector: 'usb-c' }
+    ]
+  },
+  {
+    id: 'stage-box',
+    name: 'Stage Box',
+    family: 'av',
+    drawing: 'stage-box',
+    ports: [
+      {
+        id: 'in{1..12}',
+        name: 'Input {n}',
+        medium: 'analog-audio',
+        connector: 'xlr-3'
+      },
+      {
+        id: 'out{1..4}',
+        name: 'Output {n}',
+        medium: 'analog-audio',
+        connector: 'xlr-3'
+      },
+      {
+        id: 'eth1',
+        name: 'Network',
+        medium: 'ethernet-copper',
+        protocols: ['dante']
+      },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'audio-mixer',
+    name: 'Audio Mixer',
+    family: 'av',
+    drawing: 'audio-mixer',
+    ports: [
+      {
+        id: 'ch{1..8}',
+        name: 'Channel {n}',
+        medium: 'analog-audio',
+        connector: 'xlr-3'
+      },
+      {
+        id: 'main{1..2}',
+        name: 'Main out {n}',
+        medium: 'analog-audio',
+        connector: 'xlr-3'
+      },
+      {
+        id: 'eth1',
+        name: 'Network',
+        medium: 'ethernet-copper',
+        protocols: ['dante']
+      },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'comms-beltpack',
+    name: 'Comms Beltpack',
+    family: 'av',
+    drawing: 'comms-beltpack',
+    ports: [
+      {
+        id: 'line',
+        name: 'Party line',
+        medium: 'analog-audio',
+        connector: 'xlr-3'
+      },
+      {
+        id: 'headset',
+        name: 'Headset',
+        medium: 'analog-audio',
+        connector: 'trs'
+      }
+    ]
+  },
+  {
+    id: 'lighting-console',
+    name: 'Lighting Console',
+    family: 'av',
+    drawing: 'lighting-console',
+    ports: [
+      {
+        id: 'dmx{1..2}',
+        name: 'DMX {n}',
+        medium: 'dmx512',
+        connector: 'xlr-5',
+        role: 'through'
+      },
+      {
+        id: 'eth1',
+        name: 'Network',
+        medium: 'ethernet-copper',
+        protocols: ['art-net', 'sacn']
+      },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'dmx-node',
+    name: 'DMX Node',
+    family: 'av',
+    drawing: 'dmx-node',
+    ports: [
+      { ...poeIn, name: 'Network (PoE)', protocols: ['art-net', 'sacn'] },
+      {
+        id: 'dmx{1..2}',
+        name: 'DMX {n}',
+        medium: 'dmx512',
+        connector: 'xlr-5',
+        role: 'through'
+      }
+    ]
+  },
+  {
+    id: 'stage-light',
+    name: 'Stage Light',
+    family: 'av',
+    drawing: 'stage-light',
+    ports: [
+      {
+        id: 'dmx-in',
+        name: 'DMX in',
+        medium: 'dmx512',
+        connector: 'xlr-5',
+        role: 'through'
+      },
+      {
+        id: 'dmx-out',
+        name: 'DMX thru',
+        medium: 'dmx512',
+        connector: 'xlr-5',
+        role: 'through'
+      },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'media-server',
+    name: 'Media Server',
+    family: 'av',
+    drawing: 'media-server',
+    ports: [
+      { id: 'hdmi{1..4}', name: 'Output {n}', medium: 'hdmi' },
+      { id: 'eth{1..2}', name: 'LAN {n}', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'teleprompter',
+    name: 'Teleprompter',
+    family: 'av',
+    drawing: 'teleprompter',
+    ports: [
+      { id: 'hdmi', name: 'HDMI in', medium: 'hdmi' },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'break-glass',
+    name: 'Emergency Break Glass',
+    family: 'security',
+    drawing: 'break-glass',
+    ports: [
+      {
+        id: 'release',
+        name: 'Door release',
+        medium: 'dry-contact',
+        role: 'through'
+      }
+    ]
+  },
+  {
+    id: 'aed',
+    name: 'AED',
+    family: 'security',
+    drawing: 'aed',
+    ports: [
+      {
+        id: 'alarm',
+        name: 'Cabinet alarm',
+        medium: 'dry-contact',
+        role: 'through'
+      },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'emergency-shower',
+    name: 'Emergency Shower / Eye Wash',
+    family: 'security',
+    drawing: 'emergency-shower',
+    ports: [
+      { id: 'flow', name: 'Flow alarm', medium: 'dry-contact', role: 'through' }
+    ]
+  },
+  {
+    id: 'gas-detector',
+    name: 'Gas Detector',
+    family: 'serial',
+    drawing: 'gas-detector',
+    ports: [
+      { ...modbus },
+      { id: 'alarm', name: 'Alarm', medium: 'dry-contact', role: 'through' },
+      { ...dcIn, connector: 'terminal' }
+    ]
   }
 ];

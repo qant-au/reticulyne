@@ -32,6 +32,14 @@ export const MEDIA: Medium[] = [
     protocols: ETHERNET_PROTOCOLS
   },
   {
+    // Fibre Channel: the SAN fabric between servers, switches and storage.
+    id: 'fibre-channel',
+    name: 'Fibre Channel',
+    family: 'ethernet',
+    topology: 'point-to-point',
+    connectors: ['sfp-plus', 'sfp', 'lc']
+  },
+  {
     id: 'wi-fi',
     name: 'Wi-Fi',
     family: 'wireless',
@@ -242,8 +250,16 @@ export const MEDIA: Medium[] = [
     name: 'Coax',
     family: 'av',
     topology: 'point-to-point',
-    connectors: ['bnc', 'f-type', 'iec-tv', 'sma', 'n-type'],
+    connectors: ['bnc', 'f-type', 'iec-tv', 'sma', 'n-type', 'tnc', 'pl-259'],
     protocols: ['analog-video', 'hd-tvi', 'hd-cvi', 'ahd', 'dvb-t', 'catv']
+  },
+  {
+    // Line and microphone level audio: one signal per cable.
+    id: 'analog-audio',
+    name: 'Analogue audio',
+    family: 'av',
+    topology: 'point-to-point',
+    connectors: ['xlr-3', 'trs', 'rca', 'terminal']
   },
   {
     id: 'speaker-100v',
@@ -274,7 +290,8 @@ export const MEDIA: Medium[] = [
       'iec-c20',
       'mains-socket',
       'mains-plug',
-      'terminal'
+      'terminal',
+      'type-2'
     ]
   },
   {
@@ -282,7 +299,7 @@ export const MEDIA: Medium[] = [
     name: 'Power (DC)',
     family: 'power',
     topology: 'point-to-point',
-    connectors: ['barrel', 'terminal', 'anderson', 'wire']
+    connectors: ['barrel', 'terminal', 'anderson', 'wire', 'mc4']
   },
   {
     id: 'ip-tunnel',

@@ -5197,5 +5197,38 @@ export const ITEMS: CatalogueItem[] = [
       { id: 'alarm', name: 'Alarm', medium: 'dry-contact', role: 'through' },
       { ...dcIn, connector: 'terminal' }
     ]
+  },
+  // --- Sixth pass, 2026-10-20: the last three cloud candidates ---
+  {
+    id: 'edge-location',
+    name: 'Edge Location',
+    drawing: 'edge-location',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'client', name: 'Clients', medium: 'ethernet-copper', role: 'hub' },
+      { id: 'origin', name: 'Origin', medium: 'ethernet-copper' }
+    ]
+  },
+  {
+    id: 'email-service',
+    name: 'Email Service',
+    drawing: 'email-service',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'api', name: 'API / SMTP', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'web-app-service',
+    name: 'Web App Service',
+    drawing: 'web-app-service',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'public', name: 'Public', medium: 'ethernet-copper', role: 'hub' },
+      { id: 'backend', name: 'Backend', medium: 'ethernet-copper', role: 'hub' }
+    ]
   }
 ];

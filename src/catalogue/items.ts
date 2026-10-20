@@ -4342,5 +4342,300 @@ export const ITEMS: CatalogueItem[] = [
       { id: 'inside', name: 'Inside', medium: 'ethernet-copper', role: 'hub' },
       { id: 'outside', name: 'Outside', medium: 'ethernet-copper' }
     ]
+  },
+  // --- Second pass, 2026-10-20: referenced devices and cloud services ---
+  {
+    id: 'drone',
+    name: 'Drone',
+    family: 'wireless',
+    drawing: 'drone',
+    ports: [
+      { id: 'wifi', name: 'Control link', medium: 'wi-fi', role: 'client' }
+    ]
+  },
+  {
+    id: 'weather-station',
+    name: 'Weather Station',
+    family: 'marine-vehicle',
+    drawing: 'weather-station',
+    ports: [{ ...n2k, props: { len: 1 } }]
+  },
+  {
+    id: 'perimeter-fence',
+    name: 'Perimeter Fence',
+    family: 'security',
+    drawing: 'perimeter-fence',
+    description:
+      'An electrified fence zone: the energiser reports alarm and tamper.',
+    ports: [
+      { id: 'alarm', name: 'Alarm', medium: 'dry-contact', role: 'through' },
+      { id: 'tamper', name: 'Tamper', medium: 'dry-contact', role: 'through' },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'projector-screen',
+    name: 'Projector Screen',
+    family: 'av',
+    drawing: 'projector-screen',
+    ports: [
+      {
+        id: 'control',
+        name: 'Up / down',
+        medium: 'dry-contact',
+        role: 'through'
+      },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'marina-pedestal',
+    name: 'Marina Pedestal',
+    family: 'power',
+    drawing: 'marina-pedestal',
+    ports: [
+      {
+        id: 'outlet{1..2}',
+        name: 'Shore outlet {n}',
+        medium: 'power-ac',
+        connector: 'mains-socket',
+        capabilities: ['power-out']
+      },
+      { id: 'eth1', name: 'Metering', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'api-gateway',
+    name: 'API Gateway',
+    drawing: 'api-gateway',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'public', name: 'Clients', medium: 'ethernet-copper', role: 'hub' },
+      { id: 'backend{1..4}', name: 'Backend {n}', medium: 'ethernet-copper' }
+    ]
+  },
+  {
+    id: 'virtual-network',
+    name: 'Virtual Network',
+    drawing: 'virtual-network',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'member', name: 'Members', medium: 'ethernet-copper', role: 'hub' },
+      { id: 'peer', name: 'Peering', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'bastion-host',
+    name: 'Bastion Host',
+    drawing: 'bastion-host',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'public', name: 'Public', medium: 'ethernet-copper' },
+      { id: 'private', name: 'Private', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'transit-hub',
+    name: 'Transit Hub',
+    drawing: 'transit-hub',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      {
+        id: 'attach{1..8}',
+        name: 'Attachment {n}',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      }
+    ]
+  },
+  {
+    id: 'dedicated-cloud-link',
+    name: 'Dedicated Cloud Link',
+    drawing: 'dedicated-cloud-link',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'site', name: 'Site', medium: 'ethernet-fibre' },
+      { id: 'cloud', name: 'Cloud', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'event-bus',
+    name: 'Event Bus',
+    drawing: 'event-bus',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      {
+        id: 'producer',
+        name: 'Producers',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      },
+      {
+        id: 'consumer',
+        name: 'Consumers',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      }
+    ]
+  },
+  {
+    id: 'stream-processing',
+    name: 'Stream Processing',
+    drawing: 'stream-processing',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      {
+        id: 'in',
+        name: 'Input stream',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      },
+      { id: 'out', name: 'Output', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'data-pipeline',
+    name: 'Data Pipeline',
+    drawing: 'data-pipeline',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'source', name: 'Sources', medium: 'ethernet-copper', role: 'hub' },
+      { id: 'sink', name: 'Sink', medium: 'ethernet-copper' }
+    ]
+  },
+  {
+    id: 'data-warehouse',
+    name: 'Data Warehouse',
+    drawing: 'data-warehouse',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'client', name: 'Clients', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'block-storage',
+    name: 'Block Storage',
+    drawing: 'block-storage',
+    family: 'virtual',
+    virtual: true,
+    ports: [{ id: 'attach', name: 'Attached to', medium: 'ethernet-copper' }]
+  },
+  {
+    id: 'file-share',
+    name: 'File Share',
+    drawing: 'file-share',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'client', name: 'Clients', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'cache-service',
+    name: 'Cache Service',
+    drawing: 'cache-service',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'client', name: 'Clients', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'secrets-manager',
+    name: 'Secrets Manager',
+    drawing: 'secrets-manager',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'client', name: 'Clients', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'monitoring-service',
+    name: 'Monitoring Service',
+    drawing: 'monitoring-service',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      { id: 'agent', name: 'Agents', medium: 'ethernet-copper', role: 'hub' }
+    ]
+  },
+  {
+    id: 'log-analytics',
+    name: 'Log Analytics',
+    drawing: 'log-analytics',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      {
+        id: 'source',
+        name: 'Log sources',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      }
+    ]
+  },
+  {
+    id: 'ml-model',
+    name: 'Machine Learning Model',
+    drawing: 'ml-model',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      {
+        id: 'endpoint',
+        name: 'Endpoint',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      }
+    ]
+  },
+  {
+    id: 'notification-service',
+    name: 'Notification Service',
+    drawing: 'notification-service',
+    family: 'virtual',
+    virtual: true,
+    ports: [{ id: 'api', name: 'API', medium: 'ethernet-copper', role: 'hub' }]
+  },
+  {
+    id: 'container-registry',
+    name: 'Container Registry',
+    drawing: 'container-registry',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      {
+        id: 'pull',
+        name: 'Pull / push',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      }
+    ]
+  },
+  {
+    id: 'workflow-automation',
+    name: 'Workflow Automation',
+    drawing: 'workflow-automation',
+    family: 'virtual',
+    virtual: true,
+    ports: [
+      {
+        id: 'trigger',
+        name: 'Triggers and actions',
+        medium: 'ethernet-copper',
+        role: 'hub'
+      }
+    ]
   }
 ];

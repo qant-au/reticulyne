@@ -111,9 +111,9 @@ Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT
 
 ## Author
 
-Created and maintained by **Adam Burgess** ([adamburgess.me](https://adamburgess.me)).
-Adam is available for customer implementation work through
-[QANT Pty Ltd](https://qant.au).
+Created, owned and maintained by **Adam Burgess**
+([adamburgess.me](https://adamburgess.me)), who is available for customer
+implementation work.
 
 ## Origins and license
 

@@ -14,6 +14,10 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+### Changed
+
+- **Copyright holder.** `LICENSE` names Adam Burgess personally as the copyright holder of the fork and everything added since, replacing the company notice that had been on it since the first commit. Mark Mankarious's Isoflow notice is unchanged, and the licence is still MIT.
+
 ### Changed (breaking)
 
 - **Reticulyne stands alone.** The scene format, the shared widgets and the device drawings it carried as vendored copies of another project's builds are now its own source: `src/core` (the scene format, units, keymap), `src/kit` (dialogs, menus, panels, notifications, theme) and `src/icons` (the drawings and icon packs). Nothing is vendored from it any more, and `scripts/sync-accurona.mjs` is gone.

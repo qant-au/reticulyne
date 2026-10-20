@@ -20,6 +20,7 @@ import { useColor } from 'src/hooks/useColor';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useSceneStore } from 'src/stores/sceneStore';
 import { GlyphRenderer } from './glyphs';
+import { useProjection } from 'src/hooks/useProjection';
 import type { ConnectorGlyph } from 'src/types';
 
 // FEA5-06: fixed end-to-end animation duration for the looping
@@ -44,6 +45,7 @@ export const Connector = ({
   isDimmed
 }: Props) => {
   const theme = useTheme();
+  const projection = useProjection();
   const color = useColor(_connector.color);
   const { currentView, visibleView } = useScene();
   // useConnector may return null during the final render cycle after the
@@ -247,6 +249,7 @@ export const Connector = ({
           return (
             <g key={i} transform={`translate(${icon.x}, ${icon.y})`}>
               <GlyphRenderer
+                projection={projection}
                 glyph={connector.glyph}
                 rotation={icon.rotation}
                 fill={theme.palette.text.primary}
@@ -259,6 +262,7 @@ export const Connector = ({
 
         {isLooping && animationFlow !== 'reverse' && (
           <GlyphRenderer
+            projection={projection}
             glyph={connector.glyph}
             rotation={0}
             fill={theme.palette.text.primary}
@@ -273,6 +277,7 @@ export const Connector = ({
         )}
         {isLooping && animationFlow !== 'forward' && (
           <GlyphRenderer
+            projection={projection}
             // FEA7-01: when flow is 'both', this second glyph travels
             // in the opposite direction so the connector carries two
             // moving glyphs simultaneously. When flow is 'reverse',
@@ -293,6 +298,7 @@ export const Connector = ({
 
         {pulseOverlay?.pulseExpiresAt !== undefined && (
           <GlyphRenderer
+            projection={projection}
             // Re-key on pulseExpiresAt so a fresh pulse triggered
             // mid-flight cleanly restarts the animation rather than
             // letting the in-flight <animateMotion> linger and the

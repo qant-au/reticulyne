@@ -70,6 +70,32 @@ describe('FEA5-05 glyph registry', () => {
     }
   );
 
+  // lw-129: the diamond and square are drawn pre-skewed for the isometric
+  // view, so the flat view draws each as the other shape.
+  test('the flat view swaps the diamond and square shapes', () => {
+    const square = '0,-16 16,0 0,16 -16,0';
+    const iso = renderInSvg(<GlyphRenderer glyph="diamond" rotation={0} />);
+    expect(iso.container.querySelector('rect')).not.toBeNull();
+    const flat = renderInSvg(
+      <GlyphRenderer glyph="diamond" rotation={0} projection="schematic" />
+    );
+    expect(flat.container.querySelector('rect')).toBeNull();
+    expect(
+      flat.container.querySelector('polygon')?.getAttribute('points')
+    ).toBe(square);
+    const flatSquare = renderInSvg(
+      <GlyphRenderer glyph="square" rotation={0} projection="schematic" />
+    );
+    expect(flatSquare.container.querySelector('rect')).not.toBeNull();
+    // Other glyphs are the same in both views.
+    const tri = renderInSvg(
+      <GlyphRenderer glyph="triangle" rotation={0} projection="schematic" />
+    );
+    expect(tri.container.querySelector('polygon')?.getAttribute('points')).toBe(
+      '17.58,17.01 0,-17.01 -17.58,17.01'
+    );
+  });
+
   test('unknown glyph slug falls back to triangle without throwing', () => {
     const { container } = renderInSvg(
       // @ts-expect-error -- intentionally passing an unknown slug

@@ -11,7 +11,7 @@
 //            like or rotation-symmetric shapes).
 import { Fragment, useEffect, useRef } from 'react';
 import type { FC } from 'react';
-import type { ConnectorGlyph } from 'src/types';
+import type { ConnectorGlyph, Projection } from 'src/types';
 
 export interface GlyphProps {
   fill: string;
@@ -97,10 +97,11 @@ const CircleOutline: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
   );
 };
 
-// Connector SVGs are drawn in isometric projection, so each shape is the
-// other one before it: an axis-aligned square comes out as a diamond on
-// screen, and a 45-degree diamond as a flat rectangle. They were drawn
-// the other way round, and each looked like the other's name.
+// Connector SVGs are drawn in the view's projection. In the isometric
+// view each shape is the other one before it: an axis-aligned square comes
+// out as a diamond on screen, and a 45-degree diamond as a flat rectangle,
+// so they are drawn the other way round. The flat view draws them as they
+// are, so GlyphRenderer swaps the two there (lw-129).
 const Diamond: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
   return (
     <rect
@@ -298,7 +299,17 @@ interface GlyphRendererProps {
   // glyphs face the direction of travel and text-like glyphs stay
   // upright.
   motion?: GlyphMotion;
+  // The view the glyph is drawn in: the isometric view skews the shapes
+  // drawn for it, the flat view does not.
+  projection?: Projection;
 }
+
+// The shapes drawn pre-skewed for the isometric view, swapped back for
+// the flat one.
+const FLAT_SWAP: Partial<Record<ConnectorGlyph, ConnectorGlyph>> = {
+  diamond: 'square',
+  square: 'diamond'
+};
 
 export const GlyphRenderer = ({
   glyph = 'triangle',
@@ -306,10 +317,16 @@ export const GlyphRenderer = ({
   fill = 'black',
   stroke = 'white',
   strokeWidth = 4,
-  motion
+  motion,
+  projection = 'iso'
 }: GlyphRendererProps) => {
   const entry = GLYPHS[glyph] ?? GLYPHS.triangle;
-  const { Component, rotateWithLine } = entry;
+  const drawn =
+    projection === 'schematic'
+      ? (GLYPHS[FLAT_SWAP[glyph] ?? glyph] ?? entry)
+      : entry;
+  const { Component } = drawn;
+  const { rotateWithLine } = entry;
   // A one-shot (a pulse) must start when it mounts. Left to begin at the
   // document's time 0, it had already ended by the time it was added,
   // and the glyph sat still off the line until it was removed.

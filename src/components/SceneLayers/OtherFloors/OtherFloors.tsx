@@ -5,22 +5,42 @@ import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useLayerFilter } from 'src/hooks/sceneLists';
 import { useIcon } from 'src/hooks/useIcon';
+import { useProjection } from 'src/hooks/useProjection';
 import { filterViewByLayers, getTilePosition } from 'src/utils';
-import type { Coords, ModelItem, View, ViewItem } from 'src/types';
+import { getProjectedTileSize } from 'src/utils/projection';
+import type { Coords, ModelItem, Projection, View, ViewItem } from 'src/types';
 
 // The other floors, drawn faintly above and below the one on show,
 // a storey apart, so the building reads as a stack: enough to follow the
-// topology, not enough to compete with the floor being edited. Only
-// isometric floors stack; they cannot be clicked, and they are never in an
-// export (a NON_INTERACTIVE render) or while the floor on show is flat.
+// topology, not enough to compete with the floor being edited. They are
+// drawn in the projection of the floor on show, isometric or flat, so the
+// switch changes nothing but the drawing (lw-129); they cannot be clicked,
+// and they are never in an export (a NON_INTERACTIVE render).
 
 /** How far apart two floors are drawn, in screen pixels at zoom 1. */
 export const FLOOR_SPACING = PROJECTED_TILE_SIZE.height * 4;
 export const OTHER_FLOOR_OPACITY = 0.18;
 
-const GhostNode = ({ item, node }: { item?: ModelItem; node: ViewItem }) => {
-  const { iconComponent } = useIcon(item?.icon, 'iso');
-  const position = getTilePosition({ tile: node.tile, origin: 'BOTTOM' });
+/** The floor spacing in the given projection: four tiles tall. */
+export const floorSpacing = (projection: Projection) => {
+  return getProjectedTileSize(projection).height * 4;
+};
+
+const GhostNode = ({
+  item,
+  node,
+  projection
+}: {
+  item?: ModelItem;
+  node: ViewItem;
+  projection: Projection;
+}) => {
+  const { iconComponent } = useIcon(item?.icon, projection);
+  const position = getTilePosition({
+    tile: node.tile,
+    origin: projection === 'schematic' ? 'CENTER' : 'BOTTOM',
+    projection
+  });
   if (!iconComponent) return null;
   return (
     <Box
@@ -34,7 +54,7 @@ const GhostNode = ({ item, node }: { item?: ModelItem; node: ViewItem }) => {
 
 // A connector as a straight run through its ends and waypoints. The real
 // route is worked out per floor on show; this only has to read as a link.
-const ghostPaths = (view: View): string[] => {
+const ghostPaths = (view: View, projection: Projection): string[] => {
   const tiles = new Map(
     view.items.map((item) => {
       return [item.id, item.tile];
@@ -43,7 +63,7 @@ const ghostPaths = (view: View): string[] => {
   return (view.connectors ?? []).flatMap((connector) => {
     const points = connector.anchors.flatMap(({ ref }): Coords[] => {
       const tile = ref.item !== undefined ? tiles.get(ref.item) : ref.tile;
-      return tile ? [getTilePosition({ tile })] : [];
+      return tile ? [getTilePosition({ tile, projection })] : [];
     });
     if (points.length < 2) return [];
     return [
@@ -59,15 +79,17 @@ const ghostPaths = (view: View): string[] => {
 const GhostFloor = ({
   view,
   offset,
-  items
+  items,
+  projection
 }: {
   view: View;
   offset: number;
   items: Map<string, ModelItem>;
+  projection: Projection;
 }) => {
   const paths = useMemo(() => {
-    return ghostPaths(view);
-  }, [view]);
+    return ghostPaths(view, projection);
+  }, [view, projection]);
   return (
     <Box
       data-testid={`other-floor-${view.id}`}
@@ -104,7 +126,12 @@ const GhostFloor = ({
       </Box>
       {view.items.map((node) => {
         return (
-          <GhostNode key={node.id} node={node} item={items.get(node.id)} />
+          <GhostNode
+            key={node.id}
+            node={node}
+            item={items.get(node.id)}
+            projection={projection}
+          />
         );
       })}
     </Box>
@@ -125,6 +152,7 @@ export const OtherFloors = memo(() => {
     return state.showOtherFloors && state.editorMode !== 'NON_INTERACTIVE';
   });
   const leftOut = useLayerFilter();
+  const projection = useProjection();
 
   const items = useMemo(() => {
     return new Map(
@@ -137,20 +165,21 @@ export const OtherFloors = memo(() => {
   const current = views.findIndex((v) => {
     return v.id === currentViewId;
   });
-  if (!show || current === -1 || views[current].kind === 'schematic') {
+  if (!show || current === -1) {
     return null;
   }
 
   return (
     <>
       {views.map((view, index) => {
-        if (index === current || view.kind === 'schematic') return null;
+        if (index === current) return null;
         return (
           <GhostFloor
             key={view.id}
             view={filterViewByLayers(view, leftOut)}
-            offset={(current - index) * FLOOR_SPACING}
+            offset={(current - index) * floorSpacing(projection)}
             items={items}
+            projection={projection}
           />
         );
       })}

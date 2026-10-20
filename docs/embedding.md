@@ -507,10 +507,11 @@ adds (pick a floor, then an item on it) or removes them. A stub is not drawn whi
 either item is on a hidden layer, and an export leaves out a connection to anything it
 leaves out (the Redacted layer, say), so a stub never names it.
 
-While an isometric floor is on show, the **other floors** are drawn faintly above and
-below it, a storey apart, so the building reads as a stack: enough to follow the
-topology, not enough to compete with the floor being edited. They cannot be clicked
-and are never exported; the eye button in the floor switcher hides them. That choice
+While a floor is on show, the **other floors** are drawn faintly above and below it, a
+storey apart, in the same projection as the floor on show (isometric or flat), so the
+building reads as a stack: enough to follow the topology, not enough to compete with the
+floor being edited. They cannot be clicked and are never exported; the eye button in the
+floor switcher hides them. That choice
 is the viewer's, not the diagram's, and is not saved.
 
 ### Presentation tours

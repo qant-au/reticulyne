@@ -41,6 +41,7 @@ potentially breaking and read the release notes before upgrading.
 ### Fixed
 
 - In the flat view, an icon with no image drew an `<img src="">`; it now draws nothing, as the isometric view does.
+- **The flat view is the same diagram as the isometric one in every respect but the drawing.** The other floors are now drawn faintly in the flat view too, in the flat projection, where before they were left out; and the diamond and square connector glyphs, drawn pre-skewed for the isometric view, no longer swap shapes in the flat one.
 
 ## [0.7.0] - 2026-10-11
 

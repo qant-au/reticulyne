@@ -4637,5 +4637,105 @@ export const ITEMS: CatalogueItem[] = [
         role: 'hub'
       }
     ]
+  },
+  // --- Third pass, 2026-10-20: devices drawn from references ---
+  {
+    id: 'barcode-scanner',
+    name: 'Barcode Scanner',
+    family: 'serial',
+    drawing: 'barcode-scanner',
+    ports: [{ id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-a' }]
+  },
+  {
+    id: 'cable-modem',
+    name: 'Cable Modem',
+    family: 'ethernet',
+    drawing: 'cable-modem',
+    ports: [
+      {
+        id: 'coax',
+        name: 'Cable',
+        medium: 'coax',
+        connector: 'f-type',
+        protocols: ['catv']
+      },
+      { id: 'eth{1..2}', name: 'LAN {n}', medium: 'ethernet-copper' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'docking-station',
+    name: 'Docking Station',
+    family: 'ethernet',
+    drawing: 'docking-station',
+    ports: [
+      { id: 'host', name: 'Laptop', medium: 'usb', connector: 'usb-c' },
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      { id: 'dp{1..2}', name: 'DisplayPort {n}', medium: 'displayport' },
+      { id: 'usb{1..3}', name: 'USB {n}', medium: 'usb', connector: 'usb-a' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'gate-motor',
+    name: 'Gate Motor',
+    family: 'security',
+    drawing: 'gate-motor',
+    ports: [
+      { id: 'open', name: 'Open', medium: 'dry-contact', role: 'through' },
+      {
+        id: 'safety',
+        name: 'Safety beam',
+        medium: 'dry-contact',
+        role: 'through'
+      },
+      { ...acIn, connector: 'terminal' }
+    ]
+  },
+  {
+    id: 'headset',
+    name: 'Headset',
+    family: 'wireless',
+    drawing: 'headset',
+    ports: [
+      { id: 'bt', name: 'Bluetooth', medium: 'bluetooth', role: 'peer' },
+      { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-a' }
+    ]
+  },
+  {
+    id: 'ip-pbx',
+    name: 'IP PBX',
+    family: 'ethernet',
+    drawing: 'ip-pbx',
+    ports: [
+      { id: 'eth{1..2}', name: 'LAN {n}', medium: 'ethernet-copper' },
+      { id: 'trunk', name: 'SIP trunk', medium: 'ethernet-copper' },
+      { ...acIn, connector: 'iec-c14' }
+    ]
+  },
+  {
+    id: 'label-printer',
+    name: 'Label Printer',
+    family: 'ethernet',
+    drawing: 'label-printer',
+    ports: [
+      { id: 'eth1', name: 'LAN', medium: 'ethernet-copper' },
+      { id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-b' },
+      { ...dcIn, connector: 'barrel' }
+    ]
+  },
+  {
+    id: 'time-clock',
+    name: 'Time Clock',
+    family: 'security',
+    drawing: 'time-clock',
+    ports: [{ ...poeIn, name: 'LAN (PoE)' }]
+  },
+  {
+    id: 'webcam',
+    name: 'Webcam',
+    family: 'serial',
+    drawing: 'webcam',
+    ports: [{ id: 'usb', name: 'USB', medium: 'usb', connector: 'usb-a' }]
   }
 ];

@@ -4,52 +4,75 @@
 
 # Reticulyne
 
-An open-source React component for drawing isometric network diagrams: software
-architecture, infrastructure topologies, comms rooms, and any system best read on an
-isometric grid. Embed it in your own application, or run it on its own as a
-self-hosted editor.
+Reticulyne is an open-source editor for network diagrams, drawn on an isometric grid
+or as a flat schematic. It is a React component you embed in your own application, and
+it also runs on its own as a self-hosted editor. Use it for infrastructure topologies,
+software architecture, comms rooms, building systems, and the networks on boats and in
+vehicles, where the catalogue of devices and their ports does the fiddly part for you.
 
 **Project site:** [reticulyne.com](https://reticulyne.com)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![npm](https://img.shields.io/npm/v/%40reticulyne%2Feditor)](https://www.npmjs.com/package/@reticulyne/editor)
 
-## Status
+## See it in action
 
-Pre-1.0 (currently v0.7). The public API is settling, and breaking changes are still
-possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELOG.md).
+Three recordings of the editor itself, driven the way a person uses it.
+
+### Drawing a small office network
+
+Devices are dragged in from the catalogue and connected from their context menu. Each
+connection takes a real port on a real medium, and the inspector lets you choose a
+different port, or move a device's label to any of eight points around it. At the end
+the same diagram is shown as a flat schematic and back.
+
+![Drawing a small office network in Reticulyne](docs/demos/office-network.gif)
+
+### The same network as a live status board
+
+An embedding application drives the diagram from its own data: traffic animates along
+the links, status pips sit on the devices, readings sit on the links, and the story of
+a fibre outage, a failover to 4G and a mains failure carried by the UPS plays out. Part
+way through the labels are hidden, so only the network shows.
+
+![The office network driven as a live status board](docs/demos/office-live.gif)
+
+### An NMEA 2000 network on a boat
+
+A backbone of tees between two terminators, a power injector, and the instruments on
+the drops. The catalogue knows the bus rules, so the inspector warns about the missing
+terminator and the missing bus power until the backbone is complete.
+
+![Drawing an NMEA 2000 network in Reticulyne](docs/demos/nmea-2000.gif)
+
+The recordings are made by scripts in [`demos/`](demos/README.md), so a change to the
+editor that breaks one of these flows fails the recording.
 
 ## Features
 
-- **Drag-and-drop editor.** Lay out icons, regions (rectangles) and connectors on an
-  isometric grid.
-- **Isometric or flat 2D, per view.** The same diagram drawn isometrically or as a
-  flat, Visio-style schematic. The toolbar switches the current view between the two;
-  nothing moves, because both draw the same tiles. The flat view draws catalogue items
-  with their 2D symbols.
-- **Floors.** A diagram's views are its floors, switched from the title bar or with
-  `Alt` + `Up` / `Down`. The other floors are drawn faintly above and below the one on
-  show, and a link between items on different floors is drawn on each as a stub that
-  names the other floor and takes you there.
-- **Icon packs.** Icons come in packs ([icon packs](docs/icon-packs.md)), and each
-  icon can carry an isometric drawing and a flat one, so it looks right in both views.
-  The package ships Reticulyne's own device drawings as the built-in pack
-  (`BUILTIN_PACK`); bring your own packs beside it.
-- **Editor modes.** Fully editable, explore-only, or non-interactive, for editors,
-  viewers and dashboards.
+- **Drag-and-drop editing** of icons, regions and connectors on an isometric grid, with
+  connectors routed along the grid and its diagonals.
+- **Isometric or flat, per view.** The same diagram drawn isometrically or as a flat,
+  Visio-style schematic, switched from the toolbar. Nothing moves, because both draw
+  the same tiles, and every icon carries a drawing for each.
+- **A catalogue of real devices.** Switches, firewalls, access points, cameras, panels,
+  marine instruments and more, each with its ports, media and protocols. Connecting two
+  devices picks matching ports, and the editor warns when a bus is missing a terminator
+  or a loop is not closed. See [Catalogue](docs/catalogue.md).
+- **Floors.** A diagram's views are its floors; the others are drawn faintly above and
+  below the one on show, and a link to another floor is drawn as a stub that takes you
+  there.
+- **Labels where you want them.** Each device's label sits at any of eight compass
+  points around it, and the whole set can be hidden with a click or `Alt+L`.
+- **Icon packs.** Bring your own icons beside the built-in drawings, each with an
+  isometric and a flat view. See [Icon packs](docs/icon-packs.md).
+- **Editor modes** for an editor, a viewer and a non-interactive render.
 - **One file format.** Diagrams open and save as the
-  [Reticulyne scene format](docs/scene-format.md): one JSON document of objects and the views that
-  place them, with a published JSON Schema. Reticulyne draws the isometric and schematic views, and keeps the floor
-  plans, connections and object details it does not show when it saves. Files saved by
-  older versions (Reticulyne models) still open, and are saved as scenes.
-- **Export.** JSON (the scene file), PNG, PDF and SVG (a flat vector SVG for Illustrator,
-  Inkscape and Figma, or a full-fidelity browser SVG). Every export runs in the browser;
-  nothing is sent anywhere.
-- **8-directional connector routing.** Connectors route along the grid and its 45°
-  diagonals, giving shorter, less cluttered paths.
-- **Selection dimming.** When one item is selected everything else fades, and a host
-  can set the focus itself.
-- **Live dashboards** (opt-in). Animate connectors, fire signal pulses and decorate
-  nodes with your own gauges, driven from a poller or websocket. See
+  [Reticulyne scene format](docs/scene-format.md), one JSON document with a published
+  schema that also carries floor plans and object details the editor does not show.
+- **Export** to JSON, PNG, PDF and SVG, entirely in the browser.
+- **Live dashboards.** Animate connectors, fire signal pulses and overlay your own
+  status indicators from a poller or a websocket. See
   [Live dashboards](docs/embedding.md#live-dashboards).
 
 ## Getting started
@@ -71,33 +94,36 @@ export function Diagram() {
 }
 ```
 
-It is on npm as [`@reticulyne/editor`](https://www.npmjs.com/package/@reticulyne/editor), with
-no token needed; see [Installation](docs/installation.md). To run the editor on its own
-instead, see [Standalone Docker](docs/docker.md).
-
-**Requirements:** React 19, MUI v9, Emotion and Zustand as peer dependencies.
-Supported browsers follow MUI v9: Chrome 117+, Edge 121+, Firefox 121+, Safari 17+.
+The package is on npm as
+[`@reticulyne/editor`](https://www.npmjs.com/package/@reticulyne/editor) and needs
+React 19, MUI v9, Emotion and Zustand beside it; see [Installation](docs/installation.md)
+for versions and browser support. To run the editor on its own instead, see
+[Standalone Docker](docs/docker.md).
 
 ## Documentation
 
-- [Quick start](docs/quickstart.md) - a minimal embed, container sizing, Next.js notes
-- [API reference](docs/api.md) - every prop, plus the `useReticulyne()` imperative hook
-- [Embedding contract](docs/embedding.md) - modes, host-managed save, callbacks, the security model
-- [Icon packs](docs/icon-packs.md) - icons with isometric and flat drawings, bundled and your own
-- [Scene format](docs/scene-format.md) - the file format
-- [Standalone Docker](docs/docker.md) - run the editor as a self-hosted app
+- [Quick start](docs/quickstart.md): a minimal embed, container sizing, Next.js notes
+- [API reference](docs/api.md): every prop, plus the `useReticulyne()` hook
+- [Embedding](docs/embedding.md): modes, host-managed save, callbacks, live dashboards, the security model
+- [Catalogue](docs/catalogue.md): the devices, their ports, media and protocols
+- [Icon packs](docs/icon-packs.md): icons with isometric and flat drawings, bundled and your own
+- [Scene format](docs/scene-format.md): the file format
+- [Keyboard shortcuts](docs/keymap.md): the full keymap
+- [Standalone Docker](docs/docker.md): run the editor as a self-hosted app
+- [Demos](demos/README.md): how the recordings above are made
+
+## Status
+
+Pre-1.0, currently v0.7. The public API is settling, and breaking changes are still
+possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## Security
 
-Node descriptions are rich text, and Reticulyne parses every description (typed, pasted
-or passed in through `initialData`) through a schema that allows only bold, italic,
-underline, strikethrough and safe links. Scripts, frames, event handlers and unsafe URLs
-are dropped before anything renders. If you take descriptions out of Reticulyne and
-render them somewhere else, sanitise them there as you would any user data. The full
-model is in [Embedding: security model](docs/embedding.md#security-model).
-
-To report a vulnerability, see [SECURITY.md](SECURITY.md). Please do not open a public
-issue for security reports.
+Node descriptions are the only rich text, and they are parsed through a schema that
+allows only a few inline marks and safe links; the rest is dropped before anything
+renders. The full model is in [Embedding: security model](docs/embedding.md#security-model).
+To report a vulnerability, see [SECURITY.md](SECURITY.md) rather than opening a public
+issue.
 
 ## Contributing
 

@@ -30,6 +30,8 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Demos.** `demos/` records the editor being used, as a person would, into the GIFs in `docs/demos`: drawing a small office network, that network as a live status board, and an NMEA 2000 network on a boat (`npm run demos:record`, `npm run demos:encode`). Each build demo asserts the scene it ends with.
+- **"Office network, live" example** in the examples picker: the office network driven as a status board through `Connector.update`, `Connector.pulse`, `nodeIndicatorComponent` and `connectorIndicatorComponent`, with a fibre outage, a 4G failover and a mains failure carried by the UPS.
 - **Icons carry a flat drawing.** An icon may have `flatUrl`, its flat (2D) drawing, beside `url`; the flat view draws it, and falls back to `url`. It is in the model, the scene format and the JSON Schema. A diagram saved before this takes the flat drawing of the library icon with the same id.
 - **Icon packs** ([docs/icon-packs.md](docs/icon-packs.md)): `IconPack { id, name, version?, icons }`, with `validateIconPack`, `iconPackSchema`, `packIcons`, `flattenPacks` and `fillFlatUrls`. The device drawings ship as `BUILTIN_PACK`, each with an isometric and a flat view.
 - **Pack icons can carry their connection detail.** A pack icon may list its device's `ports` (on the catalogue's media), with a palette `family`, `description` and `props`; `validateIconPack` checks them against the catalogue's rules. `packCatalogueItems(pack)` turns them into catalogue items and the new `catalogueItems` prop adds those to the palette, so a third-party pack brings its devices ready to connect. The icon a diagram stores is still the plain icon record.

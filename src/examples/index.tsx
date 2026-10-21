@@ -5,6 +5,7 @@ import { BasicEditor } from './BasicEditor/BasicEditor';
 import { DebugTools } from './DebugTools/DebugTools';
 import { ReadonlyMode } from './ReadonlyMode/ReadonlyMode';
 import { LiveDashboard } from './LiveDashboard/LiveDashboard';
+import { OfficeNetworkLive } from './OfficeNetworkLive/OfficeNetworkLive';
 import { ConnectorAnimations } from './ConnectorAnimations/ConnectorAnimations';
 import { ConnectorPulse } from './ConnectorPulse/ConnectorPulse';
 import { NodeIndicators } from './NodeIndicators/NodeIndicators';
@@ -36,6 +37,7 @@ const examples = [
   { name: 'Debug tools', component: DebugTools },
   { name: 'Read-only mode', component: ReadonlyMode },
   { name: 'Live dashboard', component: LiveDashboard },
+  { name: 'Office network, live', component: OfficeNetworkLive },
   { name: 'Connector animations', component: ConnectorAnimations },
   { name: 'Connector pulse', component: ConnectorPulse },
   { name: 'Node indicators', component: NodeIndicators }

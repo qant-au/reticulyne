@@ -1,0 +1,1291 @@
+{
+  "$schema": "https://cdn.jsdelivr.net/npm/@reticulyne/editor@0/dist/schema/scene-v2.json",
+  "format": "reticulyne-scene",
+  "version": 2,
+  "id": "nmea-2000",
+  "title": "NMEA 2000 network",
+  "objects": [
+    {
+      "id": "term-bow",
+      "name": "Terminator (bow)",
+      "icon": "reticulyne-n2k-terminator-male",
+      "element": "n2k-terminator-male",
+      "ports": [
+        {
+          "id": "t",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "role": "backbone",
+            "capabilities": "terminator"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "n2k-terminator-male"
+        }
+      ]
+    },
+    {
+      "id": "tee-bow",
+      "name": "Tee (bow)",
+      "icon": "reticulyne-n2k-tee",
+      "element": "n2k-tee",
+      "ports": [
+        {
+          "id": "in",
+          "name": "Backbone in",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "backbone"
+          }
+        },
+        {
+          "id": "out",
+          "name": "Backbone out",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "role": "backbone"
+          }
+        },
+        {
+          "id": "drop",
+          "name": "Drop",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "n2k-tee"
+        }
+      ]
+    },
+    {
+      "id": "tee4-fwd",
+      "name": "4-Way Tee (fwd)",
+      "icon": "reticulyne-n2k-tee-4way",
+      "element": "n2k-tee-4way",
+      "ports": [
+        {
+          "id": "in",
+          "name": "Backbone in",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "backbone"
+          }
+        },
+        {
+          "id": "out",
+          "name": "Backbone out",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "role": "backbone"
+          }
+        },
+        {
+          "id": "drop1",
+          "name": "Drop 1",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        },
+        {
+          "id": "drop2",
+          "name": "Drop 2",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        },
+        {
+          "id": "drop3",
+          "name": "Drop 3",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        },
+        {
+          "id": "drop4",
+          "name": "Drop 4",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "n2k-tee-4way"
+        }
+      ]
+    },
+    {
+      "id": "tee-mid",
+      "name": "Tee (mid)",
+      "icon": "reticulyne-n2k-tee",
+      "element": "n2k-tee",
+      "ports": [
+        {
+          "id": "in",
+          "name": "Backbone in",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "backbone"
+          }
+        },
+        {
+          "id": "out",
+          "name": "Backbone out",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "role": "backbone"
+          }
+        },
+        {
+          "id": "drop",
+          "name": "Drop",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "n2k-tee"
+        }
+      ]
+    },
+    {
+      "id": "tee4-aft",
+      "name": "4-Way Tee (aft)",
+      "icon": "reticulyne-n2k-tee-4way",
+      "element": "n2k-tee-4way",
+      "ports": [
+        {
+          "id": "in",
+          "name": "Backbone in",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "backbone"
+          }
+        },
+        {
+          "id": "out",
+          "name": "Backbone out",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "role": "backbone"
+          }
+        },
+        {
+          "id": "drop1",
+          "name": "Drop 1",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        },
+        {
+          "id": "drop2",
+          "name": "Drop 2",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        },
+        {
+          "id": "drop3",
+          "name": "Drop 3",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        },
+        {
+          "id": "drop4",
+          "name": "Drop 4",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "drop"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "n2k-tee-4way"
+        }
+      ]
+    },
+    {
+      "id": "term-stern",
+      "name": "Terminator (stern)",
+      "icon": "reticulyne-n2k-terminator-female",
+      "element": "n2k-terminator-female",
+      "ports": [
+        {
+          "id": "t",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "female",
+            "role": "backbone",
+            "capabilities": "terminator"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "n2k-terminator-female"
+        }
+      ]
+    },
+    {
+      "id": "power",
+      "name": "NMEA 2000 Power Injector",
+      "icon": "reticulyne-n2k-power-injector",
+      "element": "n2k-power-injector",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "capabilities": "bus-power"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "wire",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "n2k-power-injector"
+        }
+      ]
+    },
+    {
+      "id": "radar",
+      "name": "Radar",
+      "icon": "reticulyne-marine-radar",
+      "element": "marine-radar",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000",
+            "len": 1
+          }
+        },
+        {
+          "id": "eth1",
+          "name": "Marine network",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "barrel",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "marine-radar"
+        }
+      ]
+    },
+    {
+      "id": "gps-1",
+      "name": "GPS 1",
+      "icon": "reticulyne-gps-receiver",
+      "element": "gps-receiver",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000",
+            "len": 1
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "gps-receiver"
+        }
+      ]
+    },
+    {
+      "id": "weather",
+      "name": "Weather Station",
+      "icon": "reticulyne-wind-instrument",
+      "element": "wind-instrument",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000",
+            "len": 1
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "wind-instrument"
+        }
+      ]
+    },
+    {
+      "id": "depth",
+      "name": "Depth Transducer",
+      "description": "A smart transducer that reports straight onto the bus.",
+      "icon": "reticulyne-depth-transducer",
+      "element": "depth-transducer",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000",
+            "len": 1
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "depth-transducer"
+        }
+      ]
+    },
+    {
+      "id": "engine",
+      "name": "Engine Gateway (J1939 to NMEA 2000)",
+      "icon": "reticulyne-engine-gateway",
+      "element": "engine-gateway",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000"
+          }
+        },
+        {
+          "id": "j1939",
+          "kind": "j1939",
+          "props": {
+            "connector": "deutsch-dt",
+            "protocols": "j1939",
+            "capabilities": "terminator"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "engine-gateway"
+        }
+      ]
+    },
+    {
+      "id": "plotter-helm",
+      "name": "Chartplotter (helm)",
+      "icon": "reticulyne-chartplotter",
+      "element": "chartplotter",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000",
+            "len": 1
+          }
+        },
+        {
+          "id": "eth1",
+          "name": "Marine network",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "0183",
+          "kind": "nmea-0183",
+          "props": {
+            "connector": "terminal",
+            "role": "through",
+            "protocols": "nmea-0183"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "barrel",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "chartplotter"
+        }
+      ]
+    },
+    {
+      "id": "plotter-nav",
+      "name": "Chartplotter (nav)",
+      "icon": "reticulyne-chartplotter",
+      "element": "chartplotter",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000",
+            "len": 1
+          }
+        },
+        {
+          "id": "eth1",
+          "name": "Marine network",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "0183",
+          "kind": "nmea-0183",
+          "props": {
+            "connector": "terminal",
+            "role": "through",
+            "protocols": "nmea-0183"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "barrel",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "chartplotter"
+        }
+      ]
+    },
+    {
+      "id": "gps-2",
+      "name": "GPS 2",
+      "icon": "reticulyne-gps-receiver",
+      "element": "gps-receiver",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000",
+            "len": 1
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "gps-receiver"
+        }
+      ]
+    },
+    {
+      "id": "ais",
+      "name": "AIS Transponder",
+      "icon": "reticulyne-ais-transponder",
+      "element": "ais-transponder",
+      "ports": [
+        {
+          "id": "n2k",
+          "kind": "nmea-2000",
+          "props": {
+            "connector": "micro-c",
+            "gender": "male",
+            "protocols": "nmea-2000",
+            "len": 1
+          }
+        },
+        {
+          "id": "0183",
+          "kind": "nmea-0183",
+          "props": {
+            "connector": "terminal",
+            "role": "through",
+            "protocols": "nmea-0183"
+          }
+        },
+        {
+          "id": "vhf",
+          "name": "VHF antenna",
+          "kind": "coax",
+          "props": {
+            "connector": "pl-259"
+          }
+        },
+        {
+          "id": "gps",
+          "name": "GPS antenna",
+          "kind": "coax",
+          "props": {
+            "connector": "tnc"
+          }
+        },
+        {
+          "id": "usb",
+          "name": "USB",
+          "kind": "usb",
+          "props": {
+            "connector": "usb-micro-b"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "barrel",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "ais-transponder"
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "main",
+      "kind": "iso",
+      "name": "Main",
+      "lastUpdated": "2026-10-21T01:10:28.192Z",
+      "placements": [
+        {
+          "object": "ais",
+          "tile": {
+            "x": 0,
+            "y": -4
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "gps-2",
+          "tile": {
+            "x": 3,
+            "y": 1
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "plotter-nav",
+          "tile": {
+            "x": 6,
+            "y": 2
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "plotter-helm",
+          "tile": {
+            "x": 4,
+            "y": 0
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "engine",
+          "tile": {
+            "x": -1,
+            "y": -3
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "depth",
+          "tile": {
+            "x": -2,
+            "y": -2
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "weather",
+          "tile": {
+            "x": 2,
+            "y": 2
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "gps-1",
+          "tile": {
+            "x": 1,
+            "y": 3
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "radar",
+          "tile": {
+            "x": 4,
+            "y": 4
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "power",
+          "tile": {
+            "x": -3,
+            "y": -1
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "term-stern",
+          "tile": {
+            "x": 3,
+            "y": -3
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "tee4-aft",
+          "tile": {
+            "x": 2,
+            "y": -2
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "tee-mid",
+          "tile": {
+            "x": 1,
+            "y": -1
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "tee4-fwd",
+          "tile": {
+            "x": 0,
+            "y": 0
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "tee-bow",
+          "tile": {
+            "x": -1,
+            "y": 1
+          },
+          "labelHeight": 80
+        },
+        {
+          "object": "term-bow",
+          "tile": {
+            "x": -2,
+            "y": 2
+          },
+          "labelHeight": 80
+        }
+      ],
+      "connectors": [
+        {
+          "id": "ais--tee4-aft",
+          "anchors": [
+            {
+              "id": "ais--tee4-aft-1",
+              "ref": {
+                "object": "ais"
+              }
+            },
+            {
+              "id": "ais--tee4-aft-2",
+              "ref": {
+                "object": "tee4-aft"
+              }
+            }
+          ],
+          "connection": "ais--tee4-aft"
+        },
+        {
+          "id": "gps-2--tee4-aft",
+          "anchors": [
+            {
+              "id": "gps-2--tee4-aft-1",
+              "ref": {
+                "object": "gps-2"
+              }
+            },
+            {
+              "id": "gps-2--tee4-aft-2",
+              "ref": {
+                "object": "tee4-aft"
+              }
+            }
+          ],
+          "connection": "gps-2--tee4-aft"
+        },
+        {
+          "id": "plotter-nav--tee4-aft",
+          "anchors": [
+            {
+              "id": "plotter-nav--tee4-aft-1",
+              "ref": {
+                "object": "plotter-nav"
+              }
+            },
+            {
+              "id": "plotter-nav--tee4-aft-2",
+              "ref": {
+                "object": "tee4-aft"
+              }
+            }
+          ],
+          "connection": "plotter-nav--tee4-aft"
+        },
+        {
+          "id": "plotter-helm--tee4-aft",
+          "anchors": [
+            {
+              "id": "plotter-helm--tee4-aft-1",
+              "ref": {
+                "object": "plotter-helm"
+              }
+            },
+            {
+              "id": "plotter-helm--tee4-aft-2",
+              "ref": {
+                "object": "tee4-aft"
+              }
+            }
+          ],
+          "connection": "plotter-helm--tee4-aft"
+        },
+        {
+          "id": "engine--tee-mid",
+          "anchors": [
+            {
+              "id": "engine--tee-mid-1",
+              "ref": {
+                "object": "engine"
+              }
+            },
+            {
+              "id": "engine--tee-mid-2",
+              "ref": {
+                "object": "tee-mid"
+              }
+            }
+          ],
+          "connection": "engine--tee-mid"
+        },
+        {
+          "id": "depth--tee4-fwd",
+          "anchors": [
+            {
+              "id": "depth--tee4-fwd-1",
+              "ref": {
+                "object": "depth"
+              }
+            },
+            {
+              "id": "depth--tee4-fwd-2",
+              "ref": {
+                "object": "tee4-fwd"
+              }
+            }
+          ],
+          "connection": "depth--tee4-fwd"
+        },
+        {
+          "id": "weather--tee4-fwd",
+          "anchors": [
+            {
+              "id": "weather--tee4-fwd-1",
+              "ref": {
+                "object": "weather"
+              }
+            },
+            {
+              "id": "weather--tee4-fwd-2",
+              "ref": {
+                "object": "tee4-fwd"
+              }
+            }
+          ],
+          "connection": "weather--tee4-fwd"
+        },
+        {
+          "id": "gps-1--tee4-fwd",
+          "anchors": [
+            {
+              "id": "gps-1--tee4-fwd-1",
+              "ref": {
+                "object": "gps-1"
+              }
+            },
+            {
+              "id": "gps-1--tee4-fwd-2",
+              "ref": {
+                "object": "tee4-fwd"
+              }
+            }
+          ],
+          "connection": "gps-1--tee4-fwd"
+        },
+        {
+          "id": "radar--tee4-fwd",
+          "anchors": [
+            {
+              "id": "radar--tee4-fwd-1",
+              "ref": {
+                "object": "radar"
+              }
+            },
+            {
+              "id": "radar--tee4-fwd-2",
+              "ref": {
+                "object": "tee4-fwd"
+              }
+            }
+          ],
+          "connection": "radar--tee4-fwd"
+        },
+        {
+          "id": "power--tee-bow",
+          "anchors": [
+            {
+              "id": "power--tee-bow-1",
+              "ref": {
+                "object": "power"
+              }
+            },
+            {
+              "id": "power--tee-bow-2",
+              "ref": {
+                "object": "tee-bow"
+              }
+            }
+          ],
+          "connection": "power--tee-bow"
+        },
+        {
+          "id": "tee4-aft--term-stern",
+          "anchors": [
+            {
+              "id": "tee4-aft--term-stern-1",
+              "ref": {
+                "object": "tee4-aft"
+              }
+            },
+            {
+              "id": "tee4-aft--term-stern-2",
+              "ref": {
+                "object": "term-stern"
+              }
+            }
+          ],
+          "connection": "tee4-aft--term-stern"
+        },
+        {
+          "id": "tee-mid--tee4-aft",
+          "anchors": [
+            {
+              "id": "tee-mid--tee4-aft-1",
+              "ref": {
+                "object": "tee-mid"
+              }
+            },
+            {
+              "id": "tee-mid--tee4-aft-2",
+              "ref": {
+                "object": "tee4-aft"
+              }
+            }
+          ],
+          "connection": "tee-mid--tee4-aft"
+        },
+        {
+          "id": "tee4-fwd--tee-mid",
+          "anchors": [
+            {
+              "id": "tee4-fwd--tee-mid-1",
+              "ref": {
+                "object": "tee4-fwd"
+              }
+            },
+            {
+              "id": "tee4-fwd--tee-mid-2",
+              "ref": {
+                "object": "tee-mid"
+              }
+            }
+          ],
+          "connection": "tee4-fwd--tee-mid"
+        },
+        {
+          "id": "tee-bow--tee4-fwd",
+          "anchors": [
+            {
+              "id": "tee-bow--tee4-fwd-1",
+              "ref": {
+                "object": "tee-bow"
+              }
+            },
+            {
+              "id": "tee-bow--tee4-fwd-2",
+              "ref": {
+                "object": "tee4-fwd"
+              }
+            }
+          ],
+          "connection": "tee-bow--tee4-fwd"
+        },
+        {
+          "id": "term-bow--tee-bow",
+          "anchors": [
+            {
+              "id": "term-bow--tee-bow-1",
+              "ref": {
+                "object": "term-bow"
+              }
+            },
+            {
+              "id": "term-bow--tee-bow-2",
+              "ref": {
+                "object": "tee-bow"
+              }
+            }
+          ],
+          "connection": "term-bow--tee-bow"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "id": "reticulyne-ais-transponder",
+      "name": "AIS Transponder",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(25.59%2021.82)%20scale(9.25459)%22%3E%3Cpath%20d%3D%22M-2.25%201.3L1.39%203.4L1.39%202.2L-2.25%200.1Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.64%202.1L1.39%203.4L1.39%202.2L3.64%200.9Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.2L3.64%200.9L1.39%202.2L-2.25%200.1Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.71%201.01L-1.73%200.93L-1.79%200.85L-1.85%200.82L-1.9%200.83L-1.92%200.89L-1.9%200.97L-1.85%201.05L-1.79%201.08L-1.73%201.07Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.33%201.23L-1.34%201.15L-1.4%201.08L-1.46%201.04L-1.51%201.06L-1.53%201.12L-1.51%201.2L-1.46%201.27L-1.4%201.31L-1.34%201.29Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.94%201.46L-0.96%201.38L-1.01%201.3L-1.07%201.27L-1.12%201.28L-1.14%201.34L-1.12%201.42L-1.07%201.5L-1.01%201.53L-0.96%201.52Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.09%20-0.45L1.04%200.7L-0.95%200.05L-0.22%20-0.02Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.3%201.75L1.3%20-1.05%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.48%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.3%201.75L1.3%20-1.05%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.61%201.5L1.6%201.52L1.59%201.55L1.58%201.57L1.56%201.59L1.54%201.61L1.52%201.63L1.49%201.64L1.45%201.65L1.42%201.66L1.38%201.67L1.34%201.68L1.3%201.68L1.26%201.68L1.22%201.67L1.18%201.66L1.15%201.65L1.11%201.64L1.08%201.63L1.06%201.61L1.03%201.59L1.02%201.57L1%201.55L1%201.52L0.99%201.5L0.99%201.75L1%201.77L1%201.8L1.02%201.82L1.03%201.84L1.06%201.86L1.08%201.88L1.11%201.89L1.15%201.9L1.18%201.91L1.22%201.92L1.26%201.93L1.3%201.93L1.34%201.93L1.38%201.92L1.42%201.91L1.45%201.9L1.49%201.89L1.52%201.88L1.54%201.86L1.56%201.84L1.58%201.82L1.59%201.8L1.6%201.77L1.61%201.75Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.52%201.63L1.48%201.64L1.44%201.66L1.39%201.67L1.35%201.67L1.3%201.68L1.25%201.67L1.2%201.67L1.16%201.66L1.12%201.64L1.08%201.63L1.05%201.6L1.03%201.58L1.01%201.55L1%201.53L0.99%201.5L1%201.47L1.01%201.45L1.03%201.42L1.05%201.4L1.08%201.38L1.12%201.36L1.16%201.34L1.2%201.33L1.25%201.33L1.3%201.32L1.35%201.33L1.39%201.33L1.44%201.34L1.48%201.36L1.52%201.38L1.55%201.4L1.57%201.42L1.59%201.45L1.6%201.47L1.61%201.5L1.6%201.53L1.59%201.55L1.57%201.58L1.55%201.6L1.52%201.63Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M9%209%20L23%2014%20L9%2019%20L12%2014%20Z%22%20fill%3D%22%231aa3c8%22%2F%3E%3Cpath%20d%3D%22M38%2026%20V4%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%223.65%22%2F%3E%3Cpath%20d%3D%22M38%2026%20V4%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%221.4%22%2F%3E%3Crect%20x%3D%2235.5%22%20y%3D%2223%22%20width%3D%225%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%2226%22%20width%3D%2242%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%2233%22%20r%3D%221.2%22%20fill%3D%22%231aa3c8%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2233%22%20r%3D%221.2%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2233%22%20r%3D%221.2%22%20fill%3D%22%2334405c%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-chartplotter",
+      "name": "Chartplotter",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(30.25%2025.74)%20scale(8.074069999999999)%22%3E%3Cpath%20d%3D%22M-2.51%201.45L2.17%204.15L2.17%200.55L-2.51%20-2.15Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.94%203.7L2.17%204.15L2.17%200.55L2.94%200.1Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.73%20-2.6L2.94%200.1L2.17%200.55L-2.51%20-2.15Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.25%201.3L0.95%203.15L0.95%200.15L-2.25%20-1.7Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.25%20-1.7L-0.95%20-0.95L-1.21%20-0.4L-1.73%20-0.2L-2.25%20-0.6Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.65%201.15L-0.61%200.95L0.43%201.85%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.75%201.31L1.72%201.19L1.65%201.06L1.56%200.98L1.46%200.95L1.39%200.99L1.37%201.09L1.39%201.21L1.46%201.34L1.56%201.42L1.65%201.45L1.72%201.41Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.75%202.11L1.72%201.99L1.65%201.86L1.56%201.78L1.46%201.75L1.39%201.79L1.37%201.89L1.39%202.01L1.46%202.14L1.56%202.22L1.65%202.25L1.72%202.21Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.75%202.91L1.72%202.79L1.65%202.66L1.56%202.58L1.46%202.55L1.39%202.59L1.37%202.69L1.39%202.81L1.46%202.94L1.56%203.02L1.65%203.05L1.72%203.01Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%222%22%20y%3D%228%22%20width%3D%2244%22%20height%3D%2232%22%20rx%3D%223%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%2211%22%20width%3D%2232%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%2334405c%22%2F%3E%3Cpath%20d%3D%22M5%2011%20H18%20L16%2017%20L11%2021%20L5%2020%20Z%22%20fill%3D%22%231aa3c8%22%2F%3E%3Cpath%20d%3D%22M11%2032%20L20%2025%20L30%2028%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%2F%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2217%22%20r%3D%221.8%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2224%22%20r%3D%221.8%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2231%22%20r%3D%221.8%22%20fill%3D%22%23c5cdda%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-depth-transducer",
+      "name": "Depth Transducer",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(32%2019.7)%20scale(9.346)%22%3E%3Cpath%20d%3D%22M1.1%200.4L1.09%200.48L1.06%200.56L1.02%200.64L0.95%200.72L0.87%200.79L0.78%200.85L0.67%200.9L0.55%200.95L0.42%200.99L0.29%201.01L0.14%201.03L0%201.04L-0.14%201.03L-0.29%201.01L-0.42%200.99L-0.55%200.95L-0.67%200.9L-0.78%200.85L-0.87%200.79L-0.95%200.72L-1.02%200.64L-1.06%200.56L-1.09%200.48L-1.1%200.4L-1.1%202L-1.09%202.08L-1.06%202.16L-1.02%202.24L-0.95%202.32L-0.87%202.39L-0.78%202.45L-0.67%202.5L-0.55%202.55L-0.42%202.59L-0.29%202.61L-0.14%202.63L0%202.64L0.14%202.63L0.29%202.61L0.42%202.59L0.55%202.55L0.67%202.5L0.78%202.45L0.87%202.39L0.95%202.32L1.02%202.24L1.06%202.16L1.09%202.08L1.1%202Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.78%200.85L0.65%200.91L0.5%200.97L0.34%201.01L0.17%201.03L0%201.04L-0.17%201.03L-0.34%201.01L-0.5%200.97L-0.65%200.91L-0.78%200.85L-0.89%200.77L-0.98%200.69L-1.05%200.6L-1.09%200.5L-1.1%200.4L-1.09%200.3L-1.05%200.2L-0.98%200.11L-0.89%200.03L-0.78%20-0.05L-0.65%20-0.11L-0.5%20-0.17L-0.34%20-0.21L-0.17%20-0.23L0%20-0.24L0.17%20-0.23L0.34%20-0.21L0.5%20-0.17L0.65%20-0.11L0.78%20-0.05L0.89%200.03L0.98%200.11L1.05%200.2L1.09%200.3L1.1%200.4L1.09%200.5L1.05%200.6L0.98%200.69L0.89%200.77L0.78%200.85Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.96%200.1L1.94%200.25L1.89%200.39L1.81%200.53L1.7%200.67L1.55%200.79L1.39%200.9L1.19%201L0.98%201.08L0.75%201.15L0.51%201.19L0.26%201.22L0%201.23L-0.26%201.22L-0.51%201.19L-0.75%201.15L-0.98%201.08L-1.19%201L-1.39%200.9L-1.55%200.79L-1.7%200.67L-1.81%200.53L-1.89%200.39L-1.94%200.25L-1.96%200.1L-1.96%200.4L-1.94%200.55L-1.89%200.69L-1.81%200.83L-1.7%200.97L-1.55%201.09L-1.39%201.2L-1.19%201.3L-0.98%201.38L-0.75%201.45L-0.51%201.49L-0.26%201.52L0%201.53L0.26%201.52L0.51%201.49L0.75%201.45L0.98%201.38L1.19%201.3L1.39%201.2L1.55%201.09L1.7%200.97L1.81%200.83L1.89%200.69L1.94%200.55L1.96%200.4Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.39%200.9L1.15%201.02L0.89%201.11L0.61%201.18L0.31%201.22L0%201.23L-0.31%201.22L-0.61%201.18L-0.89%201.11L-1.15%201.02L-1.39%200.9L-1.59%200.77L-1.75%200.61L-1.86%200.45L-1.94%200.28L-1.96%200.1L-1.94%20-0.08L-1.86%20-0.25L-1.75%20-0.41L-1.59%20-0.57L-1.39%20-0.7L-1.15%20-0.82L-0.89%20-0.91L-0.61%20-0.98L-0.31%20-1.02L0%20-1.03L0.31%20-1.02L0.61%20-0.98L0.89%20-0.91L1.15%20-0.82L1.39%20-0.7L1.59%20-0.57L1.75%20-0.41L1.86%20-0.25L1.94%20-0.08L1.96%200.1L1.94%200.28L1.86%200.45L1.75%200.61L1.59%200.77L1.39%200.9Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.92%20-0.5L0.91%20-0.43L0.89%20-0.36L0.85%20-0.3L0.8%20-0.23L0.73%20-0.18L0.65%20-0.12L0.56%20-0.08L0.46%20-0.04L0.35%20-0.01L0.24%200.01L0.12%200.03L0%200.03L-0.12%200.03L-0.24%200.01L-0.35%20-0.01L-0.46%20-0.04L-0.56%20-0.08L-0.65%20-0.12L-0.73%20-0.18L-0.8%20-0.23L-0.85%20-0.3L-0.89%20-0.36L-0.91%20-0.43L-0.92%20-0.5L-0.92%200.1L-0.91%200.17L-0.89%200.24L-0.85%200.3L-0.8%200.37L-0.73%200.42L-0.65%200.48L-0.56%200.52L-0.46%200.56L-0.35%200.59L-0.24%200.61L-0.12%200.63L0%200.63L0.12%200.63L0.24%200.61L0.35%200.59L0.46%200.56L0.56%200.52L0.65%200.48L0.73%200.42L0.8%200.37L0.85%200.3L0.89%200.24L0.91%200.17L0.92%200.1Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.65%20-0.12L0.54%20-0.07L0.42%20-0.03L0.28%200L0.14%200.02L0%200.03L-0.14%200.02L-0.28%200L-0.42%20-0.03L-0.54%20-0.07L-0.65%20-0.12L-0.74%20-0.19L-0.82%20-0.26L-0.87%20-0.34L-0.91%20-0.42L-0.92%20-0.5L-0.91%20-0.58L-0.87%20-0.66L-0.82%20-0.74L-0.74%20-0.81L-0.65%20-0.87L-0.54%20-0.93L-0.42%20-0.97L-0.28%20-1L-0.14%20-1.02L0%20-1.03L0.14%20-1.02L0.28%20-1L0.42%20-0.97L0.54%20-0.93L0.65%20-0.87L0.74%20-0.81L0.82%20-0.74L0.87%20-0.66L0.91%20-0.58L0.92%20-0.5L0.91%20-0.42L0.87%20-0.34L0.82%20-0.26L0.74%20-0.19L0.65%20-0.12Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-0.5L0%20-1.6L0%20-1.6%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.56%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-0.5L0%20-1.6L0%20-1.6%22%20fill%3D%22none%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%220.24%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.22%202.5L1.21%202.61L1.16%202.72L1.09%202.82L0.99%202.92L0.87%203L0.72%203.07L0.56%203.13L0.38%203.17L0.19%203.2L0%203.21L-0.19%203.2L-0.38%203.17L-0.56%203.13L-0.72%203.07L-0.87%203L-0.99%202.92L-1.09%202.82L-1.16%202.72L-1.21%202.61L-1.22%202.5%22%20fill%3D%22none%22%20stroke%3D%22%231aa3c8%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.96%203.1L1.94%203.28L1.86%203.45L1.75%203.61L1.59%203.77L1.39%203.9L1.15%204.02L0.89%204.11L0.61%204.18L0.31%204.22L0%204.23L-0.31%204.22L-0.61%204.18L-0.89%204.11L-1.15%204.02L-1.39%203.9L-1.59%203.77L-1.75%203.61L-1.86%203.45L-1.94%203.28L-1.96%203.1%22%20fill%3D%22none%22%20stroke%3D%22%231aa3c8%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M24%202%20V12%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%224.25%22%2F%3E%3Cpath%20d%3D%22M24%202%20V12%22%20fill%3D%22none%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%2219%22%20y%3D%2212%22%20width%3D%2210%22%20height%3D%226%22%20rx%3D%221%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2218%22%20width%3D%2224%22%20height%3D%224%22%20rx%3D%221%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2222%22%20width%3D%2212%22%20height%3D%2212%22%20rx%3D%221%22%20fill%3D%22%23c5cdda%22%2F%3E%3Cpath%20d%3D%22M17%2037%20A9%209%200%200%200%2031%2037%20M13%2039%20A14%2014%200%200%200%2035%2039%22%20fill%3D%22none%22%20stroke%3D%22%231aa3c8%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-engine-gateway",
+      "name": "Engine Gateway (J1939 to NMEA 2000)",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(26.16%2022.99)%20scale(8.58543)%22%3E%3Cpath%20d%3D%22M-2.49%20-0.36L-2.49%20-0.45L-2.46%20-0.54L-2.42%20-0.64L-2.37%20-0.73L-2.31%20-0.81L-2.24%20-0.88L-2.17%20-0.93L-2.09%20-0.96L-2.02%20-0.97L-1.96%20-0.97L-1.91%20-0.94L-1.87%20-0.89L-1.84%20-0.82L-1.84%20-0.74L-1.84%20-0.65L-1.87%20-0.56L-1.91%20-0.46L-1.96%20-0.37L-2.02%20-0.29L-2.09%20-0.22L-2.17%20-0.17L-2.24%20-0.14L-2.31%20-0.13L-2.37%20-0.13L-2.42%20-0.16L-2.46%20-0.21L-2.49%20-0.28Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.42%20-0.16L-2.46%20-0.21L-2.49%20-0.28L-2.49%20-0.36L-2.49%20-0.45L-2.46%20-0.54L-2.42%20-0.64L-2.37%20-0.73L-2.31%20-0.81L-2.24%20-0.88L-2.17%20-0.93L-2.09%20-0.96L-2.02%20-0.97L-1.96%20-0.97L-0.92%20-0.37L-0.98%20-0.37L-1.05%20-0.36L-1.13%20-0.33L-1.2%20-0.28L-1.27%20-0.21L-1.33%20-0.13L-1.38%20-0.04L-1.42%200.06L-1.45%200.15L-1.45%200.24L-1.45%200.32L-1.42%200.39L-1.38%200.44Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-2.42%20-0.16L-2.46%20-0.21L-2.49%20-0.28L-2.49%20-0.36L-2.49%20-0.45L-2.46%20-0.54L-2.42%20-0.64L-2.37%20-0.73L-2.31%20-0.81L-2.24%20-0.88L-2.17%20-0.93L-2.09%20-0.96L-2.02%20-0.97L-1.96%20-0.97%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.96%20-0.97L-0.92%20-0.37%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.42%20-0.16L-1.38%200.44%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.45%200.24L-1.45%200.15L-1.42%200.06L-1.38%20-0.04L-1.33%20-0.13L-1.27%20-0.21L-1.2%20-0.28L-1.13%20-0.33L-1.05%20-0.36L-0.98%20-0.37L-0.92%20-0.37L-0.87%20-0.34L-0.83%20-0.29L-0.8%20-0.22L-0.8%20-0.14L-0.8%20-0.05L-0.83%200.04L-0.87%200.14L-0.92%200.23L-0.98%200.31L-1.05%200.38L-1.13%200.43L-1.2%200.46L-1.27%200.47L-1.33%200.47L-1.38%200.44L-1.42%200.39L-1.45%200.32Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.25%201.3L1.21%203.3L1.21%202.1L-2.25%200.1Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.46%202L1.21%203.3L1.21%202.1L3.46%200.8Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.2L3.46%200.8L1.21%202.1L-2.25%200.1Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.91%201.2L0%202.3L0%201.8L-1.91%200.7Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.54%202.36L0.51%202.26L0.43%202.18L0.36%202.17L0.33%202.24L0.36%202.34L0.43%202.42L0.51%202.43Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.88%202.56L0.85%202.46L0.78%202.38L0.71%202.37L0.68%202.44L0.71%202.54L0.78%202.62L0.85%202.63Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.01%202.24L2.02%202.15L2.04%202.06L2.08%201.96L2.13%201.87L2.2%201.79L2.27%201.72L2.34%201.67L2.41%201.64L2.48%201.63L2.54%201.63L2.6%201.66L2.63%201.71L2.66%201.78L2.67%201.86L2.66%201.95L2.63%202.04L2.6%202.14L2.54%202.23L2.48%202.31L2.41%202.38L2.34%202.43L2.27%202.46L2.2%202.47L2.13%202.47L2.08%202.44L2.04%202.39L2.02%202.32Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.08%202.44L2.04%202.39L2.02%202.32L2.01%202.24L2.02%202.15L2.04%202.06L2.08%201.96L2.13%201.87L2.2%201.79L2.27%201.72L2.34%201.67L2.41%201.64L2.48%201.63L2.54%201.63L3.24%202.03L3.17%202.03L3.1%202.04L3.03%202.07L2.96%202.12L2.89%202.19L2.83%202.27L2.77%202.36L2.73%202.46L2.71%202.55L2.7%202.64L2.71%202.72L2.73%202.79L2.77%202.84Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M2.08%202.44L2.04%202.39L2.02%202.32L2.01%202.24L2.02%202.15L2.04%202.06L2.08%201.96L2.13%201.87L2.2%201.79L2.27%201.72L2.34%201.67L2.41%201.64L2.48%201.63L2.54%201.63%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.54%201.63L3.24%202.03%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.08%202.44L2.77%202.84%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.7%202.64L2.71%202.55L2.73%202.46L2.77%202.36L2.83%202.27L2.89%202.19L2.96%202.12L3.03%202.07L3.1%202.04L3.17%202.03L3.24%202.03L3.29%202.06L3.33%202.11L3.35%202.18L3.36%202.26L3.35%202.35L3.33%202.44L3.29%202.54L3.24%202.63L3.17%202.71L3.1%202.78L3.03%202.83L2.96%202.86L2.89%202.87L2.83%202.87L2.77%202.84L2.73%202.79L2.71%202.72Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.64%202.68L2.65%202.57L2.68%202.46L2.73%202.35L2.79%202.24L2.86%202.14L2.94%202.06L3.03%202L3.12%201.96L3.2%201.95L3.27%201.96L3.34%201.99L3.38%202.05L3.41%202.13L3.42%202.23L3.41%202.33L3.38%202.44L3.34%202.55L3.27%202.66L3.2%202.76L3.12%202.84L3.03%202.9L2.94%202.94L2.86%202.95L2.79%202.94L2.73%202.91L2.68%202.85L2.65%202.77Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%231aa3c8%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.73%202.91L2.68%202.85L2.65%202.77L2.64%202.68L2.65%202.57L2.68%202.46L2.73%202.35L2.79%202.24L2.86%202.14L2.94%202.06L3.03%202L3.12%201.96L3.2%201.95L3.27%201.96L3.71%202.21L3.63%202.2L3.55%202.21L3.46%202.25L3.38%202.31L3.3%202.39L3.22%202.49L3.16%202.6L3.11%202.71L3.08%202.82L3.07%202.93L3.08%203.02L3.11%203.1L3.16%203.16Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M2.73%202.91L2.68%202.85L2.65%202.77L2.64%202.68L2.65%202.57L2.68%202.46L2.73%202.35L2.79%202.24L2.86%202.14L2.94%202.06L3.03%202L3.12%201.96L3.2%201.95L3.27%201.96%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.27%201.96L3.71%202.21%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.73%202.91L3.16%203.16%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.07%202.93L3.08%202.82L3.11%202.71L3.16%202.6L3.22%202.49L3.3%202.39L3.38%202.31L3.46%202.25L3.55%202.21L3.63%202.2L3.71%202.21L3.77%202.24L3.82%202.3L3.84%202.38L3.85%202.48L3.84%202.58L3.82%202.69L3.77%202.8L3.71%202.91L3.63%203.01L3.55%203.09L3.46%203.15L3.38%203.19L3.3%203.2L3.22%203.19L3.16%203.16L3.11%203.1L3.08%203.02Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.29%202.8L3.31%202.69L3.38%202.58L3.46%202.5L3.55%202.48L3.61%202.51L3.64%202.6L3.61%202.71L3.55%202.82L3.46%202.9L3.38%202.92L3.31%202.89Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M2%2026%20H12%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%225.25%22%2F%3E%3Cpath%20d%3D%22M2%2026%20H12%22%20fill%3D%22none%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M36%2026%20H42%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%225.25%22%2F%3E%3Cpath%20d%3D%22M36%2026%20H42%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%223%22%2F%3E%3Crect%20x%3D%2242%22%20y%3D%2222%22%20width%3D%224%22%20height%3D%228%22%20rx%3D%221%22%20fill%3D%22%231aa3c8%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2216%22%20width%3D%2224%22%20height%3D%2216%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2215%22%20y%3D%2224%22%20width%3D%2213%22%20height%3D%225%22%20rx%3D%221%22%20fill%3D%22%231aa3c8%22%2F%3E%3Ccircle%20cx%3D%2230.5%22%20cy%3D%2226.5%22%20r%3D%221.1%22%20fill%3D%22%231aa3c8%22%2F%3E%3Ccircle%20cx%3D%2233.5%22%20cy%3D%2226.5%22%20r%3D%221.1%22%20fill%3D%22%2334405c%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-gps-receiver",
+      "name": "GPS Receiver",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(32%2014.07)%20scale(12.360850000000001)%22%3E%3Cpath%20d%3D%22M0%203.4L0%202%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.74%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%203.4L0%202%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.2%201.65L2.19%201.82L2.13%201.98L2.04%202.14L1.91%202.29L1.75%202.42L1.56%202.55L1.34%202.66L1.1%202.75L0.84%202.83L0.57%202.88L0.29%202.91L0%202.92L-0.29%202.91L-0.57%202.88L-0.84%202.83L-1.1%202.75L-1.34%202.66L-1.56%202.55L-1.75%202.42L-1.91%202.29L-2.04%202.14L-2.13%201.98L-2.19%201.82L-2.2%201.65L-2.2%202L-2.19%202.17L-2.13%202.33L-2.04%202.49L-1.91%202.64L-1.75%202.77L-1.56%202.9L-1.34%203.01L-1.1%203.1L-0.84%203.18L-0.57%203.23L-0.29%203.26L0%203.27L0.29%203.26L0.57%203.23L0.84%203.18L1.1%203.1L1.34%203.01L1.56%202.9L1.75%202.77L1.91%202.64L2.04%202.49L2.13%202.33L2.19%202.17L2.2%202Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.12%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.56%202.55L1.3%202.68L1%202.78L0.68%202.86L0.34%202.91L0%202.92L-0.34%202.91L-0.68%202.86L-1%202.78L-1.3%202.68L-1.56%202.55L-1.78%202.4L-1.96%202.23L-2.1%202.04L-2.18%201.85L-2.2%201.65L-2.18%201.45L-2.1%201.26L-1.96%201.07L-1.78%200.9L-1.56%200.75L-1.3%200.62L-1%200.52L-0.68%200.44L-0.34%200.39L0%200.38L0.34%200.39L0.68%200.44L1%200.52L1.3%200.62L1.56%200.75L1.78%200.9L1.96%201.07L2.1%201.26L2.18%201.45L2.2%201.65L2.18%201.85L2.1%202.04L1.96%202.23L1.78%202.4L1.56%202.55Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.12%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.2%201.4L2.19%201.57L2.13%201.73L2.04%201.89L1.91%202.04L1.75%202.17L1.56%202.3L1.34%202.41L1.1%202.5L0.84%202.58L0.57%202.63L0.29%202.66L0%202.67L-0.29%202.66L-0.57%202.63L-0.84%202.58L-1.1%202.5L-1.34%202.41L-1.56%202.3L-1.75%202.17L-1.91%202.04L-2.04%201.89L-2.13%201.73L-2.19%201.57L-2.2%201.4L-2.2%201.65L-2.19%201.82L-2.13%201.98L-2.04%202.14L-1.91%202.29L-1.75%202.42L-1.56%202.55L-1.34%202.66L-1.1%202.75L-0.84%202.83L-0.57%202.88L-0.29%202.91L0%202.92L0.29%202.91L0.57%202.88L0.84%202.83L1.1%202.75L1.34%202.66L1.56%202.55L1.75%202.42L1.91%202.29L2.04%202.14L2.13%201.98L2.19%201.82L2.2%201.65Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.12%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.56%202.3L1.3%202.43L1%202.53L0.68%202.61L0.34%202.66L0%202.67L-0.34%202.66L-0.68%202.61L-1%202.53L-1.3%202.43L-1.56%202.3L-1.78%202.15L-1.96%201.98L-2.1%201.79L-2.18%201.6L-2.2%201.4L-2.18%201.2L-2.1%201.01L-1.96%200.82L-1.78%200.65L-1.56%200.5L-1.3%200.37L-1%200.27L-0.68%200.19L-0.34%200.14L0%200.13L0.34%200.14L0.68%200.19L1%200.27L1.3%200.37L1.56%200.5L1.78%200.65L1.96%200.82L2.1%201.01L2.18%201.2L2.2%201.4L2.18%201.6L2.1%201.79L1.96%201.98L1.78%202.15L1.56%202.3Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.12%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.9%201.4L1.88%201.15L1.83%200.91L1.75%200.67L1.64%200.45L1.51%200.24L1.34%200.06L1.16%20-0.11L0.95%20-0.24L0.73%20-0.35L0.49%20-0.43L0.25%20-0.48L0%20-0.5L-0.25%20-0.48L-0.49%20-0.43L-0.73%20-0.35L-0.95%20-0.24L-1.16%20-0.11L-1.34%200.06L-1.51%200.24L-1.64%200.45L-1.75%200.67L-1.83%200.91L-1.88%201.15L-1.9%201.4L-1.9%201.4L-1.88%201.54L-1.83%201.68L-1.75%201.82L-1.64%201.95L-1.51%202.07L-1.34%202.17L-1.16%202.27L-0.95%202.35L-0.73%202.41L-0.49%202.46L-0.25%202.49L0%202.5L0.25%202.49L0.49%202.46L0.73%202.41L0.95%202.35L1.16%202.27L1.34%202.17L1.51%202.07L1.64%201.95L1.75%201.82L1.83%201.68L1.88%201.54L1.9%201.4Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.12%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M24%2036%20V46%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%226.25%22%2F%3E%3Cpath%20d%3D%22M24%2036%20V46%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%224%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2226%22%20width%3D%2232%22%20height%3D%2210%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2226%22%20width%3D%2232%22%20height%3D%223.5%22%20rx%3D%220%22%20fill%3D%22%231aa3c8%22%2F%3E%3Cpath%20d%3D%22M10%2026%20C10%2012%2038%2012%2038%2026%20Z%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-marine-radar",
+      "name": "Radar",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(28.11%2032.2)%20scale(8.17288)%22%3E%3Cpath%20d%3D%22M-0.95%201.95L0.61%202.85L0.61%201.25L-0.95%200.35Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.99%202.05L0.61%202.85L0.61%201.25L1.99%200.45Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.43%20-0.45L1.99%200.45L0.61%201.25L-0.95%200.35Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%200.4L0.52%200.7L0.52%200.4L0%200.1Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.04%200.4L0.52%200.7L0.52%200.4L1.04%200.1Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.52%20-0.2L1.04%200.1L0.52%200.4L0%200.1Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.86%20-1.45L3.2%202.05L3.2%200.95L-2.86%20-2.55Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.81%201.7L3.2%202.05L3.2%200.95L3.81%200.6Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.25%20-2.9L3.81%200.6L3.2%200.95L-2.86%20-2.55Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.6%20-1.6L2.94%201.6L2.94%201.1L-2.6%20-2.1Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.61%201.75L0.26%202.25L0.26%201.85L-0.61%201.35Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%2218%22%20y%3D%2226%22%20width%3D%2212%22%20height%3D%2216%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2221%22%20y%3D%2234%22%20width%3D%226%22%20height%3D%223%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2222%22%20y%3D%2223%22%20width%3D%224%22%20height%3D%223%22%20rx%3D%220%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%2214%22%20width%3D%2244%22%20height%3D%229%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%2217%22%20width%3D%2240%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%231aa3c8%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-n2k-power-injector",
+      "name": "NMEA 2000 Power Injector",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(24.68%2020.73)%20scale(9.39271)%22%3E%3Cpath%20d%3D%22M0.69%202.1L-0.35%202.7L-0.35%203.8%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.57%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.69%202.1L-0.35%202.7L-0.35%203.8%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.25%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.12%20-0.37L-2.11%20-0.48L-2.08%20-0.59L-2.04%20-0.7L-1.98%20-0.81L-1.9%20-0.91L-1.82%20-0.99L-1.73%20-1.05L-1.65%20-1.09L-1.56%20-1.1L-1.49%20-1.09L-1.43%20-1.06L-1.38%20-1L-1.35%20-0.92L-1.34%20-0.82L-1.35%20-0.72L-1.38%20-0.61L-1.43%20-0.5L-1.49%20-0.39L-1.56%20-0.29L-1.65%20-0.21L-1.73%20-0.15L-1.82%20-0.11L-1.9%20-0.1L-1.98%20-0.11L-2.04%20-0.14L-2.08%20-0.2L-2.11%20-0.28Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.04%20-0.14L-2.08%20-0.2L-2.11%20-0.28L-2.12%20-0.37L-2.11%20-0.48L-2.08%20-0.59L-2.04%20-0.7L-1.98%20-0.81L-1.9%20-0.91L-1.82%20-0.99L-1.73%20-1.05L-1.65%20-1.09L-1.56%20-1.1L-1.49%20-1.09L-0.71%20-0.64L-0.78%20-0.65L-0.87%20-0.64L-0.95%20-0.6L-1.04%20-0.54L-1.12%20-0.46L-1.2%20-0.36L-1.26%20-0.25L-1.3%20-0.14L-1.33%20-0.03L-1.34%200.08L-1.33%200.17L-1.3%200.25L-1.26%200.31Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-2.04%20-0.14L-2.08%20-0.2L-2.11%20-0.28L-2.12%20-0.37L-2.11%20-0.48L-2.08%20-0.59L-2.04%20-0.7L-1.98%20-0.81L-1.9%20-0.91L-1.82%20-0.99L-1.73%20-1.05L-1.65%20-1.09L-1.56%20-1.1L-1.49%20-1.09%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.49%20-1.09L-0.71%20-0.64%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.04%20-0.14L-1.26%200.31%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.34%200.08L-1.33%20-0.03L-1.3%20-0.14L-1.26%20-0.25L-1.2%20-0.36L-1.12%20-0.46L-1.04%20-0.54L-0.95%20-0.6L-0.87%20-0.64L-0.78%20-0.65L-0.71%20-0.64L-0.65%20-0.61L-0.6%20-0.55L-0.57%20-0.47L-0.56%20-0.37L-0.57%20-0.27L-0.6%20-0.16L-0.65%20-0.05L-0.71%200.06L-0.78%200.16L-0.87%200.24L-0.95%200.3L-1.04%200.34L-1.12%200.35L-1.2%200.34L-1.26%200.31L-1.3%200.25L-1.33%200.17Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.91%201.1L1.56%203.1L1.56%201.7L-1.91%20-0.3Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.46%202L1.56%203.1L1.56%201.7L3.46%200.6Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.4L3.46%200.6L1.56%201.7L-1.91%20-0.3Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.29%20-0.45L1.29%20-0.41L1.28%20-0.37L1.25%20-0.34L1.22%20-0.3L1.19%20-0.27L1.14%20-0.24L1.09%20-0.21L1.04%20-0.19L0.98%20-0.18L0.91%20-0.16L0.85%20-0.16L0.78%20-0.15L0.71%20-0.16L0.65%20-0.16L0.58%20-0.18L0.52%20-0.19L0.47%20-0.21L0.42%20-0.24L0.37%20-0.27L0.33%20-0.3L0.3%20-0.34L0.28%20-0.37L0.27%20-0.41L0.27%20-0.45L0.27%200.15L0.27%200.19L0.28%200.23L0.3%200.26L0.33%200.3L0.37%200.33L0.42%200.36L0.47%200.39L0.52%200.41L0.58%200.42L0.65%200.44L0.71%200.44L0.78%200.45L0.85%200.44L0.91%200.44L0.98%200.42L1.04%200.41L1.09%200.39L1.14%200.36L1.19%200.33L1.22%200.3L1.25%200.26L1.28%200.23L1.29%200.19L1.29%200.15Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.14%20-0.24L1.08%20-0.21L1.01%20-0.19L0.94%20-0.17L0.86%20-0.16L0.78%20-0.15L0.7%20-0.16L0.62%20-0.17L0.55%20-0.19L0.48%20-0.21L0.42%20-0.24L0.36%20-0.28L0.32%20-0.32L0.29%20-0.36L0.27%20-0.4L0.27%20-0.45L0.27%20-0.5L0.29%20-0.54L0.32%20-0.58L0.36%20-0.62L0.42%20-0.66L0.48%20-0.69L0.55%20-0.71L0.62%20-0.73L0.7%20-0.74L0.78%20-0.75L0.86%20-0.74L0.94%20-0.73L1.01%20-0.71L1.08%20-0.69L1.14%20-0.66L1.2%20-0.62L1.24%20-0.58L1.27%20-0.54L1.29%20-0.5L1.29%20-0.45L1.29%20-0.4L1.27%20-0.36L1.24%20-0.32L1.2%20-0.28L1.14%20-0.24Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.95%20-0.35L0.84%20-0.31L0.72%20-0.31L0.61%20-0.35L0.54%20-0.41L0.54%20-0.49L0.61%20-0.55L0.72%20-0.59L0.84%20-0.59L0.95%20-0.55L1.02%20-0.49L1.02%20-0.41Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.12%202.08L2.13%201.97L2.16%201.86L2.21%201.75L2.27%201.64L2.34%201.54L2.42%201.46L2.51%201.4L2.6%201.36L2.68%201.35L2.75%201.36L2.82%201.39L2.86%201.45L2.89%201.53L2.9%201.63L2.89%201.73L2.86%201.84L2.82%201.95L2.75%202.06L2.68%202.16L2.6%202.24L2.51%202.3L2.42%202.34L2.34%202.35L2.27%202.34L2.21%202.31L2.16%202.25L2.13%202.17Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.21%202.31L2.16%202.25L2.13%202.17L2.12%202.08L2.13%201.97L2.16%201.86L2.21%201.75L2.27%201.64L2.34%201.54L2.42%201.46L2.51%201.4L2.6%201.36L2.68%201.35L2.75%201.36L3.53%201.81L3.46%201.8L3.38%201.81L3.29%201.85L3.2%201.91L3.12%201.99L3.05%202.09L2.99%202.2L2.94%202.31L2.91%202.42L2.9%202.53L2.91%202.62L2.94%202.7L2.99%202.76Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M2.21%202.31L2.16%202.25L2.13%202.17L2.12%202.08L2.13%201.97L2.16%201.86L2.21%201.75L2.27%201.64L2.34%201.54L2.42%201.46L2.51%201.4L2.6%201.36L2.68%201.35L2.75%201.36%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.75%201.36L3.53%201.81%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.21%202.31L2.99%202.76%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.9%202.53L2.91%202.42L2.94%202.31L2.99%202.2L3.05%202.09L3.12%201.99L3.2%201.91L3.29%201.85L3.38%201.81L3.46%201.8L3.53%201.81L3.6%201.84L3.64%201.9L3.67%201.98L3.68%202.08L3.67%202.18L3.64%202.29L3.6%202.4L3.53%202.51L3.46%202.61L3.38%202.69L3.29%202.75L3.2%202.79L3.12%202.8L3.05%202.79L2.99%202.76L2.94%202.7L2.91%202.62Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.12%202.4L3.14%202.29L3.2%202.18L3.29%202.1L3.38%202.08L3.44%202.11L3.46%202.2L3.44%202.31L3.38%202.42L3.29%202.5L3.2%202.52L3.14%202.49Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.65%200.58L-1.08%200.93L-0.78%201.1L-1%201.48L-0.48%201.13L-0.78%200.95L-0.56%200.63Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M1%2028%20H8%20M40%2028%20H47%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%225.25%22%2F%3E%3Cpath%20d%3D%22M1%2028%20H8%20M40%2028%20H47%22%20fill%3D%22none%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M30%2035%20V45%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%224.25%22%2F%3E%3Cpath%20d%3D%22M30%2035%20V45%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2221%22%20width%3D%2232%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2221.5%22%20y%3D%2212%22%20width%3D%225%22%20height%3D%229%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2221.5%22%20y%3D%2210%22%20width%3D%225%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%231aa3c8%22%2F%3E%3Cpath%20d%3D%22M15%2023%20L11%2029%20H14%20L12%2034%20L18%2027%20H15%20L17%2023%20Z%22%20fill%3D%22%231aa3c8%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-n2k-tee",
+      "name": "NMEA 2000 Tee",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(29.68%2027.31)%20scale(13.389610000000001)%22%3E%3Cpath%20d%3D%22M-1.86%20-0.38L-1.85%20-0.48L-1.82%20-0.59L-1.78%20-0.7L-1.72%20-0.81L-1.64%20-0.91L-1.56%20-0.99L-1.47%20-1.05L-1.39%20-1.09L-1.3%20-1.1L-1.23%20-1.09L-1.17%20-1.06L-1.12%20-1L-1.09%20-0.92L-1.08%20-0.82L-1.09%20-0.72L-1.12%20-0.61L-1.17%20-0.5L-1.23%20-0.39L-1.3%20-0.29L-1.39%20-0.21L-1.47%20-0.15L-1.56%20-0.11L-1.64%20-0.1L-1.72%20-0.11L-1.78%20-0.14L-1.82%20-0.2L-1.85%20-0.28Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%220.07%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.78%20-0.14L-1.82%20-0.2L-1.85%20-0.28L-1.86%20-0.38L-1.85%20-0.48L-1.82%20-0.59L-1.78%20-0.7L-1.72%20-0.81L-1.64%20-0.91L-1.56%20-0.99L-1.47%20-1.05L-1.39%20-1.09L-1.3%20-1.1L-1.23%20-1.09L-0.45%20-0.64L-0.52%20-0.65L-0.61%20-0.64L-0.69%20-0.6L-0.78%20-0.54L-0.86%20-0.46L-0.94%20-0.36L-1%20-0.25L-1.04%20-0.14L-1.07%20-0.03L-1.08%200.07L-1.07%200.17L-1.04%200.25L-1%200.31Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-1.78%20-0.14L-1.82%20-0.2L-1.85%20-0.28L-1.86%20-0.38L-1.85%20-0.48L-1.82%20-0.59L-1.78%20-0.7L-1.72%20-0.81L-1.64%20-0.91L-1.56%20-0.99L-1.47%20-1.05L-1.39%20-1.09L-1.3%20-1.1L-1.23%20-1.09%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.23%20-1.09L-0.45%20-0.64%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.78%20-0.14L-1%200.31%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.08%200.07L-1.07%20-0.03L-1.04%20-0.14L-1%20-0.25L-0.94%20-0.36L-0.86%20-0.46L-0.78%20-0.54L-0.69%20-0.6L-0.61%20-0.64L-0.52%20-0.65L-0.45%20-0.64L-0.39%20-0.61L-0.34%20-0.55L-0.31%20-0.47L-0.3%20-0.37L-0.31%20-0.27L-0.34%20-0.16L-0.39%20-0.05L-0.45%200.06L-0.52%200.16L-0.61%200.24L-0.69%200.3L-0.78%200.34L-0.86%200.35L-0.94%200.34L-1%200.31L-1.04%200.25L-1.07%200.17Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.39%200.8L0.35%201.8L0.35%200.7L-1.39%20-0.3Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.73%201L0.35%201.8L0.35%200.7L1.73%20-0.1Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.1L1.73%20-0.1L0.35%200.7L-1.39%20-0.3Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.69%20-0.8L0.68%20-0.76L0.67%20-0.72L0.65%20-0.69L0.62%20-0.65L0.58%20-0.62L0.54%20-0.59L0.49%20-0.56L0.43%20-0.54L0.37%20-0.53L0.31%20-0.51L0.24%20-0.51L0.17%20-0.5L0.11%20-0.51L0.04%20-0.51L-0.02%20-0.53L-0.08%20-0.54L-0.14%20-0.56L-0.19%20-0.59L-0.23%20-0.62L-0.27%20-0.65L-0.3%20-0.69L-0.32%20-0.72L-0.34%20-0.76L-0.34%20-0.8L-0.34%20-0.2L-0.34%20-0.16L-0.32%20-0.12L-0.3%20-0.09L-0.27%20-0.05L-0.23%20-0.02L-0.19%200.01L-0.14%200.04L-0.08%200.06L-0.02%200.07L0.04%200.09L0.11%200.09L0.17%200.1L0.24%200.09L0.31%200.09L0.37%200.07L0.43%200.06L0.49%200.04L0.54%200.01L0.58%20-0.02L0.62%20-0.05L0.65%20-0.09L0.67%20-0.12L0.68%20-0.16L0.69%20-0.2Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.54%20-0.59L0.48%20-0.56L0.41%20-0.54L0.33%20-0.52L0.25%20-0.51L0.17%20-0.5L0.09%20-0.51L0.01%20-0.52L-0.06%20-0.54L-0.13%20-0.56L-0.19%20-0.59L-0.24%20-0.63L-0.29%20-0.67L-0.32%20-0.71L-0.33%20-0.75L-0.34%20-0.8L-0.33%20-0.85L-0.32%20-0.89L-0.29%20-0.93L-0.24%20-0.97L-0.19%20-1.01L-0.13%20-1.04L-0.06%20-1.06L0.01%20-1.08L0.09%20-1.09L0.17%20-1.1L0.25%20-1.09L0.33%20-1.08L0.41%20-1.06L0.48%20-1.04L0.54%20-1.01L0.59%20-0.97L0.63%20-0.93L0.66%20-0.89L0.68%20-0.85L0.69%20-0.8L0.68%20-0.75L0.66%20-0.71L0.63%20-0.67L0.59%20-0.63L0.54%20-0.59Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.35%20-0.7L0.24%20-0.66L0.11%20-0.66L0%20-0.7L-0.06%20-0.76L-0.06%20-0.84L0%20-0.9L0.11%20-0.94L0.24%20-0.94L0.35%20-0.9L0.41%20-0.84L0.41%20-0.76Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.65%201.08L0.66%200.97L0.69%200.86L0.73%200.75L0.8%200.64L0.87%200.54L0.95%200.46L1.04%200.4L1.13%200.36L1.21%200.35L1.28%200.36L1.34%200.39L1.39%200.45L1.42%200.53L1.43%200.63L1.42%200.73L1.39%200.84L1.34%200.95L1.28%201.06L1.21%201.16L1.13%201.24L1.04%201.3L0.95%201.34L0.87%201.35L0.8%201.34L0.73%201.31L0.69%201.25L0.66%201.17Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%220.07%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.73%201.31L0.69%201.25L0.66%201.17L0.65%201.08L0.66%200.97L0.69%200.86L0.73%200.75L0.8%200.64L0.87%200.54L0.95%200.46L1.04%200.4L1.13%200.36L1.21%200.35L1.28%200.36L2.06%200.81L1.99%200.8L1.91%200.81L1.82%200.85L1.73%200.91L1.65%200.99L1.58%201.09L1.51%201.2L1.47%201.31L1.44%201.42L1.43%201.53L1.44%201.62L1.47%201.7L1.51%201.76Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M0.73%201.31L0.69%201.25L0.66%201.17L0.65%201.08L0.66%200.97L0.69%200.86L0.73%200.75L0.8%200.64L0.87%200.54L0.95%200.46L1.04%200.4L1.13%200.36L1.21%200.35L1.28%200.36%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.28%200.36L2.06%200.81%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.73%201.31L1.51%201.76%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.43%201.53L1.44%201.42L1.47%201.31L1.51%201.2L1.58%201.09L1.65%200.99L1.73%200.91L1.82%200.85L1.91%200.81L1.99%200.8L2.06%200.81L2.12%200.84L2.17%200.9L2.2%200.98L2.21%201.08L2.2%201.18L2.17%201.29L2.12%201.4L2.06%201.51L1.99%201.61L1.91%201.69L1.82%201.75L1.73%201.79L1.65%201.8L1.58%201.79L1.51%201.76L1.47%201.7L1.44%201.62Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.65%201.4L1.67%201.29L1.73%201.18L1.82%201.1L1.91%201.08L1.97%201.11L1.99%201.2L1.97%201.31L1.91%201.42L1.82%201.5L1.73%201.52L1.67%201.49Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.11%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M4%2030%20H14%20M34%2030%20H44%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%225.25%22%2F%3E%3Cpath%20d%3D%22M4%2030%20H14%20M34%2030%20H44%22%20fill%3D%22none%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%223%22%2F%3E%3Crect%20x%3D%2214%22%20y%3D%2225%22%20width%3D%2220%22%20height%3D%2210%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2221.5%22%20y%3D%2215%22%20width%3D%225%22%20height%3D%2210%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2221.5%22%20y%3D%2213%22%20width%3D%225%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%231aa3c8%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-n2k-tee-4way",
+      "name": "NMEA 2000 4-Way Tee",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(17.92%2022.1)%20scale(7.07092)%22%3E%3Cpath%20d%3D%22M-1.86%20-0.38L-1.85%20-0.48L-1.82%20-0.59L-1.78%20-0.7L-1.72%20-0.81L-1.64%20-0.91L-1.56%20-0.99L-1.47%20-1.05L-1.39%20-1.09L-1.3%20-1.1L-1.23%20-1.09L-1.17%20-1.06L-1.12%20-1L-1.09%20-0.92L-1.08%20-0.82L-1.09%20-0.72L-1.12%20-0.61L-1.17%20-0.5L-1.23%20-0.39L-1.3%20-0.29L-1.39%20-0.21L-1.47%20-0.15L-1.56%20-0.11L-1.64%20-0.1L-1.72%20-0.11L-1.78%20-0.14L-1.82%20-0.2L-1.85%20-0.28Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.78%20-0.14L-1.82%20-0.2L-1.85%20-0.28L-1.86%20-0.38L-1.85%20-0.48L-1.82%20-0.59L-1.78%20-0.7L-1.72%20-0.81L-1.64%20-0.91L-1.56%20-0.99L-1.47%20-1.05L-1.39%20-1.09L-1.3%20-1.1L-1.23%20-1.09L-0.45%20-0.64L-0.52%20-0.65L-0.61%20-0.64L-0.69%20-0.6L-0.78%20-0.54L-0.86%20-0.46L-0.94%20-0.36L-1%20-0.25L-1.04%20-0.14L-1.07%20-0.03L-1.08%200.07L-1.07%200.17L-1.04%200.25L-1%200.31Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-1.78%20-0.14L-1.82%20-0.2L-1.85%20-0.28L-1.86%20-0.38L-1.85%20-0.48L-1.82%20-0.59L-1.78%20-0.7L-1.72%20-0.81L-1.64%20-0.91L-1.56%20-0.99L-1.47%20-1.05L-1.39%20-1.09L-1.3%20-1.1L-1.23%20-1.09%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.23%20-1.09L-0.45%20-0.64%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.78%20-0.14L-1%200.31%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.08%200.07L-1.07%20-0.03L-1.04%20-0.14L-1%20-0.25L-0.94%20-0.36L-0.86%20-0.46L-0.78%20-0.54L-0.69%20-0.6L-0.61%20-0.64L-0.52%20-0.65L-0.45%20-0.64L-0.39%20-0.61L-0.34%20-0.55L-0.31%20-0.47L-0.3%20-0.37L-0.31%20-0.27L-0.34%20-0.16L-0.39%20-0.05L-0.45%200.06L-0.52%200.16L-0.61%200.24L-0.69%200.3L-0.78%200.34L-0.86%200.35L-0.94%200.34L-1%200.31L-1.04%200.25L-1.07%200.17Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.39%200.8L3.98%203.9L3.98%202.8L-1.39%20-0.3Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5.37%203.1L3.98%203.9L3.98%202.8L5.37%202Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.1L5.37%202L3.98%202.8L-1.39%20-0.3Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.69%20-0.8L0.68%20-0.76L0.67%20-0.72L0.65%20-0.69L0.62%20-0.65L0.58%20-0.62L0.54%20-0.59L0.49%20-0.56L0.43%20-0.54L0.37%20-0.53L0.31%20-0.51L0.24%20-0.51L0.17%20-0.5L0.11%20-0.51L0.04%20-0.51L-0.02%20-0.53L-0.08%20-0.54L-0.14%20-0.56L-0.19%20-0.59L-0.23%20-0.62L-0.27%20-0.65L-0.3%20-0.69L-0.32%20-0.72L-0.34%20-0.76L-0.34%20-0.8L-0.34%20-0.2L-0.34%20-0.16L-0.32%20-0.12L-0.3%20-0.09L-0.27%20-0.05L-0.23%20-0.02L-0.19%200.01L-0.14%200.04L-0.08%200.06L-0.02%200.07L0.04%200.09L0.11%200.09L0.17%200.1L0.24%200.09L0.31%200.09L0.37%200.07L0.43%200.06L0.49%200.04L0.54%200.01L0.58%20-0.02L0.62%20-0.05L0.65%20-0.09L0.67%20-0.12L0.68%20-0.16L0.69%20-0.2Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.54%20-0.59L0.48%20-0.56L0.41%20-0.54L0.33%20-0.52L0.25%20-0.51L0.17%20-0.5L0.09%20-0.51L0.01%20-0.52L-0.06%20-0.54L-0.13%20-0.56L-0.19%20-0.59L-0.24%20-0.63L-0.29%20-0.67L-0.32%20-0.71L-0.33%20-0.75L-0.34%20-0.8L-0.33%20-0.85L-0.32%20-0.89L-0.29%20-0.93L-0.24%20-0.97L-0.19%20-1.01L-0.13%20-1.04L-0.06%20-1.06L0.01%20-1.08L0.09%20-1.09L0.17%20-1.1L0.25%20-1.09L0.33%20-1.08L0.41%20-1.06L0.48%20-1.04L0.54%20-1.01L0.59%20-0.97L0.63%20-0.93L0.66%20-0.89L0.68%20-0.85L0.69%20-0.8L0.68%20-0.75L0.66%20-0.71L0.63%20-0.67L0.59%20-0.63L0.54%20-0.59Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.35%20-0.7L0.24%20-0.66L0.11%20-0.66L0%20-0.7L-0.06%20-0.76L-0.06%20-0.84L0%20-0.9L0.11%20-0.94L0.24%20-0.94L0.35%20-0.9L0.41%20-0.84L0.41%20-0.76Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.9%20-0.1L1.9%20-0.06L1.88%20-0.02L1.86%200.01L1.83%200.05L1.79%200.08L1.75%200.11L1.7%200.14L1.64%200.16L1.58%200.17L1.52%200.19L1.45%200.19L1.39%200.2L1.32%200.19L1.25%200.19L1.19%200.17L1.13%200.16L1.07%200.14L1.02%200.11L0.98%200.08L0.94%200.05L0.91%200.01L0.89%20-0.02L0.88%20-0.06L0.87%20-0.1L0.87%200.5L0.88%200.54L0.89%200.58L0.91%200.61L0.94%200.65L0.98%200.68L1.02%200.71L1.07%200.74L1.13%200.76L1.19%200.77L1.25%200.79L1.32%200.79L1.39%200.8L1.45%200.79L1.52%200.79L1.58%200.77L1.64%200.76L1.7%200.74L1.75%200.71L1.79%200.68L1.83%200.65L1.86%200.61L1.88%200.58L1.9%200.54L1.9%200.5Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.75%200.11L1.69%200.14L1.62%200.16L1.54%200.18L1.47%200.19L1.39%200.2L1.31%200.19L1.23%200.18L1.15%200.16L1.08%200.14L1.02%200.11L0.97%200.07L0.93%200.03L0.9%20-0.01L0.88%20-0.05L0.87%20-0.1L0.88%20-0.15L0.9%20-0.19L0.93%20-0.23L0.97%20-0.27L1.02%20-0.31L1.08%20-0.34L1.15%20-0.36L1.23%20-0.38L1.31%20-0.39L1.39%20-0.4L1.47%20-0.39L1.54%20-0.38L1.62%20-0.36L1.69%20-0.34L1.75%20-0.31L1.8%20-0.27L1.84%20-0.23L1.87%20-0.19L1.89%20-0.15L1.9%20-0.1L1.89%20-0.05L1.87%20-0.01L1.84%200.03L1.8%200.07L1.75%200.11Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.56%200L1.45%200.04L1.32%200.04L1.21%200L1.15%20-0.06L1.15%20-0.14L1.21%20-0.2L1.32%20-0.24L1.45%20-0.24L1.56%20-0.2L1.62%20-0.14L1.62%20-0.06Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.11%200.6L3.11%200.64L3.09%200.68L3.07%200.71L3.04%200.75L3.01%200.78L2.96%200.81L2.91%200.84L2.86%200.86L2.79%200.87L2.73%200.89L2.67%200.89L2.6%200.9L2.53%200.89L2.46%200.89L2.4%200.87L2.34%200.86L2.28%200.84L2.23%200.81L2.19%200.78L2.15%200.75L2.12%200.71L2.1%200.68L2.09%200.64L2.08%200.6L2.08%201.2L2.09%201.24L2.1%201.28L2.12%201.31L2.15%201.35L2.19%201.38L2.23%201.41L2.28%201.44L2.34%201.46L2.4%201.47L2.46%201.49L2.53%201.49L2.6%201.5L2.67%201.49L2.73%201.49L2.79%201.47L2.86%201.46L2.91%201.44L2.96%201.41L3.01%201.38L3.04%201.35L3.07%201.31L3.09%201.28L3.11%201.24L3.11%201.2Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.96%200.81L2.9%200.84L2.83%200.86L2.76%200.88L2.68%200.89L2.6%200.9L2.52%200.89L2.44%200.88L2.36%200.86L2.3%200.84L2.23%200.81L2.18%200.77L2.14%200.73L2.11%200.69L2.09%200.65L2.08%200.6L2.09%200.55L2.11%200.51L2.14%200.47L2.18%200.43L2.23%200.39L2.3%200.36L2.36%200.34L2.44%200.32L2.52%200.31L2.6%200.3L2.68%200.31L2.76%200.32L2.83%200.34L2.9%200.36L2.96%200.39L3.01%200.43L3.06%200.47L3.09%200.51L3.11%200.55L3.11%200.6L3.11%200.65L3.09%200.69L3.06%200.73L3.01%200.77L2.96%200.81Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.77%200.7L2.66%200.74L2.53%200.74L2.42%200.7L2.36%200.64L2.36%200.56L2.42%200.5L2.53%200.46L2.66%200.46L2.77%200.5L2.83%200.56L2.83%200.64Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.32%201.3L4.32%201.34L4.31%201.38L4.29%201.41L4.26%201.45L4.22%201.48L4.17%201.51L4.12%201.54L4.07%201.56L4.01%201.57L3.94%201.59L3.88%201.59L3.81%201.6L3.74%201.59L3.68%201.59L3.61%201.57L3.55%201.56L3.5%201.54L3.45%201.51L3.4%201.48L3.37%201.45L3.34%201.41L3.31%201.38L3.3%201.34L3.3%201.3L3.3%201.9L3.3%201.94L3.31%201.98L3.34%202.01L3.37%202.05L3.4%202.08L3.45%202.11L3.5%202.14L3.55%202.16L3.61%202.17L3.68%202.19L3.74%202.19L3.81%202.2L3.88%202.19L3.94%202.19L4.01%202.17L4.07%202.16L4.12%202.14L4.17%202.11L4.22%202.08L4.26%202.05L4.29%202.01L4.31%201.98L4.32%201.94L4.32%201.9Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.17%201.51L4.11%201.54L4.04%201.56L3.97%201.58L3.89%201.59L3.81%201.6L3.73%201.59L3.65%201.58L3.58%201.56L3.51%201.54L3.45%201.51L3.39%201.47L3.35%201.43L3.32%201.39L3.3%201.35L3.3%201.3L3.3%201.25L3.32%201.21L3.35%201.17L3.39%201.13L3.45%201.09L3.51%201.06L3.58%201.04L3.65%201.02L3.73%201.01L3.81%201L3.89%201.01L3.97%201.02L4.04%201.04L4.11%201.06L4.17%201.09L4.23%201.13L4.27%201.17L4.3%201.21L4.32%201.25L4.32%201.3L4.32%201.35L4.3%201.39L4.27%201.43L4.23%201.47L4.17%201.51Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.98%201.4L3.87%201.44L3.75%201.44L3.64%201.4L3.57%201.34L3.57%201.26L3.64%201.2L3.75%201.16L3.87%201.16L3.98%201.2L4.05%201.26L4.05%201.34Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.29%203.18L4.3%203.07L4.33%202.96L4.37%202.85L4.43%202.74L4.51%202.64L4.59%202.56L4.68%202.5L4.76%202.46L4.85%202.45L4.92%202.46L4.98%202.49L5.03%202.55L5.06%202.63L5.07%202.72L5.06%202.83L5.03%202.94L4.98%203.05L4.92%203.16L4.85%203.26L4.76%203.34L4.68%203.4L4.59%203.44L4.51%203.45L4.43%203.44L4.37%203.41L4.33%203.35L4.3%203.27Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.37%203.41L4.33%203.35L4.3%203.27L4.29%203.18L4.3%203.07L4.33%202.96L4.37%202.85L4.43%202.74L4.51%202.64L4.59%202.56L4.68%202.5L4.76%202.46L4.85%202.45L4.92%202.46L5.7%202.91L5.63%202.9L5.54%202.91L5.46%202.95L5.37%203.01L5.29%203.09L5.21%203.19L5.15%203.3L5.1%203.41L5.08%203.52L5.07%203.63L5.08%203.72L5.1%203.8L5.15%203.86Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M4.37%203.41L4.33%203.35L4.3%203.27L4.29%203.18L4.3%203.07L4.33%202.96L4.37%202.85L4.43%202.74L4.51%202.64L4.59%202.56L4.68%202.5L4.76%202.46L4.85%202.45L4.92%202.46%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.92%202.46L5.7%202.91%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.37%203.41L5.15%203.86%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5.07%203.63L5.08%203.52L5.1%203.41L5.15%203.3L5.21%203.19L5.29%203.09L5.37%203.01L5.46%202.95L5.54%202.91L5.63%202.9L5.7%202.91L5.76%202.94L5.81%203L5.84%203.08L5.85%203.18L5.84%203.28L5.81%203.39L5.76%203.5L5.7%203.61L5.63%203.71L5.54%203.79L5.46%203.85L5.37%203.89L5.29%203.9L5.21%203.89L5.15%203.86L5.1%203.8L5.08%203.72Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5.28%203.5L5.31%203.39L5.37%203.28L5.46%203.2L5.54%203.18L5.61%203.21L5.63%203.3L5.61%203.41L5.54%203.52L5.46%203.6L5.37%203.62L5.31%203.59Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M1%2030%20H5%20M43%2030%20H47%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%225.25%22%2F%3E%3Cpath%20d%3D%22M1%2030%20H5%20M43%2030%20H47%22%20fill%3D%22none%22%20stroke%3D%22%2334405c%22%20stroke-width%3D%223%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%2225%22%20width%3D%2238%22%20height%3D%2210%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2216%22%20width%3D%225%22%20height%3D%229%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2214%22%20width%3D%225%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%231aa3c8%22%2F%3E%3Crect%20x%3D%2217%22%20y%3D%2216%22%20width%3D%225%22%20height%3D%229%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2217%22%20y%3D%2214%22%20width%3D%225%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%231aa3c8%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2216%22%20width%3D%225%22%20height%3D%229%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2214%22%20width%3D%225%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%231aa3c8%22%2F%3E%3Crect%20x%3D%2235%22%20y%3D%2216%22%20width%3D%225%22%20height%3D%229%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2235%22%20y%3D%2214%22%20width%3D%225%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%231aa3c8%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-n2k-terminator-female",
+      "name": "NMEA 2000 Terminator (Female)",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(28.01%2029.7)%20scale(15.34907)%22%3E%3Cpath%20d%3D%22M-1.52%20-0.12L-1.5%20-0.3L-1.45%20-0.49L-1.37%20-0.67L-1.27%20-0.85L-1.15%20-1.01L-1.01%20-1.15L-0.87%20-1.25L-0.72%20-1.31L-0.58%20-1.34L-0.46%20-1.32L-0.36%20-1.26L-0.28%20-1.16L-0.23%20-1.03L-0.22%20-0.87L-0.23%20-0.7L-0.28%20-0.51L-0.36%20-0.33L-0.46%20-0.15L-0.58%200.01L-0.72%200.15L-0.87%200.25L-1.01%200.31L-1.15%200.34L-1.27%200.32L-1.37%200.26L-1.45%200.16L-1.5%200.03Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.06%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.37%200.26L-1.45%200.16L-1.5%200.03L-1.52%20-0.12L-1.5%20-0.3L-1.45%20-0.49L-1.37%20-0.67L-1.27%20-0.85L-1.15%20-1.01L-1.01%20-1.15L-0.87%20-1.25L-0.72%20-1.31L-0.58%20-1.34L-0.46%20-1.32L0.58%20-0.72L0.46%20-0.74L0.32%20-0.71L0.17%20-0.65L0.03%20-0.55L-0.11%20-0.41L-0.23%20-0.25L-0.33%20-0.07L-0.41%200.11L-0.46%200.3L-0.48%200.48L-0.46%200.63L-0.41%200.76L-0.33%200.86Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-1.37%200.26L-1.45%200.16L-1.5%200.03L-1.52%20-0.12L-1.5%20-0.3L-1.45%20-0.49L-1.37%20-0.67L-1.27%20-0.85L-1.15%20-1.01L-1.01%20-1.15L-0.87%20-1.25L-0.72%20-1.31L-0.58%20-1.34L-0.46%20-1.32%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.46%20-1.32L0.58%20-0.72%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.37%200.26L-0.33%200.86%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.48%200.48L-0.46%200.3L-0.41%200.11L-0.33%20-0.07L-0.23%20-0.25L-0.11%20-0.41L0.03%20-0.55L0.17%20-0.65L0.32%20-0.71L0.46%20-0.74L0.58%20-0.72L0.68%20-0.66L0.76%20-0.56L0.81%20-0.43L0.82%20-0.28L0.81%20-0.1L0.76%200.09L0.68%200.27L0.58%200.45L0.46%200.61L0.32%200.75L0.17%200.85L0.03%200.91L-0.11%200.94L-0.23%200.92L-0.33%200.86L-0.41%200.76L-0.46%200.63Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.59%200.54L-0.57%200.33L-0.51%200.11L-0.42%20-0.1L-0.3%20-0.31L-0.16%20-0.5L0%20-0.66L0.17%20-0.78L0.34%20-0.86L0.5%20-0.88L0.65%20-0.86L0.77%20-0.79L0.86%20-0.68L0.92%20-0.52L0.94%20-0.34L0.92%20-0.13L0.86%200.09L0.77%200.3L0.65%200.51L0.5%200.7L0.34%200.86L0.17%200.98L0%201.06L-0.16%201.08L-0.3%201.06L-0.42%200.99L-0.51%200.88L-0.57%200.72Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%231aa3c8%22%20stroke-width%3D%220.06%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.42%200.99L-0.51%200.88L-0.57%200.72L-0.59%200.54L-0.57%200.33L-0.51%200.11L-0.42%20-0.1L-0.3%20-0.31L-0.16%20-0.5L0%20-0.66L0.17%20-0.78L0.34%20-0.86L0.5%20-0.88L0.65%20-0.86L1.34%20-0.46L1.2%20-0.48L1.04%20-0.46L0.87%20-0.38L0.7%20-0.26L0.54%20-0.1L0.39%200.09L0.27%200.3L0.18%200.51L0.12%200.73L0.1%200.94L0.12%201.12L0.18%201.28L0.27%201.39Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-0.42%200.99L-0.51%200.88L-0.57%200.72L-0.59%200.54L-0.57%200.33L-0.51%200.11L-0.42%20-0.1L-0.3%20-0.31L-0.16%20-0.5L0%20-0.66L0.17%20-0.78L0.34%20-0.86L0.5%20-0.88L0.65%20-0.86%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.65%20-0.86L1.34%20-0.46%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.42%200.99L0.27%201.39%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.1%200.94L0.12%200.73L0.18%200.51L0.27%200.3L0.39%200.09L0.54%20-0.1L0.7%20-0.26L0.87%20-0.38L1.04%20-0.46L1.2%20-0.48L1.34%20-0.46L1.46%20-0.39L1.55%20-0.28L1.61%20-0.12L1.63%200.06L1.61%200.27L1.55%200.49L1.46%200.7L1.34%200.91L1.2%201.1L1.04%201.26L0.87%201.38L0.7%201.46L0.54%201.48L0.39%201.46L0.27%201.39L0.18%201.28L0.12%201.12Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.22%200.88L0.23%200.7L0.28%200.51L0.36%200.33L0.46%200.15L0.58%20-0.01L0.72%20-0.15L0.87%20-0.25L1.01%20-0.31L1.15%20-0.34L1.27%20-0.32L1.37%20-0.26L1.45%20-0.16L1.5%20-0.03L1.52%200.13L1.5%200.3L1.45%200.49L1.37%200.67L1.27%200.85L1.15%201.01L1.01%201.15L0.87%201.25L0.72%201.31L0.58%201.34L0.46%201.32L0.36%201.26L0.28%201.16L0.23%201.03Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.06%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.36%201.26L0.28%201.16L0.23%201.03L0.22%200.88L0.23%200.7L0.28%200.51L0.36%200.33L0.46%200.15L0.58%20-0.01L0.72%20-0.15L0.87%20-0.25L1.01%20-0.31L1.15%20-0.34L1.27%20-0.32L1.79%20-0.02L1.67%20-0.04L1.53%20-0.01L1.39%200.05L1.24%200.15L1.1%200.29L0.98%200.45L0.88%200.63L0.8%200.81L0.75%201L0.74%201.17L0.75%201.33L0.8%201.46L0.88%201.56Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M0.36%201.26L0.28%201.16L0.23%201.03L0.22%200.88L0.23%200.7L0.28%200.51L0.36%200.33L0.46%200.15L0.58%20-0.01L0.72%20-0.15L0.87%20-0.25L1.01%20-0.31L1.15%20-0.34L1.27%20-0.32%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.27%20-0.32L1.79%20-0.02%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.36%201.26L0.88%201.56%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.74%201.17L0.75%201L0.8%200.81L0.88%200.63L0.98%200.45L1.1%200.29L1.24%200.15L1.39%200.05L1.53%20-0.01L1.67%20-0.04L1.79%20-0.02L1.89%200.04L1.97%200.14L2.02%200.27L2.04%200.43L2.02%200.6L1.97%200.79L1.89%200.97L1.79%201.15L1.67%201.31L1.53%201.45L1.39%201.55L1.24%201.61L1.1%201.64L0.98%201.62L0.88%201.56L0.8%201.46L0.75%201.33Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.3%200.85L1.32%200.76L1.39%200.7L1.45%200.69L1.47%200.75L1.45%200.84L1.39%200.9L1.32%200.91Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.96%200.88L0.99%200.79L1.05%200.73L1.11%200.72L1.14%200.78L1.11%200.87L1.05%200.93L0.99%200.94Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.44%200.38L1.47%200.3L1.53%200.23L1.59%200.23L1.61%200.28L1.59%200.37L1.53%200.43L1.47%200.44Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.63%200.82L1.66%200.73L1.72%200.67L1.78%200.66L1.81%200.72L1.78%200.81L1.72%200.87L1.66%200.88Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.16%201.32L1.18%201.23L1.24%201.17L1.31%201.16L1.33%201.22L1.31%201.3L1.24%201.37L1.18%201.37Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%2218%22%20width%3D%2214%22%20height%3D%2212%22%20rx%3D%222%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2220%22%20y%3D%2216%22%20width%3D%2210%22%20height%3D%2216%22%20rx%3D%222%22%20fill%3D%22%231aa3c8%22%2F%3E%3Crect%20x%3D%2230%22%20y%3D%2217%22%20width%3D%2212%22%20height%3D%2214%22%20rx%3D%221%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2236%22%20y%3D%2219.5%22%20width%3D%226%22%20height%3D%229%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-n2k-terminator-male",
+      "name": "NMEA 2000 Terminator (Male)",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(28.01%2029.7)%20scale(15.34907)%22%3E%3Cpath%20d%3D%22M-1.52%20-0.12L-1.5%20-0.3L-1.45%20-0.49L-1.37%20-0.67L-1.27%20-0.85L-1.15%20-1.01L-1.01%20-1.15L-0.87%20-1.25L-0.72%20-1.31L-0.58%20-1.34L-0.46%20-1.32L-0.36%20-1.26L-0.28%20-1.16L-0.23%20-1.03L-0.22%20-0.87L-0.23%20-0.7L-0.28%20-0.51L-0.36%20-0.33L-0.46%20-0.15L-0.58%200.01L-0.72%200.15L-0.87%200.25L-1.01%200.31L-1.15%200.34L-1.27%200.32L-1.37%200.26L-1.45%200.16L-1.5%200.03Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.06%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.37%200.26L-1.45%200.16L-1.5%200.03L-1.52%20-0.12L-1.5%20-0.3L-1.45%20-0.49L-1.37%20-0.67L-1.27%20-0.85L-1.15%20-1.01L-1.01%20-1.15L-0.87%20-1.25L-0.72%20-1.31L-0.58%20-1.34L-0.46%20-1.32L0.58%20-0.72L0.46%20-0.74L0.32%20-0.71L0.17%20-0.65L0.03%20-0.55L-0.11%20-0.41L-0.23%20-0.25L-0.33%20-0.07L-0.41%200.11L-0.46%200.3L-0.48%200.48L-0.46%200.63L-0.41%200.76L-0.33%200.86Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-1.37%200.26L-1.45%200.16L-1.5%200.03L-1.52%20-0.12L-1.5%20-0.3L-1.45%20-0.49L-1.37%20-0.67L-1.27%20-0.85L-1.15%20-1.01L-1.01%20-1.15L-0.87%20-1.25L-0.72%20-1.31L-0.58%20-1.34L-0.46%20-1.32%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.46%20-1.32L0.58%20-0.72%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.37%200.26L-0.33%200.86%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.48%200.48L-0.46%200.3L-0.41%200.11L-0.33%20-0.07L-0.23%20-0.25L-0.11%20-0.41L0.03%20-0.55L0.17%20-0.65L0.32%20-0.71L0.46%20-0.74L0.58%20-0.72L0.68%20-0.66L0.76%20-0.56L0.81%20-0.43L0.82%20-0.28L0.81%20-0.1L0.76%200.09L0.68%200.27L0.58%200.45L0.46%200.61L0.32%200.75L0.17%200.85L0.03%200.91L-0.11%200.94L-0.23%200.92L-0.33%200.86L-0.41%200.76L-0.46%200.63Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.59%200.54L-0.57%200.33L-0.51%200.11L-0.42%20-0.1L-0.3%20-0.31L-0.16%20-0.5L0%20-0.66L0.17%20-0.78L0.34%20-0.86L0.5%20-0.88L0.65%20-0.86L0.77%20-0.79L0.86%20-0.68L0.92%20-0.52L0.94%20-0.34L0.92%20-0.13L0.86%200.09L0.77%200.3L0.65%200.51L0.5%200.7L0.34%200.86L0.17%200.98L0%201.06L-0.16%201.08L-0.3%201.06L-0.42%200.99L-0.51%200.88L-0.57%200.72Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%231aa3c8%22%20stroke-width%3D%220.06%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.42%200.99L-0.51%200.88L-0.57%200.72L-0.59%200.54L-0.57%200.33L-0.51%200.11L-0.42%20-0.1L-0.3%20-0.31L-0.16%20-0.5L0%20-0.66L0.17%20-0.78L0.34%20-0.86L0.5%20-0.88L0.65%20-0.86L1.34%20-0.46L1.2%20-0.48L1.04%20-0.46L0.87%20-0.38L0.7%20-0.26L0.54%20-0.1L0.39%200.09L0.27%200.3L0.18%200.51L0.12%200.73L0.1%200.94L0.12%201.12L0.18%201.28L0.27%201.39Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-0.42%200.99L-0.51%200.88L-0.57%200.72L-0.59%200.54L-0.57%200.33L-0.51%200.11L-0.42%20-0.1L-0.3%20-0.31L-0.16%20-0.5L0%20-0.66L0.17%20-0.78L0.34%20-0.86L0.5%20-0.88L0.65%20-0.86%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.65%20-0.86L1.34%20-0.46%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.42%200.99L0.27%201.39%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.1%200.94L0.12%200.73L0.18%200.51L0.27%200.3L0.39%200.09L0.54%20-0.1L0.7%20-0.26L0.87%20-0.38L1.04%20-0.46L1.2%20-0.48L1.34%20-0.46L1.46%20-0.39L1.55%20-0.28L1.61%20-0.12L1.63%200.06L1.61%200.27L1.55%200.49L1.46%200.7L1.34%200.91L1.2%201.1L1.04%201.26L0.87%201.38L0.7%201.46L0.54%201.48L0.39%201.46L0.27%201.39L0.18%201.28L0.12%201.12Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.22%200.88L0.23%200.7L0.28%200.51L0.36%200.33L0.46%200.15L0.58%20-0.01L0.72%20-0.15L0.87%20-0.25L1.01%20-0.31L1.15%20-0.34L1.27%20-0.32L1.37%20-0.26L1.45%20-0.16L1.5%20-0.03L1.52%200.13L1.5%200.3L1.45%200.49L1.37%200.67L1.27%200.85L1.15%201.01L1.01%201.15L0.87%201.25L0.72%201.31L0.58%201.34L0.46%201.32L0.36%201.26L0.28%201.16L0.23%201.03Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.06%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.36%201.26L0.28%201.16L0.23%201.03L0.22%200.88L0.23%200.7L0.28%200.51L0.36%200.33L0.46%200.15L0.58%20-0.01L0.72%20-0.15L0.87%20-0.25L1.01%20-0.31L1.15%20-0.34L1.27%20-0.32L1.79%20-0.02L1.67%20-0.04L1.53%20-0.01L1.39%200.05L1.24%200.15L1.1%200.29L0.98%200.45L0.88%200.63L0.8%200.81L0.75%201L0.74%201.17L0.75%201.33L0.8%201.46L0.88%201.56Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M0.36%201.26L0.28%201.16L0.23%201.03L0.22%200.88L0.23%200.7L0.28%200.51L0.36%200.33L0.46%200.15L0.58%20-0.01L0.72%20-0.15L0.87%20-0.25L1.01%20-0.31L1.15%20-0.34L1.27%20-0.32%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.27%20-0.32L1.79%20-0.02%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.36%201.26L0.88%201.56%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.74%201.17L0.75%201L0.8%200.81L0.88%200.63L0.98%200.45L1.1%200.29L1.24%200.15L1.39%200.05L1.53%20-0.01L1.67%20-0.04L1.79%20-0.02L1.89%200.04L1.97%200.14L2.02%200.27L2.04%200.43L2.02%200.6L1.97%200.79L1.89%200.97L1.79%201.15L1.67%201.31L1.53%201.45L1.39%201.55L1.24%201.61L1.1%201.64L0.98%201.62L0.88%201.56L0.8%201.46L0.75%201.33Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.39%200.8L1.69%200.98%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.3%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.39%200.8L1.69%200.98%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.05%200.83L1.35%201%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.3%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.05%200.83L1.35%201%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.53%200.33L1.83%200.51%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.3%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.53%200.33L1.83%200.51%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.72%200.77L2.02%200.95%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.3%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.72%200.77L2.02%200.95%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.24%201.27L1.55%201.44%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.3%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.24%201.27L1.55%201.44%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.1%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%2218%22%20width%3D%2214%22%20height%3D%2212%22%20rx%3D%222%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2220%22%20y%3D%2216%22%20width%3D%2210%22%20height%3D%2216%22%20rx%3D%222%22%20fill%3D%22%231aa3c8%22%2F%3E%3Crect%20x%3D%2230%22%20y%3D%2218%22%20width%3D%228%22%20height%3D%2212%22%20rx%3D%221%22%20fill%3D%22%23c5cdda%22%2F%3E%3Cpath%20d%3D%22M38%2021%20H43%20M38%2024%20H43%20M38%2027%20H43%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%223.05%22%2F%3E%3Cpath%20d%3D%22M38%2021%20H43%20M38%2024%20H43%20M38%2027%20H43%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.8%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-wind-instrument",
+      "name": "Wind Instrument",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(31.95%2035.93)%20scale(11.21543)%22%3E%3Cpath%20d%3D%22M0%202L0%20-0.6%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.57%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%202L0%20-0.6%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.3%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.56%20-1.5L1.56%200.3%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.47%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.56%20-1.5L1.56%200.3%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.56%200.3L1.56%20-0.3%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.39%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.56%200.3L1.56%20-0.3%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.12%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.56%20-0.3L2.17%200.05%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.43%200.05L2.43%200.09L2.42%200.13L2.41%200.17L2.38%200.21L2.36%200.24L2.32%200.27L2.29%200.29L2.25%200.31L2.21%200.32L2.17%200.32L2.12%200.32L2.08%200.31L2.04%200.29L2.01%200.27L1.97%200.24L1.95%200.21L1.92%200.17L1.91%200.13L1.9%200.09L1.9%200.05L1.9%200.01L1.91%20-0.03L1.92%20-0.07L1.95%20-0.11L1.97%20-0.14L2.01%20-0.17L2.04%20-0.19L2.08%20-0.21L2.12%20-0.22L2.17%20-0.22L2.21%20-0.22L2.25%20-0.21L2.29%20-0.19L2.32%20-0.17L2.36%20-0.14L2.38%20-0.11L2.41%20-0.07L2.42%20-0.03L2.43%200.01Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.56%20-0.3L0.73%20-0.17%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1%20-0.17L1%20-0.13L0.99%20-0.09L0.97%20-0.05L0.95%20-0.02L0.92%200.02L0.89%200.04L0.85%200.07L0.81%200.08L0.77%200.09L0.73%200.09L0.69%200.09L0.65%200.08L0.61%200.07L0.57%200.04L0.54%200.02L0.51%20-0.02L0.49%20-0.05L0.47%20-0.09L0.46%20-0.13L0.46%20-0.17L0.46%20-0.22L0.47%20-0.26L0.49%20-0.3L0.51%20-0.33L0.54%20-0.37L0.57%20-0.39L0.61%20-0.41L0.65%20-0.43L0.69%20-0.44L0.73%20-0.44L0.77%20-0.44L0.81%20-0.43L0.85%20-0.41L0.89%20-0.39L0.92%20-0.37L0.95%20-0.33L0.97%20-0.3L0.99%20-0.26L1%20-0.22Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.56%20-0.3L1.79%20-0.78%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.06%20-0.78L2.06%20-0.73L2.05%20-0.69L2.03%20-0.65L2.01%20-0.62L1.98%20-0.59L1.95%20-0.56L1.91%20-0.54L1.87%20-0.52L1.83%20-0.51L1.79%20-0.51L1.75%20-0.51L1.71%20-0.52L1.67%20-0.54L1.63%20-0.56L1.6%20-0.59L1.57%20-0.62L1.55%20-0.65L1.53%20-0.69L1.52%20-0.73L1.52%20-0.78L1.52%20-0.82L1.53%20-0.86L1.55%20-0.9L1.57%20-0.94L1.6%20-0.97L1.63%20-0.99L1.67%20-1.02L1.71%20-1.03L1.75%20-1.04L1.79%20-1.05L1.83%20-1.04L1.87%20-1.03L1.91%20-1.02L1.95%20-0.99L1.98%20-0.97L2.01%20-0.94L2.03%20-0.9L2.05%20-0.86L2.06%20-0.82Z%22%20fill%3D%22%231aa3c8%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.65%20-1.55L-2.42%20-2.7L-2.42%20-1.6Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M24%2046%20V24%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%224.65%22%2F%3E%3Cpath%20d%3D%22M24%2046%20V24%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%222.4%22%2F%3E%3Cpath%20d%3D%22M8%2024%20H38%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%223.85%22%2F%3E%3Cpath%20d%3D%22M8%2024%20H38%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%221.6%22%2F%3E%3Cpath%20d%3D%22M8%2024%20L1%2018%20V28%20Z%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M38%2024%20V17%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%223.25%22%2F%3E%3Cpath%20d%3D%22M38%2024%20V17%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%221%22%2F%3E%3Cpath%20d%3D%22M31%2017%20H45%22%20fill%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2231%22%20cy%3D%2217%22%20r%3D%222.4%22%20fill%3D%22%231aa3c8%22%2F%3E%3Ccircle%20cx%3D%2245%22%20cy%3D%2217%22%20r%3D%222.4%22%20fill%3D%22%231aa3c8%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2213%22%20r%3D%222.4%22%20fill%3D%22%231aa3c8%22%2F%3E%3C%2Fsvg%3E"
+    }
+  ],
+  "connections": [
+    {
+      "id": "term-bow--tee-bow",
+      "from": "term-bow",
+      "to": "tee-bow",
+      "fromPort": "t",
+      "toPort": "in",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "tee-bow--tee4-fwd",
+      "from": "tee-bow",
+      "to": "tee4-fwd",
+      "fromPort": "out",
+      "toPort": "in",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "tee4-fwd--tee-mid",
+      "from": "tee4-fwd",
+      "to": "tee-mid",
+      "fromPort": "out",
+      "toPort": "in",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "tee-mid--tee4-aft",
+      "from": "tee-mid",
+      "to": "tee4-aft",
+      "fromPort": "out",
+      "toPort": "in",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "tee4-aft--term-stern",
+      "from": "tee4-aft",
+      "to": "term-stern",
+      "fromPort": "out",
+      "toPort": "t",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "power--tee-bow",
+      "from": "power",
+      "to": "tee-bow",
+      "fromPort": "n2k",
+      "toPort": "drop",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "radar--tee4-fwd",
+      "from": "radar",
+      "to": "tee4-fwd",
+      "fromPort": "n2k",
+      "toPort": "drop1",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "gps-1--tee4-fwd",
+      "from": "gps-1",
+      "to": "tee4-fwd",
+      "fromPort": "n2k",
+      "toPort": "drop2",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "weather--tee4-fwd",
+      "from": "weather",
+      "to": "tee4-fwd",
+      "fromPort": "n2k",
+      "toPort": "drop3",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "depth--tee4-fwd",
+      "from": "depth",
+      "to": "tee4-fwd",
+      "fromPort": "n2k",
+      "toPort": "drop4",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "engine--tee-mid",
+      "from": "engine",
+      "to": "tee-mid",
+      "fromPort": "n2k",
+      "toPort": "drop",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "plotter-helm--tee4-aft",
+      "from": "plotter-helm",
+      "to": "tee4-aft",
+      "fromPort": "n2k",
+      "toPort": "drop1",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "plotter-nav--tee4-aft",
+      "from": "plotter-nav",
+      "to": "tee4-aft",
+      "fromPort": "n2k",
+      "toPort": "drop2",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "gps-2--tee4-aft",
+      "from": "gps-2",
+      "to": "tee4-aft",
+      "fromPort": "n2k",
+      "toPort": "drop3",
+      "kind": "nmea-2000"
+    },
+    {
+      "id": "ais--tee4-aft",
+      "from": "ais",
+      "to": "tee4-aft",
+      "fromPort": "n2k",
+      "toPort": "drop4",
+      "kind": "nmea-2000"
+    }
+  ]
+}

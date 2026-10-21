@@ -1034,7 +1034,8 @@ export const officeScene: Scene = {
             "x": -1,
             "y": -5
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "ap-rear",
@@ -1042,7 +1043,8 @@ export const officeScene: Scene = {
             "x": 1,
             "y": -3
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "E"
         },
         {
           "object": "ap-front",
@@ -1050,7 +1052,8 @@ export const officeScene: Scene = {
             "x": 0,
             "y": -2
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "ups",
@@ -1058,7 +1061,8 @@ export const officeScene: Scene = {
             "x": -2,
             "y": 0
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "nas",
@@ -1066,7 +1070,8 @@ export const officeScene: Scene = {
             "x": -3,
             "y": 1
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "server",
@@ -1074,7 +1079,8 @@ export const officeScene: Scene = {
             "x": -4,
             "y": 2
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "poe-switch",
@@ -1083,7 +1089,7 @@ export const officeScene: Scene = {
             "y": -2
           },
           "labelHeight": 80,
-          "labelPosition": "SE"
+          "labelPosition": "NE"
         },
         {
           "object": "core-switch",
@@ -1092,7 +1098,7 @@ export const officeScene: Scene = {
             "y": 0
           },
           "labelHeight": 80,
-          "labelPosition": "SW"
+          "labelPosition": "NW"
         },
         {
           "object": "firewall",

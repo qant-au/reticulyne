@@ -40,6 +40,20 @@ const AT: Record<string, Tile> = {
   Laptop: { x: -1, y: -5 }
 };
 
+// Where each label sits in the live example (demos/office-live.demo.ts):
+// clear of every link, so the animation is never behind a label.
+const LIVE_LABELS: Record<string, string> = {
+  firewall: 'S',
+  'core-switch': 'NW',
+  'poe-switch': 'NE',
+  server: 'S',
+  nas: 'S',
+  ups: 'S',
+  'ap-front': 'S',
+  'ap-rear': 'E',
+  laptop: 'S'
+};
+
 const IDS: Record<string, string> = {
   'Fibre ONT': 'fibre-ont',
   '4G/5G Router': 'cellular-router',
@@ -153,12 +167,22 @@ test('office network', async ({ page }, testInfo) => {
   expect(positions['poe-switch']).toBe('SE');
 
   // The example needs no `icons`: every object names its element, and the
-  // built-in pack supplies the drawing.
+  // built-in pack supplies the drawing. Its labels sit where none of them
+  // crosses a link, so the animation is never behind one.
   const { icons: _icons, ...rest } = scene;
   const forExample = {
     ...rest,
     objects: rest.objects.map(({ icon: _icon, ...object }) => {
       return object;
+    }),
+    views: rest.views.map((v) => {
+      return {
+        ...v,
+        placements: (v.placements ?? []).map(({ labelPosition: _p, ...p }) => {
+          const position = LIVE_LABELS[p.object];
+          return position ? { ...p, labelPosition: position } : p;
+        })
+      };
     })
   };
   await writeFile(

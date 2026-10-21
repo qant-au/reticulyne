@@ -14,7 +14,7 @@ import type { Coords, ModelItem, Projection, View, ViewItem } from 'src/types';
 // a storey apart, so the building reads as a stack: enough to follow the
 // topology, not enough to compete with the floor being edited. They are
 // drawn in the projection of the floor on show, isometric or flat, so the
-// switch changes nothing but the drawing (rtl-065); they cannot be clicked,
+// switch changes nothing but the drawing; they cannot be clicked,
 // and they are never in an export (a NON_INTERACTIVE render).
 
 /** How far apart two floors are drawn, in screen pixels at zoom 1. */

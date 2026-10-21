@@ -70,7 +70,7 @@ describe('FEA5-05 glyph registry', () => {
     }
   );
 
-  // rtl-065: the diamond and square are drawn pre-skewed for the isometric
+  // The diamond and square are drawn pre-skewed for the isometric
   // view, so the flat view draws each as the other shape.
   test('the flat view swaps the diamond and square shapes', () => {
     const square = '0,-16 16,0 0,16 -16,0';

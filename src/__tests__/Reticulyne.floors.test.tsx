@@ -286,7 +286,7 @@ describe('other floors', () => {
     expect(screen.queryByTestId('other-floor-l1')).toBeNull();
   });
 
-  // rtl-065: the flat view draws the other floors too, flat.
+  // The flat view draws the other floors too, flat.
   test('drawn when the floor on show is flat', () => {
     mount(
       {},

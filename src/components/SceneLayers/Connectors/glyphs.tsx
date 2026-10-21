@@ -101,7 +101,7 @@ const CircleOutline: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
 // view each shape is the other one before it: an axis-aligned square comes
 // out as a diamond on screen, and a 45-degree diamond as a flat rectangle,
 // so they are drawn the other way round. The flat view draws them as they
-// are, so GlyphRenderer swaps the two there (rtl-065).
+// are, so GlyphRenderer swaps the two there (flat view).
 const Diamond: FC<GlyphProps> = ({ fill, stroke, strokeWidth }) => {
   return (
     <rect

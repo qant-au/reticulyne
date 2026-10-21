@@ -10,6 +10,7 @@ import {
   placeAs,
   saveScene,
   saveVideo,
+  setLabelPosition,
   startEmpty,
   tidyIds,
   toView,
@@ -102,6 +103,13 @@ test('office network', async ({ page }, testInfo) => {
     toPort: 'Mains in 1'
   });
 
+  // Labels can sit at any compass point: the firewall and the switches take
+  // theirs below, clear of the links that come down into them.
+  await setLabelPosition(page, AT['Firewall (Rack-Mount)'], 'Label below');
+  await setLabelPosition(page, AT['Network Switch (24-Port)'], 'Label below left');
+  await setLabelPosition(page, AT['PoE Switch (8-Port)'], 'Label below right');
+  await pause(page, 400);
+
   // The finished diagram: a long look at it, the flat view, and back to
   // the isometric view, which stays on screen before the GIF loops.
   await fitToView(page);
@@ -135,6 +143,14 @@ test('office network', async ({ page }, testInfo) => {
   expect(ports['firewall--core-switch']).toEqual(['lan1', 'eth1', 'ethernet-copper']);
   expect(ports['laptop--ap-rear']).toEqual(['wifi', 'radio', 'wi-fi']);
   expect(ports['ups--firewall']).toEqual(['out1', 'ac1', 'power-ac']);
+  const positions = Object.fromEntries(
+    (view.placements ?? []).map((p) => {
+      return [p.object, p.labelPosition];
+    })
+  );
+  expect(positions.firewall).toBe('S');
+  expect(positions['core-switch']).toBe('SW');
+  expect(positions['poe-switch']).toBe('SE');
 
   // The example needs no `icons`: every object names its element, and the
   // built-in pack supplies the drawing.

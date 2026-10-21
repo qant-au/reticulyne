@@ -1026,7 +1026,7 @@ export const officeScene: Scene = {
       "id": "main",
       "kind": "iso",
       "name": "Main",
-      "lastUpdated": "2026-10-21T01:07:33.886Z",
+      "lastUpdated": "2026-10-21T04:00:44.167Z",
       "placements": [
         {
           "object": "laptop",
@@ -1082,7 +1082,8 @@ export const officeScene: Scene = {
             "x": 2,
             "y": -2
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "SE"
         },
         {
           "object": "core-switch",
@@ -1090,7 +1091,8 @@ export const officeScene: Scene = {
             "x": 0,
             "y": 0
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "SW"
         },
         {
           "object": "firewall",
@@ -1098,7 +1100,8 @@ export const officeScene: Scene = {
             "x": 3,
             "y": 1
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "cellular-router",

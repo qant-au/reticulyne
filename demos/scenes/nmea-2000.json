@@ -663,7 +663,7 @@
       "id": "main",
       "kind": "iso",
       "name": "Main",
-      "lastUpdated": "2026-10-21T01:10:28.192Z",
+      "lastUpdated": "2026-10-21T03:58:10.045Z",
       "placements": [
         {
           "object": "ais",
@@ -751,7 +751,8 @@
             "x": 3,
             "y": -3
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "tee4-aft",
@@ -767,7 +768,8 @@
             "x": 1,
             "y": -1
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "tee4-fwd",
@@ -783,7 +785,8 @@
             "x": -1,
             "y": 1
           },
-          "labelHeight": 80
+          "labelHeight": 80,
+          "labelPosition": "S"
         },
         {
           "object": "term-bow",

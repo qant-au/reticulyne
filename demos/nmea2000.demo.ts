@@ -9,6 +9,7 @@ import {
   placeAs,
   saveScene,
   saveVideo,
+  setLabelPosition,
   startEmpty,
   tidyIds,
   toView,
@@ -107,6 +108,12 @@ test('nmea 2000 network', async ({ page }, testInfo) => {
 
   // The finished diagram: a long look at it, the flat view, and back to
   // the isometric view, which stays on screen before the GIF loops.
+  // Six labels in a row crowd each other: every other one goes below.
+  await setLabelPosition(page, AT['Tee (bow)'], 'Label below');
+  await setLabelPosition(page, AT['Tee (mid)'], 'Label below');
+  await setLabelPosition(page, AT['Terminator (stern)'], 'Label below');
+  await pause(page, 400);
+
   await fitToView(page);
   await pause(page, 9000);
   await toView(page, 'flat');
@@ -141,6 +148,15 @@ test('nmea 2000 network', async ({ page }, testInfo) => {
   expect(ports['power--tee-bow']).toEqual(['n2k', 'drop']);
   expect(ports['radar--tee4-fwd']).toEqual(['n2k', 'drop1']);
   expect(ports['ais--tee4-aft']).toEqual(['n2k', 'drop4']);
+  const below = (view.placements ?? [])
+    .filter((p) => {
+      return p.labelPosition === 'S';
+    })
+    .map((p) => {
+      return p.object;
+    })
+    .sort();
+  expect(below).toEqual(['tee-bow', 'tee-mid', 'term-stern']);
 
   await saveVideo(page, testInfo, 'nmea-2000');
 });

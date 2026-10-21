@@ -77,6 +77,36 @@ export const placeAs = async (
   await rename(page, name);
 };
 
+/**
+ * Put a placed node's label on one of the eight compass points around it,
+ * from the inspector's compass: select the node, then the point.
+ */
+export const setLabelPosition = async (
+  page: Page,
+  tile: Tile,
+  where:
+    | 'Label above'
+    | 'Label above right'
+    | 'Label right'
+    | 'Label below right'
+    | 'Label below'
+    | 'Label below left'
+    | 'Label left'
+    | 'Label above left'
+) => {
+  await page.keyboard.press('Escape');
+  await glide(page, screenOf(page, tile), 400);
+  await page.mouse.click(...screenOf(page, tile));
+  const compass = page.getByRole('group', { name: 'Label position' });
+  await expect(compass).toBeVisible();
+  const button = compass.getByRole('button', { name: where, exact: true });
+  const box = (await button.boundingBox())!;
+  await glide(page, [box.x + box.width / 2, box.y + box.height / 2], 450);
+  await button.click();
+  await pause(page, 700);
+  await page.keyboard.press('Escape');
+};
+
 /** Switch between the isometric and the flat view with the toolbar. */
 export const toView = async (page: Page, view: 'iso' | 'flat') => {
   const button = page.getByRole('button', {

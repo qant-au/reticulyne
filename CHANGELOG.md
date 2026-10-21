@@ -14,6 +14,10 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.8.0] - 2026-10-21
+
 ### Changed
 
 - **Copyright holder.** `LICENSE` names Adam Burgess personally as the copyright holder of the fork and everything added since, replacing the company notice that had been on it since the first commit. Mark Mankarious's Isoflow notice is unchanged, and the licence is still MIT.

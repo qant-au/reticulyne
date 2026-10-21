@@ -114,7 +114,7 @@ for versions and browser support. To run the editor on its own instead, see
 
 ## Status
 
-Pre-1.0, currently v0.7. The public API is settling, and breaking changes are still
+Pre-1.0, currently v0.8. The public API is settling, and breaking changes are still
 possible between minor versions; each one is recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## Security

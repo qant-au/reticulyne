@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="https://reticulyne.com"><img src="docs/images/og.png" alt="Reticulyne: networks, drawn. Open source, by Adam Burgess." width="720"></a>
+</p>
+
 # Reticulyne
 
 An open-source React component for drawing isometric network diagrams: software

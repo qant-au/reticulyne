@@ -75,7 +75,9 @@ export const ZoomControls = ({ compact = false }: { compact?: boolean }) => {
           onClick={fitToView}
         />
       </Surface>
-      <LabelsToggle />
+      {/* A phone's width has no room for it beside the rest; Alt+L and the
+          host's showLabels prop still work there. */}
+      {!compact && <LabelsToggle />}
       {editable && <ViewKindToggle />}
       {editable && <LayersButton />}
     </Stack>

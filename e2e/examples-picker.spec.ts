@@ -30,6 +30,7 @@ const EXAMPLE_NAMES = [
   'Debug tools',
   'Read-only mode',
   'Live dashboard',
+  'Office network, live',
   'Connector animations',
   'Connector pulse',
   'Node indicators'

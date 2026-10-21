@@ -76,13 +76,26 @@ export const PanelSection = ({
   );
 };
 
-// The line at the top of a panel naming what is being edited.
-export const PanelHeader = ({ title }: { title: string }) => {
+// The line at the top of a panel naming what is being edited, with room
+// for one control at its right (a button that opens something).
+export const PanelHeader = ({
+  title,
+  action
+}: {
+  title: string;
+  action?: ReactNode;
+}) => {
   return (
-    <PanelSection sx={{ py: 3 }}>
-      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-        {title}
-      </Typography>
+    <PanelSection sx={{ py: action ? 2 : 3 }}>
+      <Stack
+        direction="row"
+        sx={{ alignItems: 'center', justifyContent: 'space-between' }}
+      >
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {title}
+        </Typography>
+        {action}
+      </Stack>
     </PanelSection>
   );
 };

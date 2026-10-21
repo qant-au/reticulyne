@@ -10,6 +10,7 @@ import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { Icons } from '../IconSelectionControls/Icons';
 import { NodeSettings } from './NodeSettings/NodeSettings';
+import { LabelPositionButton } from './NodeSettings/LabelPositionButton';
 import { TopologyWarnings } from '../components/TopologySection';
 import { Panel, PanelHeader, PanelSection } from 'src/kit';
 
@@ -37,7 +38,23 @@ export const NodeControls = ({ id }: Props) => {
   if (!viewItem || !modelItem) return null;
 
   return (
-    <Panel header={<PanelHeader title="Edit object" />}>
+    <Panel
+      header={
+        <PanelHeader
+          title="Edit object"
+          action={
+            mode === 'SETTINGS' && modelItem.name ? (
+              <LabelPositionButton
+                value={viewItem.labelPosition ?? 'N'}
+                onChange={(labelPosition) => {
+                  updateViewItem(id, { labelPosition });
+                }}
+              />
+            ) : undefined
+          }
+        />
+      }
+    >
       <Box
         sx={{
           bgcolor: (theme) => {

@@ -97,6 +97,10 @@ export const setLabelPosition = async (
   await page.keyboard.press('Escape');
   await glide(page, screenOf(page, tile), 400);
   await page.mouse.click(...screenOf(page, tile));
+  const open = page.getByRole('button', { name: 'Label position', exact: true });
+  const ob = (await open.boundingBox())!;
+  await glide(page, [ob.x + ob.width / 2, ob.y + ob.height / 2], 400);
+  await open.click();
   const compass = page.getByRole('group', { name: 'Label position' });
   await expect(compass).toBeVisible();
   const button = compass.getByRole('button', { name: where, exact: true });
@@ -104,7 +108,6 @@ export const setLabelPosition = async (
   await glide(page, [box.x + box.width / 2, box.y + box.height / 2], 450);
   await button.click();
   await pause(page, 700);
-  await page.keyboard.press('Escape');
 };
 
 /** Switch between the isometric and the flat view with the toolbar. */

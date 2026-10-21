@@ -30,7 +30,7 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
-- **Label position.** A node's label can sit at any of eight compass points around it (`labelPosition`, default `N`, above), chosen on a compass in the inspector beside the distance slider; saved with the diagram as `placements[].labelPosition` in the scene format.
+- **Label position.** A node's label can sit at any of eight compass points around it (`labelPosition`, default `N`, above), chosen on a compass behind the Label position button at the top right of the inspector; saved with the diagram as `placements[].labelPosition` in the scene format.
 - **Hide labels.** A toolbar button and `Alt+L` hide and show the nodes' labels for the session, in every editor mode; the `showLabels` prop sets the start and `useReticulyne().setLabelsVisible()` drives it from code. Display only, never saved; hidden labels are left out of exports.
 - **Demos.** `demos/` records the editor being used, as a person would, into the GIFs in `docs/demos`: drawing a small office network, that network as a live status board, and an NMEA 2000 network on a boat (`npm run demos:record`, `npm run demos:encode`). Each build demo asserts the scene it ends with.
 - **"Office network, live" example** in the examples picker: the office network driven as a status board through `Connector.update`, `Connector.pulse`, `nodeIndicatorComponent` and `connectorIndicatorComponent`, with a fibre outage, a 4G failover and a mains failure carried by the UPS.

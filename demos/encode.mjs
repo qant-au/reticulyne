@@ -18,8 +18,8 @@ const OUT = join(here, '..', 'docs', 'demos');
 
 // Per-recording settings: how much to speed it up, and where to cut.
 const SETTINGS = {
-  'office-network': { speed: 3, start: 1.2 },
-  'nmea-2000': { speed: 3, start: 1.2 },
+  'office-network': { speed: 1.5, start: 1.2 },
+  'nmea-2000': { speed: 1.5, start: 1.2 },
   'office-live': { speed: 1, start: 1.5 }
 };
 const FPS = 10;

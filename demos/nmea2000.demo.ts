@@ -105,12 +105,14 @@ test('nmea 2000 network', async ({ page }, testInfo) => {
   await connect(page, AT['GPS 2'], '4-Way Tee (aft)');
   await connect(page, AT['AIS Transponder'], '4-Way Tee (aft)');
 
+  // The finished diagram: a long look at it, the flat view, and back to
+  // the isometric view, which stays on screen before the GIF loops.
   await fitToView(page);
-  await pause(page, 1800);
+  await pause(page, 9000);
   await toView(page, 'flat');
-  await pause(page, 2200);
+  await pause(page, 11000);
   await toView(page, 'iso');
-  await pause(page, 1800);
+  await pause(page, 18000);
 
   const scene = tidyIds(await exportScene(page), IDS);
   await saveScene(scene, join(__dirname, 'scenes', 'nmea-2000.json'));

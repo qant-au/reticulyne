@@ -102,12 +102,14 @@ test('office network', async ({ page }, testInfo) => {
     toPort: 'Mains in 1'
   });
 
+  // The finished diagram: a long look at it, the flat view, and back to
+  // the isometric view, which stays on screen before the GIF loops.
   await fitToView(page);
-  await pause(page, 1800);
+  await pause(page, 9000);
   await toView(page, 'flat');
-  await pause(page, 2200);
+  await pause(page, 11000);
   await toView(page, 'iso');
-  await pause(page, 1800);
+  await pause(page, 18000);
 
   const scene = tidyIds(await exportScene(page), IDS);
   await saveScene(scene, join(__dirname, 'scenes', 'small-office.json'));

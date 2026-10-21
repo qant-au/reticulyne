@@ -72,6 +72,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       nodeIndicatorComponent: undefined,
       connectorIndicatorComponent: undefined,
       selectionDimEnabled: false,
+      labelsVisible: true,
       highlightedItemId: undefined,
       tour: null,
       tourSteps: undefined,
@@ -302,6 +303,12 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         toggleSelectionDimEnabled: () => {
           set({ selectionDimEnabled: !get().selectionDimEnabled });
+        },
+        setLabelsVisible: (labelsVisible) => {
+          set({ labelsVisible });
+        },
+        toggleLabelsVisible: () => {
+          set({ labelsVisible: !get().labelsVisible });
         },
         setHighlightedItemId: (highlightedItemId) => {
           set({ highlightedItemId });

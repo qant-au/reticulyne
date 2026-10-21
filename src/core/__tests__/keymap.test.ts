@@ -120,6 +120,10 @@ test('Alt chords match the physical key', () => {
     resolveAction(ev('ˆ', 'KeyI', { altKey: true }), reticulyne),
     'toggle-highlight'
   );
+  assert.equal(
+    resolveAction(ev('¬', 'KeyL', { altKey: true }), reticulyne),
+    'toggle-labels'
+  );
 });
 
 test('Alt + Up / Down change floor in Reticulyne; a bare arrow still nudges', () => {

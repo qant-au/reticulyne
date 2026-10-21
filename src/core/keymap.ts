@@ -450,6 +450,13 @@ export const RETICULYNE_BINDINGS: readonly Binding[] = [
     editing: false
   },
   {
+    action: 'toggle-labels',
+    label: 'Hide or show the labels',
+    section: 'View',
+    chords: [c('KeyL', { alt: true })],
+    editing: false
+  },
+  {
     action: 'floor-up',
     label: 'Show the floor above',
     section: 'View',

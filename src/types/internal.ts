@@ -401,6 +401,10 @@ export interface UiState {
   // visual from outside without touching interaction state.
   selectionDimEnabled: boolean;
   highlightedItemId: string | undefined;
+  // Whether the nodes' labels are drawn. The host sets it with the
+  // `showLabels` prop; the toolbar button and Alt+L flip it for the
+  // session. Not part of the diagram, so never saved.
+  labelsVisible: boolean;
   // The tour running, if any. `hostHighlight` is what
   // highlightedItemId was before it started, restored when it ends.
   tour: ActiveTour | null;
@@ -441,6 +445,8 @@ export interface UiStateActions {
   setRendererEl: (el: HTMLDivElement) => void;
   setEnableDebugTools: (enabled: boolean) => void;
   setEnableAnimation: (enabled: boolean) => void;
+  setLabelsVisible: (visible: boolean) => void;
+  toggleLabelsVisible: () => void;
   setExportTheme: (mode: 'light' | 'dark') => void;
   setExportBackgroundColor: (color: string) => void;
   setTitleBarRaised: (raised: boolean) => void;

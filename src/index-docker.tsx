@@ -41,6 +41,8 @@ declare global {
        * AND opt into animation in one shot.
        */
       enableAnimation?: boolean;
+      /** Start with the labels hidden (the `showLabels` prop). */
+      showLabels?: boolean;
       /**
        * 2.3: give the editor a host onSave for the save-status spec.
        * Saves (scenes) are recorded on window.__RETICULYNE_E2E_SAVES__; delayMs
@@ -116,6 +118,9 @@ const enableAnimation =
 const editorProps = {
   editorMode,
   enableAnimation,
+  ...(e2eConfig?.showLabels === undefined
+    ? {}
+    : { showLabels: e2eConfig.showLabels }),
   ...saveProps,
   ...eventProps
 };

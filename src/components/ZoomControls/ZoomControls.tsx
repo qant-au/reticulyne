@@ -9,6 +9,7 @@ import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { Surface, ToolButton } from 'src/kit';
 import { ViewKindToggle } from './ViewKindToggle';
 import { LayersButton } from './LayersButton';
+import { LabelsToggle } from './LabelsToggle';
 
 // `compact` (a phone) leaves out the zoom percentage: with it, the row ran
 // past the right edge and the Layers and ? buttons were cut off.
@@ -74,6 +75,7 @@ export const ZoomControls = ({ compact = false }: { compact?: boolean }) => {
           onClick={fitToView}
         />
       </Surface>
+      <LabelsToggle />
       {editable && <ViewKindToggle />}
       {editable && <LayersButton />}
     </Stack>

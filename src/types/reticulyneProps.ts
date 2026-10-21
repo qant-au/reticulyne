@@ -206,6 +206,14 @@ export interface ReticulyneProps {
    */
   enableAnimation?: boolean;
   /**
+   * Whether the nodes' labels (name and description) are drawn. Default
+   * `true`. The user can hide and show them for the session from the
+   * toolbar or with `Alt+L`; a change to this prop applies over that, and
+   * `useReticulyne().setLabelsVisible()` does the same from code. Labels
+   * hidden on the canvas are left out of exports too.
+   */
+  showLabels?: boolean;
+  /**
    * When `false`, pointer event listeners attach to the renderer element
    * rather than `window`, preventing drag events from leaking into host-page
    * sibling widgets when Reticulyne is embedded in a larger app. Defaults to

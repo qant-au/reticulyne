@@ -30,6 +30,7 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Hide labels.** A toolbar button and `Alt+L` hide and show the nodes' labels for the session, in every editor mode; the `showLabels` prop sets the start and `useReticulyne().setLabelsVisible()` drives it from code. Display only, never saved; hidden labels are left out of exports.
 - **Demos.** `demos/` records the editor being used, as a person would, into the GIFs in `docs/demos`: drawing a small office network, that network as a live status board, and an NMEA 2000 network on a boat (`npm run demos:record`, `npm run demos:encode`). Each build demo asserts the scene it ends with.
 - **"Office network, live" example** in the examples picker: the office network driven as a status board through `Connector.update`, `Connector.pulse`, `nodeIndicatorComponent` and `connectorIndicatorComponent`, with a fibre outage, a 4G failover and a mains failure carried by the UPS.
 - **Icons carry a flat drawing.** An icon may have `flatUrl`, its flat (2D) drawing, beside `url`; the flat view draws it, and falls back to `url`. It is in the model, the scene format and the JSON Schema. A diagram saved before this takes the flat drawing of the library icon with the same id.

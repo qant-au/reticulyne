@@ -121,6 +121,7 @@ Reticulyne's own tools, as shipped:
 | Fit everything (alias) | `F` | kept for existing users |
 | Zoom in, out (aliases) | `=`, `-` | bare, without `Ctrl/Cmd` |
 | Toggle item highlighting | `Alt` + `I` | not in Excalidraw |
+| Hide or show the labels | `Alt` + `L` | not in Excalidraw; display only, works read-only |
 | Show the floor above, below | `Alt` + `Up`, `Alt` + `Down` | not in Excalidraw; a floor is a view |
 | Pan the view | `Ctrl/Cmd` + arrow keys | not in Excalidraw; works read-only |
 | Select the next, previous object | `Tab`, `Shift` + `Tab` | only while the canvas has focus; works read-only |

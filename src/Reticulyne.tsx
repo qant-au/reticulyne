@@ -70,6 +70,7 @@ const App = ({
   legacyConnections = false,
   enableDebugTools = false,
   enableAnimation = false,
+  showLabels = true,
   enableGlobalDragHandlers = true,
   enableGlobalKeyboardShortcuts = true,
   editorMode = 'EDITABLE',
@@ -243,6 +244,10 @@ const App = ({
   useEffect(() => {
     uiStateActions.setEnableAnimation(enableAnimation);
   }, [enableAnimation, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setLabelsVisible(showLabels);
+  }, [showLabels, uiStateActions]);
 
   useEffect(() => {
     uiStateActions.setNodeIndicatorComponent(nodeIndicatorComponent);
@@ -730,6 +735,12 @@ const useReticulyne = () => {
     },
     [currentView, uiStateActions]
   );
+  const setLabelsVisible = useCallback(
+    (visible: boolean): void => {
+      uiStateActions.setLabelsVisible(visible);
+    },
+    [uiStateActions]
+  );
   const fitToView = useCallback((): void => {
     const view = currentView();
     const el = uiStateActions.get().rendererEl;
@@ -1044,6 +1055,11 @@ const useReticulyne = () => {
     focusNode,
     /** Zoom and pan so the whole current view fits the editor. */
     fitToView,
+    /**
+     * Draw or hide the nodes' labels, as the toolbar button and Alt+L do.
+     * Display only: never saved with the diagram.
+     */
+    setLabelsVisible,
 
     // --- 1.6: selection ---
     /**

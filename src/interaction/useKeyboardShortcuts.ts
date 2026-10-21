@@ -484,6 +484,13 @@ export const useKeyboardShortcuts = (enableGlobalKeyboardShortcuts = true) => {
           done();
           return;
 
+        // Alt+L hides or shows the labels: how the diagram looks, not the
+        // diagram, so it works in every mode.
+        case 'toggle-labels':
+          uiStateActions.toggleLabelsVisible();
+          done();
+          return;
+
         // Selecting and panning are not editing: they work read-only, but
         // not in a NON_INTERACTIVE render, which has no pointer at all.
         case 'select':

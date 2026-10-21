@@ -97,6 +97,9 @@ export const NodeLabel = ({ node, order, isDimmed }: Props) => {
   const isTourStep = useUiStateStore((state) => {
     return state.tour?.steps[state.tour.index]?.nodeId === node.id;
   });
+  const labelsVisible = useUiStateStore((state) => {
+    return state.labelsVisible;
+  });
 
   const description = useMemo(() => {
     if (!modelItem || isEmptyMarkdown(modelItem.description)) return null;
@@ -104,6 +107,7 @@ export const NodeLabel = ({ node, order, isDimmed }: Props) => {
     return modelItem.description;
   }, [modelItem]);
 
+  if (!labelsVisible) return null;
   if (!modelItem || !(modelItem.name || description)) return null;
 
   return (

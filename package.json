@@ -54,6 +54,8 @@
     "schema": "UPDATE_SCENE_SCHEMA=1 jest src/core/__tests__/jsonSchema",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium",
+    "demos:record": "playwright test --config demos/playwright.config.ts",
+    "demos:encode": "node demos/encode.mjs",
     "lint": "tsc --noEmit && eslint ./src",
     "lint:fix": "eslint --fix ./src",
     "prepare": "husky",

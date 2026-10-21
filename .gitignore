@@ -10,6 +10,8 @@
 
 # Playwright (e2e) — generated reports, traces, videos, screenshots
 /playwright-out
+# Demo recordings (demos/encode.mjs turns them into docs/demos/*.gif)
+/demos/out
 /playwright-report
 /test-results
 

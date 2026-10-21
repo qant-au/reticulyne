@@ -111,6 +111,7 @@ const viewToScene = (view: View): DiagramView => {
             object: item.id,
             tile: item.tile,
             labelHeight: item.labelHeight,
+            labelPosition: item.labelPosition,
             group: item.parentGroupId,
             layer: item.layerId,
             locked: item.locked
@@ -395,6 +396,7 @@ const viewFromScene = (view: DiagramView): View => {
         id: p.object,
         tile: p.tile,
         labelHeight: p.labelHeight,
+        labelPosition: p.labelPosition,
         parentGroupId: p.group,
         layerId: p.layer,
         locked: p.locked

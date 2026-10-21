@@ -66,7 +66,10 @@ export const VIEW_DEFAULTS: Required<
 };
 
 export const VIEW_ITEM_DEFAULTS: Required<
-  Omit<ViewItem, 'id' | 'tile' | 'parentGroupId' | 'layerId' | 'locked'>
+  Omit<
+    ViewItem,
+    'id' | 'tile' | 'parentGroupId' | 'layerId' | 'locked' | 'labelPosition'
+  >
 > = {
   labelHeight: 80
 };

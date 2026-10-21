@@ -233,10 +233,24 @@ const tileCoord = z
   .max(SCENE_LIMITS.TILE);
 export const tileSchema = z.strictObject({ x: tileCoord, y: tileCoord });
 
+// Where the label sits, as a compass point from the object; absent is 'N'
+// (above). `labelHeight` is how far away.
+export const LABEL_POSITIONS = [
+  'N',
+  'NE',
+  'E',
+  'SE',
+  'S',
+  'SW',
+  'W',
+  'NW'
+] as const;
+
 export const diagramPlacementSchema = z.strictObject({
   object: idSchema,
   tile: tileSchema,
   labelHeight: z.number().min(-1_000).max(1_000).optional(),
+  labelPosition: z.enum(LABEL_POSITIONS).optional(),
   group: idSchema.optional(),
   layer: idSchema.optional(),
   locked: z.boolean().optional()

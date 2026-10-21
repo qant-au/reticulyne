@@ -20,7 +20,8 @@ import {
   connectorDirectionOptions,
   connectorGlyphOptions,
   connectorAnimationFlowOptions,
-  anchorSideOptions
+  anchorSideOptions,
+  labelPositionOptions
 } from 'src/schemas';
 
 export {
@@ -28,7 +29,8 @@ export {
   connectorDirectionOptions,
   connectorGlyphOptions,
   connectorAnimationFlowOptions,
-  anchorSideOptions
+  anchorSideOptions,
+  labelPositionOptions
 } from 'src/schemas';
 export type Model = z.infer<typeof modelSchema>;
 export type ModelItems = z.infer<typeof modelItemsSchema>;
@@ -45,6 +47,7 @@ export type ConnectorGlyph = (typeof connectorGlyphOptions)[number];
 export type ConnectorAnimationFlow =
   (typeof connectorAnimationFlowOptions)[number];
 export type AnchorSide = (typeof anchorSideOptions)[number];
+export type LabelPosition = (typeof labelPositionOptions)[number];
 export type ConnectorAnchor = z.infer<typeof anchorSchema>;
 export type Connector = z.infer<typeof connectorSchema>;
 export type TextBox = z.infer<typeof textBoxSchema>;

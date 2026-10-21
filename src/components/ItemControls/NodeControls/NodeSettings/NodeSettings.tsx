@@ -1,5 +1,6 @@
 import { Slider, Box, TextField } from '@mui/material';
 import { ModelItem, ViewItem } from 'src/types';
+import { LabelPositionPicker } from './LabelPositionPicker';
 import { NAME_MAX } from 'src/schemas/common';
 import { MarkdownEditor } from 'src/components/MarkdownEditor/MarkdownEditorLazy';
 import { useModelItem } from 'src/hooks/useModelItem';
@@ -53,7 +54,17 @@ export const NodeSettings = ({
         />
       </PanelSection>
       {modelItem.name && (
-        <PanelSection title="Label height">
+        <PanelSection title="Label position">
+          <LabelPositionPicker
+            value={node.labelPosition ?? 'N'}
+            onChange={(labelPosition) => {
+              onViewItemUpdated({ labelPosition });
+            }}
+          />
+        </PanelSection>
+      )}
+      {modelItem.name && (
+        <PanelSection title="Label distance">
           <Slider
             marks
             step={20}

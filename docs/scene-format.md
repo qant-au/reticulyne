@@ -392,7 +392,8 @@ interface Tile { x: number; y: number } // integers, -1000 to 1000
 interface DiagramPlacement {
   object: Id;
   tile: Tile;
-  labelHeight?: number;
+  labelHeight?: number;   // how far the label sits from the object
+  labelPosition?: 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW'; // which way; default 'N', above
   group?: Id;             // a group in this view
   layer?: Id;
   locked?: boolean;       // default false

@@ -1,4 +1,9 @@
-import { validateScene, type PlanView, type Scene } from 'src/core';
+import {
+  validateScene,
+  type DiagramView,
+  type PlanView,
+  type Scene
+} from 'src/core';
 import { model as fixtureModel } from 'src/fixtures/model';
 import { modelSchema } from 'src/schemas/model';
 import type { Model } from 'src/types';
@@ -203,6 +208,27 @@ describe('scene -> model -> scene', () => {
     ];
     expectValid(opened);
     const { model, context } = sceneToModel(opened);
+    const saved = sceneFromModel(model, context);
+    expectValid(saved);
+    expect(saved).toEqual(opened);
+  });
+
+  test('keeps a placement’s label position', () => {
+    const opened = richScene();
+    const iso = opened.views!.find((v) => {
+      return v.id === 'iso';
+    }) as DiagramView;
+    iso.placements = [
+      {
+        object: 'ap',
+        tile: { x: 1, y: 1 },
+        labelHeight: 120,
+        labelPosition: 'SE'
+      }
+    ];
+    expectValid(opened);
+    const { model, context } = sceneToModel(opened);
+    expect(model.views[1].items[0].labelPosition).toBe('SE');
     const saved = sceneFromModel(model, context);
     expectValid(saved);
     expect(saved).toEqual(opened);

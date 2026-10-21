@@ -144,6 +144,7 @@ export const NodeLabel = ({ node, order, isDimmed }: Props) => {
             maxWidth={250}
             expandDirection="BOTTOM"
             labelHeight={node.labelHeight ?? DEFAULT_LABEL_HEIGHT}
+            labelPosition={node.labelPosition}
           >
             <Stack spacing={1}>
               {modelItem.name && (

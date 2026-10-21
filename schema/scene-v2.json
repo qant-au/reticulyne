@@ -615,6 +615,19 @@
                       "minimum": -1000,
                       "maximum": 1000
                     },
+                    "labelPosition": {
+                      "type": "string",
+                      "enum": [
+                        "N",
+                        "NE",
+                        "E",
+                        "SE",
+                        "S",
+                        "SW",
+                        "W",
+                        "NW"
+                      ]
+                    },
                     "group": {
                       "type": "string",
                       "pattern": "^[A-Za-z0-9_-]{1,64}$"

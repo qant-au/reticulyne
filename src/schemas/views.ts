@@ -5,11 +5,25 @@ import { connectorSchema } from './connector';
 import { textBoxSchema } from './textBox';
 import { groupSchema } from './group';
 
+// Where a node's label sits, as a compass point from the node: 'N' (above,
+// the default) through 'NE', 'E' ... 'NW'. `labelHeight` is its distance.
+export const labelPositionOptions = [
+  'N',
+  'NE',
+  'E',
+  'SE',
+  'S',
+  'SW',
+  'W',
+  'NW'
+] as const;
+
 export const viewItemSchema = z
   .object({
     id,
     tile: coords,
     labelHeight: z.number().optional(),
+    labelPosition: z.enum(labelPositionOptions).optional(),
     parentGroupId: id.optional(),
     layerId: id.optional(),
     // Locked items are drawn but not selectable on the canvas.

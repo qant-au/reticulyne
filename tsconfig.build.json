@@ -19,6 +19,7 @@
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
     "e2e/**",
+    "demos/**",
     "playwright.config.ts",
     "playwright-out/**",
     "playwright-report/**"

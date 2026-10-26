@@ -2,7 +2,11 @@ import { expect, test } from '@playwright/test';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseMermaid } from '../src/mermaid/parse';
-import { MERMAID_VERSIONS, mermaidParse, withMermaid } from './mermaid-lib';
+import {
+  MERMAID_VERSIONS,
+  mermaidParse,
+  withMermaid
+} from './mermaid-lib';
 
 /**
  * Reticulyne's flowchart reader against Mermaid's own parser, on the whole

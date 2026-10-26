@@ -84,27 +84,18 @@ test('the default is above, and the compass moves the label and saves it', async
   );
 
   // Select the node: its inspector opens with the compass.
-  await page
-    .getByRole('application')
-    .locator('img')
-    .first()
-    .click({ force: true });
-  await page
-    .getByRole('button', { name: 'Label position', exact: true })
-    .click();
+  await page.getByRole('application').locator('img').first().click({ force: true });
+  await page.getByRole('button', { name: 'Label position', exact: true }).click();
   const compass = page.getByRole('group', { name: 'Label position' });
   await expect(compass).toBeVisible();
-  await expect(
-    compass.getByRole('button', { name: 'Label above', exact: true })
-  ).toHaveAttribute('aria-pressed', 'true');
-  await compass
-    .getByRole('button', { name: 'Label below', exact: true })
-    .click();
+  await expect(compass.getByRole('button', { name: 'Label above', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  await compass.getByRole('button', { name: 'Label below', exact: true }).click();
   // Choosing closes the popover; it reopens showing the choice.
   await expect(compass).toHaveCount(0);
-  await page
-    .getByRole('button', { name: 'Label position', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Label position', exact: true }).click();
   await expect(
     page
       .getByRole('group', { name: 'Label position' })
@@ -112,9 +103,7 @@ test('the default is above, and the compass moves the label and saves it', async
   ).toHaveAttribute('aria-pressed', 'true');
   await page.keyboard.press('Escape');
   const after = await boxes(page);
-  expect(after.label.y).toBeGreaterThan(
-    before.icon.y + before.icon.height * 0.6
-  );
+  expect(after.label.y).toBeGreaterThan(before.icon.y + before.icon.height * 0.6);
 
   let saved = await exported(page);
   expect(saved.views[0].placements[0].labelPosition).toBe('S');

@@ -69,9 +69,7 @@ test('iso -> flat -> iso leaves every node where it was', async ({ page }) => {
   await expect(
     page.getByRole('button', { name: 'Flat 2D view', exact: true })
   ).toHaveAttribute('aria-pressed', 'true');
-  await page
-    .getByRole('button', { name: 'Isometric view', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Isometric view', exact: true }).click();
   await expect(
     page.getByRole('button', { name: 'Isometric view', exact: true })
   ).toHaveAttribute('aria-pressed', 'true');
@@ -88,9 +86,7 @@ test('flat -> iso -> flat leaves every node where it was', async ({ page }) => {
   await page.getByRole('button', { name: 'Flat 2D view', exact: true }).click();
   const before = await labelCentres(page);
 
-  await page
-    .getByRole('button', { name: 'Isometric view', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Isometric view', exact: true }).click();
   await page.getByRole('button', { name: 'Flat 2D view', exact: true }).click();
 
   const after = await labelCentres(page);

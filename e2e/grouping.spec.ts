@@ -12,32 +12,29 @@ const tinyIconSvg =
 
 const load = async (page: Page) => {
   await page.addInitScript((url) => {
-    (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
-      {
-        initialData: {
-          title: 'e2e groups',
-          items: ['A', 'B', 'C'].map((n) => {
-            return {
-              id: n.toLowerCase(),
-              name: `Node ${n}`,
-              icon: 'icon-tiny'
-            };
-          }),
-          icons: [{ id: 'icon-tiny', name: 'Tiny', url, collection: 'test' }],
-          colors: [{ id: 'c', value: '#999999' }],
-          views: [
-            {
-              id: 'view-main',
-              name: 'Main',
-              items: [
-                { id: 'a', tile: { x: 0, y: 0 } },
-                { id: 'b', tile: { x: 0, y: 2 } },
-                { id: 'c', tile: { x: 0, y: -3 } }
-              ]
-            }
-          ]
-        }
-      };
+    (
+      window as unknown as { __RETICULYNE_E2E__: unknown }
+    ).__RETICULYNE_E2E__ = {
+      initialData: {
+        title: 'e2e groups',
+        items: ['A', 'B', 'C'].map((n) => {
+          return { id: n.toLowerCase(), name: `Node ${n}`, icon: 'icon-tiny' };
+        }),
+        icons: [{ id: 'icon-tiny', name: 'Tiny', url, collection: 'test' }],
+        colors: [{ id: 'c', value: '#999999' }],
+        views: [
+          {
+            id: 'view-main',
+            name: 'Main',
+            items: [
+              { id: 'a', tile: { x: 0, y: 0 } },
+              { id: 'b', tile: { x: 0, y: 2 } },
+              { id: 'c', tile: { x: 0, y: -3 } }
+            ]
+          }
+        ]
+      }
+    };
   }, tinyIconSvg);
   await page.goto('/');
   await expect(page).toHaveTitle(/Reticulyne/);

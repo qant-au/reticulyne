@@ -24,7 +24,9 @@ test('Edit line panel meets the new requirements', async ({ page }) => {
           { id: 'A', name: 'A', icon: 'icn' },
           { id: 'B', name: 'B', icon: 'icn' }
         ],
-        icons: [{ id: 'icn', name: 'icn', url: iconSvg, collection: 't' }],
+        icons: [
+          { id: 'icn', name: 'icn', url: iconSvg, collection: 't' }
+        ],
         colors: [{ id: 'c', value: '#1f77b4' }],
         views: [
           {

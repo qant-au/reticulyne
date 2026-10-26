@@ -71,12 +71,10 @@ for (const mode of ['EDITABLE', 'EXPLORABLE_READONLY']) {
     await page.mouse.click(c.x, c.y);
     // Two tiles along +Y: the middle of c1.
     await page.mouse.click(c.x - 141.5, c.y - 81.9);
-    await expect
-      .poll(() => events(page))
-      .toEqual([
-        ['node', 'a'],
-        ['connector', 'c1']
-      ]);
+    await expect.poll(() => events(page)).toEqual([
+      ['node', 'a'],
+      ['connector', 'c1']
+    ]);
   });
 }
 

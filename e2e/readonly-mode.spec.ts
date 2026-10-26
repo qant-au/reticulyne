@@ -58,7 +58,9 @@ test('read-only mode hides editor-only UI affordances', async ({ page }) => {
 
   // EXPLORABLE_READONLY's availableTools is ['ZOOM_CONTROLS',
   // 'VIEW_TITLE']. Main menu and tool menu should NOT exist.
-  await expect(page.getByRole('button', { name: 'Main menu' })).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'Main menu' })
+  ).toHaveCount(0);
 
   // Zoom-in and zoom-out are part of ZoomControls, which IS available
   // in read-only mode. Both buttons should be present.

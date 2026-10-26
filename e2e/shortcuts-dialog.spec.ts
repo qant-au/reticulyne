@@ -117,18 +117,13 @@ for (const [width, height] of [
         });
         for (const or of ors) {
           // What follows "or" in reading order must share its line.
-          const all = [...cells[1].querySelectorAll('kbd, span')].filter(
-            (e) => {
-              return e.children.length === 0;
-            }
-          );
+          const all = [...cells[1].querySelectorAll('kbd, span')].filter((e) => {
+            return e.children.length === 0;
+          });
           const next = all[all.indexOf(or) + 1];
           const a = or.getBoundingClientRect();
           const b = next?.getBoundingClientRect();
-          if (
-            !b ||
-            Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) > 6
-          ) {
+          if (!b || Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) > 6) {
             bad.push(cells[0].textContent ?? '');
           }
         }
@@ -137,8 +132,7 @@ for (const [width, height] of [
         if (first && getComputedStyle(cells[0]).display === 'table-cell') {
           const l = cells[0].getBoundingClientRect();
           const k = first.getBoundingClientRect();
-          if (Math.abs(l.top - k.top) > 12)
-            bad.push('label: ' + cells[0].textContent);
+          if (Math.abs(l.top - k.top) > 12) bad.push('label: ' + cells[0].textContent);
         }
       }
       return bad;

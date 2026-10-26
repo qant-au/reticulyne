@@ -74,9 +74,7 @@ test('exports the current view as PNG via the main menu', async ({ page }) => {
   await mainMenuButton.click();
 
   // The menu opens with menu items including "Export as image".
-  const exportImageItem = page.getByRole('menuitem', {
-    name: /Export as image/i
-  });
+  const exportImageItem = page.getByRole('menuitem', { name: /Export as image/i });
   await expect(exportImageItem).toBeVisible();
   await exportImageItem.click();
 

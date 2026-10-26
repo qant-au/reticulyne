@@ -5,8 +5,7 @@ import { expect, test, Page } from '@playwright/test';
  * there is room; when there is not, the title gives way first, then the
  * floors, and the save status never wraps (sweep 2026-09-30, round 3).
  */
-const EXAMPLES =
-  process.env.RETICULYNE_EXAMPLES_BASE_URL ?? 'http://localhost:2223';
+const EXAMPLES = process.env.RETICULYNE_EXAMPLES_BASE_URL ?? 'http://localhost:2223';
 
 type Fixture = {
   title: string;
@@ -128,9 +127,7 @@ for (const [width, height] of [
   });
 
   // (d) "Unsaved changes" wrapped to two lines while the title shrank.
-  test(`(d) at ${width} the save status stays on one line`, async ({
-    page
-  }) => {
+  test(`(d) at ${width} the save status stays on one line`, async ({ page }) => {
     await open(page, width, height, {
       title: 'Sweep diagram title',
       views: [{ id: 'v', name: 'Schematic' }],
@@ -299,9 +296,7 @@ for (const width of [390, 430]) {
 
 // At 390 the bar stopped at 276px (x57-333) under a zoom row spanning
 // x41-363, the title cut with ~30px unused.
-test('at 390 a long title uses the width of the row below', async ({
-  page
-}) => {
+test('at 390 a long title uses the width of the row below', async ({ page }) => {
   await open(page, 390, 844, {
     title: 'Sweep diagram with a long enough title',
     views: [{ id: 'v', name: 'Main' }]

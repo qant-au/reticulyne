@@ -18,7 +18,10 @@ import { expect, test, Page } from '@playwright/test';
 async function readZoomPercent(page: Page): Promise<number> {
   // The chip renders as "<n>%". Match the first occurrence in
   // the toolbar — there's only one ZoomControls instance.
-  const text = await page.locator('text=/^[0-9]+%$/').first().textContent();
+  const text = await page
+    .locator('text=/^[0-9]+%$/')
+    .first()
+    .textContent();
   if (!text) throw new Error('zoom percent chip not found');
   return Number(text.replace('%', ''));
 }

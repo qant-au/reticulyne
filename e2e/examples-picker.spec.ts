@@ -23,8 +23,7 @@ import { expect, test } from '@playwright/test';
  * absolute URL — the override only matters when an embedder is mirrored
  * on a different host.
  */
-const BASE =
-  process.env.RETICULYNE_EXAMPLES_BASE_URL ?? 'http://localhost:2223';
+const BASE = process.env.RETICULYNE_EXAMPLES_BASE_URL ?? 'http://localhost:2223';
 
 const EXAMPLE_NAMES = [
   'Basic editor',
@@ -107,13 +106,10 @@ test.describe('examples-picker @ :2223', () => {
     // floating expand button appears in the top-left corner.
     await page.getByTestId('sidebar-collapse').click();
     await expect
-      .poll(
-        async () => {
-          const box = await sidebar.boundingBox();
-          return box?.width ?? -1;
-        },
-        { timeout: 2_000 }
-      )
+      .poll(async () => {
+        const box = await sidebar.boundingBox();
+        return box?.width ?? -1;
+      }, { timeout: 2_000 })
       .toBe(0);
 
     const expandButton = page.getByTestId('sidebar-expand');
@@ -122,20 +118,15 @@ test.describe('examples-picker @ :2223', () => {
 
     // Re-expanded sidebar returns to its full width.
     await expect
-      .poll(
-        async () => {
-          const box = await sidebar.boundingBox();
-          return box?.width ?? -1;
-        },
-        { timeout: 2_000 }
-      )
+      .poll(async () => {
+        const box = await sidebar.boundingBox();
+        return box?.width ?? -1;
+      }, { timeout: 2_000 })
       .toBeGreaterThan(200);
     await expect(page.getByTestId('sidebar-expand')).toHaveCount(0);
   });
 
-  test('switching to Read-only mode swaps the editor surface', async ({
-    page
-  }) => {
+  test('switching to Read-only mode swaps the editor surface', async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on('pageerror', (err) => {
       consoleErrors.push(`pageerror: ${err.message}`);
@@ -159,9 +150,7 @@ test.describe('examples-picker @ :2223', () => {
     // ReadonlyMode uses the same Airport initialData but wraps Reticulyne
     // in EXPLORABLE_READONLY — the main menu button disappears, while
     // the title strip stays.
-    await expect(page.getByRole('button', { name: 'Main menu' })).toHaveCount(
-      0
-    );
+    await expect(page.getByRole('button', { name: 'Main menu' })).toHaveCount(0);
     await expect(
       page.getByText('Airport management software system', { exact: true })
     ).toBeVisible();
@@ -225,7 +214,5 @@ test('a fired pulse travels along its connector', async ({ page }) => {
   const first = (await glyph.boundingBox())!;
   await page.waitForTimeout(400);
   const later = (await glyph.boundingBox())!;
-  expect(
-    Math.abs(later.x - first.x) + Math.abs(later.y - first.y)
-  ).toBeGreaterThan(5);
+  expect(Math.abs(later.x - first.x) + Math.abs(later.y - first.y)).toBeGreaterThan(5);
 });

@@ -134,9 +134,7 @@ test('Ctrl+wheel zooms about the pointer, not the screen centre', async ({
   // The label shrinks with the zoom, so compare its bottom-centre anchor
   // loosely: it stays near the pointer instead of sliding to the centre.
   expect(Math.abs(after.x + after.width / 2 - at.x)).toBeLessThan(40);
-  expect(Math.abs(after.y + after.height - (box.y + box.height))).toBeLessThan(
-    40
-  );
+  expect(Math.abs(after.y + after.height - (box.y + box.height))).toBeLessThan(40);
 });
 
 // Sweep 2026-09-30: from Fit's level zoom in went 64 -> 84 -> 100 and zoom

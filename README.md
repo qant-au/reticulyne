@@ -70,7 +70,10 @@ editor that breaks one of these flows fails the recording.
 - **One file format.** Diagrams open and save as the
   [Reticulyne scene format](docs/scene-format.md), one JSON document with a published
   schema that also carries floor plans and object details the editor does not show.
-- **Export** to JSON, PNG, PDF and SVG, entirely in the browser.
+- **Export** to JSON, PNG, PDF, SVG and Mermaid, entirely in the browser.
+- **Mermaid flowcharts in and out.** Import a Mermaid flowchart as a laid-out diagram, with
+  any mistake in it shown at its line and column, and export a view as flowchart text that
+  GitHub and every Mermaid renderer draw.
 - **Live dashboards.** Animate connectors, fire signal pulses and overlay your own
   status indicators from a poller or a websocket. See
   [Live dashboards](docs/embedding.md#live-dashboards).
@@ -108,6 +111,7 @@ for versions and browser support. To run the editor on its own instead, see
 - [Catalogue](docs/catalogue.md): the devices, their ports, media and protocols
 - [Icon packs](docs/icon-packs.md): icons with isometric and flat drawings, bundled and your own
 - [Scene format](docs/scene-format.md): the file format
+- [Mermaid](docs/mermaid.md): flowcharts in and out, every shape, link and error
 - [Keyboard shortcuts](docs/keymap.md): the full keymap
 - [Standalone Docker](docs/docker.md): run the editor as a self-hosted app
 - [Demos](demos/README.md): how the recordings above are made

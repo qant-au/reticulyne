@@ -380,6 +380,7 @@ Available values (`MainMenuOptionsEnum`):
 | Value | What it renders |
 |---|---|
 | `'ACTION.OPEN'` | Open a diagram from a local JSON file: a scene, or a legacy model (converted) |
+| `'ACTION.IMPORT_MERMAID'` | Import a Mermaid flowchart, pasted or from a `.mmd` / `.md` file, with every error shown at its line; it replaces the diagram (see [Mermaid](mermaid.md)) |
 | `'ACTION.NEW_FROM_TEMPLATE'` | Replace the diagram with a starter diagram (see the `templates` prop) |
 | `'ACTION.SAVE'` | A **Save** entry that calls `onSave`; off by default, and shown only when `onSave` is supplied (see [Host-managed save](#host-managed-save--onsave--actionsave)) |
 | `'ACTION.RENAME'` | Rename the diagram (menu label: "Rename diagram") |
@@ -387,6 +388,7 @@ Available values (`MainMenuOptionsEnum`):
 | `'EXPORT.PNG'` | Export the diagram as a PNG image |
 | `'EXPORT.PDF'` | Export the diagram as a PDF |
 | `'EXPORT.SVG'` | Export the diagram as SVG. Opens a dialog with background colour picker and two download buttons: **vector SVG** (true-flat, Illustrator/Inkscape/Figma compatible; leaves out text: labels and text boxes) and **universal SVG** (foreignObject, full-fidelity in browsers and Figma) |
+| `'EXPORT.MERMAID'` | Export the current view as Mermaid flowchart text: preview, copy, or download `.mmd` / `.md` (see [Mermaid](mermaid.md)) |
 | `'ACTION.CLEAR_CANVAS'` | Clear all items from the current view |
 | `'LINK.GITHUB'` | Link to the GitHub repository |
 | `'VERSION'` | Display the library version number |
@@ -465,6 +467,16 @@ import { parseScene, serializeScene, type Scene } from '@reticulyne/editor';
 const text = serializeScene(scene); // validated; throws on an invalid scene
 const result = parseScene(text);    // { ok: true, scene } or { ok: false, errors }
 ```
+
+### Mermaid Flowcharts
+
+The current view exports as a Mermaid flowchart, and a Mermaid flowchart imports as a diagram,
+from the main menu (`'EXPORT.MERMAID'`, `'ACTION.IMPORT_MERMAID'`), from `useReticulyne()`
+(`exportMermaid`, `importMermaid`) or, without an editor, from the standalone entry
+(`sceneToMermaid`, `mermaidToScene`). The Mermaid export follows the export rules below like
+the others: the Redacted layer stays out unless included, hidden layers and plan views are left
+out, and one view (floor) is written at a time. An import replaces the diagram, as Open does,
+and cannot be undone. Every shape, link and error is in [mermaid.md](mermaid.md).
 
 ### Layers and the Redacted layer
 

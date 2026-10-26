@@ -85,6 +85,7 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 | Identifier | Default? | What it does |
 |---|---|---|
 | `'ACTION.OPEN'` | on | Open a JSON file: a scene, or a legacy Reticulyne model (converted to a scene). |
+| `'ACTION.IMPORT_MERMAID'` | on | Paste or open a Mermaid flowchart (`.mmd`, or a `.md` with a mermaid block); every error is listed at its line and column, and the flowchart replaces the diagram, laid out on tiles. See [mermaid.md](mermaid.md). (Menu label: "Import Mermaid".) |
 | `'ACTION.NEW_FROM_TEMPLATE'` | on | Replace the diagram with a starter from `templates`. Hidden when `templates` is empty. |
 | `'ACTION.SAVE'` | off | Render a **Save** menu entry that fires the `onSave` prop with the diagram as a scene. Only appears when both `'ACTION.SAVE'` is listed AND the `onSave` prop is supplied. Off-by-default because there's no useful behaviour without a host callback. Added in v4.1.0. |
 | `'ACTION.RENAME'` | on | Open a dialog to rename the diagram; the title shows in the title bar and names the JSON export. (Menu label: "Rename diagram".) |
@@ -92,6 +93,7 @@ to hide the menu entirely. Default: every option marked **default-on** below.
 | `'EXPORT.PNG'` | on | Render the current view to PNG and download. (Menu label: "Export as Image".) |
 | `'EXPORT.PDF'` | on | Render the current view to PNG and embed it in a single-page A4 PDF, then download. All client-side via jsPDF — no network call. Added in v4.0.0. |
 | `'EXPORT.SVG'` | on | Open the SVG export dialog: a flat vector SVG (for Illustrator, Inkscape and Figma) or a full-fidelity browser SVG. |
+| `'EXPORT.MERMAID'` | on | Show the current view as Mermaid flowchart text, to copy or download as `.mmd` or `.md`; lists what did not carry across. See [mermaid.md](mermaid.md). (Menu label: "Export as Mermaid".) |
 | `'ACTION.CLEAR_CANVAS'` | on | Wipe items + views back to an empty scene. (Menu label: "Clear".) |
 | `'LINK.GITHUB'` | on | External link button — opens this fork's GitHub repo (`https://github.com/qant-au/reticulyne`). |
 | `'VERSION'` | on | Shows the running package version. |
@@ -186,6 +188,8 @@ Callable from any component rendered **inside** `<Reticulyne>`. Returns:
 | `getTitle()` | `() => string` | The diagram title. |
 | `setTitle(title)` | `(title: string) => void` | Rename the diagram. Gated on `editorMode === 'EDITABLE'`; schema-validated (over 100 characters goes to `onValidationError`); a blank title becomes `'Untitled'`. Not recorded in undo history. |
 | `loadModel(data, options?)` | `(data: Scene \| InitialData, { fitToView?, view? }?) => Promise<boolean>` | Validate and open a scene, or a legacy model (converted to a scene). `options` fits the diagram to the screen or opens a view; a legacy model's own `fitToView` / `view` still work. Gated on `editorMode === 'EDITABLE'`. Resolves `true` once the diagram has rendered, `false` if refused (wrong mode, or invalid); never rejects. |
+| `exportMermaid(options?)` | `(MermaidExportOptions & { includeRedacted? }) => MermaidExport` | The current view as Mermaid flowchart text: `{ text, warnings, stats }`. The Redacted layer is left out unless `includeRedacted`. Options as `sceneToMermaid` ([mermaid.md](mermaid.md#from-code)). Allowed in every editor mode. |
+| `importMermaid(text, options?)` | `(text: string, MermaidImportOptions?) => Promise<{ ok, issues }>` | Replace the diagram with a Mermaid flowchart (or Markdown holding one), laid out and fitted to the screen. `ok` is `false` when the text has errors (each issue carries a `code`, `line`, `column` and `message`) or the load is refused as `loadModel` is. Warnings come back in `issues` either way. |
 | `setEditorMode(mode)` | `(mode) => void` | Switch between `EDITABLE` / `EXPLORABLE_READONLY` / `NON_INTERACTIVE`. |
 | `setView(viewId)` | `(viewId: string) => void` | Show another view (floor). Allowed in every editor mode; clears the selection; warns and no-ops on an unknown id. |
 | `getLayers()` | `() => Layer[]` | The diagram's layers, `{ id, name, visible? }` (absent `visible` is shown). The base layer and the reserved Redacted layer are never listed. |
@@ -252,6 +256,7 @@ The package also re-exports from `src/standaloneExports.ts`:
 - The [scene format](scene-format.md) — the `Scene` and `SceneResult` types, `SCENE_FORMAT`,
   `SCENE_VERSION`, `SCENE_SCHEMA_URL`, `validateScene`, `parseScene`, `serializeScene`,
   `redactScene`, and `legacyModelToScene` to convert a stored model.
+- [Mermaid](mermaid.md): `sceneToMermaid`, `mermaidToScene`, `flowchartToScene`, `parseMermaid`, `formatIssue`, `isMermaidError`, `MERMAID_SHAPES`, `MERMAID_SHAPE_PROP`, `MERMAID_ERRORS`, `MERMAID_WARNINGS`, and the `MermaidIssue`, `MermaidExport`, `MermaidImport` and option types.
 - Option maps, as **runtime values** (FEA-05): `EditorModeEnum`, `MainMenuOptionsEnum`,
   `ProjectionOrientationEnum`, `AnchorPositionOptions`, `DialogTypeEnum`,
   `LayerOrderingActionOptions`, `tileOriginOptions`, `ItemReferenceTypeOptions`. Each is an

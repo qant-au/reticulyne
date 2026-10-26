@@ -14,7 +14,10 @@ potentially breaking and read the release notes before upgrading.
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- **Mermaid flowcharts in and out** ([docs/mermaid.md](docs/mermaid.md)). **Export as Mermaid** writes the current view as flowchart text (preview, copy, `.mmd` or fenced `.md`), with zones and groups as subgraphs, connector direction, dashes, colours and labels, and a list of what did not carry across. **Import Mermaid** reads pasted text or a `.mmd` / `.md` file and lays the flowchart out on tiles; every problem is an error with a code, a line, a column and a plain message, listed as it is typed, and Import stays off until there are none. Both menu entries are on by default (`'EXPORT.MERMAID'`, `'ACTION.IMPORT_MERMAID'`). `useReticulyne()` gains `exportMermaid()` and `importMermaid()`, and the standalone entry exports `sceneToMermaid`, `mermaidToScene`, `parseMermaid` and the issue codes. The reader is Reticulyne's own (no Mermaid at runtime) and is checked against Mermaid 11 and 12.
+- **Flowchart drawings and catalogue family.** 39 new drawings, one per flowchart shape (Process, Decision, Terminal Point, Document, Database and the rest), each a catalogue item in a new **Flowchart** palette section.
 
 ## [0.8.0] - 2026-10-21
 

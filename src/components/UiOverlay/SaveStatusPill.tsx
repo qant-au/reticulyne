@@ -151,6 +151,9 @@ export const SaveStatusPill = ({ compact = false }: { compact?: boolean }) => {
               setStatus: uiStateActions.setSaveStatus,
               getSceneContext: () => {
                 return uiStateActions.get().sceneContext;
+              },
+              getPacks: () => {
+                return uiStateActions.get().packs;
               }
             });
           }}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
+import { isMissingIcon } from 'src/icons/missing';
 import { packContents } from 'src/icons/packRegistry';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -62,7 +63,8 @@ export const useIconPackSync = (iconCollections?: {
     // An icon an object draws with stays as the diagram has it: a diagram
     // keeps the copies it saved, so opening one never reads as a change.
     const kept = model.icons.filter((icon) => {
-      if (used.has(icon.id)) return true;
+      // A placeholder for a missing icon gives way to a pack that has it.
+      if (used.has(icon.id)) return !(isMissingIcon(icon) && ids.has(icon.id));
       if (ids.has(icon.id)) return false;
       return !added.current.has(icon.id);
     });

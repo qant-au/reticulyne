@@ -29,6 +29,14 @@ import type { Scene as SceneDocument } from 'src/core';
 import type { SceneContext } from 'src/scene/convert';
 import type { DiagramTemplate } from 'src/templates';
 import type { IconPackResult } from 'src/icons/pack';
+import type { ExternalPack } from 'src/core';
+import type { MissingIcon } from 'src/icons/missing';
+
+export interface OpenNotice {
+  // The packs the diagram lists; compared with those loaded as they change.
+  packs: ExternalPack[];
+  icons: MissingIcon[];
+}
 import type {
   IconPackEntry,
   IconPackHandlers,
@@ -394,6 +402,10 @@ export interface UiState {
   packs: LoadedPack[];
   // The host's pack callbacks, for the Icon packs dialog.
   packHandlers: IconPackHandlers;
+  // What the diagram just opened lacks: icon packs it lists that are not
+  // loaded, and icons nobody has (drawn as placeholders). Null when it lacks
+  // nothing, or the notice was closed.
+  openNotice: OpenNotice | null;
   // 2.3: where saving stands. See src/utils/save.ts.
   saveStatus: SaveStatus;
   // SEC-02: host-supplied validation-error callback, mirrored onto the
@@ -497,6 +509,7 @@ export interface UiStateActions {
   /** Removes a pack, unless it is locked. */
   removePack: (id: string) => { ok: true } | { ok: false; errors: string[] };
   setPackHandlers: (handlers: IconPackHandlers) => void;
+  setOpenNotice: (notice: OpenNotice | null) => void;
   setEditingGroupId: (id: string | null) => void;
   setHideRedacted: (hideRedacted: boolean) => void;
   setShowOtherFloors: (showOtherFloors: boolean) => void;

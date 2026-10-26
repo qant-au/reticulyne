@@ -110,8 +110,17 @@ test('a hooked diagram gets the bundled icons, as an imported one does', () => {
   expect(img).not.toBeNull();
 });
 
-test('a hooked diagram naming an unknown icon says so instead of a blank page', () => {
+test('a hooked diagram naming an unknown icon opens, and lists the icon', () => {
   mount(naming('no-such-icon'));
+  expect(screen.queryByText(/That diagram is not valid/)).toBeNull();
+  expect(screen.getByTestId('open-notice').textContent).toMatch(
+    /no-such-icon \(1 object\)/
+  );
+});
+
+test('a hooked diagram that is not valid says so instead of a blank page', () => {
+  const base = naming('server');
+  mount({ ...base, objects: [...base.objects, ...base.objects] });
   expect(screen.getByRole('alert').textContent).toMatch(
     /That diagram is not valid/
   );

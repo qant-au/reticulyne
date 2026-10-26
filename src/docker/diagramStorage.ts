@@ -154,9 +154,12 @@ export const createDiagramStorage = (
    */
   const open = (value: unknown, id?: string): Scene | null => {
     if (!isObject(value)) return null;
+    // An icon the diagram names and nobody has opens as a placeholder,
+    // which the editor then lists, rather than refusing the whole file.
     const result = readScene(
       withBundledIcons(value),
-      id === undefined ? undefined : sceneSafeId(id)
+      id === undefined ? undefined : sceneSafeId(id),
+      { library: [...bundled, ...packIcons()] }
     );
     return result.ok ? result.scene : null;
   };

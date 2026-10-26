@@ -69,9 +69,34 @@ export const useSceneItems = ({
     [getState, setState, currentViewId]
   );
 
+  // Every object drawn with one icon redrawn with another, as one undo step.
+  // Only the drawing changes: ports, connections and the rest are kept.
+  const replaceIcon = useCallback(
+    (fromIcon: string, toIcon: string, onlyIds?: string[]) => {
+      const start = getState();
+      const ids = start.model.items
+        .filter((item) => {
+          return (
+            item.icon === fromIcon &&
+            (onlyIds === undefined || onlyIds.includes(item.id))
+          );
+        })
+        .map((item) => {
+          return item.id;
+        });
+      if (!ids.length) return;
+      const next = ids.reduce((state, id) => {
+        return reducers.updateModelItem(id, { icon: toIcon }, state);
+      }, start);
+      setState(next);
+    },
+    [getState, setState]
+  );
+
   return {
     createModelItem,
     updateModelItem,
+    replaceIcon,
     deleteModelItem,
     createViewItem,
     updateViewItem,

@@ -403,6 +403,19 @@ export const iconSchema = z.strictObject({
 
 export const colorSchema = z.strictObject({ id: idSchema, value: hex });
 
+// An icon pack, other than Reticulyne's own, whose icons the diagram uses:
+// written once per pack, so someone opening the file without the pack is
+// told what it is and where to get it (docs/icon-packs.md, Sharing). The
+// diagram still carries its own copy of every icon it uses.
+export const externalPackSchema = z.strictObject({
+  id: idSchema,
+  name,
+  version: z.string().max(40).optional(),
+  sourceUrl: z.string().trim().min(1).max(2_000),
+  // The ids of the pack's icons the diagram uses.
+  icons: z.array(idSchema).max(SCENE_LIMITS.ICONS)
+});
+
 // Structure only: the JSON Schema is generated from this.
 export const sceneShapeSchema = z.strictObject({
   $schema: z.string().max(2_000).optional(),
@@ -421,6 +434,7 @@ export const sceneShapeSchema = z.strictObject({
   layers: z.array(layerSchema).max(SCENE_LIMITS.LAYERS).optional(),
   icons: z.array(iconSchema).max(SCENE_LIMITS.ICONS).optional(),
   colors: z.array(colorSchema).max(SCENE_LIMITS.COLORS).optional(),
+  externalPacks: z.array(externalPackSchema).max(100).optional(),
   links: links.optional()
 });
 
@@ -459,6 +473,7 @@ export type IconOverride = z.infer<typeof iconOverrideSchema>;
 export type Port = z.infer<typeof portSchema>;
 export type Connection = z.infer<typeof connectionSchema>;
 export type ExternalLink = z.infer<typeof externalLinkSchema>;
+export type ExternalPack = z.infer<typeof externalPackSchema>;
 export type View = z.infer<typeof viewSchema>;
 export type PlanView = z.infer<typeof planViewSchema>;
 export type DiagramView = z.infer<typeof diagramViewSchema>;

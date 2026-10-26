@@ -68,6 +68,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       removedPackIds: [],
       packs: [],
       packHandlers: {},
+      openNotice: null,
       editingGroupId: null,
       hideRedacted: false,
       showOtherFloors: true,
@@ -334,6 +335,9 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setPackHandlers: (packHandlers) => {
           set({ packHandlers });
+        },
+        setOpenNotice: (openNotice) => {
+          set({ openNotice });
         },
         setOnIconUpload: (onIconUpload) => {
           set({ onIconUpload });

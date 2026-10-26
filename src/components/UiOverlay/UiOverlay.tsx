@@ -14,6 +14,7 @@
 // Split out under QUA4-10. EDITOR_MODE_MAPPING + getEditorModeMapping
 // have moved to src/utils/editorModeMapping.ts.
 
+import { OpenNotice } from 'src/components/OpenNotice/OpenNotice';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { getEditorModeMapping } from 'src/utils';
@@ -139,6 +140,7 @@ export const UiOverlay = () => {
         <SearchBar />
         <MiniMap />
         <IconPalette />
+        <OpenNotice />
       </Box>
       <DialogLayer
         mode={mode}

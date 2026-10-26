@@ -45,6 +45,9 @@ export const useSaveModel = () => {
       setStatus: uiStateActions.setSaveStatus,
       getSceneContext: () => {
         return uiStateActions.get().sceneContext;
+      },
+      getPacks: () => {
+        return uiStateActions.get().packs;
       }
     });
   }, [model, onSave, uiStateActions]);

@@ -1,5 +1,7 @@
 import { BUILTIN_PACK } from 'src/icons/builtin';
 import { fillFlatUrls } from 'src/icons/pack';
+import { packContents } from 'src/icons/packRegistry';
+import { packNotices } from 'src/icons/externalPacks';
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import type { ZodIssue } from 'zod';
 import type { InitialData, IconCollectionState, Model } from 'src/types';
@@ -134,9 +136,19 @@ export const useInitialDataManager = ({
       // A scene, or a legacy model converted to one: either way the
       // editor opens a validated scene and remembers it, so a save can
       // merge into it.
+      // An icon the diagram names but does not carry is taken from the
+      // editor's library (its icons, the built-in drawings, the loaded
+      // packs), else drawn as a placeholder and listed (src/icons/missing.ts).
+      const { packs } = uiStateActions.get();
       const read = readScene(_initialData, undefined, {
         connections:
-          legacyConnectionsRef.current ?? uiStateActions.get().legacyConnections
+          legacyConnectionsRef.current ??
+          uiStateActions.get().legacyConnections,
+        library: [
+          ...modelActions.get().icons,
+          ...BUILTIN_PACK.icons,
+          ...packContents(packs).icons
+        ]
       });
 
       if (!read.ok) {
@@ -236,6 +248,17 @@ export const useInitialDataManager = ({
         ...initialData
       });
       uiStateActions.setSceneContext(context);
+      // What the diagram lacks: packs it lists that are not here (or are
+      // here at another version), and icons nobody has. Every load replaces
+      // the notice, so it never speaks of the diagram that was open before.
+      uiStateActions.setOpenNotice(
+        packNotices(read.scene, packs).length || read.missingIcons.length
+          ? {
+              packs: read.scene.externalPacks ?? [],
+              icons: read.missingIcons
+            }
+          : null
+      );
       // A load replaces the diagram, views included. An undo reaching
       // back past it restored a model whose view no longer existed and
       // crashed the editor (after a template, a Clear, an import).

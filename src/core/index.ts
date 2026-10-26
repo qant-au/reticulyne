@@ -33,6 +33,7 @@ export {
   type DiagramPlacement,
   type DiagramView,
   type ExternalLink,
+  type ExternalPack,
   type Facing,
   type Floor,
   type Group,

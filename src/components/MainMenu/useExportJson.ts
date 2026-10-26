@@ -23,6 +23,7 @@ import {
 } from 'src/utils';
 import { leanIcons, sceneFromModel } from 'src/scene/convert';
 import { redactScene } from 'src/core';
+import { withExternalPacks } from 'src/icons/externalPacks';
 
 /** Downloads the diagram's scene, with or without the Redacted layer. */
 export const useDownloadJson = () => {
@@ -38,7 +39,12 @@ export const useDownloadJson = () => {
   return useCallback(
     (includeRedacted: boolean) => {
       const scene = sceneFromModel(model, uiStateActions.get().sceneContext);
-      exportAsJSON(leanIcons(includeRedacted ? scene : redactScene(scene)));
+      exportAsJSON(
+        withExternalPacks(
+          leanIcons(includeRedacted ? scene : redactScene(scene)),
+          uiStateActions.get().packs
+        )
+      );
     },
     [model, uiStateActions]
   );

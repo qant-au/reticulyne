@@ -1126,6 +1126,47 @@
         "additionalProperties": false
       }
     },
+    "externalPacks": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,64}$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "version": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "sourceUrl": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "icons": {
+            "maxItems": 5000,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,64}$"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "sourceUrl",
+          "icons"
+        ],
+        "additionalProperties": false
+      }
+    },
     "links": {
       "maxItems": 20,
       "type": "array",

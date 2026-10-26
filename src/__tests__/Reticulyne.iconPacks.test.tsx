@@ -9,12 +9,15 @@ import userEvent from '@testing-library/user-event';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import Reticulyne, { useReticulyne } from '../Reticulyne';
 import { useModelStore } from 'src/stores/modelStore';
+import { useScene } from 'src/hooks/useScene';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { model as fixtureModel } from 'src/fixtures/model';
 import type { IconPack } from 'src/icons/pack';
 import type { IconPackEntry } from 'src/icons/packRegistry';
 import { PACK_LOCKED_MESSAGE } from 'src/icons/packRegistry';
 import type { Icon } from 'src/types';
+import { emptyScene, type Scene } from 'src/core';
+import { MISSING_ICON_URL } from 'src/icons/missing';
 
 // Icon packs pushed in from code: the iconPacks prop and useReticulyne's
 // installIconPack / removeIconPack, over the Nautical Flags pack.
@@ -69,6 +72,7 @@ interface Seen {
   icons: Icon[];
   categories: (string | undefined)[];
   addItemWithIcon: (icon: string) => void;
+  undo: () => void;
   isDirty: boolean;
 }
 
@@ -86,6 +90,7 @@ const Probe = ({ onSeen }: { onSeen: (seen: Seen) => void }) => {
   const modelActions = useModelStore((state) => {
     return state.actions;
   });
+  const { undo } = useScene();
   useEffect(() => {
     onSeen({
       api,
@@ -94,6 +99,7 @@ const Probe = ({ onSeen }: { onSeen: (seen: Seen) => void }) => {
         return c.id;
       }),
       isDirty,
+      undo,
       addItemWithIcon: (icon) => {
         const { items } = modelActions.get();
         modelActions.set({
@@ -109,6 +115,7 @@ const mount = (props: {
   iconPacks?: IconPackEntry[];
   onIconPackInstall?: (pack: IconPack) => void;
   onIconPackRemove?: (id: string) => void;
+  initialData?: Scene;
 }) => {
   let seen: Seen | undefined;
   act(() => {
@@ -270,5 +277,141 @@ describe('the Icon packs menu entry', () => {
 
   test('is not offered on a read-only diagram', async () => {
     expect(await menuHas({ editorMode: 'EXPLORABLE_READONLY' })).toBe(false);
+  });
+});
+
+describe('opening a diagram drawn with a pack', () => {
+  // Saved with the flags pack loaded: it lists the pack and carries its own
+  // copies of Alfa and Zulu; a third object names an icon nobody has.
+  const shared = (): Scene => {
+    const base = emptyScene('shared', 'Regatta');
+    const copy = (i: number) => {
+      const icon = flags.icons[i];
+      return {
+        id: icon.id,
+        name: icon.name,
+        url: icon.url,
+        isIsometric: true,
+        flatUrl: icon.flatUrl
+      };
+    };
+    return {
+      ...base,
+      objects: [
+        { id: 'a', name: 'Alfa', icon: 'nautical-flags-alfa' },
+        { id: 'z', name: 'Zulu', icon: 'nautical-flags-zulu' },
+        { id: 'q', name: 'Lost', icon: 'gone-icon' },
+        { id: 'q2', name: 'Lost too', icon: 'gone-icon' }
+      ],
+      icons: [copy(0), copy(25)],
+      externalPacks: [
+        {
+          id: 'nautical-flags',
+          name: 'Nautical Flags',
+          version: '1.0.0',
+          sourceUrl: flags.sourceUrl,
+          icons: ['nautical-flags-alfa', 'nautical-flags-zulu']
+        }
+      ],
+      connections: [{ id: 'c1', from: 'a', to: 'q' }],
+      views: [
+        {
+          id: 'v',
+          kind: 'iso' as const,
+          name: 'Main',
+          placements: ['a', 'z', 'q', 'q2'].map((object, i) => {
+            return { object, tile: { x: i * 2, y: 0 } };
+          })
+        }
+      ]
+    };
+  };
+
+  test('without the pack: names it with its source, and lists the missing icon', () => {
+    mount({ initialData: shared() });
+    const notice = screen.getByTestId('open-notice').textContent ?? '';
+    expect(notice).toContain('Nautical Flags 1.0.0, from');
+    expect(notice).toContain(flags.sourceUrl);
+    expect(notice).toContain('gone-icon (2 objects)');
+  });
+
+  test('with the pack at another version: says which', () => {
+    mount({
+      initialData: shared(),
+      iconPacks: [{ pack: { ...flags, version: '2.0.0' } }]
+    });
+    expect(screen.getByTestId('open-notice').textContent).toContain(
+      'Nautical Flags: the diagram was drawn with 1.0.0; 2.0.0 is installed.'
+    );
+  });
+
+  test('installing the pack takes its line away; the diagram keeps its copies', () => {
+    const seen = mount({ initialData: shared() });
+    act(() => {
+      seen().api.installIconPack(flags);
+    });
+    const notice = screen.getByTestId('open-notice').textContent ?? '';
+    expect(notice).not.toContain('Nautical Flags 1.0.0, from');
+    expect(notice).toContain('gone-icon');
+  });
+
+  test('Replace swaps the missing icon on every object in one undo step, connections kept', async () => {
+    const seen = mount({ initialData: shared() });
+    const placeholder = seen().icons.find((i) => {
+      return i.id === 'gone-icon';
+    });
+    expect(placeholder?.url).toBe(MISSING_ICON_URL);
+    await act(async () => {
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Replace gone-icon' })
+      );
+    });
+    await act(async () => {
+      await userEvent.type(screen.getByLabelText('Search icons'), 'Zulu');
+    });
+    const choices = screen.getByTestId('replace-icon-choices');
+    await act(async () => {
+      await userEvent.click(choices.querySelector('img')!);
+    });
+    const scene = seen().api.getScene();
+    expect(
+      scene.objects
+        .filter((o) => {
+          return o.id === 'q' || o.id === 'q2';
+        })
+        .map((o) => {
+          return o.icon;
+        })
+    ).toEqual(['nautical-flags-zulu', 'nautical-flags-zulu']);
+    expect(scene.connections).toEqual([
+      expect.objectContaining({ id: 'c1', from: 'a', to: 'q' })
+    ]);
+    expect(screen.getByTestId('open-notice').textContent).not.toContain(
+      'gone-icon'
+    );
+    // One undo brings both back.
+    act(() => {
+      seen().undo();
+    });
+    expect(
+      seen()
+        .api.getScene()
+        .objects.filter((o) => {
+          return o.icon === 'gone-icon';
+        })
+    ).toHaveLength(2);
+  });
+
+  test('a save lists the pack once; a diagram with no pack icons lists none', () => {
+    const seen = mount({ initialData: shared(), iconPacks: [{ pack: flags }] });
+    expect(seen().api.getScene().externalPacks).toEqual([
+      expect.objectContaining({
+        id: 'nautical-flags',
+        icons: ['nautical-flags-alfa', 'nautical-flags-zulu']
+      })
+    ]);
+    cleanup();
+    const plain = mount({});
+    expect(plain().api.getScene()).not.toHaveProperty('externalPacks');
   });
 });

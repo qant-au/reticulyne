@@ -6,6 +6,8 @@ import {
   type SceneContext
 } from 'src/scene/convert';
 import { CUSTOM_ICON_COLLECTION } from 'src/utils/iconUpload';
+import { withExternalPacks } from 'src/icons/externalPacks';
+import type { LoadedPack } from 'src/icons/packRegistry';
 
 // One save path for the menu's Save, the pill's Retry and
 // auto-save, so all three report the same status. What is saved is a
@@ -46,6 +48,8 @@ interface SaveDeps {
   setStatus: (patch: Partial<SaveStatus>) => void;
   /** The scene the diagram was opened from, read at save time. */
   getSceneContext: () => SceneContext;
+  /** The icon packs loaded, for the scene's `externalPacks`. */
+  getPacks?: () => LoadedPack[];
 }
 
 /**
@@ -58,7 +62,7 @@ interface SaveDeps {
 export const performSave = async (
   onSave: SaveHandler,
   model: Model,
-  { getStatus, setStatus, getSceneContext }: SaveDeps
+  { getStatus, setStatus, getSceneContext, getPacks }: SaveDeps
 ): Promise<void> => {
   if (getStatus().state === 'saving') return;
   const fingerprint = fingerprintModel(model);
@@ -67,7 +71,10 @@ export const performSave = async (
     // An editor that writes an invalid scene has a bug; saving it would
     // lose work on the next open, so it is reported as a failed save.
     const checked = validateScene(
-      leanIcons(sceneFromModel(model, getSceneContext()))
+      withExternalPacks(
+        leanIcons(sceneFromModel(model, getSceneContext())),
+        getPacks?.() ?? []
+      )
     );
     if (!checked.ok) {
       throw new Error(`The diagram is not a valid scene: ${checked.errors[0]}`);

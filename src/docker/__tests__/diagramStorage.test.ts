@@ -6,6 +6,7 @@ import type { Model } from 'src/types';
 import { legacyModelToScene } from 'src/scene';
 import type { Scene } from 'src/core';
 import { createDiagramStorage, StorageFullError } from '../diagramStorage';
+import { MISSING_ICON_URL } from 'src/icons/missing';
 
 // APP-01.
 const bundled = [
@@ -103,7 +104,7 @@ test('withBundledIcons puts the bundled icons back and changes nothing else', ()
   ).toEqual(['server', 'a&b', 'mine']);
 });
 
-test('a scene naming a bundled icon it does not carry opens; an unknown one does not', () => {
+test('a scene naming a bundled icon it does not carry opens; an unknown one opens with a placeholder', () => {
   const store = createDiagramStorage(localStorage, bundled);
   const base = scene('Refs');
   const naming = (icon: string): Scene => {
@@ -114,7 +115,10 @@ test('a scene naming a bundled icon it does not carry opens; an unknown one does
     };
   };
   expect(store.open(naming('server'))).not.toBeNull();
-  expect(store.open(naming('no-such-icon'))).toBeNull();
+  const opened = store.open(naming('no-such-icon'));
+  expect(opened?.icons).toContainEqual(
+    expect.objectContaining({ id: 'no-such-icon', url: MISSING_ICON_URL })
+  );
 });
 
 test('a pack icon an older build stripped comes back from the installed packs, and is kept on save', () => {

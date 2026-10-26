@@ -55,6 +55,7 @@ import { TEMPLATES } from 'src/templates';
 import type { CatalogueItem } from 'src/catalogue/schema';
 import type { IconPackEntry } from 'src/icons/packRegistry';
 import { useIconPackSync } from 'src/hooks/useIconPackSync';
+import { withExternalPacks } from 'src/icons/externalPacks';
 
 // A stable default, so the effect below does not run on every render.
 const NO_CATALOGUE_ITEMS: CatalogueItem[] = [];
@@ -149,6 +150,12 @@ const App = ({
     return { ...INITIAL_DATA, ...(initialData as InitialData | undefined) };
   }, [initialData]);
 
+  // Before the load: a diagram's pack icons are read against the packs the
+  // host passes, so they must be in the store when the first load runs.
+  useEffect(() => {
+    uiStateActions.setHostPacks(iconPacks);
+  }, [iconPacks, uiStateActions]);
+
   useEffect(() => {
     load(mergedInitialData);
     // `iconCollectionsKey` is included so a runtime change to the
@@ -204,10 +211,6 @@ const App = ({
   useEffect(() => {
     uiStateActions.setCatalogueItems(catalogueItems);
   }, [catalogueItems, uiStateActions]);
-
-  useEffect(() => {
-    uiStateActions.setHostPacks(iconPacks);
-  }, [iconPacks, uiStateActions]);
 
   useEffect(() => {
     uiStateActions.setPackHandlers({
@@ -547,11 +550,14 @@ const useReticulyne = () => {
   // The diagram as a scene (the file format): the model merged into the
   // scene it was opened from, as a save hands it to onSave.
   const getScene = useCallback((): Scene => {
-    return leanIcons(
-      sceneFromModel(
-        modelFromModelStore(ModelActions.get()),
-        uiStateActions.get().sceneContext
-      )
+    return withExternalPacks(
+      leanIcons(
+        sceneFromModel(
+          modelFromModelStore(ModelActions.get()),
+          uiStateActions.get().sceneContext
+        )
+      ),
+      uiStateActions.get().packs
     );
   }, [ModelActions, uiStateActions]);
 

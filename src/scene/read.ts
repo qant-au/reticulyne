@@ -1,7 +1,8 @@
 import type { ZodIssue } from 'zod';
 import { isSceneDocument, sceneSchema, type Scene } from 'src/core';
 import { initialDataSchema } from 'src/schemas/model';
-import type { Model } from 'src/types/model';
+import type { Icon, Model } from 'src/types/model';
+import { fillMissingIcons, type MissingIcon } from 'src/icons/missing';
 import {
   legacyModelToScene,
   normaliseLegacyModel,
@@ -15,8 +16,24 @@ export interface LoadHints {
 }
 
 export type SceneReadResult =
-  | { ok: true; scene: Scene; hints: LoadHints }
+  | {
+      ok: true;
+      scene: Scene;
+      hints: LoadHints;
+      /** The icons the scene's objects name and nobody has (src/icons/missing.ts). */
+      missingIcons: MissingIcon[];
+    }
   | { ok: false; issues: ZodIssue[] };
+
+export interface ReadOptions extends LegacyModelOptions {
+  /**
+   * The icons the editor has. Given, an icon a scene's objects name that the
+   * scene does not carry is taken from here, else put in as a placeholder,
+   * rather than the scene being refused. Left out, such a scene is invalid,
+   * as `validateScene` says.
+   */
+  library?: Icon[];
+}
 
 /**
  * Anything a diagram can be opened from, as a validated scene: a scene, or
@@ -28,12 +45,15 @@ export type SceneReadResult =
 export const readScene = (
   data: unknown,
   id?: string,
-  options: LegacyModelOptions = {}
+  options: ReadOptions = {}
 ): SceneReadResult => {
   if (isSceneDocument(data)) {
-    const result = sceneSchema.safeParse(data);
+    const { value, missing } = options.library
+      ? fillMissingIcons(data, options.library)
+      : { value: data, missing: [] };
+    const result = sceneSchema.safeParse(value);
     return result.success
-      ? { ok: true, scene: result.data, hints: {} }
+      ? { ok: true, scene: result.data, hints: {}, missingIcons: missing }
       : { ok: false, issues: result.error.issues };
   }
   const legacy = initialDataSchema.safeParse(data);
@@ -49,5 +69,5 @@ export const readScene = (
   if (view !== undefined) {
     hints.view = normaliseLegacyModel(model as Model).viewId(view);
   }
-  return { ok: true, scene: checked.data, hints };
+  return { ok: true, scene: checked.data, hints, missingIcons: [] };
 };

@@ -117,6 +117,36 @@ test('a scene naming a bundled icon it does not carry opens; an unknown one does
   expect(store.open(naming('no-such-icon'))).toBeNull();
 });
 
+test('a pack icon an older build stripped comes back from the installed packs, and is kept on save', () => {
+  const flag = {
+    id: 'flags-alfa',
+    name: 'Alfa',
+    url: 'alfa.svg',
+    collection: 'flags'
+  };
+  let installed = [flag];
+  const store = createDiagramStorage(localStorage, bundled, () => {
+    return installed;
+  });
+  const base = scene('Flags');
+  const naming: Scene = {
+    ...base,
+    icons: [],
+    objects: [{ id: 'a', name: 'A', icon: 'flags-alfa' }]
+  };
+  const opened = store.open(naming);
+  expect(opened?.icons).toContainEqual(flag);
+  // Only the icons named are taken, and a save keeps the copy.
+  expect(
+    opened?.icons?.filter((icon) => {
+      return icon.collection === 'flags';
+    })
+  ).toHaveLength(1);
+  store.save('f', opened!);
+  installed = [];
+  expect(store.load('f')?.icons).toContainEqual(flag);
+});
+
 test('an invalid stored diagram reads as null', () => {
   localStorage.setItem(
     'reticulyne.diagram.bad',

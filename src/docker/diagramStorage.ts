@@ -53,7 +53,16 @@ const isObject = (value: unknown): value is Record<string, unknown> => {
 
 export const createDiagramStorage = (
   storage: Storage,
-  bundledIcons: Icon[]
+  bundledIcons: Icon[],
+  /**
+   * The icons of the packs installed in this browser. Builds before rtl-064
+   * stripped them from a saved diagram as if they were bundled, so a diagram
+   * that names one and does not carry it takes it from here when read. They
+   * are never stripped on save: a diagram keeps its own copy of a pack icon.
+   */
+  packIcons: () => Icon[] = () => {
+    return [];
+  }
 ) => {
   // Legacy models name the bundled icons by their own ids; a scene names
   // them by scene-safe ones (the same, bar one AWS icon with an '&').
@@ -103,6 +112,18 @@ export const createDiagramStorage = (
           return icon.id;
         })
       );
+      const named = new Set(
+        (Array.isArray(value.objects) ? value.objects : []).map(
+          (object: unknown) => {
+            return isObject(object) ? object.icon : undefined;
+          }
+        )
+      );
+      const fromPacks = packIcons().filter((icon) => {
+        return (
+          named.has(icon.id) && !ownIds.has(icon.id) && !bundledIds.has(icon.id)
+        );
+      });
       return {
         ...value,
         icons: [
@@ -111,7 +132,8 @@ export const createDiagramStorage = (
           }),
           // An icon the diagram saved before icons carried flat drawings
           // takes the bundled one's.
-          ...fillFlatUrls(own, bundled)
+          ...fillFlatUrls(own, bundled),
+          ...fromPacks
         ]
       } as T;
     }

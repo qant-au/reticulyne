@@ -40,6 +40,7 @@ import {
 } from './diagramStorage';
 import { Surface } from 'src/kit';
 import type { IconPackEntry } from 'src/icons/packRegistry';
+import { flattenPacks } from 'src/icons/pack';
 import type { PackStore } from './store/localStore';
 
 // APP-01: the Docker editor as a small app. Diagrams live in this
@@ -301,8 +302,10 @@ export const DiagramShell = ({
     ];
   }, [appPacks, packStore]);
   const store: DiagramStorage = useMemo(() => {
-    return createDiagramStorage(storage, bundledIcons);
-  }, [storage, bundledIcons]);
+    return createDiagramStorage(storage, bundledIcons, () => {
+      return flattenPacks(packStore?.list() ?? []);
+    });
+  }, [storage, bundledIcons, packStore]);
 
   const blank = useCallback((): Current => {
     return {

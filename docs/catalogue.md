@@ -325,6 +325,15 @@ object rather than to a port).
 The `internet` item's ports are `hub` ports on Ethernet so a router's WAN port can connect to it
 without a special medium; the role lifts the one-connection limit.
 
+## Flowchart items
+
+The **Flowchart** family holds one item per flowchart node shape: Process, Decision,
+Terminal Point, Document, Database and the rest, 39 in all, each drawn as the shape itself
+(`flow-process`, `flow-decision`, ...). They are virtual items with no ports, so they never
+appear on a floor plan and a connector joins the nodes themselves. They are what a Mermaid
+flowchart imports as, and what a hand-drawn flowchart exports back to Mermaid as; the shape
+for each is in [mermaid.md](mermaid.md#node-shapes).
+
 ## Drawings
 
 An item that has a drawing names it:
@@ -375,6 +384,7 @@ The palette is arranged by **medium family**, never by drawing:
 8. AV
 9. Power
 10. Virtual
+11. Flowchart
 
 An item appears under its own `family`. Search covers every item regardless of section.
 

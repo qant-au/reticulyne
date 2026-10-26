@@ -33,7 +33,8 @@ export const FAMILIES = [
   'fire',
   'av',
   'power',
-  'virtual'
+  'virtual',
+  'flowchart'
 ] as const;
 
 export const FAMILY_NAMES: Record<Family, string> = {
@@ -46,7 +47,8 @@ export const FAMILY_NAMES: Record<Family, string> = {
   fire: 'Fire',
   av: 'AV',
   power: 'Power',
-  virtual: 'Virtual'
+  virtual: 'Virtual',
+  flowchart: 'Flowchart'
 };
 
 export const PORT_ROLES = [

@@ -61,6 +61,62 @@ const serverPorts = (): CatalogueItem['ports'] => {
   ];
 };
 
+// Flowchart shapes: the nodes of a Mermaid flowchart, imported or drawn by
+// hand (docs/mermaid.md). Virtual, so never on a floor plan, and with no
+// ports: a flowchart link joins the nodes themselves.
+const flow = (id: string, name: string): CatalogueItem => {
+  return {
+    id: `flow-${id}`,
+    name,
+    drawing: `flow-${id}`,
+    family: 'flowchart',
+    virtual: true,
+    ports: []
+  };
+};
+
+const FLOWCHART: CatalogueItem[] = [
+  flow('process', 'Process'),
+  flow('event', 'Event'),
+  flow('terminal', 'Terminal Point'),
+  flow('start', 'Start'),
+  flow('stop', 'Stop'),
+  flow('decision', 'Decision'),
+  flow('data-io', 'Data Input/Output'),
+  flow('document', 'Document'),
+  flow('documents', 'Multi-Document'),
+  flow('database', 'Database'),
+  flow('subprocess', 'Subprocess'),
+  flow('processes', 'Multi-Process'),
+  flow('prepare', 'Prepare Conditional'),
+  flow('manual-input', 'Manual Input'),
+  flow('manual-operation', 'Manual Operation'),
+  flow('manual-file', 'Manual File'),
+  flow('priority', 'Priority Action'),
+  flow('delay', 'Delay'),
+  flow('display', 'Display'),
+  flow('card', 'Card'),
+  flow('lined-process', 'Lined Process'),
+  flow('divided-process', 'Divided Process'),
+  flow('loop-limit', 'Loop Limit'),
+  flow('data-store', 'Data Store'),
+  flow('stored-data', 'Stored Data'),
+  flow('internal-storage', 'Internal Storage'),
+  flow('disk-storage', 'Disk Storage'),
+  flow('direct-storage', 'Direct Access Storage'),
+  flow('paper-tape', 'Paper Tape'),
+  flow('extract', 'Extract'),
+  flow('collate', 'Collate'),
+  flow('summary', 'Summary'),
+  flow('junction', 'Junction'),
+  flow('fork', 'Fork/Join'),
+  flow('console', 'Console'),
+  flow('com-link', 'Com Link'),
+  flow('odd', 'Odd'),
+  flow('comment', 'Comment'),
+  flow('text', 'Text Block')
+];
+
 export const ITEMS: CatalogueItem[] = [
   // --- Ethernet and IP ------------------------------------------------
   {
@@ -5230,5 +5286,6 @@ export const ITEMS: CatalogueItem[] = [
       { id: 'public', name: 'Public', medium: 'ethernet-copper', role: 'hub' },
       { id: 'backend', name: 'Backend', medium: 'ethernet-copper', role: 'hub' }
     ]
-  }
+  },
+  ...FLOWCHART
 ];

@@ -394,7 +394,8 @@ describe('the catalogue palette', () => {
       'Fire',
       'AV',
       'Power',
-      'Virtual'
+      'Virtual',
+      'Flowchart'
     ]);
   });
 

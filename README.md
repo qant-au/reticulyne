@@ -73,7 +73,8 @@ editor that breaks one of these flows fails the recording.
 - **Export** to JSON, PNG, PDF, SVG and Mermaid, entirely in the browser.
 - **Mermaid flowcharts in and out.** Import a Mermaid flowchart as a laid-out diagram, with
   any mistake in it shown at its line and column, and export a view as flowchart text that
-  GitHub and every Mermaid renderer draw.
+  GitHub and every Mermaid renderer draw. How it works, step by step:
+  [Mermaid import and export](docs/mermaid.md).
 - **Live dashboards.** Animate connectors, fire signal pulses and overlay your own
   status indicators from a poller or a websocket. See
   [Live dashboards](docs/embedding.md#live-dashboards).

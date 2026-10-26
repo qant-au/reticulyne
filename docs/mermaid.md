@@ -10,6 +10,8 @@ grammar, so nothing extra ships to users and every problem is reported at its li
 The test suite checks that reader against Mermaid 11.17 and 12.1 on a corpus of good and broken
 flowcharts (`e2e/mermaid-parity.spec.ts`).
 
+- [Importing a Flowchart, Step by Step](#importing-a-flowchart-step-by-step)
+- [Exporting a Diagram, Step by Step](#exporting-a-diagram-step-by-step)
 - [In the Editor](#in-the-editor)
 - [From Code](#from-code)
 - [Node Shapes](#node-shapes)
@@ -20,6 +22,47 @@ flowcharts (`e2e/mermaid-parity.spec.ts`).
 - [Errors](#errors)
 - [Warnings](#warnings)
 - [Limits](#limits)
+
+## Importing a Flowchart, Step by Step
+
+![Importing a Mermaid flowchart: pasted, a typo shown at its line and fixed, then laid out on the canvas](demos/mermaid-import.gif)
+
+1. Open the **main menu** (top left) and choose **Import Mermaid**.
+2. **Paste** the flowchart into the box, or choose **Open file…** and pick a `.mmd`, `.mermaid`,
+   `.md` or `.txt` file. From a Markdown file the first ` ```mermaid ` block is read.
+3. **Read the line under the box.** "Ready to import: 7 nodes, 7 links." means it is good. If
+   anything is wrong, each problem is listed with its line and column, for example
+   `Line 11, col 8: "->" is not a Mermaid link. Did you mean "-->"?`, and **Import** stays off.
+4. **Choose a problem** in the list: the cursor goes to that place in the text. Fix it there;
+   the list updates as you type. [Errors](#errors) lists every message and its fix.
+5. Check **Not carried across**, if it appears: click actions, styling and the like are listed
+   there ([Warnings](#warnings)). They do not stop the import.
+6. Choose **Import**. The flowchart **replaces the diagram** on the canvas, laid out in its
+   direction and fitted to the screen: each node drawn as its shape, each subgraph as a group,
+   each link as a connector with its label. An import cannot be undone, so export or save the
+   diagram first if you want to keep it.
+
+The imported diagram is an ordinary Reticulyne diagram: move, restyle, connect and save it as
+any other.
+
+## Exporting a Diagram, Step by Step
+
+![Exporting a diagram as Mermaid: the preview, the text copied, and Mermaid drawing it](demos/mermaid-export.gif)
+
+1. Show the view (floor) to export: the export writes the **current view**.
+2. Open the **main menu** and choose **Export as Mermaid**. The flowchart text appears at once.
+3. Pick the **Direction** Mermaid should lay it out in (left to right by default).
+4. Tick **Mermaid 11 shapes** only if the text is for a renderer on Mermaid 11 or later; left
+   off, every shape is written in the bracket form every renderer reads, GitHub's included.
+5. If the diagram has anything on the Redacted layer, it is left out unless you tick
+   **Include redacted content**.
+6. Check **Not carried across**: positions, device icons with no flowchart shape, plan views
+   and hidden layers stay behind ([What Does Not Carry Across](#what-does-not-carry-across)).
+7. **Copy** the text, or **Download .mmd** (the text as it is) or **Download .md** (inside a
+   ` ```mermaid ` fence, ready for a README or a wiki page).
+
+Paste the text into any Markdown file on GitHub or GitLab, or into the
+[Mermaid Live Editor](https://mermaid.live/), and Mermaid draws it.
 
 ## In the Editor
 

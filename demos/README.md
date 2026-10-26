@@ -11,6 +11,8 @@ that the editor still does what the GIF shows.
 | `office-network` | Drawing a small office network: two internet services into a firewall, two switches, two access points, a server, a NAS, a UPS and a laptop on Wi-Fi | [`office-network.demo.ts`](office-network.demo.ts) |
 | `office-live` | The same network as a status board: traffic on the trunks, a fibre outage and the failover to 4G, a mains failure carried by the UPS | [`office-live.demo.ts`](office-live.demo.ts), driving the [Office network, live](../src/examples/OfficeNetworkLive/OfficeNetworkLive.tsx) example |
 | `nmea-2000` | Drawing an NMEA 2000 network on a boat: a backbone of tees between two terminators, a power injector, and the instruments on the drops | [`nmea2000.demo.ts`](nmea2000.demo.ts) |
+| `mermaid-import` | Importing a Mermaid flowchart: pasted, a typo shown at its line and fixed from the error list, then laid out on the canvas. Shown in [docs/mermaid.md](../docs/mermaid.md) | [`mermaid-import.demo.ts`](mermaid-import.demo.ts) |
+| `mermaid-export` | Exporting the three-tier sample as Mermaid: the preview, the text copied, and Mermaid 12 drawing it. Shown in [docs/mermaid.md](../docs/mermaid.md) | [`mermaid-export.demo.ts`](mermaid-export.demo.ts) |
 
 The scenes the build demos draw are saved in [`scenes/`](scenes) once a
 recording passes; the office scene is also written to

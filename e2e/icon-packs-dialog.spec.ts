@@ -167,8 +167,12 @@ test('removal is refused while two saved diagrams use the pack; Show finds the o
   await expect(
     page.locator('#root').getByText('Harbour', { exact: true })
   ).toBeVisible();
+  // Opening a diagram drawn with a pack icon is not a change to it.
+  await expect(page.locator('#root').getByText('Unsaved changes')).toHaveCount(
+    0
+  );
   await page.keyboard.press('Delete');
-  expect((await exportJson(page)).objects).toHaveLength(0);
+  expect((await exportJson(page)).views[0].placements ?? []).toHaveLength(0);
   await saveDiagram(page);
 
   // Regatta, saved, still uses it.
@@ -182,7 +186,7 @@ test('removal is refused while two saved diagrams use the pack; Show finds the o
     .getByRole('button', { name: 'Show the objects in Regatta' })
     .click();
   await page.keyboard.press('Delete');
-  expect((await exportJson(page)).objects).toHaveLength(0);
+  expect((await exportJson(page)).views[0].placements ?? []).toHaveLength(0);
   await saveDiagram(page);
 
   dialog = await openIconPacks(page);

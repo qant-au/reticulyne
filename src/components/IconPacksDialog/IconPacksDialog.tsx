@@ -143,12 +143,25 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
     await install(checked.pack);
   };
 
-  // The objects in the open diagram drawn with any of these icons.
+  // The objects placed in the open diagram that draw with any of these
+  // icons. Only placed ones count: an object on no view cannot be seen or
+  // deleted, and it carries its own copy of the icon anyway.
   const openUsage = (iconIds: Set<string>): IconPackUsage[] => {
     const model = modelActions.get();
+    const placed = new Set(
+      model.views.flatMap((v) => {
+        return v.items.map((i) => {
+          return i.id;
+        });
+      })
+    );
     const objects = model.items
       .filter((item) => {
-        return item.icon !== undefined && iconIds.has(item.icon);
+        return (
+          placed.has(item.id) &&
+          item.icon !== undefined &&
+          iconIds.has(item.icon)
+        );
       })
       .map((item) => {
         return { id: item.id, name: item.name || item.id };

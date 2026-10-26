@@ -50,7 +50,7 @@ const Setup = ({
 }: {
   hostPacks: IconPackEntry[];
   handlers: IconPackHandlers;
-  items: { id: string; name: string; icon: string }[];
+  items: { id: string; name: string; icon: string; placed?: boolean }[];
 }) => {
   const ui = useUiStateStore((state) => {
     return state.actions;
@@ -64,14 +64,21 @@ const Setup = ({
     ui.setPackHandlers(handlers);
     model.set({
       title: 'Harbour',
-      items,
+      items: items.map(({ placed, ...item }) => {
+        void placed;
+        return item;
+      }),
       views: [
         {
           id: 'v',
           name: 'Main',
-          items: items.map((i) => {
-            return { id: i.id, tile: { x: 0, y: 0 } };
-          })
+          items: items
+            .filter((i) => {
+              return i.placed !== false;
+            })
+            .map((i) => {
+              return { id: i.id, tile: { x: 0, y: 0 } };
+            })
         }
       ]
     });
@@ -87,7 +94,7 @@ const mount = ({
 }: {
   hostPacks?: IconPackEntry[];
   handlers?: IconPackHandlers;
-  items?: { id: string; name: string; icon: string }[];
+  items?: { id: string; name: string; icon: string; placed?: boolean }[];
 }) => {
   render(
     <ThemeProvider theme={theme}>
@@ -335,4 +342,21 @@ test('with no host usage check, only the open diagram is checked, and Show is of
   expect(
     screen.getAllByRole('button', { name: /^Show the objects/ })
   ).toHaveLength(1);
+});
+
+test('an object on no view does not hold the pack: it cannot be seen or deleted', async () => {
+  mount({
+    hostPacks: [{ pack: flags, origin: 'user' }],
+    items: [
+      { id: 'f1', name: 'Alfa', icon: 'nautical-flags-alfa', placed: false }
+    ]
+  });
+  await act(async () => {
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Remove Nautical Flags' })
+    );
+  });
+  expect(
+    screen.getByText(/Its 40 icons and its devices leave the library/)
+  ).toBeTruthy();
 });

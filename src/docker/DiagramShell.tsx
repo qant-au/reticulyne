@@ -458,9 +458,21 @@ export const DiagramShell = ({
       return store.list().flatMap((entry) => {
         if (entry.id === current.id) return [];
         const scene = store.load(entry.id);
+        // Placed objects only, as the editor counts the open diagram.
+        const placed = new Set(
+          (scene?.views ?? []).flatMap((v) => {
+            return (v.placements ?? []).map((p) => {
+              return p.object;
+            });
+          })
+        );
         const objects = (scene?.objects ?? [])
           .filter((object) => {
-            return object.icon !== undefined && ids.has(object.icon);
+            return (
+              placed.has(object.id) &&
+              object.icon !== undefined &&
+              ids.has(object.icon)
+            );
           })
           .map((object) => {
             return { id: object.id, name: object.name || object.id };

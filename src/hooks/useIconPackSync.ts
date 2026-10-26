@@ -6,9 +6,9 @@ import type { Icon } from 'src/types';
 import { filterIconsByCollection } from 'src/utils/common';
 
 // Keeps the icon library in step with the loaded icon packs: a pack's icons
-// are added (replacing any icon of the same id, a diagram's saved copy
-// included, so a pack's newer drawings show), and a removed pack's icons
-// go, except one an object still draws with. Runs again after every load,
+// are added (replacing a library icon of the same id, but never the copy of
+// an icon an object draws with), and a removed pack's icons go, except one
+// an object still draws with. Runs again after every load,
 // which rebuilds the library. The icon categories follow, so a pack's
 // collection is a section of the library.
 
@@ -59,11 +59,24 @@ export const useIconPackSync = (iconCollections?: {
         return item.icon;
       })
     );
+    // An icon an object draws with stays as the diagram has it: a diagram
+    // keeps the copies it saved, so opening one never reads as a change.
     const kept = model.icons.filter((icon) => {
+      if (used.has(icon.id)) return true;
       if (ids.has(icon.id)) return false;
-      return !added.current.has(icon.id) || used.has(icon.id);
+      return !added.current.has(icon.id);
     });
-    const icons = [...kept, ...packIcons];
+    const keptIds = new Set(
+      kept.map((icon) => {
+        return icon.id;
+      })
+    );
+    const icons = [
+      ...kept,
+      ...packIcons.filter((icon) => {
+        return !keptIds.has(icon.id);
+      })
+    ];
     added.current = ids;
     if (!sameIcons(icons, model.icons)) modelActions.set({ icons });
 

@@ -20,7 +20,9 @@ const OUT = join(here, '..', 'docs', 'demos');
 const SETTINGS = {
   'office-network': { speed: 1.5, start: 1.2 },
   'nmea-2000': { speed: 1.5, start: 1.2 },
-  'office-live': { speed: 1, start: 1.5 }
+  'office-live': { speed: 1, start: 1.5 },
+  'mermaid-import': { speed: 1.5, start: 1.2 },
+  'mermaid-export': { speed: 1.5, start: 1.2 }
 };
 const FPS = 10;
 const WIDTH = 800;

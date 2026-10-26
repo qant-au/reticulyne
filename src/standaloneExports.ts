@@ -83,10 +83,12 @@ export {
 export {
   fillFlatUrls,
   flattenPacks,
+  ICON_PACK_SCHEMA_URL,
   iconPackSchema,
   packCatalogueItems,
   packIcons,
   packIconSchema,
+  packMedia,
   validateIconPack,
   type PackIcon,
   type IconPack,

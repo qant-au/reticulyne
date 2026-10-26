@@ -16,6 +16,7 @@ jest.mock('../idb', () => {
 const pack: IconPack = {
   id: 'network',
   name: 'Network',
+  sourceUrl: 'https://example.com/network',
   icons: [
     {
       id: 'switch',
@@ -250,6 +251,53 @@ describe('icon packs', () => {
     const result = await packs.install({ id: 'x', icons: [] });
     expect(result.ok).toBe(false);
     expect(packs.list()).toEqual([]);
+  });
+
+  test('packs are listed in install order, a reinstall moving last', async () => {
+    const first = await openLocalStore({ factory, legacy: null });
+    const other = { ...pack, id: 'aaa-first-by-id', name: 'Other' };
+    await first.packs.install(pack);
+    await first.packs.install(other);
+    await first.packs.install({ ...pack, version: '2' });
+    const ids = (s: typeof first) => {
+      return s.packs.list().map((p) => {
+        return p.id;
+      });
+    };
+    expect(ids(first)).toEqual(['aaa-first-by-id', 'network']);
+    const again = await openLocalStore({ factory, legacy: null });
+    expect(ids(again)).toEqual(['aaa-first-by-id', 'network']);
+  });
+
+  test('a stored pack this build cannot read is reported, not dropped', async () => {
+    const first = await openLocalStore({ factory, legacy: null });
+    void first;
+    // A pack as an older build stored it: bare, and with no sourceUrl.
+    const { sourceUrl, ...old } = pack;
+    void sourceUrl;
+    await new Promise<void>((resolve, reject) => {
+      const open = factory.open('reticulyne');
+      open.onsuccess = () => {
+        const tx = open.result.transaction('packs', 'readwrite');
+        tx.objectStore('packs').put(old);
+        tx.oncomplete = () => {
+          open.result.close();
+          resolve();
+        };
+        tx.onerror = () => {
+          reject(tx.error);
+        };
+      };
+    });
+    const again = await openLocalStore({ factory, legacy: null });
+    expect(again.packs.list()).toEqual([]);
+    expect(again.packs.unreadable()).toEqual([
+      { id: 'network', errors: [expect.stringMatching(/sourceUrl/)] }
+    ]);
+    await again.packs.remove('network');
+    expect(again.packs.unreadable()).toEqual([]);
+    const third = await openLocalStore({ factory, legacy: null });
+    expect(third.packs.unreadable()).toEqual([]);
   });
 
   test('a removed pack is gone next time', async () => {

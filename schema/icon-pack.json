@@ -1,0 +1,288 @@
+{
+  "$id": "https://cdn.jsdelivr.net/npm/@reticulyne/editor@0/dist/schema/icon-pack.json",
+  "title": "Reticulyne icon pack",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "sourceUrl": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "media": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "family": {
+            "type": "string",
+            "enum": [
+              "ethernet",
+              "wireless",
+              "serial",
+              "marine-vehicle",
+              "building",
+              "security",
+              "fire",
+              "av",
+              "power",
+              "virtual",
+              "flowchart"
+            ]
+          },
+          "topology": {
+            "type": "string",
+            "enum": [
+              "point-to-point",
+              "bus",
+              "loop",
+              "wireless"
+            ]
+          },
+          "basedOn": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "connectors": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+            }
+          },
+          "protocols": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+            }
+          },
+          "termination": {
+            "type": "string",
+            "enum": [
+              "both-ends",
+              "eol"
+            ]
+          },
+          "busPower": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "family",
+          "topology",
+          "connectors"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "icons": {
+      "maxItems": 5000,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "collection": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "isIsometric": {
+            "type": "boolean"
+          },
+          "flatUrl": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "family": {
+            "type": "string",
+            "enum": [
+              "ethernet",
+              "wireless",
+              "serial",
+              "marine-vehicle",
+              "building",
+              "security",
+              "fire",
+              "av",
+              "power",
+              "virtual",
+              "flowchart"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 60,
+                  "pattern": "^[A-Za-z0-9_-]*(\\{\\d+\\.\\.\\d+\\}[A-Za-z0-9_-]*)?$"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "medium": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                },
+                "connector": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                },
+                "gender": {
+                  "type": "string",
+                  "enum": [
+                    "male",
+                    "female"
+                  ]
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "device",
+                    "through",
+                    "backbone",
+                    "drop",
+                    "loop-out",
+                    "loop-return",
+                    "hub",
+                    "client",
+                    "peer"
+                  ]
+                },
+                "protocols": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                  }
+                },
+                "capabilities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "poe-pse",
+                      "poe-pd",
+                      "power-in",
+                      "power-out",
+                      "bus-power",
+                      "terminator",
+                      "eol",
+                      "isolator"
+                    ]
+                  }
+                },
+                "props": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 2000
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "medium"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "props": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 2000
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "url"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "sourceUrl",
+    "icons"
+  ],
+  "additionalProperties": false
+}

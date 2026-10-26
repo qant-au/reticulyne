@@ -36,5 +36,6 @@ export const builtinIcons = (): Icon[] => {
 export const BUILTIN_PACK: IconPack = {
   id: 'reticulyne',
   name: BUILTIN_ICON_COLLECTION,
+  sourceUrl: 'https://github.com/qant-au/reticulyne/tree/main/src/icons',
   icons: builtinIcons()
 };

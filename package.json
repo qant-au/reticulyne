@@ -51,7 +51,7 @@
     "build": "npm run clean && webpack --config ./webpack/prod.config.js && webpack --config ./webpack/esm.config.js && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && mkdir -p dist/schema && cp schema/*.json dist/schema/",
     "prepublishOnly": "npm run lint && npm test && npm run build",
     "test": "jest",
-    "schema": "UPDATE_SCENE_SCHEMA=1 jest src/core/__tests__/jsonSchema",
+    "schema": "UPDATE_SCENE_SCHEMA=1 jest src/core/__tests__/jsonSchema src/icons/__tests__/packJsonSchema",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium",
     "demos:record": "playwright test --config demos/playwright.config.ts",

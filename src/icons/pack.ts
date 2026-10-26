@@ -2,8 +2,10 @@ import { z } from 'zod';
 import { MEDIA, PROTOCOLS } from 'src/catalogue/media';
 import {
   FAMILIES,
+  mediumSchema,
   portTemplateSchema,
-  type CatalogueItem
+  type CatalogueItem,
+  type Medium
 } from 'src/catalogue/schema';
 import { validateCatalogue } from 'src/catalogue/validate';
 import { constrainedStrings, id, SCHEMA_LIMITS } from 'src/schemas/common';
@@ -22,6 +24,16 @@ import type { Icon } from 'src/types/model';
 // (`packCatalogueItems`), so a third-party pack brings its devices with
 // their ports. The detail stays in the pack; the icon a diagram stores is
 // the plain icon record.
+//
+// A pack can declare media of its own (a halyard between signal flags, a
+// vendor's stacking cable) for its ports to use. Their ids may not clash
+// with a built-in medium. `sourceUrl` says where the pack comes from, so
+// someone who opens a diagram drawn with it knows where to get it; it is
+// required but never fetched or checked as a URL.
+
+/** Where the JSON Schema of a pack is published (schema/icon-pack.json). */
+export const ICON_PACK_SCHEMA_URL =
+  'https://cdn.jsdelivr.net/npm/@reticulyne/editor@0/dist/schema/icon-pack.json';
 
 export const packIconSchema = iconSchema.extend({
   family: z.enum(FAMILIES).optional(),
@@ -40,6 +52,8 @@ export const iconPackSchema = z
     id,
     name: constrainedStrings.name,
     version: z.string().max(40).optional(),
+    sourceUrl: z.string().trim().min(1).max(2_000),
+    media: z.array(mediumSchema).max(100).optional(),
     icons: z.array(packIconSchema).max(SCHEMA_LIMITS.ICONS)
   })
   .strict();
@@ -68,6 +82,11 @@ export const packCatalogueItems = (pack: IconPack): CatalogueItem[] => {
       }
     ];
   });
+};
+
+/** The media a pack declares for its own ports. */
+export const packMedia = (pack: IconPack): Medium[] => {
+  return pack.media ?? [];
 };
 
 export type IconPackResult =
@@ -113,11 +132,27 @@ export const validateIconPack = (value: unknown): IconPackResult => {
       errors.push(`icons.${icon.id}: an icon with ports needs a family`);
     }
   }
+  const builtinMedia = new Set(
+    MEDIA.map((m) => {
+      return m.id;
+    })
+  );
+  const packMediaIds = new Set<string>();
+  for (const medium of result.data.media ?? []) {
+    if (builtinMedia.has(medium.id)) {
+      errors.push(
+        `media.${medium.id}: the built-in medium "${medium.id}" has this id already`
+      );
+    } else if (packMediaIds.has(medium.id)) {
+      errors.push(`media.${medium.id}: appears more than once`);
+    }
+    packMediaIds.add(medium.id);
+  }
   if (errors.length) return { ok: false, errors };
   const items = packCatalogueItems(result.data);
   if (items.length) {
     const checked = validateCatalogue({
-      media: MEDIA,
+      media: [...MEDIA, ...packMedia(result.data)],
       protocols: PROTOCOLS,
       items
     });

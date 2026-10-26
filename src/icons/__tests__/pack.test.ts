@@ -8,6 +8,7 @@ import {
   flattenPacks,
   packCatalogueItems,
   packIcons,
+  packMedia,
   validateIconPack,
   type IconPack
 } from '../pack';
@@ -19,6 +20,7 @@ const pack: IconPack = {
   id: 'network',
   name: 'Network',
   version: '1.0.0',
+  sourceUrl: 'https://example.com/network',
   icons: [
     {
       id: 'switch',
@@ -77,6 +79,7 @@ describe('packIcons and flattenPacks', () => {
     const other: IconPack = {
       id: 'other',
       name: 'Other',
+      sourceUrl: 'https://example.com/other',
       icons: [
         { id: 'switch', name: 'Other switch', url: iso },
         { id: 'router', name: 'Router', url: iso }
@@ -157,6 +160,7 @@ describe('a pack icon with connection detail', () => {
   const withPorts: IconPack = {
     id: 'marine-extra',
     name: 'Marine Extra',
+    sourceUrl: 'https://example.com/marine-extra',
     icons: [
       {
         id: 'sat-hotspot',
@@ -225,5 +229,88 @@ describe('a pack icon with connection detail', () => {
         expect.stringMatching(/needs a family/)
       ]);
     }
+  });
+});
+
+describe('a pack source and its own media', () => {
+  const halyard = {
+    id: 'halyard',
+    name: 'Halyard',
+    family: 'marine-vehicle' as const,
+    topology: 'point-to-point' as const,
+    connectors: ['snap-shackle']
+  };
+  const flags: IconPack = {
+    id: 'flags',
+    name: 'Flags',
+    sourceUrl: 'https://example.com/flags',
+    media: [halyard],
+    icons: [
+      {
+        id: 'flags-alfa',
+        name: 'Alfa',
+        url: iso,
+        family: 'marine-vehicle',
+        ports: [{ id: 'hoist-top', medium: 'halyard' }]
+      }
+    ]
+  };
+
+  it('needs a sourceUrl', () => {
+    const { sourceUrl, ...nameless } = flags;
+    void sourceUrl;
+    const result = validateIconPack(nameless);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(' ')).toMatch(/sourceUrl/);
+    expect(validateIconPack({ ...flags, sourceUrl: '  ' }).ok).toBe(false);
+  });
+
+  it('takes any non-empty sourceUrl, without checking it is a URL', () => {
+    expect(validateIconPack({ ...flags, sourceUrl: 'ask Dana' }).ok).toBe(true);
+  });
+
+  it('lets pack icons connect on a medium the pack declares', () => {
+    const result = validateIconPack(flags);
+    expect(result.ok).toBe(true);
+    expect(packMedia(flags)).toEqual([halyard]);
+    expect(packCatalogueItems(flags)[0].ports[0]).toMatchObject({
+      medium: 'halyard'
+    });
+  });
+
+  it('refuses a port on the medium when the pack does not declare it', () => {
+    const result = validateIconPack({ ...flags, media: undefined });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors.join(' ')).toMatch(/icons\.flags-alfa.*halyard/);
+    }
+  });
+
+  it('refuses a medium whose id a built-in medium has', () => {
+    const result = validateIconPack({
+      ...flags,
+      media: [halyard, { ...halyard, id: 'ethernet-copper' }]
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors).toEqual([
+        expect.stringMatching(/media\.ethernet-copper.*built-in/)
+      ]);
+    }
+  });
+
+  it('refuses a medium declared twice', () => {
+    const result = validateIconPack({ ...flags, media: [halyard, halyard] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors).toEqual([
+        expect.stringMatching(/media\.halyard.*more than once/)
+      ]);
+    }
+  });
+
+  it('gives the built-in pack a source', () => {
+    expect(validateIconPack(BUILTIN_PACK).ok).toBe(true);
+    expect(BUILTIN_PACK.sourceUrl).toMatch(/^https:\/\/github\.com\//);
   });
 });

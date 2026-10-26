@@ -146,6 +146,7 @@ test('an icon pack installed in this browser is in the library', async ({
   const pack = {
     id: 'e2e-pack',
     name: 'E2E pack',
+    sourceUrl: 'https://example.com/e2e-pack',
     icons: [
       {
         id: 'e2e-pack-icon',
@@ -164,7 +165,11 @@ test('an icon pack installed in this browser is in the library', async ({
       };
       open.onsuccess = () => {
         const tx = open.result.transaction('packs', 'readwrite');
-        tx.objectStore('packs').put(value);
+        tx.objectStore('packs').put({
+          id: value.id,
+          pack: value,
+          installedAt: Date.now()
+        });
         tx.oncomplete = () => {
           open.result.close();
           resolve();

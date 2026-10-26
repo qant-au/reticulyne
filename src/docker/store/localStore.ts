@@ -47,12 +47,33 @@ export interface PersistentStorage extends Storage {
   flush(): Promise<void>;
 }
 
+/** A stored pack that no longer passes validation, kept until removed. */
+export interface UnreadablePack {
+  id: string;
+  errors: string[];
+}
+
 export interface PackStore {
-  /** The installed packs, in install order. */
+  /** The installed packs, in install order (oldest first). */
   list(): IconPack[];
+  /**
+   * Stored packs this build cannot read (one saved before a field became
+   * required, say). They are reported rather than dropped, so the user can
+   * see what went and remove it.
+   */
+  unreadable(): UnreadablePack[];
   /** Validates and installs a pack, replacing one with the same id. */
   install(value: unknown): Promise<IconPackResult>;
   remove(id: string): Promise<void>;
+}
+
+// What the packs store holds per pack. A bare pack is how builds before
+// rtl-064 stored one; it is read the same way, as installed first.
+// The store's key path is `id`, so a record carries its pack's id too.
+interface PackRecord {
+  id: string;
+  pack: unknown;
+  installedAt: number;
 }
 
 export interface LocalStore {
@@ -169,27 +190,54 @@ const createStorage = (
   };
 };
 
-const createPackStore = (db: IDBDatabase, installed: IconPack[]): PackStore => {
+const isPackRecord = (value: unknown): value is PackRecord => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'pack' in value &&
+    typeof (value as PackRecord).installedAt === 'number'
+  );
+};
+
+const createPackStore = (
+  db: IDBDatabase,
+  installed: IconPack[],
+  unreadable: UnreadablePack[]
+): PackStore => {
   const packs = [...installed];
+  const broken = [...unreadable];
   return {
     list() {
       return [...packs];
     },
+    unreadable() {
+      return [...broken];
+    },
     async install(value: unknown) {
       const result = validateIconPack(value);
       if (!result.ok) return result;
+      const record: PackRecord = {
+        id: result.pack.id,
+        pack: result.pack,
+        installedAt: Date.now()
+      };
       const tx = db.transaction(PACKS, 'readwrite');
-      tx.objectStore(PACKS).put(result.pack);
+      tx.objectStore(PACKS).put(record);
       try {
         await transactionDone(tx);
       } catch (e) {
         throw isQuotaError(e) ? new StorageFullError() : e;
       }
+      // The latest install is the newest: it moves to the end.
       const at = packs.findIndex((pack) => {
         return pack.id === result.pack.id;
       });
-      if (at === -1) packs.push(result.pack);
-      else packs[at] = result.pack;
+      if (at !== -1) packs.splice(at, 1);
+      packs.push(result.pack);
+      const was = broken.findIndex((b) => {
+        return b.id === result.pack.id;
+      });
+      if (was !== -1) broken.splice(was, 1);
       return result;
     },
     async remove(id: string) {
@@ -200,6 +248,10 @@ const createPackStore = (db: IDBDatabase, installed: IconPack[]): PackStore => {
         return pack.id === id;
       });
       if (at !== -1) packs.splice(at, 1);
+      const was = broken.findIndex((b) => {
+        return b.id === id;
+      });
+      if (was !== -1) broken.splice(was, 1);
     }
   };
 };
@@ -327,15 +379,27 @@ export const openLocalStore = async ({
     }
   }
 
-  const installed = (await readEntries<IconPack>(db, PACKS)).flatMap(
-    ([, value]) => {
-      const result = validateIconPack(value);
-      return result.ok ? [result.pack] : [];
-    }
-  );
+  const installed: { pack: IconPack; at: number }[] = [];
+  const unreadable: UnreadablePack[] = [];
+  for (const [key, value] of await readEntries<unknown>(db, PACKS)) {
+    const record = isPackRecord(value) ? value : undefined;
+    const result = validateIconPack(record ? record.pack : value);
+    if (result.ok) {
+      installed.push({ pack: result.pack, at: record?.installedAt ?? 0 });
+    } else unreadable.push({ id: String(key), errors: result.errors });
+  }
+  installed.sort((a, b) => {
+    return a.at - b.at;
+  });
 
   return {
     storage: createStorage(db, entries),
-    packs: createPackStore(db, installed)
+    packs: createPackStore(
+      db,
+      installed.map((i) => {
+        return i.pack;
+      }),
+      unreadable
+    )
   };
 };

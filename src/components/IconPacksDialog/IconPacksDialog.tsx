@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Box,
@@ -89,6 +89,14 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
   const [errors, setErrors] = useState<string[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  // Each step's main button takes the focus when the step changes: the
+  // button that was focused (Remove, Replace) has just gone, and with the
+  // focus on the page the keyboard, Escape included, no longer reaches the
+  // dialog.
+  const primary = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    primary.current?.focus();
+  }, [step]);
 
   const handlers = () => {
     return uiStateActions.get().packHandlers;
@@ -268,8 +276,8 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
             Cancel
           </Button>
           <Button
+            ref={primary}
             variant="contained"
-            autoFocus
             onClick={() => {
               void install(step.pack);
             }}
@@ -291,9 +299,9 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
             Cancel
           </Button>
           <Button
+            ref={primary}
             variant="contained"
             color="error"
-            autoFocus
             onClick={() => {
               void remove(step.loaded);
             }}
@@ -306,8 +314,8 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
     if (step.kind === 'in-use') {
       return (
         <Button
+          ref={primary}
           variant="contained"
-          autoFocus
           onClick={() => {
             setStep({ kind: 'list' });
           }}
@@ -317,11 +325,9 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
       );
     }
     return (
-      // Each step's main button takes the focus when it appears, so the
-      // keyboard (Escape included) keeps working after the last one went.
       <Button
+        ref={primary}
         variant="contained"
-        autoFocus
         onClick={() => {
           fileInput.current?.click();
         }}

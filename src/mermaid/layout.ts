@@ -28,7 +28,7 @@ export interface LayoutInput {
 }
 
 /** Tiles between ranks, and between nodes side by side in a rank. */
-export const RANK_STEP = 4;
+export const RANK_STEP = 3;
 export const CROSS_STEP = 3;
 /** Tiles between two subgraphs' strips. */
 export const BAND_GAP = 2;

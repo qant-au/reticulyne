@@ -30,7 +30,8 @@ and `'EXPORT.MERMAID'`):
   `.mermaid`, `.md` or `.txt` file. A Markdown file is read for its first ` ```mermaid ` block.
   The text is checked as it is typed: every error is listed as `Line 4, col 9: …`, and choosing
   one puts the cursor there. **Import** stays off until there are no errors; then the flowchart
-  **replaces the diagram** on the canvas, fitted to the screen. What did not carry across is
+  **replaces the diagram** on the canvas, fitted to the screen. A flowchart with no `title` of its own
+  takes the opened file's name, or keeps the diagram's current title. What did not carry across is
   listed under the box before you import.
 - **Export as Mermaid** shows the current view as flowchart text, with a **direction** (left to
   right, top to bottom, and the reverse of each), **Mermaid 11 shapes** (see
@@ -245,7 +246,7 @@ an import chooses them (`src/mermaid/layout.ts`):
    they link to, a few sweeps each way, which takes out most crossings.
 
 Left to right runs along +x (up and to the right in the isometric view, rightwards in the flat
-view), top to bottom along −y. Ranks are four tiles apart, nodes in a rank three. Import draws
+view), top to bottom along −y. Ranks are three tiles apart, and so are nodes side by side in a rank. Import draws
 in an isometric view by default; `view: 'schematic'` imports into a flat one.
 
 ## What Does Not Carry Across

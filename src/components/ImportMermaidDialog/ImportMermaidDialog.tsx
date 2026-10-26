@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { AppDialog } from 'src/kit';
 import { useUiStateStore } from 'src/stores/uiStateStore';
+import { useModelStore } from 'src/stores/modelStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { mermaidToScene } from 'src/mermaid';
 import { formatIssue, type MermaidIssue } from 'src/mermaid/issues';
@@ -37,6 +38,12 @@ export const offsetOf = (text: string, line: number, column: number) => {
 export const ImportMermaidDialog = ({ onClose }: { onClose: () => void }) => {
   const [text, setText] = useState('');
   const [fileError, setFileError] = useState<string | null>(null);
+  // A flowchart with no title of its own is named after the file it came
+  // from, else keeps the diagram's current title.
+  const [fileTitle, setFileTitle] = useState<string | null>(null);
+  const title = useModelStore((state) => {
+    return state.title;
+  });
   const deferred = useDeferredValue(text);
   const textArea = useRef<HTMLTextAreaElement | null>(null);
   const fileInput = useRef<HTMLInputElement | null>(null);
@@ -46,8 +53,10 @@ export const ImportMermaidDialog = ({ onClose }: { onClose: () => void }) => {
   const { load } = useInitialDataManager();
 
   const result = useMemo(() => {
-    return deferred.trim() ? mermaidToScene(deferred) : null;
-  }, [deferred]);
+    return deferred.trim()
+      ? mermaidToScene(deferred, { title: fileTitle ?? title })
+      : null;
+  }, [deferred, fileTitle, title]);
   const errors =
     result?.issues.filter((i) => {
       return i.severity === 'error';
@@ -78,6 +87,7 @@ export const ImportMermaidDialog = ({ onClose }: { onClose: () => void }) => {
     const reader = new FileReader();
     reader.onload = () => {
       setFileError(null);
+      setFileTitle(file.name.replace(/\.[^.]+$/, '') || null);
       setText(typeof reader.result === 'string' ? reader.result : '');
     };
     reader.onerror = () => {

@@ -169,6 +169,8 @@ describe('Import Mermaid', () => {
     const text = await screen.findByTestId('mermaid-export-text');
     expect(text.textContent).toContain('B{"OK?"}');
     expect(text.textContent).toContain('B -->|"Yes"| C');
+    // A flowchart with no title keeps the diagram's.
+    expect(text.textContent).toContain('title: "Three-tier web application"');
     expect(text.textContent).not.toContain('Load balancer');
   });
 

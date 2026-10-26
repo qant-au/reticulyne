@@ -28,7 +28,7 @@ export const emptyScene = (id = 'e2e-packs') => {
     id,
     title: id,
     objects: [],
-    views: [{ id: 'v', name: 'Main', placements: [] }]
+    views: [{ id: 'v', kind: 'iso', name: 'Main', placements: [] }]
   };
 };
 

@@ -22,8 +22,9 @@ const red = Buffer.from(
 const load = async (page: Page) => {
   await page.addInitScript(
     (data) => {
-      (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
-        { initialData: data };
+      (
+        window as unknown as { __RETICULYNE_E2E__: unknown }
+      ).__RETICULYNE_E2E__ = { initialData: data };
     },
     {
       format: 'reticulyne-scene',
@@ -56,11 +57,13 @@ const load = async (page: Page) => {
 const drawn = async (page: Page) => {
   const imgs = page.getByRole('application').locator('img');
   await expect(imgs).toHaveCount(2);
-  return (await imgs.evaluateAll((els) => {
-    return els.map((el) => {
-      return el.getAttribute('src') ?? '';
-    });
-  })).sort();
+  return (
+    await imgs.evaluateAll((els) => {
+      return els.map((el) => {
+        return el.getAttribute('src') ?? '';
+      });
+    })
+  ).sort();
 };
 const UPLOADED = /^data:image\/svg\+xml;base64,/;
 
@@ -95,7 +98,9 @@ test('a flat image overrides one object, travels with copy and paste, and comes 
 
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Upload flat image' }).click();
-  await (await chooser).setFiles({
+  await (
+    await chooser
+  ).setFiles({
     name: 'red.svg',
     mimeType: 'image/svg+xml',
     buffer: red
@@ -159,7 +164,9 @@ test('an isometric image overrides the iso view only', async ({ page }) => {
   await selectCore(page);
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Upload isometric image' }).click();
-  await (await chooser).setFiles({
+  await (
+    await chooser
+  ).setFiles({
     name: 'red.svg',
     mimeType: 'image/svg+xml',
     buffer: red
@@ -173,16 +180,24 @@ test('an isometric image overrides the iso view only', async ({ page }) => {
   expect(await drawn(page)).toEqual([ICON.flatUrl, ICON.flatUrl]);
 });
 
-test('a file that is not an image is refused with a message', async ({ page }) => {
+test('a file that is not an image is refused with a message', async ({
+  page
+}) => {
   await load(page);
   await selectCore(page);
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Upload flat image' }).click();
-  await (await chooser).setFiles({
+  await (
+    await chooser
+  ).setFiles({
     name: 'notes.txt',
     mimeType: 'text/plain',
     buffer: Buffer.from('hello')
   });
-  await expect(page.getByText('Use an SVG, PNG, JPEG, GIF or WebP image.')).toBeVisible();
-  await expect(page.getByTestId('icon-override-flat')).toContainText("The icon's own");
+  await expect(
+    page.getByText('Use an SVG, PNG, JPEG, GIF or WebP image.')
+  ).toBeVisible();
+  await expect(page.getByTestId('icon-override-flat')).toContainText(
+    "The icon's own"
+  );
 });

@@ -97,7 +97,7 @@ test('read-only description renders via the schema and drops XSS', async ({
     )
   );
   expect(liveHandlers).toEqual([]);
-  expect(consoleErrors,consoleErrors.join('\n')).toEqual([]);
+  expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
 });
 
 test('selecting a node mounts the editable editor and the bold toolbar works', async ({

@@ -8,9 +8,7 @@ test('the manifest is linked and names both icon sizes', async ({
   request
 }) => {
   await page.goto('/');
-  const href = await page
-    .locator('link[rel="manifest"]')
-    .getAttribute('href');
+  const href = await page.locator('link[rel="manifest"]').getAttribute('href');
   const res = await request.get(`/${href}`);
   expect(res.ok()).toBe(true);
   expect(res.headers()['content-type']).toContain('application/manifest+json');

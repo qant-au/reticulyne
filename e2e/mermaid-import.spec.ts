@@ -27,24 +27,46 @@ const GOOD = [
 ].join('\n');
 
 const BROKEN: [string, string][] = [
-  ['flowchart LR\n  A[Start --> B', 'Line 2, col 4: Expected "]" to close the "["'],
-  ['flowchart LR\n  A -> B', 'Line 2, col 5: "->" is not a Mermaid link. Did you mean "-->"?'],
-  ['flowchart LR\n  A{Choice] --> B', 'Line 2, col 11: "]" cannot close the "{"'],
-  ['flowchart LR\n  subgraph S\n  A --> B', 'Line 2, col 3: The subgraph "S" opened on line 2 is never closed with "end".'],
+  [
+    'flowchart LR\n  A[Start --> B',
+    'Line 2, col 4: Expected "]" to close the "["'
+  ],
+  [
+    'flowchart LR\n  A -> B',
+    'Line 2, col 5: "->" is not a Mermaid link. Did you mean "-->"?'
+  ],
+  [
+    'flowchart LR\n  A{Choice] --> B',
+    'Line 2, col 11: "]" cannot close the "{"'
+  ],
+  [
+    'flowchart LR\n  subgraph S\n  A --> B',
+    'Line 2, col 3: The subgraph "S" opened on line 2 is never closed with "end".'
+  ],
   ['flowchart LR\n  A --> end', 'Line 2, col 9: "end" is a Mermaid keyword'],
-  ['sequenceDiagram\n  A->>B: hi', '"sequenceDiagram" diagrams can\'t be imported'],
+  [
+    'sequenceDiagram\n  A->>B: hi',
+    '"sequenceDiagram" diagrams can\'t be imported'
+  ],
   ['flowchart XY\n  A --> B', 'Line 1, col 11: "XY" is not a direction'],
-  ['flowchart LR\n  A@{ shape: blob }', 'Mermaid has no node shape called "blob"'],
+  [
+    'flowchart LR\n  A@{ shape: blob }',
+    'Mermaid has no node shape called "blob"'
+  ],
   ['A --> B', 'A flowchart starts with "flowchart" or "graph"']
 ];
 
-test('broken text is explained at its place and cannot be imported', async ({ page }) => {
+test('broken text is explained at its place and cannot be imported', async ({
+  page
+}) => {
   const dialog = await openImport(page);
   const box = dialog.getByTestId('mermaid-import-text');
   const button = dialog.getByTestId('mermaid-import-button');
   for (const [text, message] of BROKEN) {
     await box.fill(text);
-    await expect(dialog.getByTestId('mermaid-import-errors')).toContainText(message);
+    await expect(dialog.getByTestId('mermaid-import-errors')).toContainText(
+      message
+    );
     await expect(button).toBeDisabled();
   }
 });
@@ -57,7 +79,13 @@ test('a flowchart imports, laid out, and exports back', async ({ page }) => {
   );
   await dialog.getByTestId('mermaid-import-button').click();
   await expect(dialog).toBeHidden();
-  for (const label of ['Order placed', 'Paid?', 'Ship it', 'Send reminder', 'Delivered']) {
+  for (const label of [
+    'Order placed',
+    'Paid?',
+    'Ship it',
+    'Send reminder',
+    'Delivered'
+  ]) {
     await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
   }
   // Out again: the same graph, shapes and group.
@@ -78,20 +106,27 @@ test('a Markdown file opens with its mermaid block', async ({ page }) => {
   await dialog.getByTestId('mermaid-import-file').setInputFiles({
     name: 'design.md',
     mimeType: 'text/markdown',
-    buffer: Buffer.from(`# Design\n\nProse.\n\n\`\`\`mermaid\n${GOOD}\n\`\`\`\n`)
+    buffer: Buffer.from(
+      `# Design\n\nProse.\n\n\`\`\`mermaid\n${GOOD}\n\`\`\`\n`
+    )
   });
-  await expect(dialog.getByTestId('mermaid-import-text')).toHaveValue(/flowchart LR/);
+  await expect(dialog.getByTestId('mermaid-import-text')).toHaveValue(
+    /flowchart LR/
+  );
   await expect(dialog.getByTestId('mermaid-import-button')).toBeEnabled();
   // An error in it is placed on the file's own line numbers.
-  const broken = (await dialog.getByTestId('mermaid-import-text').inputValue()).replace(
-    'pay -->|Yes| ship',
-    'pay ->|Yes| ship'
-  );
+  const broken = (
+    await dialog.getByTestId('mermaid-import-text').inputValue()
+  ).replace('pay -->|Yes| ship', 'pay ->|Yes| ship');
   await dialog.getByTestId('mermaid-import-text').fill(broken);
-  await expect(dialog.getByTestId('mermaid-import-errors')).toContainText('Line 8, col');
+  await expect(dialog.getByTestId('mermaid-import-errors')).toContainText(
+    'Line 8, col'
+  );
 });
 
-test('a click line is dropped with a warning and nothing navigates', async ({ page }) => {
+test('a click line is dropped with a warning and nothing navigates', async ({
+  page
+}) => {
   const dialog = await openImport(page);
   await dialog
     .getByTestId('mermaid-import-text')

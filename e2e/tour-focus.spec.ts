@@ -118,9 +118,13 @@ for (const [width, height] of [
       await expect(
         label.getByRole('button', { name: 'Show less' })
       ).toBeVisible();
-      await expect(label.getByRole('button', { name: 'Show more' })).toHaveCount(0);
+      await expect(
+        label.getByRole('button', { name: 'Show more' })
+      ).toHaveCount(0);
       await page.getByRole('button', { name: 'Next' }).click();
-      await expect(label.getByRole('button', { name: 'Show more' })).toBeVisible();
+      await expect(
+        label.getByRole('button', { name: 'Show more' })
+      ).toBeVisible();
     });
   }
 }

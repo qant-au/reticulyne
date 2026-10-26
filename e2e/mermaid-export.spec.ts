@@ -10,7 +10,12 @@ import { MERMAID_VERSIONS, mermaidRender, withMermaid } from './mermaid-lib';
  * that downloads is what sceneToMermaid writes, and real Mermaid (12 and
  * 11) renders it with every label in the picture.
  */
-const SAMPLES = ['three-tier-web', 'aws-serverless', 'office-network', 'two-floor-building'];
+const SAMPLES = [
+  'three-tier-web',
+  'aws-serverless',
+  'office-network',
+  'two-floor-building'
+];
 
 const open = async (page: Page, name: string) => {
   const scene = JSON.parse(
@@ -40,7 +45,9 @@ for (const name of SAMPLES) {
   }) => {
     const scene = await open(page, name);
     const dialog = await exportDialog(page);
-    const preview = await dialog.getByTestId('mermaid-export-text').textContent();
+    const preview = await dialog
+      .getByTestId('mermaid-export-text')
+      .textContent();
     const download = page.waitForEvent('download');
     await dialog.getByRole('button', { name: 'Download .mmd' }).click();
     const file = await download;
@@ -50,9 +57,13 @@ for (const name of SAMPLES) {
     // The editor writes what the pure function writes for the first view.
     expect(text).toBe(sceneToMermaid(scene).text);
 
-    const labels = [...text.matchAll(/\["([^"]+)"\]|\("([^"]+)"\)|\{"([^"]+)"\}/g)]
+    const labels = [
+      ...text.matchAll(/\["([^"]+)"\]|\("([^"]+)"\)|\{"([^"]+)"\}/g)
+    ]
       .map((m) => {
-        return (m[1] ?? m[2] ?? m[3]).replace(/#quot;/g, '"').replace(/#35;/g, '#');
+        return (m[1] ?? m[2] ?? m[3])
+          .replace(/#quot;/g, '"')
+          .replace(/#35;/g, '#');
       })
       .filter((l) => {
         return l.trim() && !l.includes('#');
@@ -70,14 +81,20 @@ for (const name of SAMPLES) {
   });
 }
 
-test('the .md download is fenced and the options change the text', async ({ page }) => {
+test('the .md download is fenced and the options change the text', async ({
+  page
+}) => {
   await open(page, 'three-tier-web');
   const dialog = await exportDialog(page);
   await dialog.getByLabel('Direction').click();
   await page.getByRole('option', { name: 'Top to bottom' }).click();
-  await expect(dialog.getByTestId('mermaid-export-text')).toContainText('flowchart TB');
+  await expect(dialog.getByTestId('mermaid-export-text')).toContainText(
+    'flowchart TB'
+  );
   await dialog.getByLabel('Mermaid 11 shapes').check();
-  await expect(dialog.getByTestId('mermaid-export-summary')).toContainText('Mermaid 11');
+  await expect(dialog.getByTestId('mermaid-export-summary')).toContainText(
+    'Mermaid 11'
+  );
   const download = page.waitForEvent('download');
   await dialog.getByRole('button', { name: 'Download .md' }).click();
   const text = await readFile(await (await download).path(), 'utf8');

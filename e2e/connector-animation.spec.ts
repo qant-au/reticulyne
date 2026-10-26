@@ -89,7 +89,9 @@ test('animated connector emits <animateMotion>, toggle removes it', async ({
   const first = (await glyph.boundingBox())!;
   await page.waitForTimeout(500);
   const later = (await glyph.boundingBox())!;
-  expect(Math.abs(later.x - first.x) + Math.abs(later.y - first.y)).toBeGreaterThan(5);
+  expect(
+    Math.abs(later.x - first.x) + Math.abs(later.y - first.y)
+  ).toBeGreaterThan(5);
 
   // Click the connector polyline to select it — that opens the
   // ConnectorControls panel where the Animate toggle lives.

@@ -11,17 +11,16 @@ const svg = Buffer.from(
 
 const load = async (page: Page) => {
   await page.addInitScript(() => {
-    (
-      window as unknown as { __RETICULYNE_E2E__: unknown }
-    ).__RETICULYNE_E2E__ = {
-      initialData: {
-        title: 'e2e upload',
-        items: [],
-        icons: [],
-        colors: [{ id: 'c', value: '#999999' }],
-        views: [{ id: 'view-main', name: 'Main', items: [] }]
-      }
-    };
+    (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
+      {
+        initialData: {
+          title: 'e2e upload',
+          items: [],
+          icons: [],
+          colors: [{ id: 'c', value: '#999999' }],
+          views: [{ id: 'view-main', name: 'Main', items: [] }]
+        }
+      };
   });
   await page.goto('/');
   await expect(page).toHaveTitle(/Reticulyne/);
@@ -97,7 +96,9 @@ test('a file named .png that is not an image is refused', async ({ page }) => {
     mimeType: 'image/png',
     buffer: Buffer.from('not a png at all')
   });
-  await expect(page.getByText(/not an image this browser can show/)).toBeVisible();
+  await expect(
+    page.getByText(/not an image this browser can show/)
+  ).toBeVisible();
   const icons = ((await exported(page)).icons ?? []) as {
     collection?: string;
   }[];

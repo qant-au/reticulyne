@@ -18,17 +18,18 @@ test('a flat icon in the vector SVG keeps its iso projection', async ({
   page
 }) => {
   await page.addInitScript((url) => {
-    (
-      window as unknown as { __RETICULYNE_E2E__: unknown }
-    ).__RETICULYNE_E2E__ = {
-      initialData: {
-        title: 'e2e vector',
-        icons: [{ id: 'tiny', name: 'Tiny', url, collection: 'test' }],
-        colors: [{ id: 'c', value: '#1f77b4' }],
-        items: [{ id: 'a', name: 'Flat', icon: 'tiny' }],
-        views: [{ id: 'v', name: 'V', items: [{ id: 'a', tile: { x: 0, y: 0 } }] }]
-      }
-    };
+    (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
+      {
+        initialData: {
+          title: 'e2e vector',
+          icons: [{ id: 'tiny', name: 'Tiny', url, collection: 'test' }],
+          colors: [{ id: 'c', value: '#1f77b4' }],
+          items: [{ id: 'a', name: 'Flat', icon: 'tiny' }],
+          views: [
+            { id: 'v', name: 'V', items: [{ id: 'a', tile: { x: 0, y: 0 } }] }
+          ]
+        }
+      };
   }, tinyIconSvg);
   await page.goto('/');
   await expect(page.getByText('Flat', { exact: true }).first()).toBeVisible();

@@ -135,18 +135,22 @@ export const OpenNotice = () => {
   const lacking = useMemo(() => {
     if (!notice) return null;
     const missingPacks = packNotices({ externalPacks: notice.packs }, packs);
-    const missingIcons = notice.icons.filter((m) => {
-      const icon = icons.find((i) => {
-        return i.id === m.id;
+    const missingIcons = notice.icons
+      .map((m) => {
+        // Counted live: one replaced from its inspector leaves the rest.
+        return {
+          id: m.id,
+          objects: items.filter((item) => {
+            return item.icon === m.id;
+          }).length
+        };
+      })
+      .filter((m) => {
+        const icon = icons.find((i) => {
+          return i.id === m.id;
+        });
+        return icon !== undefined && isMissingIcon(icon) && m.objects > 0;
       });
-      return (
-        icon !== undefined &&
-        isMissingIcon(icon) &&
-        items.some((item) => {
-          return item.icon === m.id;
-        })
-      );
-    });
     return missingPacks.length || missingIcons.length
       ? { missingPacks, missingIcons }
       : null;

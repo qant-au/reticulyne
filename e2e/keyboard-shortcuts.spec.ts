@@ -21,10 +21,7 @@ import { expect, test, Page } from '@playwright/test';
  */
 
 const readZoomPercent = async (page: Page): Promise<number> => {
-  const text = await page
-    .locator('text=/^[0-9]+%$/')
-    .first()
-    .textContent();
+  const text = await page.locator('text=/^[0-9]+%$/').first().textContent();
   if (!text) throw new Error('zoom percent chip not found');
   return Number(text.replace('%', ''));
 };

@@ -46,7 +46,9 @@ const label = (page: Page, name: string) => {
   return page.getByRole('application').getByText(name, { exact: true });
 };
 
-test('the toolbar button and Alt+L hide and show the labels', async ({ page }) => {
+test('the toolbar button and Alt+L hide and show the labels', async ({
+  page
+}) => {
   await hook(page);
   await expect(label(page, 'Core switch')).toBeVisible();
   await expect(label(page, 'File server')).toBeVisible();

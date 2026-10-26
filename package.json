@@ -89,7 +89,7 @@
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "lint-staged": "^17.6.0",
-    "mermaid": "12.1.0",
+    "mermaid": "12.2.0",
     "mermaid11": "npm:mermaid@11.17.2",
     "nodemon": "^3.1.14",
     "prettier": "^3.8.3",

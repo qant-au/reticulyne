@@ -269,6 +269,7 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
           </Button>
           <Button
             variant="contained"
+            autoFocus
             onClick={() => {
               void install(step.pack);
             }}
@@ -292,6 +293,7 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
           <Button
             variant="contained"
             color="error"
+            autoFocus
             onClick={() => {
               void remove(step.loaded);
             }}
@@ -305,6 +307,7 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
       return (
         <Button
           variant="contained"
+          autoFocus
           onClick={() => {
             setStep({ kind: 'list' });
           }}
@@ -314,8 +317,11 @@ export const IconPacksDialog = ({ onClose }: { onClose: () => void }) => {
       );
     }
     return (
+      // Each step's main button takes the focus when it appears, so the
+      // keyboard (Escape included) keeps working after the last one went.
       <Button
         variant="contained"
+        autoFocus
         onClick={() => {
           fileInput.current?.click();
         }}

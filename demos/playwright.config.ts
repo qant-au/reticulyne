@@ -31,14 +31,5 @@ export default defineConfig({
     trace: 'off',
     screenshot: 'off'
   },
-  projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: VIEWPORT,
-        deviceScaleFactor: 1
-      }
-    }
-  ]
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: VIEWPORT, deviceScaleFactor: 1 } }]
 });

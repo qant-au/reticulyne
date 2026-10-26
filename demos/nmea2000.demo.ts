@@ -69,85 +69,21 @@ test('nmea 2000 network', async ({ page }, testInfo) => {
   await pause(page, 400);
 
   // The backbone, bow to stern.
-  await placeAs(
-    page,
-    'NMEA 2000 Terminator (Male)',
-    'Terminator (bow)',
-    AT['Terminator (bow)'],
-    'Terminator (Male'
-  );
-  await placeAs(
-    page,
-    'NMEA 2000 Tee',
-    'Tee (bow)',
-    AT['Tee (bow)'],
-    'NMEA 2000 Tee'
-  );
-  await placeAs(
-    page,
-    'NMEA 2000 4-Way Tee',
-    '4-Way Tee (fwd)',
-    AT['4-Way Tee (fwd)'],
-    '4-Way'
-  );
-  await placeAs(
-    page,
-    'NMEA 2000 Tee',
-    'Tee (mid)',
-    AT['Tee (mid)'],
-    'NMEA 2000 Tee'
-  );
-  await placeAs(
-    page,
-    'NMEA 2000 4-Way Tee',
-    '4-Way Tee (aft)',
-    AT['4-Way Tee (aft)'],
-    '4-Way'
-  );
-  await placeAs(
-    page,
-    'NMEA 2000 Terminator (Female)',
-    'Terminator (stern)',
-    AT['Terminator (stern)'],
-    'Terminator (Female'
-  );
+  await placeAs(page, 'NMEA 2000 Terminator (Male)', 'Terminator (bow)', AT['Terminator (bow)'], 'Terminator (Male');
+  await placeAs(page, 'NMEA 2000 Tee', 'Tee (bow)', AT['Tee (bow)'], 'NMEA 2000 Tee');
+  await placeAs(page, 'NMEA 2000 4-Way Tee', '4-Way Tee (fwd)', AT['4-Way Tee (fwd)'], '4-Way');
+  await placeAs(page, 'NMEA 2000 Tee', 'Tee (mid)', AT['Tee (mid)'], 'NMEA 2000 Tee');
+  await placeAs(page, 'NMEA 2000 4-Way Tee', '4-Way Tee (aft)', AT['4-Way Tee (aft)'], '4-Way');
+  await placeAs(page, 'NMEA 2000 Terminator (Female)', 'Terminator (stern)', AT['Terminator (stern)'], 'Terminator (Female');
   // Then what hangs off it.
-  await place(
-    page,
-    'NMEA 2000 Power Injector',
-    AT['NMEA 2000 Power Injector'],
-    'Power Injector'
-  );
+  await place(page, 'NMEA 2000 Power Injector', AT['NMEA 2000 Power Injector'], 'Power Injector');
   await place(page, 'Radar', AT.Radar);
   await placeAs(page, 'GPS Receiver', 'GPS 1', AT['GPS 1'], 'GPS Receiver');
-  await placeAs(
-    page,
-    'Wind Instrument',
-    'Weather Station',
-    AT['Weather Station'],
-    'Wind'
-  );
+  await placeAs(page, 'Wind Instrument', 'Weather Station', AT['Weather Station'], 'Wind');
   await place(page, 'Depth Transducer', AT['Depth Transducer'], 'Depth');
-  await place(
-    page,
-    'Engine Gateway (J1939 to NMEA 2000)',
-    AT['Engine Gateway (J1939 to NMEA 2000)'],
-    'Engine Gateway'
-  );
-  await placeAs(
-    page,
-    'Chartplotter',
-    'Chartplotter (helm)',
-    AT['Chartplotter (helm)'],
-    'Chartplotter'
-  );
-  await placeAs(
-    page,
-    'Chartplotter',
-    'Chartplotter (nav)',
-    AT['Chartplotter (nav)'],
-    'Chartplotter'
-  );
+  await place(page, 'Engine Gateway (J1939 to NMEA 2000)', AT['Engine Gateway (J1939 to NMEA 2000)'], 'Engine Gateway');
+  await placeAs(page, 'Chartplotter', 'Chartplotter (helm)', AT['Chartplotter (helm)'], 'Chartplotter');
+  await placeAs(page, 'Chartplotter', 'Chartplotter (nav)', AT['Chartplotter (nav)'], 'Chartplotter');
   await placeAs(page, 'GPS Receiver', 'GPS 2', AT['GPS 2'], 'GPS Receiver');
   await place(page, 'AIS Transponder', AT['AIS Transponder'], 'AIS');
   await pause(page, 600);

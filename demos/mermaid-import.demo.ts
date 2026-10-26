@@ -78,16 +78,8 @@ test('import a Mermaid flowchart', async ({ page }, testInfo) => {
   await expect(dialog).toBeHidden();
   await fitToView(page);
   await glide(page, [1190, 740], 600);
-  for (const label of [
-    'Order placed',
-    'Paid?',
-    'Pick items',
-    'Send reminder',
-    'Pack parcel',
-    'Shipping log',
-    'Delivered',
-    'Email customer'
-  ]) {
+  for (const label of ['Order placed', 'Paid?', 'Pick items', 'Send reminder',
+    'Pack parcel', 'Shipping log', 'Delivered', 'Email customer']) {
     await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
   }
   await pause(page, 4000);

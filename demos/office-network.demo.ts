@@ -76,46 +76,14 @@ test('office network', async ({ page }, testInfo) => {
   // The internet side first, then the core, then what hangs off it.
   await place(page, 'Fibre ONT', AT['Fibre ONT']);
   await place(page, '4G/5G Router', AT['4G/5G Router'], '4G');
-  await place(
-    page,
-    'Firewall (Rack-Mount)',
-    AT['Firewall (Rack-Mount)'],
-    'Firewall (Rack'
-  );
-  await place(
-    page,
-    'Network Switch (24-Port)',
-    AT['Network Switch (24-Port)'],
-    '24-Port'
-  );
-  await place(
-    page,
-    'PoE Switch (8-Port)',
-    AT['PoE Switch (8-Port)'],
-    'PoE Switch'
-  );
+  await place(page, 'Firewall (Rack-Mount)', AT['Firewall (Rack-Mount)'], 'Firewall (Rack');
+  await place(page, 'Network Switch (24-Port)', AT['Network Switch (24-Port)'], '24-Port');
+  await place(page, 'PoE Switch (8-Port)', AT['PoE Switch (8-Port)'], 'PoE Switch');
   await place(page, 'Server', AT.Server);
   await place(page, 'NAS', AT.NAS);
-  await place(
-    page,
-    'UPS (Network Managed)',
-    AT['UPS (Network Managed)'],
-    'UPS'
-  );
-  await placeAs(
-    page,
-    'Wi-Fi Access Point',
-    'Wi-Fi AP, front',
-    AT['Wi-Fi AP, front'],
-    'Access Point'
-  );
-  await placeAs(
-    page,
-    'Wi-Fi Access Point',
-    'Wi-Fi AP, rear',
-    AT['Wi-Fi AP, rear'],
-    'Access Point'
-  );
+  await place(page, 'UPS (Network Managed)', AT['UPS (Network Managed)'], 'UPS');
+  await placeAs(page, 'Wi-Fi Access Point', 'Wi-Fi AP, front', AT['Wi-Fi AP, front'], 'Access Point');
+  await placeAs(page, 'Wi-Fi Access Point', 'Wi-Fi AP, rear', AT['Wi-Fi AP, rear'], 'Access Point');
   await place(page, 'Laptop', AT.Laptop);
   await pause(page, 600);
 
@@ -152,11 +120,7 @@ test('office network', async ({ page }, testInfo) => {
   // Labels can sit at any compass point: the firewall and the switches take
   // theirs below, clear of the links that come down into them.
   await setLabelPosition(page, AT['Firewall (Rack-Mount)'], 'Label below');
-  await setLabelPosition(
-    page,
-    AT['Network Switch (24-Port)'],
-    'Label below left'
-  );
+  await setLabelPosition(page, AT['Network Switch (24-Port)'], 'Label below left');
   await setLabelPosition(page, AT['PoE Switch (8-Port)'], 'Label below right');
   await pause(page, 400);
 
@@ -188,21 +152,9 @@ test('office network', async ({ page }, testInfo) => {
       return [c.id, [c.fromPort, c.toPort, c.kind]];
     })
   );
-  expect(ports['fibre-ont--firewall']).toEqual([
-    'lan1',
-    'wan1',
-    'ethernet-copper'
-  ]);
-  expect(ports['cellular-router--firewall']).toEqual([
-    'lan1',
-    'wan2',
-    'ethernet-copper'
-  ]);
-  expect(ports['firewall--core-switch']).toEqual([
-    'lan1',
-    'eth1',
-    'ethernet-copper'
-  ]);
+  expect(ports['fibre-ont--firewall']).toEqual(['lan1', 'wan1', 'ethernet-copper']);
+  expect(ports['cellular-router--firewall']).toEqual(['lan1', 'wan2', 'ethernet-copper']);
+  expect(ports['firewall--core-switch']).toEqual(['lan1', 'eth1', 'ethernet-copper']);
   expect(ports['laptop--ap-rear']).toEqual(['wifi', 'radio', 'wi-fi']);
   expect(ports['ups--firewall']).toEqual(['out1', 'ac1', 'power-ac']);
   const positions = Object.fromEntries(

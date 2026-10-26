@@ -111,3 +111,29 @@ export type {
   TopologyWarning
 } from 'src/catalogue';
 export { legacyModelToScene, type LegacyModelOptions } from 'src/scene/legacy';
+
+// Mermaid flowcharts in and out (docs/mermaid.md): export a diagram view as
+// flowchart text, import flowchart text as a scene, and the parser with its
+// located, coded issues. Framework-free, so safe to load without `window`.
+export {
+  MERMAID_ERRORS,
+  MERMAID_SHAPES,
+  MERMAID_SHAPE_PROP,
+  MERMAID_WARNINGS,
+  flowchartToScene,
+  formatIssue,
+  isMermaidError,
+  mermaidToScene,
+  parseMermaid,
+  sceneToMermaid
+} from 'src/mermaid';
+export type {
+  Flowchart,
+  MermaidExport,
+  MermaidExportOptions,
+  MermaidImport,
+  MermaidImportOptions,
+  MermaidIssue,
+  MermaidIssueCode,
+  MermaidShape
+} from 'src/mermaid';

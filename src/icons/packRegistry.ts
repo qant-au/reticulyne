@@ -43,6 +43,31 @@ export interface LoadedPack {
   origin: PackOrigin;
 }
 
+/** The objects in one diagram that draw with a pack's icons. */
+export interface IconPackUsage {
+  diagramId: string;
+  diagramName: string;
+  objects: { id: string; name: string }[];
+}
+
+/** What the host does with the Icon packs dialog's installs and removals. */
+export interface IconPackHandlers {
+  /** Keep a pack the user installed; a rejection is shown in the dialog. */
+  onIconPackInstall?: (pack: IconPack) => void | Promise<void>;
+  /** Forget a pack the user removed. */
+  onIconPackRemove?: (id: string) => void | Promise<void>;
+  /**
+   * The host's other diagrams that draw with any of these icons. The
+   * editor checks the diagram that is open itself.
+   */
+  iconPackUsage?: (
+    packId: string,
+    iconIds: string[]
+  ) => IconPackUsage[] | Promise<IconPackUsage[]>;
+  /** Open one of the host's diagrams with these objects selected. */
+  onShowIconPackUsage?: (diagramId: string, objectIds: string[]) => void;
+}
+
 export const PACK_LOCKED_MESSAGE =
   "This pack was loaded by the app and can't be replaced or removed here.";
 

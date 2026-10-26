@@ -27,7 +27,9 @@ export const DialogTypeEnum = {
   CONNECT_TO: 'CONNECT_TO',
   // Mermaid flowchart text out (with a preview) and in (pasted or opened).
   EXPORT_MERMAID: 'EXPORT_MERMAID',
-  IMPORT_MERMAID: 'IMPORT_MERMAID'
+  IMPORT_MERMAID: 'IMPORT_MERMAID',
+  // The icon packs loaded: install from a file, remove.
+  ICON_PACKS: 'ICON_PACKS'
 } as const;
 
 export const LayerOrderingActionOptions = {

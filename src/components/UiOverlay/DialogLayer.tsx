@@ -27,6 +27,11 @@ const ExportImageDialog = lazy(() => {
     }
   );
 });
+const IconPacksDialog = lazy(() => {
+  return import('src/components/IconPacksDialog/IconPacksDialog').then((m) => {
+    return { default: m.IconPacksDialog };
+  });
+});
 const ExportSvgDialog = lazy(() => {
   return import('src/components/ExportSvgDialog/ExportSvgDialog').then((m) => {
     return { default: m.ExportSvgDialog };
@@ -118,6 +123,7 @@ export const DialogLayer = ({
         {dialog === 'IMPORT_MERMAID' && (
           <ImportMermaidDialog onClose={onCloseDialog} />
         )}
+        {dialog === 'ICON_PACKS' && <IconPacksDialog onClose={onCloseDialog} />}
         {dialog === 'KEYBOARD_SHORTCUTS' && (
           <KeyboardShortcutsDialog onClose={onCloseDialog} />
         )}

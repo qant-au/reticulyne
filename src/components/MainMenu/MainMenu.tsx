@@ -20,6 +20,7 @@ import LibraryIcon from '@mui/icons-material/CategoryOutlined';
 import NewFromTemplateIcon from '@mui/icons-material/DashboardCustomizeOutlined';
 import MermaidIcon from '@mui/icons-material/AccountTreeOutlined';
 import ImportMermaidIcon from '@mui/icons-material/InputOutlined';
+import IconPacksIcon from '@mui/icons-material/ExtensionOutlined';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { useScene } from 'src/hooks/useScene';
@@ -59,6 +60,9 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
   });
   const mainMenuOptions = useUiStateStore((state) => {
     return state.mainMenuOptions;
+  });
+  const editorMode = useUiStateStore((state) => {
+    return state.editorMode;
   });
   const templates = useUiStateStore((state) => {
     return state.templates;
@@ -132,6 +136,11 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
     uiStateActions.setDialog('EXPORT_MERMAID');
   }, [uiStateActions]);
 
+  const onIconPacks = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    uiStateActions.setDialog('ICON_PACKS');
+  }, [uiStateActions]);
+
   const onImportMermaid = useCallback(() => {
     uiStateActions.setIsMainMenuOpen(false);
     uiStateActions.setDialog('IMPORT_MERMAID');
@@ -166,6 +175,7 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
     });
   }, [uiStateActions, createTextBox, mousePosition]);
 
+  const isEditable = editorMode === 'EDITABLE';
   const has = (option: (typeof mainMenuOptions)[number]) => {
     return mainMenuOptions.includes(option);
   };
@@ -196,6 +206,10 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
       : []),
     ...(has('ACTION.RENAME')
       ? [{ label: 'Rename diagram', icon: <RenameIcon />, onClick: onRename }]
+      : []),
+    // Installing and removing packs changes the library: editable only.
+    ...(has('ACTION.ICON_PACKS') && isEditable
+      ? [{ label: 'Icon packs', icon: <IconPacksIcon />, onClick: onIconPacks }]
       : []),
     ...(has('EXPORT.JSON')
       ? [

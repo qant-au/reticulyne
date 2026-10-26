@@ -67,8 +67,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       installedPacks: [],
       removedPackIds: [],
       packs: [],
-      onIconPackInstall: undefined,
-      onIconPackRemove: undefined,
+      packHandlers: {},
       editingGroupId: null,
       hideRedacted: false,
       showOtherFloors: true,
@@ -280,7 +279,7 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
           });
         },
         installPack: (value, options = {}) => {
-          const { packs, hostPacks, onIconPackInstall } = get();
+          const { packs, hostPacks } = get();
           const result = checkInstall(packs, value);
           if (!result.ok) return result;
           const { pack } = result;
@@ -306,11 +305,10 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
               new Set(removedPackIds)
             )
           });
-          if ((options.origin ?? 'user') === 'user') onIconPackInstall?.(pack);
           return result;
         },
         removePack: (id) => {
-          const { packs, hostPacks, onIconPackRemove } = get();
+          const { packs, hostPacks } = get();
           if (lockedPack(packs, id)) {
             return { ok: false, errors: [PACK_LOCKED_MESSAGE] };
           }
@@ -332,11 +330,10 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
               new Set(removedPackIds)
             )
           });
-          onIconPackRemove?.(id);
           return { ok: true };
         },
-        setPackHandlers: ({ onIconPackInstall, onIconPackRemove }) => {
-          set({ onIconPackInstall, onIconPackRemove });
+        setPackHandlers: (packHandlers) => {
+          set({ packHandlers });
         },
         setOnIconUpload: (onIconUpload) => {
           set({ onIconUpload });

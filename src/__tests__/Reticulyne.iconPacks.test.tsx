@@ -164,7 +164,8 @@ test('a removable app pack can be removed; its icons and section go', () => {
   expect(flagIcons(seen().icons)).toHaveLength(0);
   expect(seen().categories).not.toContain('nautical-flags');
   expect(seen().api.getIconPacks()).toEqual([]);
-  expect(onIconPackRemove).toHaveBeenCalledWith('nautical-flags');
+  // A removal the app makes is not reported back to it.
+  expect(onIconPackRemove).not.toHaveBeenCalled();
 });
 
 test('a locked pack is neither removed nor installed over', () => {

@@ -126,6 +126,42 @@ export const storePack = async (page: Page, pack: Pack) => {
   }, pack);
 };
 
+export const renameDiagram = async (page: Page, title: string) => {
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Rename diagram' }).click();
+  await page.getByLabel('Title').fill(title);
+  await page.getByLabel('Title').press('Enter');
+};
+
+export const saveDiagram = async (page: Page) => {
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Save' }).click();
+  await expect(page.locator('#root').getByText(/^Saved/)).toBeVisible();
+};
+
+export const newDiagram = async (page: Page) => {
+  await page.getByRole('button', { name: 'Diagrams' }).click();
+  await page.getByRole('menuitem', { name: 'New diagram' }).click();
+};
+
+export const openIconPacks = async (page: Page) => {
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Main menu' }).click();
+  await page.getByRole('menuitem', { name: 'Icon packs' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Icon packs' });
+  await expect(dialog).toBeVisible();
+  return dialog;
+};
+
+/** Installs a pack file through the Icon packs dialog's file input. */
+export const installFile = async (page: Page, pack: unknown, name: string) => {
+  await page.getByTestId('icon-pack-file-input').setInputFiles({
+    name,
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(pack))
+  });
+};
+
 /** The ids of the packs kept in the browser's store. */
 export const storedPackIds = async (page: Page) => {
   return page.evaluate(() => {

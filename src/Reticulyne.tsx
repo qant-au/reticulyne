@@ -100,6 +100,8 @@ const App = ({
   iconPacks = NO_ICON_PACKS,
   onIconPackInstall,
   onIconPackRemove,
+  iconPackUsage,
+  onShowIconPackUsage,
   iconCollections,
   onSave,
   autoSaveDebounce = false,
@@ -208,8 +210,19 @@ const App = ({
   }, [iconPacks, uiStateActions]);
 
   useEffect(() => {
-    uiStateActions.setPackHandlers({ onIconPackInstall, onIconPackRemove });
-  }, [onIconPackInstall, onIconPackRemove, uiStateActions]);
+    uiStateActions.setPackHandlers({
+      onIconPackInstall,
+      onIconPackRemove,
+      iconPackUsage,
+      onShowIconPackUsage
+    });
+  }, [
+    onIconPackInstall,
+    onIconPackRemove,
+    iconPackUsage,
+    onShowIconPackUsage,
+    uiStateActions
+  ]);
 
   useIconPackSync(iconCollections);
 

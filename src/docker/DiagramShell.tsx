@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode
+} from 'react';
 import {
   Alert,
   Box,
@@ -21,7 +28,11 @@ import UploadIcon from '@mui/icons-material/FileUploadOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandIcon from '@mui/icons-material/ExpandMore';
-import Reticulyne, { INITIAL_DATA, readIconAsDataUrl } from 'src/Reticulyne';
+import Reticulyne, {
+  INITIAL_DATA,
+  readIconAsDataUrl,
+  useReticulyne
+} from 'src/Reticulyne';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import { generateId } from 'src/utils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -39,7 +50,7 @@ import {
   type DiagramStorage
 } from './diagramStorage';
 import { Surface } from 'src/kit';
-import type { IconPackEntry } from 'src/icons/packRegistry';
+import type { IconPackEntry, IconPackUsage } from 'src/icons/packRegistry';
 import { flattenPacks } from 'src/icons/pack';
 import type { PackStore } from './store/localStore';
 
@@ -85,6 +96,8 @@ interface BarProps {
   onNew: () => void;
   onImport: (file: File) => void;
   onOpen: (id: string) => void;
+  /** A standing warning under the bar, with its own actions. */
+  notice?: ReactNode;
   onDelete: (id: string) => void;
 }
 
@@ -96,7 +109,8 @@ const DiagramBar = ({
   onNew,
   onImport,
   onOpen,
-  onDelete
+  onDelete,
+  notice
 }: BarProps) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -164,6 +178,7 @@ const DiagramBar = ({
           {error}
         </Alert>
       )}
+      {notice}
       <input
         ref={fileInput}
         type="file"
@@ -281,6 +296,39 @@ interface ShellProps {
    */
   packStore?: PackStore;
 }
+
+// Show (in the Icon packs dialog) opens a diagram and selects the objects
+// that draw with a pack's icons. The selection waits for that diagram's
+// load, which bumps the load generation.
+const SelectAfterLoad = ({
+  ids,
+  onDone
+}: {
+  ids: string[] | null;
+  onDone: () => void;
+}) => {
+  const { select } = useReticulyne();
+  const loadGeneration = useUiStateStore((state) => {
+    return state.loadGeneration;
+  });
+  const armedAt = useRef<number | null>(null);
+  useEffect(() => {
+    if (!ids) {
+      armedAt.current = null;
+      return;
+    }
+    if (armedAt.current === null) {
+      armedAt.current = loadGeneration;
+      return;
+    }
+    if (loadGeneration > armedAt.current) {
+      armedAt.current = null;
+      select(ids);
+      onDone();
+    }
+  }, [ids, loadGeneration, select, onDone]);
+  return null;
+};
 
 export const DiagramShell = ({
   bundledIcons,
@@ -401,6 +449,56 @@ export const DiagramShell = ({
     });
   };
 
+  // Icon packs: the saved diagrams other than the open one that draw with a
+  // pack's icons (the editor checks the open one itself), and Show, which
+  // opens one of them with those objects selected.
+  const iconPackUsage = useCallback(
+    (_packId: string, iconIds: string[]): IconPackUsage[] => {
+      const ids = new Set(iconIds);
+      return store.list().flatMap((entry) => {
+        if (entry.id === current.id) return [];
+        const scene = store.load(entry.id);
+        const objects = (scene?.objects ?? [])
+          .filter((object) => {
+            return object.icon !== undefined && ids.has(object.icon);
+          })
+          .map((object) => {
+            return { id: object.id, name: object.name || object.id };
+          });
+        return objects.length
+          ? [{ diagramId: entry.id, diagramName: entry.name, objects }]
+          : [];
+      });
+    },
+    [store, current.id]
+  );
+  const [selectOnOpen, setSelectOnOpen] = useState<string[] | null>(null);
+  const onShowIconPackUsage = (diagramId: string, objectIds: string[]) => {
+    leave('Open another diagram', () => {
+      const scene = store.load(diagramId);
+      if (!scene) {
+        setError('That diagram could not be read.');
+        return;
+      }
+      show({ id: diagramId, data: scene, stored: true });
+      setSelectOnOpen(objectIds);
+    });
+  };
+  // Stored packs this build cannot read: named once, with a way to clear
+  // them out, rather than dropped without a word.
+  const [unreadablePacks, setUnreadablePacks] = useState(() => {
+    return packStore?.unreadable() ?? [];
+  });
+  const clearUnreadablePacks = () => {
+    void Promise.all(
+      unreadablePacks.map((p) => {
+        return packStore?.remove(p.id);
+      })
+    ).then(() => {
+      setUnreadablePacks([]);
+    });
+  };
+
   // Saves are scenes. The editor builds each one from the model it last
   // reported, so that model is what is now saved.
   const onSave = useCallback(
@@ -501,20 +599,18 @@ export const DiagramShell = ({
         }}
         {...editorProps}
         iconPacks={iconPacks}
-        onIconPackInstall={(pack) => {
-          packStore?.install(pack).catch((e: unknown) => {
-            setError(
-              e instanceof Error
-                ? e.message
-                : 'The icon pack could not be kept in this browser.'
-            );
-          });
+        onIconPackInstall={async (pack) => {
+          if (!packStore) {
+            throw new Error('this browser has no storage for icon packs.');
+          }
+          const result = await packStore.install(pack);
+          if (!result.ok) throw new Error(result.errors.join(' '));
         }}
-        onIconPackRemove={(id) => {
-          packStore?.remove(id).catch(() => {
-            setError('The icon pack could not be removed from this browser.');
-          });
+        onIconPackRemove={async (id) => {
+          await packStore?.remove(id);
         }}
+        iconPackUsage={iconPackUsage}
+        onShowIconPackUsage={onShowIconPackUsage}
       >
         <DiagramBar
           currentId={current.id}
@@ -529,6 +625,34 @@ export const DiagramShell = ({
             });
           }}
           onImport={onImport}
+          notice={
+            unreadablePacks.length > 0 && (
+              <Alert
+                severity="warning"
+                sx={{ maxWidth: 420 }}
+                action={
+                  <Button
+                    color="inherit"
+                    size="small"
+                    onClick={clearUnreadablePacks}
+                  >
+                    Remove
+                  </Button>
+                }
+              >
+                {unreadablePacks.length === 1
+                  ? 'An icon pack stored in this browser could not be read and was not loaded: '
+                  : `${unreadablePacks.length} icon packs stored in this browser could not be read and were not loaded: `}
+                {unreadablePacks
+                  .map((p) => {
+                    return p.id;
+                  })
+                  .join(', ')}
+                . Install a current copy, or remove{' '}
+                {unreadablePacks.length === 1 ? 'it' : 'them'}.
+              </Alert>
+            )
+          }
           onOpen={(id) => {
             leave('Open another diagram', () => {
               const scene = store.load(id);
@@ -586,6 +710,12 @@ export const DiagramShell = ({
             </Button>
           </DialogActions>
         </Dialog>
+        <SelectAfterLoad
+          ids={selectOnOpen}
+          onDone={() => {
+            setSelectOnOpen(null);
+          }}
+        />
       </Reticulyne>
     </>
   );

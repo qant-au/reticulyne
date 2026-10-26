@@ -7,7 +7,7 @@ import type { SelectedRef, TourState, TourStep, Viewport } from './imperative';
 import type { DiagramTemplate } from 'src/templates';
 import type { CatalogueItem } from 'src/catalogue/schema';
 import type { IconPack } from 'src/icons/pack';
-import type { IconPackEntry } from 'src/icons/packRegistry';
+import type { IconPackEntry, IconPackUsage } from 'src/icons/packRegistry';
 import type { Scene } from 'src/core';
 
 export type NodeIndicatorComponent = (props: {
@@ -154,14 +154,30 @@ export interface ReticulyneProps {
    */
   iconPacks?: IconPackEntry[];
   /**
-   * A pack was installed in the editor (the Icon packs dialog, or
-   * `useReticulyne().installIconPack`), already validated. Keep it, if
-   * installs should outlast the page, and pass it back in `iconPacks` as
-   * `origin: 'user'`.
+   * The user installed a pack in the Icon packs dialog; it is validated and
+   * already loaded. Keep it, if installs should outlast the page, and pass
+   * it back in `iconPacks` as `origin: 'user'`. A rejected promise is
+   * shown in the dialog (the pack stays loaded for this session).
    */
-  onIconPackInstall?: (pack: IconPack) => void;
-  /** A pack was removed in the editor. Forget it, if you kept it. */
-  onIconPackRemove?: (id: string) => void;
+  onIconPackInstall?: (pack: IconPack) => void | Promise<void>;
+  /** The user removed a pack in the Icon packs dialog. Forget it. */
+  onIconPackRemove?: (id: string) => void | Promise<void>;
+  /**
+   * Before a pack is removed, the editor checks the open diagram for
+   * objects drawn with its icons and refuses while there are any. A host
+   * that keeps other diagrams answers for those here, so the refusal can
+   * name them too.
+   */
+  iconPackUsage?: (
+    packId: string,
+    iconIds: string[]
+  ) => IconPackUsage[] | Promise<IconPackUsage[]>;
+  /**
+   * Show is chosen on one of the host's other diagrams in that refusal:
+   * open it with these objects selected. Without this, Show is offered only
+   * for the open diagram.
+   */
+  onShowIconPackUsage?: (diagramId: string, objectIds: string[]) => void;
   /** 1.6: as `onNodeClick`, for a connector. */
   onConnectorClick?: (id: string) => void;
   /**

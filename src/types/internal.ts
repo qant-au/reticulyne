@@ -28,9 +28,10 @@ import type { QueuedPatch, TourState, TourStep } from './imperative';
 import type { Scene as SceneDocument } from 'src/core';
 import type { SceneContext } from 'src/scene/convert';
 import type { DiagramTemplate } from 'src/templates';
-import type { IconPack, IconPackResult } from 'src/icons/pack';
+import type { IconPackResult } from 'src/icons/pack';
 import type {
   IconPackEntry,
+  IconPackHandlers,
   LoadedPack,
   PackOrigin
 } from 'src/icons/packRegistry';
@@ -391,9 +392,8 @@ export interface UiState {
   installedPacks: LoadedPack[];
   removedPackIds: string[];
   packs: LoadedPack[];
-  // The host hears of an install or removal made in the editor, to keep it.
-  onIconPackInstall: ((pack: IconPack) => void) | undefined;
-  onIconPackRemove: ((id: string) => void) | undefined;
+  // The host's pack callbacks, for the Icon packs dialog.
+  packHandlers: IconPackHandlers;
   // 2.3: where saving stands. See src/utils/save.ts.
   saveStatus: SaveStatus;
   // SEC-02: host-supplied validation-error callback, mirrored onto the
@@ -489,21 +489,14 @@ export interface UiStateActions {
   setTemplates: (templates: DiagramTemplate[]) => void;
   setCatalogueItems: (items: CatalogueItem[]) => void;
   setHostPacks: (entries: IconPackEntry[]) => void;
-  /**
-   * Validates and installs a pack, unless a locked pack has its id. An
-   * install the user made (origin 'user', the default) is reported to the
-   * host's onIconPackInstall; one the app made through useReticulyne is not.
-   */
+  /** Validates and installs a pack, unless a locked pack has its id. */
   installPack: (
     value: unknown,
     options?: { origin?: PackOrigin; removable?: boolean }
   ) => IconPackResult;
   /** Removes a pack, unless it is locked. */
   removePack: (id: string) => { ok: true } | { ok: false; errors: string[] };
-  setPackHandlers: (handlers: {
-    onIconPackInstall?: (pack: IconPack) => void;
-    onIconPackRemove?: (id: string) => void;
-  }) => void;
+  setPackHandlers: (handlers: IconPackHandlers) => void;
   setEditingGroupId: (id: string | null) => void;
   setHideRedacted: (hideRedacted: boolean) => void;
   setShowOtherFloors: (showOtherFloors: boolean) => void;

@@ -402,12 +402,14 @@ class Parser {
 
   private atStatementEnd() {
     this.skipBlank();
-    return (
-      this.atEnd() ||
-      this.peek() === '\n' ||
-      this.peek() === ';' ||
-      this.startsWith('%%')
-    );
+    // Mermaid reads %% only at the start of a line; after code it fails.
+    if (this.startsWith('%%')) {
+      this.fail(
+        'MMD_UNEXPECTED_TOKEN',
+        'A comment (%%) must be on a line of its own in Mermaid, not after a statement.'
+      );
+    }
+    return this.atEnd() || this.peek() === '\n' || this.peek() === ';';
   }
 
   private skipToLineEnd() {
@@ -530,7 +532,13 @@ class Parser {
       );
       return;
     }
-    this.header();
+    try {
+      this.header();
+    } catch (e) {
+      if (!(e instanceof StatementError)) throw e;
+      this.error(e.code, e.detail, e.at);
+      throw new Stop();
+    }
     for (;;) {
       this.skipTrivia();
       if (this.atEnd()) break;

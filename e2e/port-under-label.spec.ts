@@ -28,8 +28,8 @@ test.beforeEach(async ({ page }) => {
               id: 'v',
               name: 'Main',
               items: [
-                { id: 'printer', tile: { x: 0, y: 0 } },
-                { id: 'laptop', tile: { x: 4, y: -2 } }
+                { id: 'printer', tile: { x: 0, y: 0 }, labelHeight: 20 },
+                { id: 'laptop', tile: { x: 4, y: -2 }, labelHeight: 20 }
               ]
             }
           ]

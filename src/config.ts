@@ -185,7 +185,10 @@ export const DEFAULT_ICON: Icon = {
   url: ''
 };
 
-export const DEFAULT_LABEL_HEIGHT = 20;
+// A placement with no labelHeight of its own (a hand-written or imported
+// scene) draws its label where a placed item's starts, clear of the
+// drawing; at 20 it sat on the top of every taller drawing (rtl-060).
+export const DEFAULT_LABEL_HEIGHT = VIEW_ITEM_DEFAULTS.labelHeight;
 export const PROJECT_BOUNDING_BOX_PADDING = 3;
 // What a cleared TipTap editor serialises to. (Quill emitted `<p><br></p>`;
 // legacy stored descriptions may still carry that form — see isEmptyMarkdown.)

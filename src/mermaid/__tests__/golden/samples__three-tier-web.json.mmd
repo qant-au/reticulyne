@@ -18,9 +18,9 @@ flowchart LR
     app_2["App 2"]
   end
   subgraph production_zone_3 ["Data tier"]
-    cache[("Session cache")]
-    db_primary["DB: primary"]
-    db_replica["DB: replica"]
+    cache["Session cache"]
+    db_primary[("DB: primary")]
+    db_replica[("DB: replica")]
   end
   users -.->|"DNS lookup"| dns
   users -->|"HTTPS"| cdn

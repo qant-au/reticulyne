@@ -29,9 +29,9 @@ test.beforeEach(async ({ page }) => {
               id: 'v',
               name: 'Main',
               items: [
-                { id: 'sw', tile: { x: 0, y: 0 } },
-                { id: 'fw', tile: { x: 4, y: 0 } },
-                { id: 'far', tile: { x: -4, y: 0 } }
+                { id: 'sw', tile: { x: 0, y: 0 }, labelHeight: 20 },
+                { id: 'fw', tile: { x: 4, y: 0 }, labelHeight: 20 },
+                { id: 'far', tile: { x: -4, y: 0 }, labelHeight: 20 }
               ],
               connectors: [
                 {

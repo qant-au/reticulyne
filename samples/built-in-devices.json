@@ -1,0 +1,1920 @@
+{
+  "format": "reticulyne-scene",
+  "version": 2,
+  "id": "built-in-devices",
+  "title": "Built-in devices",
+  "description": "A small business site drawn only with built-in catalogue devices, each placed with its ports and joined port to port.",
+  "objects": [
+    {
+      "id": "ont",
+      "name": "Fibre ONT",
+      "icon": "reticulyne-fibre-ont",
+      "element": "fibre-ont",
+      "ports": [
+        {
+          "id": "pon",
+          "name": "PON",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sc"
+          }
+        },
+        {
+          "id": "lan1",
+          "name": "LAN 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan2",
+          "name": "LAN 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan3",
+          "name": "LAN 3",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan4",
+          "name": "LAN 4",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "barrel",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "fibre-ont"
+        }
+      ]
+    },
+    {
+      "id": "firewall",
+      "name": "Firewall",
+      "icon": "reticulyne-firewall",
+      "element": "firewall",
+      "ports": [
+        {
+          "id": "wan",
+          "name": "WAN",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan1",
+          "name": "LAN 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan2",
+          "name": "LAN 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan3",
+          "name": "LAN 3",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan4",
+          "name": "LAN 4",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "vpn",
+          "name": "VPN",
+          "kind": "ip-tunnel",
+          "props": {
+            "connector": "none"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "firewall"
+        }
+      ]
+    },
+    {
+      "id": "core",
+      "name": "Core switch",
+      "icon": "reticulyne-network-switch",
+      "element": "network-switch",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "Port 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth2",
+          "name": "Port 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth3",
+          "name": "Port 3",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth4",
+          "name": "Port 4",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth5",
+          "name": "Port 5",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth6",
+          "name": "Port 6",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth7",
+          "name": "Port 7",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth8",
+          "name": "Port 8",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth9",
+          "name": "Port 9",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth10",
+          "name": "Port 10",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth11",
+          "name": "Port 11",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth12",
+          "name": "Port 12",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth13",
+          "name": "Port 13",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth14",
+          "name": "Port 14",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth15",
+          "name": "Port 15",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth16",
+          "name": "Port 16",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth17",
+          "name": "Port 17",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth18",
+          "name": "Port 18",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth19",
+          "name": "Port 19",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth20",
+          "name": "Port 20",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth21",
+          "name": "Port 21",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth22",
+          "name": "Port 22",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth23",
+          "name": "Port 23",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth24",
+          "name": "Port 24",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "sfp1",
+          "name": "SFP 1",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp2",
+          "name": "SFP 2",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp3",
+          "name": "SFP 3",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp4",
+          "name": "SFP 4",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "network-switch-24"
+        }
+      ]
+    },
+    {
+      "id": "poe",
+      "name": "PoE switch",
+      "icon": "reticulyne-network-switch",
+      "element": "network-switch",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "PoE port 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "eth2",
+          "name": "PoE port 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "eth3",
+          "name": "PoE port 3",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "eth4",
+          "name": "PoE port 4",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "eth5",
+          "name": "PoE port 5",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "eth6",
+          "name": "PoE port 6",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "eth7",
+          "name": "PoE port 7",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "eth8",
+          "name": "PoE port 8",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "uplink1",
+          "name": "Uplink 1",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "uplink2",
+          "name": "Uplink 2",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "poe-switch-8"
+        }
+      ]
+    },
+    {
+      "id": "server",
+      "name": "Server",
+      "icon": "reticulyne-rack-server-1u",
+      "element": "rack-server-1u",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "LAN 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth2",
+          "name": "LAN 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "mgmt",
+          "name": "Management",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "rack-server-1u"
+        }
+      ]
+    },
+    {
+      "id": "nas",
+      "name": "NAS",
+      "icon": "reticulyne-nas",
+      "element": "nas",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "LAN 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth2",
+          "name": "LAN 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "usb",
+          "name": "USB",
+          "kind": "usb",
+          "props": {
+            "connector": "usb-a"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "barrel",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "nas"
+        }
+      ]
+    },
+    {
+      "id": "nvr",
+      "name": "NVR",
+      "icon": "reticulyne-nvr",
+      "element": "nvr",
+      "ports": [
+        {
+          "id": "lan",
+          "name": "LAN",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "poe1",
+          "name": "Camera 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "poe2",
+          "name": "Camera 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "poe3",
+          "name": "Camera 3",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "poe4",
+          "name": "Camera 4",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "poe5",
+          "name": "Camera 5",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "poe6",
+          "name": "Camera 6",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "poe7",
+          "name": "Camera 7",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "poe8",
+          "name": "Camera 8",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pse"
+          }
+        },
+        {
+          "id": "hdmi",
+          "name": "HDMI out",
+          "kind": "hdmi",
+          "props": {
+            "connector": "hdmi-a"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "nvr-8"
+        }
+      ]
+    },
+    {
+      "id": "ups",
+      "name": "Rack UPS",
+      "icon": "reticulyne-rack-ups",
+      "element": "rack-ups",
+      "ports": [
+        {
+          "id": "mgmt",
+          "name": "Network card",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "usb",
+          "name": "USB",
+          "kind": "usb",
+          "props": {
+            "connector": "usb-b"
+          }
+        },
+        {
+          "id": "epo",
+          "name": "Emergency power off",
+          "kind": "dry-contact",
+          "props": {
+            "connector": "terminal"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        },
+        {
+          "id": "out1",
+          "name": "Outlet 1",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c13",
+            "capabilities": "power-out"
+          }
+        },
+        {
+          "id": "out2",
+          "name": "Outlet 2",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c13",
+            "capabilities": "power-out"
+          }
+        },
+        {
+          "id": "out3",
+          "name": "Outlet 3",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c13",
+            "capabilities": "power-out"
+          }
+        },
+        {
+          "id": "out4",
+          "name": "Outlet 4",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c13",
+            "capabilities": "power-out"
+          }
+        },
+        {
+          "id": "out5",
+          "name": "Outlet 5",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c13",
+            "capabilities": "power-out"
+          }
+        },
+        {
+          "id": "out6",
+          "name": "Outlet 6",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c13",
+            "capabilities": "power-out"
+          }
+        },
+        {
+          "id": "out7",
+          "name": "Outlet 7",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c13",
+            "capabilities": "power-out"
+          }
+        },
+        {
+          "id": "out8",
+          "name": "Outlet 8",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c13",
+            "capabilities": "power-out"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "rack-ups"
+        }
+      ]
+    },
+    {
+      "id": "ap",
+      "name": "Wi-Fi AP",
+      "icon": "reticulyne-wifi-ap",
+      "element": "wifi-ap",
+      "ports": [
+        {
+          "id": "eth1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pd"
+          }
+        },
+        {
+          "id": "radio",
+          "kind": "wi-fi",
+          "props": {
+            "connector": "internal",
+            "role": "hub"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "wifi-ap-ceiling"
+        }
+      ]
+    },
+    {
+      "id": "laptop",
+      "name": "Laptop",
+      "icon": "reticulyne-laptop",
+      "element": "laptop",
+      "ports": [
+        {
+          "id": "wifi",
+          "name": "Wi-Fi",
+          "kind": "wi-fi",
+          "props": {
+            "connector": "internal",
+            "role": "client"
+          }
+        },
+        {
+          "id": "bt",
+          "name": "Bluetooth",
+          "kind": "bluetooth",
+          "props": {
+            "connector": "internal",
+            "role": "peer"
+          }
+        },
+        {
+          "id": "hdmi",
+          "name": "HDMI out",
+          "kind": "hdmi",
+          "props": {
+            "connector": "hdmi-a"
+          }
+        },
+        {
+          "id": "usb-c",
+          "name": "USB-C",
+          "kind": "usb",
+          "props": {
+            "connector": "usb-c"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "laptop"
+        }
+      ]
+    },
+    {
+      "id": "phone",
+      "name": "Desk phone",
+      "icon": "reticulyne-ip-phone",
+      "element": "ip-phone",
+      "ports": [
+        {
+          "id": "lan",
+          "name": "LAN",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pd"
+          }
+        },
+        {
+          "id": "pc",
+          "name": "PC",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "ip-phone"
+        }
+      ]
+    },
+    {
+      "id": "dome",
+      "name": "Reception camera",
+      "icon": "reticulyne-cctv-dome",
+      "element": "cctv-dome",
+      "ports": [
+        {
+          "id": "eth1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pd"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "ip-camera-dome"
+        }
+      ]
+    },
+    {
+      "id": "bullet",
+      "name": "Car park camera",
+      "icon": "reticulyne-cctv-bullet",
+      "element": "cctv-bullet",
+      "ports": [
+        {
+          "id": "eth1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "protocols": "onvif",
+            "capabilities": "poe-pd"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "ip-camera-bullet"
+        }
+      ]
+    },
+    {
+      "id": "door",
+      "name": "Door controller",
+      "icon": "reticulyne-door-controller",
+      "element": "door-controller",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "LAN",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45",
+            "capabilities": "poe-pd"
+          }
+        },
+        {
+          "id": "osdp",
+          "name": "Reader bus",
+          "kind": "osdp",
+          "props": {
+            "connector": "terminal",
+            "role": "through",
+            "protocols": "osdp"
+          }
+        },
+        {
+          "id": "reader1",
+          "name": "Reader 1",
+          "kind": "wiegand",
+          "props": {
+            "connector": "terminal"
+          }
+        },
+        {
+          "id": "reader2",
+          "name": "Reader 2",
+          "kind": "wiegand",
+          "props": {
+            "connector": "terminal"
+          }
+        },
+        {
+          "id": "door",
+          "name": "Door contact",
+          "kind": "dry-contact",
+          "props": {
+            "connector": "terminal"
+          }
+        },
+        {
+          "id": "rex",
+          "name": "Exit button",
+          "kind": "dry-contact",
+          "props": {
+            "connector": "terminal"
+          }
+        },
+        {
+          "id": "lock",
+          "name": "Lock",
+          "kind": "power-dc",
+          "props": {
+            "connector": "terminal",
+            "capabilities": "power-out"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "terminal",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "door-controller"
+        }
+      ]
+    },
+    {
+      "id": "reader",
+      "name": "Front door reader",
+      "icon": "reticulyne-card-reader",
+      "element": "card-reader",
+      "ports": [
+        {
+          "id": "wiegand",
+          "name": "Wiegand",
+          "kind": "wiegand",
+          "props": {
+            "connector": "terminal"
+          }
+        },
+        {
+          "id": "osdp",
+          "name": "OSDP",
+          "kind": "osdp",
+          "props": {
+            "connector": "terminal",
+            "role": "through"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "terminal",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "card-reader"
+        }
+      ]
+    },
+    {
+      "id": "mfp",
+      "name": "Printer",
+      "icon": "reticulyne-mfp",
+      "element": "mfp",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "LAN",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "wifi",
+          "name": "Wi-Fi",
+          "kind": "wi-fi",
+          "props": {
+            "connector": "internal",
+            "role": "client"
+          }
+        },
+        {
+          "id": "usb",
+          "name": "USB",
+          "kind": "usb",
+          "props": {
+            "connector": "usb-b"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "mfp"
+        }
+      ]
+    },
+    {
+      "id": "pc",
+      "name": "Reception PC",
+      "icon": "reticulyne-pc-tower",
+      "element": "pc-tower",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "LAN",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "wifi",
+          "name": "Wi-Fi",
+          "kind": "wi-fi",
+          "props": {
+            "connector": "internal",
+            "role": "client"
+          }
+        },
+        {
+          "id": "hdmi",
+          "name": "HDMI out",
+          "kind": "hdmi",
+          "props": {
+            "connector": "hdmi-a"
+          }
+        },
+        {
+          "id": "dp",
+          "name": "DisplayPort out",
+          "kind": "displayport",
+          "props": {
+            "connector": "dp"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "desktop-pc"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "ont--firewall",
+      "from": "ont",
+      "to": "firewall",
+      "fromPort": "lan1",
+      "toPort": "wan",
+      "kind": "ethernet-copper",
+      "description": "Fibre"
+    },
+    {
+      "id": "firewall--core",
+      "from": "firewall",
+      "to": "core",
+      "fromPort": "lan1",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "core--poe",
+      "from": "core",
+      "to": "poe",
+      "fromPort": "eth2",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "core--server",
+      "from": "core",
+      "to": "server",
+      "fromPort": "eth3",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "core--nas",
+      "from": "core",
+      "to": "nas",
+      "fromPort": "eth4",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "core--nvr",
+      "from": "core",
+      "to": "nvr",
+      "fromPort": "eth5",
+      "toPort": "lan",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "ups--firewall",
+      "from": "ups",
+      "to": "firewall",
+      "fromPort": "mgmt",
+      "toPort": "lan2",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "poe--ap",
+      "from": "poe",
+      "to": "ap",
+      "fromPort": "eth2",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "ap--laptop",
+      "from": "ap",
+      "to": "laptop",
+      "fromPort": "radio",
+      "toPort": "wifi",
+      "kind": "wi-fi"
+    },
+    {
+      "id": "poe--phone",
+      "from": "poe",
+      "to": "phone",
+      "fromPort": "eth3",
+      "toPort": "lan",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "poe--dome",
+      "from": "poe",
+      "to": "dome",
+      "fromPort": "eth4",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "poe--bullet",
+      "from": "poe",
+      "to": "bullet",
+      "fromPort": "eth5",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "poe--door",
+      "from": "poe",
+      "to": "door",
+      "fromPort": "eth6",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "door--reader",
+      "from": "door",
+      "to": "reader",
+      "fromPort": "osdp",
+      "toPort": "osdp",
+      "kind": "osdp"
+    },
+    {
+      "id": "core--mfp",
+      "from": "core",
+      "to": "mfp",
+      "fromPort": "eth6",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "core--pc",
+      "from": "core",
+      "to": "pc",
+      "fromPort": "eth7",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    }
+  ],
+  "views": [
+    {
+      "id": "site",
+      "name": "Site",
+      "kind": "iso",
+      "placements": [
+        {
+          "object": "ont",
+          "tile": {
+            "x": -12,
+            "y": 0
+          }
+        },
+        {
+          "object": "firewall",
+          "tile": {
+            "x": -8,
+            "y": 0
+          }
+        },
+        {
+          "object": "core",
+          "tile": {
+            "x": -4,
+            "y": 0
+          }
+        },
+        {
+          "object": "poe",
+          "tile": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "object": "server",
+          "tile": {
+            "x": -4,
+            "y": -4
+          }
+        },
+        {
+          "object": "nas",
+          "tile": {
+            "x": -6,
+            "y": -4
+          }
+        },
+        {
+          "object": "nvr",
+          "tile": {
+            "x": -2,
+            "y": -4
+          }
+        },
+        {
+          "object": "ups",
+          "tile": {
+            "x": -8,
+            "y": -4
+          }
+        },
+        {
+          "object": "ap",
+          "tile": {
+            "x": 4,
+            "y": 4
+          }
+        },
+        {
+          "object": "laptop",
+          "tile": {
+            "x": 8,
+            "y": 4
+          }
+        },
+        {
+          "object": "phone",
+          "tile": {
+            "x": 4,
+            "y": 1
+          }
+        },
+        {
+          "object": "dome",
+          "tile": {
+            "x": 4,
+            "y": -2
+          }
+        },
+        {
+          "object": "bullet",
+          "tile": {
+            "x": 4,
+            "y": -5
+          }
+        },
+        {
+          "object": "door",
+          "tile": {
+            "x": 0,
+            "y": 5
+          }
+        },
+        {
+          "object": "reader",
+          "tile": {
+            "x": 0,
+            "y": 9
+          }
+        },
+        {
+          "object": "mfp",
+          "tile": {
+            "x": -4,
+            "y": 4
+          }
+        },
+        {
+          "object": "pc",
+          "tile": {
+            "x": -8,
+            "y": 4
+          }
+        }
+      ],
+      "connectors": [
+        {
+          "id": "ont--firewall",
+          "connection": "ont--firewall",
+          "anchors": [
+            {
+              "id": "ont--firewall-a",
+              "ref": {
+                "object": "ont"
+              }
+            },
+            {
+              "id": "ont--firewall-b",
+              "ref": {
+                "object": "firewall"
+              }
+            }
+          ],
+          "description": "Fibre"
+        },
+        {
+          "id": "firewall--core",
+          "connection": "firewall--core",
+          "anchors": [
+            {
+              "id": "firewall--core-a",
+              "ref": {
+                "object": "firewall"
+              }
+            },
+            {
+              "id": "firewall--core-b",
+              "ref": {
+                "object": "core"
+              }
+            }
+          ]
+        },
+        {
+          "id": "core--poe",
+          "connection": "core--poe",
+          "anchors": [
+            {
+              "id": "core--poe-a",
+              "ref": {
+                "object": "core"
+              }
+            },
+            {
+              "id": "core--poe-b",
+              "ref": {
+                "object": "poe"
+              }
+            }
+          ]
+        },
+        {
+          "id": "core--server",
+          "connection": "core--server",
+          "anchors": [
+            {
+              "id": "core--server-a",
+              "ref": {
+                "object": "core"
+              }
+            },
+            {
+              "id": "core--server-b",
+              "ref": {
+                "object": "server"
+              }
+            }
+          ]
+        },
+        {
+          "id": "core--nas",
+          "connection": "core--nas",
+          "anchors": [
+            {
+              "id": "core--nas-a",
+              "ref": {
+                "object": "core"
+              }
+            },
+            {
+              "id": "core--nas-b",
+              "ref": {
+                "object": "nas"
+              }
+            }
+          ]
+        },
+        {
+          "id": "core--nvr",
+          "connection": "core--nvr",
+          "anchors": [
+            {
+              "id": "core--nvr-a",
+              "ref": {
+                "object": "core"
+              }
+            },
+            {
+              "id": "core--nvr-b",
+              "ref": {
+                "object": "nvr"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ups--firewall",
+          "connection": "ups--firewall",
+          "anchors": [
+            {
+              "id": "ups--firewall-a",
+              "ref": {
+                "object": "ups"
+              }
+            },
+            {
+              "id": "ups--firewall-b",
+              "ref": {
+                "object": "firewall"
+              }
+            }
+          ]
+        },
+        {
+          "id": "poe--ap",
+          "connection": "poe--ap",
+          "anchors": [
+            {
+              "id": "poe--ap-a",
+              "ref": {
+                "object": "poe"
+              }
+            },
+            {
+              "id": "poe--ap-b",
+              "ref": {
+                "object": "ap"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ap--laptop",
+          "connection": "ap--laptop",
+          "anchors": [
+            {
+              "id": "ap--laptop-a",
+              "ref": {
+                "object": "ap"
+              }
+            },
+            {
+              "id": "ap--laptop-b",
+              "ref": {
+                "object": "laptop"
+              }
+            }
+          ]
+        },
+        {
+          "id": "poe--phone",
+          "connection": "poe--phone",
+          "anchors": [
+            {
+              "id": "poe--phone-a",
+              "ref": {
+                "object": "poe"
+              }
+            },
+            {
+              "id": "poe--phone-b",
+              "ref": {
+                "object": "phone"
+              }
+            }
+          ]
+        },
+        {
+          "id": "poe--dome",
+          "connection": "poe--dome",
+          "anchors": [
+            {
+              "id": "poe--dome-a",
+              "ref": {
+                "object": "poe"
+              }
+            },
+            {
+              "id": "poe--dome-b",
+              "ref": {
+                "object": "dome"
+              }
+            }
+          ]
+        },
+        {
+          "id": "poe--bullet",
+          "connection": "poe--bullet",
+          "anchors": [
+            {
+              "id": "poe--bullet-a",
+              "ref": {
+                "object": "poe"
+              }
+            },
+            {
+              "id": "poe--bullet-b",
+              "ref": {
+                "object": "bullet"
+              }
+            }
+          ]
+        },
+        {
+          "id": "poe--door",
+          "connection": "poe--door",
+          "anchors": [
+            {
+              "id": "poe--door-a",
+              "ref": {
+                "object": "poe"
+              }
+            },
+            {
+              "id": "poe--door-b",
+              "ref": {
+                "object": "door"
+              }
+            }
+          ]
+        },
+        {
+          "id": "door--reader",
+          "connection": "door--reader",
+          "anchors": [
+            {
+              "id": "door--reader-a",
+              "ref": {
+                "object": "door"
+              }
+            },
+            {
+              "id": "door--reader-b",
+              "ref": {
+                "object": "reader"
+              }
+            }
+          ]
+        },
+        {
+          "id": "core--mfp",
+          "connection": "core--mfp",
+          "anchors": [
+            {
+              "id": "core--mfp-a",
+              "ref": {
+                "object": "core"
+              }
+            },
+            {
+              "id": "core--mfp-b",
+              "ref": {
+                "object": "mfp"
+              }
+            }
+          ]
+        },
+        {
+          "id": "core--pc",
+          "connection": "core--pc",
+          "anchors": [
+            {
+              "id": "core--pc-a",
+              "ref": {
+                "object": "core"
+              }
+            },
+            {
+              "id": "core--pc-b",
+              "ref": {
+                "object": "pc"
+              }
+            }
+          ]
+        }
+      ],
+      "rectangles": [
+        {
+          "id": "rack",
+          "from": {
+            "x": -10,
+            "y": -6
+          },
+          "to": {
+            "x": -1,
+            "y": -2
+          },
+          "colorValue": "#a5b8f3",
+          "transparency": 0.5
+        }
+      ],
+      "textBoxes": [
+        {
+          "id": "rack-label",
+          "tile": {
+            "x": -5,
+            "y": -8
+          },
+          "content": "Comms rack"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "id": "reticulyne-card-reader",
+      "name": "Access Card Reader",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(42.78%2033.52)%20scale(11.06599)%22%3E%3Cpath%20d%3D%22M-2.12%201.23L-0.22%202.33L-0.22%20-1.27L-2.12%20-2.37Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.17%202.1L-0.22%202.33L-0.22%20-1.27L0.17%20-1.5Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.73%20-2.6L0.17%20-1.5L-0.22%20-1.27L-2.12%20-2.37Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.82%20-0.2L-0.52%200.55L-0.52%20-0.95L-1.82%20-1.7Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.02%20-0.46L-1.05%20-0.51L-1.09%20-0.56L-1.13%20-0.6L-1.17%20-0.62L-1.21%20-0.64L-1.25%20-0.65L-1.29%20-0.65L-1.32%20-0.64%22%20fill%3D%22none%22%20stroke%3D%22%23f0a92e%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.89%20-0.53L-0.95%20-0.62L-1.02%20-0.7L-1.09%20-0.77L-1.17%20-0.82L-1.25%20-0.86L-1.32%20-0.88L-1.39%20-0.87L-1.44%20-0.85%22%20fill%3D%22none%22%20stroke%3D%22%23f0a92e%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.01%201.12L-1.03%201.03L-1.07%200.94L-1.13%200.87L-1.2%200.83L-1.27%200.83L-1.31%200.87L-1.33%200.94L-1.31%201.02L-1.27%201.11L-1.2%201.18L-1.13%201.22L-1.07%201.22L-1.03%201.18Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%2214%22%20y%3D%224%22%20width%3D%2220%22%20height%3D%2240%22%20rx%3D%223%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2217.5%22%20y%3D%228%22%20width%3D%2213%22%20height%3D%2215%22%20rx%3D%221.5%22%20fill%3D%22%2334405c%22%2F%3E%3Cpath%20d%3D%22M20%2017%20A5%205%200%200%201%2028%2017%20M22%2019.5%20A2.5%202.5%200%200%201%2026%2019.5%22%20fill%3D%22none%22%20stroke%3D%22%23f0a92e%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2234%22%20r%3D%222.4%22%20fill%3D%22%23f0a92e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-cctv-bullet",
+      "name": "CCTV Bullet Camera",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(15.47%2038.77)%20scale(10.31659)%22%3E%3Cpath%20d%3D%22M-1.04%200.4L-0.78%200.55L-0.78%20-1.05L-1.04%20-1.2Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.26%20-0.05L-0.78%200.55L-0.78%20-1.05L0.26%20-1.65Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.8L0.26%20-1.65L-0.78%20-1.05L-1.04%20-1.2Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.26%20-0.55L0.87%200.1L0.87%20-0.3%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.54%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.26%20-0.55L0.87%200.1L0.87%20-0.3%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.25%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.48%20-0.92L-0.46%20-1.1L-0.41%20-1.29L-0.33%20-1.47L-0.23%20-1.65L-0.11%20-1.81L0.03%20-1.95L0.17%20-2.05L0.32%20-2.11L0.46%20-2.14L0.58%20-2.12L0.68%20-2.06L0.76%20-1.96L0.81%20-1.83L0.82%20-1.67L0.81%20-1.5L0.76%20-1.31L0.68%20-1.13L0.58%20-0.95L0.46%20-0.79L0.32%20-0.65L0.17%20-0.55L0.03%20-0.49L-0.11%20-0.46L-0.23%20-0.48L-0.33%20-0.54L-0.41%20-0.64L-0.46%20-0.77Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%23e9edf3%22%20stroke-width%3D%220.09%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.33%20-0.54L-0.41%20-0.64L-0.46%20-0.77L-0.48%20-0.92L-0.46%20-1.1L-0.41%20-1.29L-0.33%20-1.47L-0.23%20-1.65L-0.11%20-1.81L0.03%20-1.95L0.17%20-2.05L0.32%20-2.11L0.46%20-2.14L0.58%20-2.12L3.7%20-0.32L3.57%20-0.34L3.44%20-0.31L3.29%20-0.25L3.15%20-0.15L3.01%20-0.01L2.89%200.15L2.78%200.33L2.71%200.51L2.66%200.7L2.64%200.88L2.66%201.03L2.71%201.16L2.78%201.26Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-0.33%20-0.54L-0.41%20-0.64L-0.46%20-0.77L-0.48%20-0.92L-0.46%20-1.1L-0.41%20-1.29L-0.33%20-1.47L-0.23%20-1.65L-0.11%20-1.81L0.03%20-1.95L0.17%20-2.05L0.32%20-2.11L0.46%20-2.14L0.58%20-2.12%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.58%20-2.12L3.7%20-0.32%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.33%20-0.54L2.78%201.26%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.64%200.88L2.66%200.7L2.71%200.51L2.78%200.33L2.89%200.15L3.01%20-0.01L3.15%20-0.15L3.29%20-0.25L3.44%20-0.31L3.57%20-0.34L3.7%20-0.32L3.8%20-0.26L3.88%20-0.16L3.92%20-0.03L3.94%200.13L3.92%200.3L3.88%200.49L3.8%200.67L3.7%200.85L3.57%201.01L3.44%201.15L3.29%201.25L3.15%201.31L3.01%201.34L2.89%201.32L2.78%201.26L2.71%201.16L2.66%201.03Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.86%200.75L2.88%200.58L2.94%200.41L3.04%200.24L3.16%200.1L3.29%200L3.42%20-0.05L3.55%20-0.05L3.64%200L3.7%200.11L3.72%200.25L3.7%200.42L3.64%200.59L3.55%200.76L3.42%200.9L3.29%201L3.16%201.05L3.04%201.05L2.94%201L2.88%200.89Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.1%200.61L3.12%200.5L3.17%200.4L3.25%200.31L3.33%200.26L3.41%200.26L3.46%200.31L3.48%200.39L3.46%200.5L3.41%200.6L3.33%200.69L3.25%200.74L3.17%200.74L3.12%200.69Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.52%20-1.7L2.86%200.25L2.86%200.1L-0.52%20-1.85Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.24%20-0.55L2.86%200.25L2.86%200.1L4.24%20-0.7Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.87%20-2.65L4.24%20-0.7L2.86%200.1L-0.52%20-1.85Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.15%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%222%22%20y%3D%2230%22%20width%3D%224%22%20height%3D%2214%22%20rx%3D%221%22%20fill%3D%22%23e9edf3%22%2F%3E%3Cpath%20d%3D%22M6%2038%20H16%20V30%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%224.65%22%2F%3E%3Cpath%20d%3D%22M6%2038%20H16%20V30%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%222.4%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2218%22%20width%3D%2228%22%20height%3D%2212%22%20rx%3D%225%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2214.5%22%20width%3D%2233%22%20height%3D%223%22%20rx%3D%221%22%20fill%3D%22%23ffffff%22%2F%3E%3Crect%20x%3D%2236%22%20y%3D%2219%22%20width%3D%225%22%20height%3D%2210%22%20rx%3D%221%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2241%22%20cy%3D%2224%22%20r%3D%221.6%22%20fill%3D%22%23f0a92e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-cctv-dome",
+      "name": "Dome Camera",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(32%2015.71)%20scale(10.59502)%22%3E%3Cpath%20d%3D%22M2.57%201.55L2.55%201.74L2.48%201.93L2.38%202.12L2.23%202.29L2.04%202.45L1.82%202.6L1.57%202.73L1.29%202.84L0.98%202.92L0.67%202.98L0.34%203.02L0%203.03L-0.34%203.02L-0.67%202.98L-0.98%202.92L-1.29%202.84L-1.57%202.73L-1.82%202.6L-2.04%202.45L-2.23%202.29L-2.38%202.12L-2.48%201.93L-2.55%201.74L-2.57%201.55L-2.57%202L-2.55%202.19L-2.48%202.38L-2.38%202.57L-2.23%202.74L-2.04%202.9L-1.82%203.05L-1.57%203.18L-1.29%203.29L-0.98%203.37L-0.67%203.43L-0.34%203.47L0%203.48L0.34%203.47L0.67%203.43L0.98%203.37L1.29%203.29L1.57%203.18L1.82%203.05L2.04%202.9L2.23%202.74L2.38%202.57L2.48%202.38L2.55%202.19L2.57%202Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.82%202.6L1.51%202.75L1.17%202.87L0.79%202.96L0.4%203.02L0%203.03L-0.4%203.02L-0.79%202.96L-1.17%202.87L-1.51%202.75L-1.82%202.6L-2.08%202.42L-2.29%202.22L-2.45%202.01L-2.54%201.78L-2.57%201.55L-2.54%201.32L-2.45%201.09L-2.29%200.88L-2.08%200.68L-1.82%200.5L-1.51%200.35L-1.17%200.23L-0.79%200.14L-0.4%200.08L0%200.07L0.4%200.08L0.79%200.14L1.17%200.23L1.51%200.35L1.82%200.5L2.08%200.68L2.29%200.88L2.45%201.09L2.54%201.32L2.57%201.55L2.54%201.78L2.45%202.01L2.29%202.22L2.08%202.42L1.82%202.6Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.96%201.55L1.94%201.29L1.89%201.04L1.81%200.8L1.7%200.57L1.55%200.36L1.39%200.16L1.19%200L0.98%20-0.15L0.75%20-0.26L0.51%20-0.34L0.26%20-0.39L0%20-0.41L-0.26%20-0.39L-0.51%20-0.34L-0.75%20-0.26L-0.98%20-0.15L-1.19%200L-1.39%200.16L-1.55%200.36L-1.7%200.57L-1.81%200.8L-1.89%201.04L-1.94%201.29L-1.96%201.55L-1.96%201.55L-1.94%201.7L-1.89%201.84L-1.81%201.98L-1.7%202.12L-1.55%202.24L-1.39%202.35L-1.19%202.45L-0.98%202.53L-0.75%202.6L-0.51%202.64L-0.26%202.67L0%202.68L0.26%202.67L0.51%202.64L0.75%202.6L0.98%202.53L1.19%202.45L1.39%202.35L1.55%202.24L1.7%202.12L1.81%201.98L1.89%201.84L1.94%201.7L1.96%201.55Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.33%202.04L0.2%202.09L0.04%202.12L-0.12%202.11L-0.27%202.07L-0.38%202L-0.45%201.92L-0.46%201.83L-0.42%201.74L-0.33%201.66L-0.2%201.61L-0.04%201.58L0.12%201.59L0.27%201.63L0.38%201.7L0.45%201.78L0.46%201.87L0.42%201.96Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.13%201.93L0.03%201.95L-0.08%201.94L-0.16%201.9L-0.18%201.83L-0.13%201.78L-0.03%201.75L0.08%201.76L0.16%201.8L0.18%201.87Z%22%20fill%3D%22%2316213d%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%2234%22%20width%3D%2236%22%20height%3D%226%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Cpath%20d%3D%22M10%2034%20H38%20C38%2018%2010%2018%2010%2034%20Z%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2228%22%20r%3D%223.4%22%20fill%3D%22%23f0a92e%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2228%22%20r%3D%221.3%22%20fill%3D%22%2316213d%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-door-controller",
+      "name": "Access Control Door Controller",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(37.45%2025.71)%20scale(10.48077)%22%3E%3Cpath%20d%3D%22M-2.42%201.4L0.69%203.2L0.69%200.2L-2.42%20-1.6Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.39%202.8L0.69%203.2L0.69%200.2L1.39%20-0.2Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.73%20-2L1.39%20-0.2L0.69%200.2L-2.42%20-1.6Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.08%201.2L-1.21%201.7L-1.21%20-0.4L-2.08%20-0.9Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.33%200.63L-1.34%200.57L-1.38%200.51L-1.43%200.48L-1.47%200.49L-1.48%200.54L-1.47%200.6L-1.43%200.65L-1.38%200.68L-1.34%200.67Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.61%200.55L0.09%200.95L0.09%200.35L-0.61%20-0.05Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.43%201.15L-0.45%201.08L-0.49%201.02L-0.55%200.99L-0.59%201L-0.61%201.05L-0.59%201.12L-0.55%201.18L-0.49%201.21L-0.45%201.2Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.13%201.33L-0.15%201.26L-0.19%201.2L-0.24%201.16L-0.29%201.18L-0.3%201.23L-0.29%201.29L-0.24%201.35L-0.19%201.39L-0.15%201.37Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.17%201.5L0.16%201.43L0.11%201.37L0.06%201.34L0.02%201.35L0%201.4L0.02%201.47L0.06%201.53L0.11%201.56L0.16%201.55Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.78%201.95L0.43%202.65L0.43%202.25L-0.78%201.55Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.14%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%225.1%22%20y%3D%228.25%22%20width%3D%2237.8%22%20height%3D%2231.5%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%229.3%22%20y%3D%2213.5%22%20width%3D%2210.5%22%20height%3D%2222.05%22%20rx%3D%220.4%22%20fill%3D%22%23ffffff%22%2F%3E%3Ccircle%20cx%3D%2217.49%22%20cy%3D%2224.97%22%20r%3D%220.95%22%20fill%3D%22%23f0a92e%22%2F%3E%3Crect%20x%3D%2227.15%22%20y%3D%2213.5%22%20width%3D%228.4%22%20height%3D%226.3%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2228.2%22%20cy%3D%2225.05%22%20r%3D%221.05%22%20fill%3D%22%23f0a92e%22%2F%3E%3Ccircle%20cx%3D%2231.88%22%20cy%3D%2225.05%22%20r%3D%221.05%22%20fill%3D%22%23f0a92e%22%2F%3E%3Ccircle%20cx%3D%2235.55%22%20cy%3D%2225.05%22%20r%3D%221.05%22%20fill%3D%22%23f0a92e%22%2F%3E%3Crect%20x%3D%2225.05%22%20y%3D%2231.35%22%20width%3D%2214.7%22%20height%3D%224.2%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-fibre-ont",
+      "name": "Fibre ONT",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(30.51%2031.79)%20scale(8.58268)%22%3E%3Cpath%20d%3D%22M-0.17%201.2L-1.39%201.9L-1.39%203.2%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.53%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.17%201.2L-1.39%201.9L-1.39%203.2%22%20fill%3D%22none%22%20stroke%3D%22%232ea88e%22%20stroke-width%3D%220.18%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.39%201L0.69%202.2L0.69%201.9L-1.39%200.7Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.73%201.6L0.69%202.2L0.69%201.9L1.73%201.3Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.35%200.1L1.73%201.3L0.69%201.9L-1.39%200.7Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.87%200.8L0.52%201.6L0.52%20-2L-0.87%20-2.8Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.13%201.25L0.52%201.6L0.52%20-2L1.13%20-2.35Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.26%20-3.15L1.13%20-2.35L0.52%20-2L-0.87%20-2.8Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.43%20-2.05L-0.46%20-2.14L-0.52%20-2.2L-0.58%20-2.21L-0.61%20-2.15L-0.58%20-2.06L-0.52%20-2L-0.46%20-1.99Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.43%20-1.6L-0.46%20-1.69L-0.52%20-1.75L-0.58%20-1.76L-0.61%20-1.7L-0.58%20-1.61L-0.52%20-1.55L-0.46%20-1.54Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.43%20-1.15L-0.46%20-1.24L-0.52%20-1.3L-0.58%20-1.31L-0.61%20-1.25L-0.58%20-1.16L-0.52%20-1.1L-0.46%20-1.09Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.43%20-0.7L-0.46%20-0.79L-0.52%20-0.85L-0.58%20-0.86L-0.61%20-0.8L-0.58%20-0.71L-0.52%20-0.65L-0.46%20-0.64Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.35%20-2.05L0.26%20-1.7L0.26%20-1.8L-0.35%20-2.15Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.35%20-1.6L0.26%20-1.25L0.26%20-1.35L-0.35%20-1.7Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.35%20-1.15L0.26%20-0.8L0.26%20-0.9L-0.35%20-1.25Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.35%20-0.7L0.26%20-0.35L0.26%20-0.45L-0.35%20-0.8Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.17%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M24%2039%20V46%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%223.85%22%2F%3E%3Cpath%20d%3D%22M24%2039%20V46%22%20fill%3D%22none%22%20stroke%3D%22%232ea88e%22%20stroke-width%3D%221.6%22%2F%3E%3Crect%20x%3D%2214%22%20y%3D%2237%22%20width%3D%2220%22%20height%3D%223%22%20rx%3D%221%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%224%22%20width%3D%2212%22%20height%3D%2233%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Ccircle%20cx%3D%2221%22%20cy%3D%229%22%20r%3D%220.9%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2223.5%22%20y%3D%228.4%22%20width%3D%224%22%20height%3D%221.2%22%20rx%3D%220.3%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2221%22%20cy%3D%2213.5%22%20r%3D%220.9%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2223.5%22%20y%3D%2212.9%22%20width%3D%224%22%20height%3D%221.2%22%20rx%3D%220.3%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2221%22%20cy%3D%2218%22%20r%3D%220.9%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2223.5%22%20y%3D%2217.4%22%20width%3D%224%22%20height%3D%221.2%22%20rx%3D%220.3%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2221%22%20cy%3D%2222.5%22%20r%3D%220.9%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2223.5%22%20y%3D%2221.9%22%20width%3D%224%22%20height%3D%221.2%22%20rx%3D%220.3%22%20fill%3D%22%23c5cdda%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-firewall",
+      "name": "Firewall",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(25.51%2027.13)%20scale(7.49181)%22%3E%3Cpath%20d%3D%22M-2.77%201.6L1.73%204.2L1.73%202.9L-2.77%200.3Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.5%202.6L1.73%204.2L1.73%202.9L4.5%201.3Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.3L4.5%201.3L1.73%202.9L-2.77%200.3Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.42%201.45L-2.04%201.67L-2.04%201.17L-2.42%200.95Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.91%201.75L-1.52%201.98L-1.52%201.48L-1.91%201.25Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.39%202.05L-1%202.28L-1%201.78L-1.39%201.55Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.87%202.35L-0.48%202.58L-0.48%202.07L-0.87%201.85Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.35%202.65L0.04%202.88L0.04%202.38L-0.35%202.15Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.16%203.27L1.14%203.19L1.1%203.11L1.04%203.06L0.98%203.04L0.93%203.07L0.92%203.13L0.93%203.21L0.98%203.29L1.04%203.34L1.1%203.36L1.14%203.33Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.95%20-0.15L2.51%201.85L2.51%20-0.55L-0.95%20-2.55Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.12%201.5L2.51%201.85L2.51%20-0.55L3.12%20-0.9Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.35%20-2.9L3.12%20-0.9L2.51%20-0.55L-0.95%20-2.55Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.95%20-0.95L2.51%201.05%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.2%200.51L0.2%20-0.29%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.35%201.18L1.35%200.38%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.95%20-1.75L2.51%200.25%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.78%200.05L0.78%20-0.75%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.93%200.71L1.93%20-0.09%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.95%20-2.55L2.51%20-0.55%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.2%20-1.09L0.2%20-1.89%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.35%20-0.42L1.35%20-1.22%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.2%20-0.29L1.35%200.38L1.35%20-0.42L0.2%20-1.09Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%229%22%20y%3D%226%22%20width%3D%2230%22%20height%3D%2220%22%20rx%3D%221%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2219%22%20y%3D%2212.67%22%20width%3D%2210%22%20height%3D%226.67%22%20rx%3D%220%22%20fill%3D%22%23f0a92e%22%2F%3E%3Cpath%20d%3D%22M9%2012.67%20H39%20M9%2019.33%20H39%20M19%206%20V12.67%20M29%206%20V12.67%20M14%2012.67%20V19.33%20M24%2012.67%20V19.33%20M34%2012.67%20V19.33%20M19%2019.33%20V26%20M29%2019.33%20V26%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%2226%22%20width%3D%2240%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2231%22%20width%3D%223.5%22%20height%3D%224%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2213%22%20y%3D%2231%22%20width%3D%223.5%22%20height%3D%224%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2231%22%20width%3D%223.5%22%20height%3D%224%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2223%22%20y%3D%2231%22%20width%3D%223.5%22%20height%3D%224%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2231%22%20width%3D%223.5%22%20height%3D%224%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2233%22%20r%3D%221.4%22%20fill%3D%22%23f0a92e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-ip-phone",
+      "name": "Desk Phone",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(30.4%2021.01)%20scale(9.25459)%22%3E%3Cpath%20d%3D%22M-2.77%201.6L0.35%203.4L0.35%202.6L-2.77%200.8Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.12%201.8L0.35%203.4L0.35%202.6L3.12%201Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-0.8L3.12%201L0.35%202.6L-2.77%200.8Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.38%200.72L-1.52%201.22L-1.52%200.77L-2.38%200.27Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.74%20-0.08L-1.52%201.22L-1.52%200.77L0.74%20-0.52Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.13%20-1.02L0.74%20-0.52L-1.52%200.77L-2.38%200.27Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.04%200.1L2.6%201L1.86%201.42L0.3%200.52Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.17%200.7L0.48%200.87L0.26%201L-0.04%200.83Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.65%200.98L0.95%201.15L0.74%201.28L0.43%201.1Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.13%201.25L1.43%201.42L1.21%201.55L0.91%201.37Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.19%200.91L0.11%201.08L-0.1%201.21L-0.41%201.03Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.29%201.19L0.59%201.36L0.37%201.49L0.07%201.31Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.76%201.46L1.07%201.63L0.85%201.76L0.55%201.58Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.55%201.12L-0.25%201.29L-0.47%201.42L-0.77%201.24Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.08%201.4L0.23%201.57L0.01%201.7L-0.29%201.52Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.4%201.67L0.7%201.84L0.48%201.97L0.18%201.79Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.92%201.33L-0.61%201.51L-0.83%201.63L-1.13%201.45Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.44%201.61L-0.14%201.78L-0.36%201.91L-0.66%201.73Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.03%201.88L0.34%202.05L0.12%202.18L-0.18%202.01Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.46%202.26L0.37%202.29L0.27%202.28L0.2%202.24L0.19%202.19L0.23%202.13L0.32%202.11L0.42%202.12L0.49%202.16L0.5%202.21Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.16%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%224%22%20y%3D%228%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2215%22%20y%3D%2214%22%20width%3D%2228%22%20height%3D%2226%22%20rx%3D%223%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2217%22%20width%3D%2222%22%20height%3D%227%22%20rx%3D%221%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2219%22%20y%3D%2227%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2225.5%22%20y%3D%2227%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2227%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2219%22%20y%3D%2230%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2225.5%22%20y%3D%2230%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2230%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2219%22%20y%3D%2233%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2225.5%22%20y%3D%2233%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2233%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2219%22%20y%3D%2236%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2225.5%22%20y%3D%2236%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%2232%22%20y%3D%2236%22%20width%3D%224.5%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2238.5%22%20cy%3D%2236%22%20r%3D%221%22%20fill%3D%22%232ea88e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-laptop",
+      "name": "Laptop",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(26.26%2031.26)%20scale(7.364859999999999)%22%3E%3Cpath%20d%3D%22M-0.17%20-0.2L3.64%202L4.33%20-1.4L0.52%20-3.6Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.14%20-0.32L3.43%201.58L4.01%20-1.28L0.72%20-3.18Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.77%201.6L1.04%203.8L1.04%203.5L-2.77%201.3Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.81%202.2L1.04%203.8L1.04%203.5L3.81%201.9Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-0.3L3.81%201.9L1.04%203.5L-2.77%201.3Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.04%200.13L3.07%201.93L1.82%202.65L-1.3%200.85Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.52%201.6L0.52%202.2L-0.13%202.58L-1.17%201.98Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.68%203.44L0.66%203.37L0.61%203.32L0.56%203.32L0.54%203.36L0.56%203.43L0.61%203.48L0.66%203.48Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%229%22%20y%3D%228%22%20width%3D%2230%22%20height%3D%2222%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2211%22%20width%3D%2224%22%20height%3D%2216%22%20rx%3D%221%22%20fill%3D%22%2334405c%22%2F%3E%3Cpath%20d%3D%22M7%2030%20H41%20L45%2036%20H3%20Z%22%20fill%3D%22%23e9edf3%22%2F%3E%3Cpath%20d%3D%22M20%2033%20H28%22%20fill%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2239%22%20cy%3D%2233%22%20r%3D%220.9%22%20fill%3D%22%232ea88e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-mfp",
+      "name": "Multifunction Printer",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(28.74%2031.44)%20scale(7.51724)%22%3E%3Cpath%20d%3D%22M-2.77%201.6L0.87%203.7L0.87%200.5L-2.77%20-1.6Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.64%202.1L0.87%203.7L0.87%200.5L3.64%20-1.1Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-3.2L3.64%20-1.1L0.87%200.5L-2.77%20-1.6Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.77%20-1.6L0.87%200.5L0.87%200.15L-2.77%20-1.95Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.64%20-1.1L0.87%200.5L0.87%200.15L3.64%20-1.45Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-3.55L3.64%20-1.45L0.87%200.15L-2.77%20-1.95Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.6%200.5L0.69%202.4%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.39%201.7L-0.52%202.2L-0.52%202.05L-1.39%201.55Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.6%20-0.5L0.69%201.4%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.39%200.7L-0.52%201.2L-0.52%201.05L-1.39%200.55Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.42%20-0.75L-0.52%200.35L-0.52%200.05L-2.42%20-1.05Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.17%200.75L0.61%201.2L0.61%200.6L-0.17%200.15Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.32%200.74L0.29%200.63L0.22%200.56L0.14%200.55L0.11%200.62L0.14%200.72L0.22%200.8L0.29%200.8Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%224%22%20width%3D%2236%22%20height%3D%224%22%20rx%3D%221%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%228%22%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%229%22%20y%3D%2212%22%20width%3D%2218%22%20height%3D%223%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2231%22%20y%3D%2211%22%20width%3D%228%22%20height%3D%225%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2235%22%20cy%3D%2213.5%22%20r%3D%221%22%20fill%3D%22%232ea88e%22%2F%3E%3Cpath%20d%3D%22M6%2022%20H42%20M6%2033%20H42%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%2220%22%20y%3D%2226%22%20width%3D%228%22%20height%3D%222%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2220%22%20y%3D%2237%22%20width%3D%228%22%20height%3D%222%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-nas",
+      "name": "Network Storage (NAS)",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(30.61%2033.6)%20scale(8.014710000000001)%22%3E%3Cpath%20d%3D%22M-2.6%201.5L0.35%203.2L0.35%20-0.4L-2.6%20-2.1Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.94%201.7L0.35%203.2L0.35%20-0.4L2.94%20-1.9Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-3.6L2.94%20-1.9L0.35%20-0.4L-2.6%20-2.1Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.29%201.27L-1.8%201.56L-1.8%20-0.84L-2.29%20-1.12Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.97%201.12L-1.99%201.03L-2.05%200.97L-2.11%200.96L-2.14%201.02L-2.11%201.1L-2.05%201.17L-1.99%201.17Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.67%201.64L-1.18%201.92L-1.18%20-0.48L-1.67%20-0.76Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.34%201.48L-1.37%201.39L-1.43%201.32L-1.49%201.32L-1.52%201.38L-1.49%201.46L-1.43%201.53L-1.37%201.53Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.05%202L-0.55%202.28L-0.55%20-0.12L-1.05%20-0.4Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.72%201.84L-0.74%201.75L-0.81%201.69L-0.87%201.68L-0.89%201.74L-0.87%201.82L-0.81%201.89L-0.74%201.89Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.42%202.36L0.07%202.64L0.07%200.24L-0.42%20-0.04Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.1%202.2L-0.12%202.11L-0.18%202.05L-0.24%202.04L-0.27%202.09L-0.24%202.18L-0.18%202.25L-0.12%202.25Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.29%20-1.32L-1.21%20-0.7L-1.21%20-1L-2.29%20-1.62Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%228%22%20y%3D%226%22%20width%3D%2232%22%20height%3D%2236%22%20rx%3D%223%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2216%22%20width%3D%224.6%22%20height%3D%2222%22%20rx%3D%220.8%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2214.3%22%20cy%3D%2234%22%20r%3D%220.9%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2218.6%22%20y%3D%2216%22%20width%3D%224.6%22%20height%3D%2222%22%20rx%3D%220.8%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2220.9%22%20cy%3D%2234%22%20r%3D%220.9%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2225.2%22%20y%3D%2216%22%20width%3D%224.6%22%20height%3D%2222%22%20rx%3D%220.8%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2227.5%22%20cy%3D%2234%22%20r%3D%220.9%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2231.799999999999997%22%20y%3D%2216%22%20width%3D%224.6%22%20height%3D%2222%22%20rx%3D%220.8%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2234.099999999999994%22%20cy%3D%2234%22%20r%3D%220.9%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2212%22%20y%3D%2210%22%20width%3D%2212%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%23c5cdda%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-network-switch",
+      "name": "Network Switch",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(20.49%2019.41)%20scale(6.99235)%22%3E%3Cpath%20d%3D%22M-2.25%201.3L3.29%204.5L3.29%203.6L-2.25%200.4Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5.54%203.2L3.29%204.5L3.29%203.6L5.54%202.3Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-0.9L5.54%202.3L3.29%203.6L-2.25%200.4Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.95%201.36L-1.58%201.57L-1.58%201.3L-1.95%201.09Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.45%201.65L-1.08%201.86L-1.08%201.59L-1.45%201.38Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.94%201.93L-0.58%202.14L-0.58%201.87L-0.94%201.66Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.44%202.22L-0.08%202.43L-0.08%202.16L-0.44%201.95Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.06%202.51L0.42%202.72L0.42%202.45L0.06%202.24Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.56%202.81L0.93%203.01L0.93%202.74L0.56%202.53Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.07%203.1L1.43%203.31L1.43%203.03L1.07%202.83Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.57%203.39L1.93%203.6L1.93%203.33L1.57%203.12Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.95%201L-1.58%201.21L-1.58%200.94L-1.95%200.73Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.45%201.29L-1.08%201.5L-1.08%201.23L-1.45%201.02Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.94%201.57L-0.58%201.78L-0.58%201.51L-0.94%201.3Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.44%201.86L-0.08%202.07L-0.08%201.8L-0.44%201.59Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.06%202.15L0.42%202.36L0.42%202.09L0.06%201.88Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.56%202.44L0.93%202.66L0.93%202.38L0.56%202.17Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.07%202.74L1.43%202.95L1.43%202.68L1.07%202.47Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.57%203.03L1.93%203.24L1.93%202.97L1.57%202.76Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.54%203.62L2.52%203.53L2.46%203.45L2.39%203.41L2.33%203.42L2.31%203.49L2.33%203.57L2.39%203.65L2.46%203.69L2.52%203.68Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.93%203.84L2.91%203.75L2.85%203.67L2.78%203.63L2.72%203.65L2.7%203.71L2.72%203.8L2.78%203.88L2.85%203.92L2.91%203.9Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%2217%22%20width%3D%2242%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%226.5%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2210.2%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2213.9%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2217.6%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2221.3%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2225%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2228.700000000000003%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2232.400000000000006%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%226.5%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2210.2%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2213.9%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2217.6%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2221.3%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2225%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2228.700000000000003%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2232.400000000000006%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2224%22%20r%3D%221.2%22%20fill%3D%22%232ea88e%22%2F%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2224%22%20r%3D%221.2%22%20fill%3D%22%232ea88e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-nvr",
+      "name": "Network Video Recorder",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(25.81%2020.56)%20scale(7.15127)%22%3E%3Cpath%20d%3D%22M-2.94%201.7L1.73%204.4L1.73%203.2L-2.94%200.5Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.68%202.7L1.73%204.4L1.73%203.2L4.68%201.5Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.2L4.68%201.5L1.73%203.2L-2.94%200.5Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.64%201.58L-2.08%201.9L-2.08%201.3L-2.64%200.98Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.91%202L-1.34%202.33L-1.34%201.73L-1.91%201.4Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.17%202.42L-0.61%202.75L-0.61%202.15L-1.17%201.82Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.43%202.85L0.13%203.18L0.13%202.58L-0.43%202.25Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.21%203.5L1.19%203.39L1.13%203.28L1.04%203.2L0.95%203.18L0.89%203.21L0.87%203.3L0.89%203.41L0.95%203.52L1.04%203.6L1.13%203.62L1.19%203.59Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.04%200.4L1.65%201.45L-0.17%201.1Z%22%20fill%3D%22%23f0a92e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%2220%22%20width%3D%2242%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%227%22%20y%3D%2224%22%20width%3D%225%22%20height%3D%226%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2213.5%22%20y%3D%2224%22%20width%3D%225%22%20height%3D%226%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2220%22%20y%3D%2224%22%20width%3D%225%22%20height%3D%226%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2226.5%22%20y%3D%2224%22%20width%3D%225%22%20height%3D%226%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2239%22%20cy%3D%2227%22%20r%3D%222%22%20fill%3D%22%23f0a92e%22%2F%3E%3Cpath%20d%3D%22M20%206%20L32%2012%20L20%2018%20Z%22%20fill%3D%22%23f0a92e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-pc-tower",
+      "name": "Desktop PC",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(37.52%2037.31)%20scale(7.07792)%22%3E%3Cpath%20d%3D%22M-3.46%202L-1.56%203.1L-1.56%20-1.5L-3.46%20-2.6Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.91%201.1L-1.56%203.1L-1.56%20-1.5L1.91%20-3.5Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-4.6L1.91%20-3.5L-1.56%20-1.5L-3.46%20-2.6Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.16%20-1.43L-1.86%20-0.68L-1.86%20-0.98L-3.16%20-1.72Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.29%20-0.23L-2.31%20-0.33L-2.36%20-0.44L-2.43%20-0.53L-2.51%20-0.6L-2.59%20-0.63L-2.66%20-0.62L-2.71%20-0.56L-2.73%20-0.48L-2.71%20-0.37L-2.66%20-0.26L-2.59%20-0.17L-2.51%20-0.1L-2.43%20-0.07L-2.36%20-0.08L-2.31%20-0.14Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%201.73L-1.95%202.38%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%201.48L-1.95%202.13%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%201.23L-1.95%201.88%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%200.98L-1.95%201.63%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%200.73L-1.95%201.38%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%2214%22%20y%3D%224%22%20width%3D%2220%22%20height%3D%2240%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2217%22%20y%3D%228%22%20width%3D%2214%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2218%22%20r%3D%222.4%22%20fill%3D%22%232ea88e%22%2F%3E%3Cpath%20d%3D%22M18%2031%20H30%20M18%2034%20H30%20M18%2037%20H30%20M18%2040%20H30%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-rack-server-1u",
+      "name": "Rack Server, 1U",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(24.26%2020.15)%20scale(7.76928)%22%3E%3Cpath%20d%3D%22M-2.51%201.15L-2.25%201.3L-2.25%200.3L-2.51%200.15Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.15%201.24L-2.25%201.3L-2.25%200.3L-2.15%200.24Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.41%200.09L-2.15%200.24L-2.25%200.3L-2.51%200.15Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.25%201.3L2.25%203.9L2.25%202.9L-2.25%200.3Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.5%202.6L2.25%203.9L2.25%202.9L4.5%201.6Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1L4.5%201.6L2.25%202.9L-2.25%200.3Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.25%203.9L2.51%204.05L2.51%203.05L2.25%202.9Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.62%203.99L2.51%204.05L2.51%203.05L2.62%202.99Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.36%202.84L2.62%202.99L2.51%203.05L2.25%202.9Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.32%200.76L-2.34%200.7L-2.38%200.66L-2.42%200.65L-2.44%200.69L-2.42%200.75L-2.38%200.8L-2.34%200.8Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.44%203.51L2.42%203.45L2.38%203.41L2.34%203.4L2.32%203.44L2.34%203.5L2.38%203.55L2.42%203.55Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.04%201.23L-2.04%200.63%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.82%201.35L-1.82%200.75%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.6%201.48L-1.6%200.88%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.34%201.68L-0.91%201.93L-0.91%201.23L-1.34%200.98Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.07%201.67L-1.1%201.59L-1.16%201.55L-1.19%201.6L-1.16%201.67L-1.1%201.71Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.74%202.03L-0.3%202.28L-0.3%201.57L-0.74%201.32Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.46%202.02L-0.49%201.94L-0.55%201.9L-0.58%201.95L-0.55%202.02L-0.49%202.06Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.13%202.38L0.3%202.63L0.3%201.93L-0.13%201.68Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.15%202.37L0.12%202.29L0.06%202.25L0.03%202.3L0.06%202.37L0.12%202.41Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.48%202.73L0.91%202.98L0.91%202.28L0.48%202.03Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.75%202.72L0.72%202.64L0.66%202.6L0.63%202.65L0.66%202.72L0.72%202.76Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.08%203.08L1.52%203.33L1.52%202.62L1.08%202.37Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.36%203.07L1.33%202.99L1.27%202.95L1.24%202.99L1.27%203.07L1.33%203.11Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.05%203.29L2.02%203.18L1.95%203.1L1.88%203.1L1.84%203.17L1.88%203.27L1.95%203.35L2.02%203.35Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%222.5%22%20y%3D%2218%22%20width%3D%222.5%22%20height%3D%2212%22%20rx%3D%220.5%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2243%22%20y%3D%2218%22%20width%3D%222.5%22%20height%3D%2212%22%20rx%3D%220.5%22%20fill%3D%22%23e9edf3%22%2F%3E%3Ccircle%20cx%3D%223.75%22%20cy%3D%2224%22%20r%3D%220.6%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2244.25%22%20cy%3D%2224%22%20r%3D%220.6%22%20fill%3D%22%23c5cdda%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%2218%22%20width%3D%2238%22%20height%3D%2212%22%20rx%3D%221%22%20fill%3D%22%23e9edf3%22%2F%3E%3Cpath%20d%3D%22M7.5%2020%20V28%20M9.5%2020%20V28%20M11.5%2020%20V28%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%2214%22%20y%3D%2219.5%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2215.9%22%20cy%3D%2226.5%22%20r%3D%220.55%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2219%22%20y%3D%2219.5%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2220.9%22%20cy%3D%2226.5%22%20r%3D%220.55%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2224%22%20y%3D%2219.5%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2225.9%22%20cy%3D%2226.5%22%20r%3D%220.55%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2229%22%20y%3D%2219.5%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2230.9%22%20cy%3D%2226.5%22%20r%3D%220.55%22%20fill%3D%22%232ea88e%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2219.5%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.4%22%20fill%3D%22%23c5cdda%22%2F%3E%3Ccircle%20cx%3D%2235.9%22%20cy%3D%2226.5%22%20r%3D%220.55%22%20fill%3D%22%232ea88e%22%2F%3E%3Ccircle%20cx%3D%2240.5%22%20cy%3D%2224%22%20r%3D%221%22%20fill%3D%22%232ea88e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-rack-ups",
+      "name": "UPS, Rack-Mount",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(25.81%2019.84)%20scale(7.15127)%22%3E%3Cpath%20d%3D%22M-2.94%201.7L1.73%204.4L1.73%203.4L-2.94%200.7Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.68%202.7L1.73%204.4L1.73%203.4L4.68%201.7Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1L4.68%201.7L1.73%203.4L-2.94%200.7Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.64%201.63L-1.43%202.33L-1.43%201.83L-2.64%201.13Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.53%201.57L-2.29%201.71L-2.29%201.45L-2.53%201.31Z%22%20fill%3D%22%238cc04a%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.17%201.78L-1.93%201.92L-1.93%201.66L-2.17%201.52Z%22%20fill%3D%22%238cc04a%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.8%201.99L-1.57%202.13L-1.57%201.87L-1.8%201.73Z%22%20fill%3D%22%238cc04a%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.89%202.38L-0.91%202.29L-0.97%202.2L-1.04%202.13L-1.11%202.11L-1.17%202.14L-1.19%202.22L-1.17%202.31L-1.11%202.4L-1.04%202.47L-0.97%202.49L-0.91%202.46Z%22%20fill%3D%22%238cc04a%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.52%202.85L-0.52%202.35%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.17%203.05L-0.17%202.55%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.17%203.25L0.17%202.75%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.52%203.45L0.52%202.95%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.87%203.65L0.87%203.15%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.21%203.85L1.21%203.35%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%222%22%20y%3D%2217%22%20width%3D%2244%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%2220%22%20width%3D%2213%22%20height%3D%228%22%20rx%3D%221%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%226.5%22%20y%3D%2221.5%22%20width%3D%222.6%22%20height%3D%225%22%20rx%3D%220.3%22%20fill%3D%22%238cc04a%22%2F%3E%3Crect%20x%3D%2210.3%22%20y%3D%2221.5%22%20width%3D%222.6%22%20height%3D%225%22%20rx%3D%220.3%22%20fill%3D%22%238cc04a%22%2F%3E%3Crect%20x%3D%2214.1%22%20y%3D%2221.5%22%20width%3D%222.6%22%20height%3D%225%22%20rx%3D%220.3%22%20fill%3D%22%238cc04a%22%2F%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2224%22%20r%3D%221.6%22%20fill%3D%22%238cc04a%22%2F%3E%3Cpath%20d%3D%22M27%2020%20V28%20M30.5%2020%20V28%20M34%2020%20V28%20M37.5%2020%20V28%20M41%2020%20V28%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-wifi-ap",
+      "name": "Wi-Fi Access Point",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(32%2013.09)%20scale(11.12477)%22%3E%3Cpath%20d%3D%22M2.45%201.4L2.43%201.58L2.37%201.77L2.26%201.94L2.12%202.11L1.94%202.26L1.73%202.4L1.49%202.52L1.22%202.62L0.94%202.71L0.63%202.77L0.32%202.8L0%202.81L-0.32%202.8L-0.63%202.77L-0.94%202.71L-1.22%202.62L-1.49%202.52L-1.73%202.4L-1.94%202.26L-2.12%202.11L-2.26%201.94L-2.37%201.77L-2.43%201.58L-2.45%201.4L-2.45%202L-2.43%202.18L-2.37%202.37L-2.26%202.54L-2.12%202.71L-1.94%202.86L-1.73%203L-1.49%203.12L-1.22%203.22L-0.94%203.31L-0.63%203.37L-0.32%203.4L0%203.41L0.32%203.4L0.63%203.37L0.94%203.31L1.22%203.22L1.49%203.12L1.73%203L1.94%202.86L2.12%202.71L2.26%202.54L2.37%202.37L2.43%202.18L2.45%202Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.73%202.4L1.44%202.54L1.11%202.66L0.76%202.74L0.38%202.8L0%202.81L-0.38%202.8L-0.76%202.74L-1.11%202.66L-1.44%202.54L-1.73%202.4L-1.98%202.23L-2.18%202.04L-2.33%201.84L-2.42%201.62L-2.45%201.4L-2.42%201.18L-2.33%200.96L-2.18%200.76L-1.98%200.57L-1.73%200.4L-1.44%200.26L-1.11%200.14L-0.76%200.06L-0.38%200L0%20-0.01L0.38%200L0.76%200.06L1.11%200.14L1.44%200.26L1.73%200.4L1.98%200.57L2.18%200.76L2.33%200.96L2.42%201.18L2.45%201.4L2.42%201.62L2.33%201.84L2.18%202.04L1.98%202.23L1.73%202.4Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.26%201.55L0.17%201.59L0.06%201.61L-0.06%201.61L-0.17%201.59L-0.26%201.55L-0.33%201.5L-0.36%201.43L-0.36%201.37L-0.33%201.3L-0.26%201.25L-0.17%201.21L-0.06%201.19L0.06%201.19L0.17%201.21L0.26%201.25L0.33%201.3L0.36%201.37L0.36%201.43L0.33%201.5Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%200.91L0.13%200.91L0.26%200.93L0.39%200.96L0.5%201L0.61%201.05L0.69%201.11L0.76%201.18L0.82%201.25L0.85%201.32L0.86%201.4%22%20fill%3D%22none%22%20stroke%3D%22%231f7f6b%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%200.62L0.21%200.63L0.42%200.66L0.61%200.71L0.79%200.77L0.95%200.85L1.09%200.94L1.2%201.05L1.28%201.16L1.33%201.28L1.35%201.4%22%20fill%3D%22none%22%20stroke%3D%22%231f7f6b%22%20stroke-width%3D%220.13%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M6%2030%20C6%2024%2042%2024%2042%2030%20V33%20C42%2037%206%2037%206%2033%20Z%22%20fill%3D%22%23e9edf3%22%2F%3E%3Cpath%20d%3D%22M6%2030%20C6%2036%2042%2036%2042%2030%22%20fill%3D%22%23ffffff%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2230%22%20r%3D%221.6%22%20fill%3D%22%232ea88e%22%2F%3E%3Cpath%20d%3D%22M17%2018%20A10%2010%200%200%201%2031%2018%20M13%2013.5%20A16%2016%200%200%201%2035%2013.5%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%223.65%22%2F%3E%3Cpath%20d%3D%22M17%2018%20A10%2010%200%200%201%2031%2018%20M13%2013.5%20A16%2016%200%200%201%2035%2013.5%22%20fill%3D%22none%22%20stroke%3D%22%232ea88e%22%20stroke-width%3D%221.4%22%2F%3E%3C%2Fsvg%3E"
+    }
+  ]
+}

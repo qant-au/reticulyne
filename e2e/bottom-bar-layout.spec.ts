@@ -23,7 +23,7 @@ const open = async (page: Page, width: number, height: number) => {
             {
               id: 'v',
               name: 'Main',
-              items: [{ id: 'a', tile: { x: 0, y: 0 } }]
+              items: [{ id: 'a', tile: { x: 0, y: 0 }, labelHeight: 20 }]
             }
           ]
         }

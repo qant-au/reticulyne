@@ -1,0 +1,847 @@
+{
+  "format": "reticulyne-scene",
+  "version": 2,
+  "id": "mixed-icons",
+  "title": "Mixed icons",
+  "description": "Built-in devices beside an icon from a third-party pack, an uploaded icon, and a built-in device with its own images laid over its icon.",
+  "objects": [
+    {
+      "id": "router",
+      "name": "Router",
+      "icon": "reticulyne-router",
+      "element": "router",
+      "ports": [
+        {
+          "id": "wan",
+          "name": "WAN",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan1",
+          "name": "LAN 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan2",
+          "name": "LAN 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan3",
+          "name": "LAN 3",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "lan4",
+          "name": "LAN 4",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "dc-in",
+          "name": "DC in",
+          "kind": "power-dc",
+          "props": {
+            "connector": "barrel",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "router"
+        }
+      ]
+    },
+    {
+      "id": "switch",
+      "name": "Switch",
+      "icon": "reticulyne-network-switch",
+      "element": "network-switch",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "Port 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth2",
+          "name": "Port 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth3",
+          "name": "Port 3",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth4",
+          "name": "Port 4",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth5",
+          "name": "Port 5",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth6",
+          "name": "Port 6",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth7",
+          "name": "Port 7",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth8",
+          "name": "Port 8",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth9",
+          "name": "Port 9",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth10",
+          "name": "Port 10",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth11",
+          "name": "Port 11",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth12",
+          "name": "Port 12",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth13",
+          "name": "Port 13",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth14",
+          "name": "Port 14",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth15",
+          "name": "Port 15",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth16",
+          "name": "Port 16",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth17",
+          "name": "Port 17",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth18",
+          "name": "Port 18",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth19",
+          "name": "Port 19",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth20",
+          "name": "Port 20",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth21",
+          "name": "Port 21",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth22",
+          "name": "Port 22",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth23",
+          "name": "Port 23",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth24",
+          "name": "Port 24",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "sfp1",
+          "name": "SFP 1",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp2",
+          "name": "SFP 2",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp3",
+          "name": "SFP 3",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp4",
+          "name": "SFP 4",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "network-switch-24"
+        }
+      ]
+    },
+    {
+      "id": "pc",
+      "name": "Desktop PC",
+      "icon": "reticulyne-pc-tower",
+      "element": "pc-tower",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "LAN",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "wifi",
+          "name": "Wi-Fi",
+          "kind": "wi-fi",
+          "props": {
+            "connector": "internal",
+            "role": "client"
+          }
+        },
+        {
+          "id": "hdmi",
+          "name": "HDMI out",
+          "kind": "hdmi",
+          "props": {
+            "connector": "hdmi-a"
+          }
+        },
+        {
+          "id": "dp",
+          "name": "DisplayPort out",
+          "kind": "displayport",
+          "props": {
+            "connector": "dp"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "desktop-pc"
+        }
+      ]
+    },
+    {
+      "id": "branded",
+      "name": "Branded switch",
+      "icon": "reticulyne-network-switch",
+      "element": "network-switch",
+      "ports": [
+        {
+          "id": "eth1",
+          "name": "Port 1",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth2",
+          "name": "Port 2",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth3",
+          "name": "Port 3",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth4",
+          "name": "Port 4",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth5",
+          "name": "Port 5",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth6",
+          "name": "Port 6",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth7",
+          "name": "Port 7",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth8",
+          "name": "Port 8",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth9",
+          "name": "Port 9",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth10",
+          "name": "Port 10",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth11",
+          "name": "Port 11",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth12",
+          "name": "Port 12",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth13",
+          "name": "Port 13",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth14",
+          "name": "Port 14",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth15",
+          "name": "Port 15",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth16",
+          "name": "Port 16",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth17",
+          "name": "Port 17",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth18",
+          "name": "Port 18",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth19",
+          "name": "Port 19",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth20",
+          "name": "Port 20",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth21",
+          "name": "Port 21",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth22",
+          "name": "Port 22",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth23",
+          "name": "Port 23",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "eth24",
+          "name": "Port 24",
+          "kind": "ethernet-copper",
+          "props": {
+            "connector": "rj45"
+          }
+        },
+        {
+          "id": "sfp1",
+          "name": "SFP 1",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp2",
+          "name": "SFP 2",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp3",
+          "name": "SFP 3",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "sfp4",
+          "name": "SFP 4",
+          "kind": "ethernet-fibre",
+          "props": {
+            "connector": "sfp"
+          }
+        },
+        {
+          "id": "ac-in",
+          "name": "Mains in",
+          "kind": "power-ac",
+          "props": {
+            "connector": "iec-c14",
+            "capabilities": "power-in"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "reticulyne",
+          "ref": "network-switch-24"
+        }
+      ],
+      "iconOverride": {
+        "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M32%2014%2052%2026%2052%2042%2032%2054%2012%2042%2012%2026Z%22%20fill%3D%22%23c94f6d%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E",
+        "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20x%3D%2210%22%20y%3D%2214%22%20width%3D%2228%22%20height%3D%2220%22%20fill%3D%22%23c94f6d%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.5%22%2F%3E%3C%2Fsvg%3E"
+      }
+    },
+    {
+      "id": "appliance",
+      "name": "Pack appliance",
+      "icon": "acme-appliance"
+    },
+    {
+      "id": "gadget",
+      "name": "Uploaded gadget",
+      "icon": "uploaded-gadget"
+    }
+  ],
+  "connections": [
+    {
+      "id": "router--switch",
+      "from": "router",
+      "to": "switch",
+      "fromPort": "wan",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "switch--pc",
+      "from": "switch",
+      "to": "pc",
+      "fromPort": "eth2",
+      "toPort": "eth1",
+      "kind": "ethernet-copper"
+    },
+    {
+      "id": "switch--branded",
+      "from": "switch",
+      "to": "branded",
+      "fromPort": "eth3",
+      "toPort": "eth1",
+      "kind": "ethernet-copper",
+      "description": "Uplink"
+    }
+  ],
+  "views": [
+    {
+      "id": "site",
+      "name": "Site",
+      "kind": "iso",
+      "placements": [
+        {
+          "object": "router",
+          "tile": {
+            "x": -6,
+            "y": 0
+          }
+        },
+        {
+          "object": "switch",
+          "tile": {
+            "x": -2,
+            "y": 0
+          }
+        },
+        {
+          "object": "pc",
+          "tile": {
+            "x": 2,
+            "y": 3
+          }
+        },
+        {
+          "object": "branded",
+          "tile": {
+            "x": 2,
+            "y": -3
+          }
+        },
+        {
+          "object": "appliance",
+          "tile": {
+            "x": -6,
+            "y": -4
+          }
+        },
+        {
+          "object": "gadget",
+          "tile": {
+            "x": 6,
+            "y": 3
+          }
+        }
+      ],
+      "connectors": [
+        {
+          "id": "router--switch",
+          "connection": "router--switch",
+          "anchors": [
+            {
+              "id": "router--switch-a",
+              "ref": {
+                "object": "router"
+              }
+            },
+            {
+              "id": "router--switch-b",
+              "ref": {
+                "object": "switch"
+              }
+            }
+          ]
+        },
+        {
+          "id": "switch--pc",
+          "connection": "switch--pc",
+          "anchors": [
+            {
+              "id": "switch--pc-a",
+              "ref": {
+                "object": "switch"
+              }
+            },
+            {
+              "id": "switch--pc-b",
+              "ref": {
+                "object": "pc"
+              }
+            }
+          ]
+        },
+        {
+          "id": "switch--branded",
+          "connection": "switch--branded",
+          "anchors": [
+            {
+              "id": "switch--branded-a",
+              "ref": {
+                "object": "switch"
+              }
+            },
+            {
+              "id": "switch--branded-b",
+              "ref": {
+                "object": "branded"
+              }
+            }
+          ],
+          "description": "Uplink"
+        },
+        {
+          "id": "router--appliance",
+          "anchors": [
+            {
+              "id": "ra-a",
+              "ref": {
+                "object": "router"
+              }
+            },
+            {
+              "id": "ra-b",
+              "ref": {
+                "object": "appliance"
+              }
+            }
+          ],
+          "style": "DASHED"
+        },
+        {
+          "id": "pc--gadget",
+          "anchors": [
+            {
+              "id": "lg-a",
+              "ref": {
+                "object": "pc"
+              }
+            },
+            {
+              "id": "lg-b",
+              "ref": {
+                "object": "gadget"
+              }
+            }
+          ],
+          "style": "DOTTED"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "id": "reticulyne-network-switch",
+      "name": "Network Switch",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(20.49%2019.41)%20scale(6.99235)%22%3E%3Cpath%20d%3D%22M-2.25%201.3L3.29%204.5L3.29%203.6L-2.25%200.4Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5.54%203.2L3.29%204.5L3.29%203.6L5.54%202.3Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-0.9L5.54%202.3L3.29%203.6L-2.25%200.4Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.95%201.36L-1.58%201.57L-1.58%201.3L-1.95%201.09Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.45%201.65L-1.08%201.86L-1.08%201.59L-1.45%201.38Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.94%201.93L-0.58%202.14L-0.58%201.87L-0.94%201.66Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.44%202.22L-0.08%202.43L-0.08%202.16L-0.44%201.95Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.06%202.51L0.42%202.72L0.42%202.45L0.06%202.24Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.56%202.81L0.93%203.01L0.93%202.74L0.56%202.53Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.07%203.1L1.43%203.31L1.43%203.03L1.07%202.83Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.57%203.39L1.93%203.6L1.93%203.33L1.57%203.12Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.95%201L-1.58%201.21L-1.58%200.94L-1.95%200.73Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.45%201.29L-1.08%201.5L-1.08%201.23L-1.45%201.02Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.94%201.57L-0.58%201.78L-0.58%201.51L-0.94%201.3Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.44%201.86L-0.08%202.07L-0.08%201.8L-0.44%201.59Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.06%202.15L0.42%202.36L0.42%202.09L0.06%201.88Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.56%202.44L0.93%202.66L0.93%202.38L0.56%202.17Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.07%202.74L1.43%202.95L1.43%202.68L1.07%202.47Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.57%203.03L1.93%203.24L1.93%202.97L1.57%202.76Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.54%203.62L2.52%203.53L2.46%203.45L2.39%203.41L2.33%203.42L2.31%203.49L2.33%203.57L2.39%203.65L2.46%203.69L2.52%203.68Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.93%203.84L2.91%203.75L2.85%203.67L2.78%203.63L2.72%203.65L2.7%203.71L2.72%203.8L2.78%203.88L2.85%203.92L2.91%203.9Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%2217%22%20width%3D%2242%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%226.5%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2210.2%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2213.9%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2217.6%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2221.3%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2225%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2228.700000000000003%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2232.400000000000006%22%20y%3D%2220%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%226.5%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2210.2%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2213.9%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2217.6%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2221.3%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2225%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2228.700000000000003%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2232.400000000000006%22%20y%3D%2224.6%22%20width%3D%222.7%22%20height%3D%223.2%22%20rx%3D%220.4%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2224%22%20r%3D%221.2%22%20fill%3D%22%232ea88e%22%2F%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2224%22%20r%3D%221.2%22%20fill%3D%22%232ea88e%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-pc-tower",
+      "name": "Desktop PC",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(37.52%2037.31)%20scale(7.07792)%22%3E%3Cpath%20d%3D%22M-3.46%202L-1.56%203.1L-1.56%20-1.5L-3.46%20-2.6Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1.91%201.1L-1.56%203.1L-1.56%20-1.5L1.91%20-3.5Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-4.6L1.91%20-3.5L-1.56%20-1.5L-3.46%20-2.6Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.16%20-1.43L-1.86%20-0.68L-1.86%20-0.98L-3.16%20-1.72Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-2.29%20-0.23L-2.31%20-0.33L-2.36%20-0.44L-2.43%20-0.53L-2.51%20-0.6L-2.59%20-0.63L-2.66%20-0.62L-2.71%20-0.56L-2.73%20-0.48L-2.71%20-0.37L-2.66%20-0.26L-2.59%20-0.17L-2.51%20-0.1L-2.43%20-0.07L-2.36%20-0.08L-2.31%20-0.14Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%201.73L-1.95%202.38%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%201.48L-1.95%202.13%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%201.23L-1.95%201.88%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%200.98L-1.95%201.63%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-3.07%200.73L-1.95%201.38%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.21%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Crect%20x%3D%2214%22%20y%3D%224%22%20width%3D%2220%22%20height%3D%2240%22%20rx%3D%222%22%20fill%3D%22%23e9edf3%22%2F%3E%3Crect%20x%3D%2217%22%20y%3D%228%22%20width%3D%2214%22%20height%3D%223%22%20rx%3D%220.6%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2218%22%20r%3D%222.4%22%20fill%3D%22%232ea88e%22%2F%3E%3Cpath%20d%3D%22M18%2031%20H30%20M18%2034%20H30%20M18%2037%20H30%20M18%2040%20H30%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "reticulyne-router",
+      "name": "Router",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20transform%3D%22translate(25.71%2025.14)%20scale(8.068100000000001)%22%3E%3Cpath%20d%3D%22M-2.6%201.5L1.56%203.9L1.56%202.8L-2.6%200.4Z%22%20fill%3D%22%23e9edf3%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.16%202.4L1.56%203.9L1.56%202.8L4.16%201.3Z%22%20fill%3D%22%23c5cdda%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0%20-1.1L4.16%201.3L1.56%202.8L-2.6%200.4Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.82%200.4L-1.82%20-2.2%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.59%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.82%200.4L-1.82%20-2.2%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.22%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.38%201.3L3.38%20-1.3%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.59%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.38%201.3L3.38%20-1.3%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%220.22%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.88%201.37L-1.9%201.28L-1.96%201.2L-2.03%201.16L-2.08%201.17L-2.1%201.23L-2.08%201.32L-2.03%201.4L-1.96%201.44L-1.9%201.43Z%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.45%201.62L-1.47%201.53L-1.52%201.45L-1.59%201.41L-1.65%201.42L-1.67%201.49L-1.65%201.57L-1.59%201.65L-1.52%201.69L-1.47%201.68Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-1.01%201.87L-1.03%201.78L-1.09%201.7L-1.16%201.66L-1.22%201.67L-1.24%201.74L-1.22%201.82L-1.16%201.9L-1.09%201.94L-1.03%201.93Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.58%202.12L-0.6%202.03L-0.66%201.95L-0.73%201.91L-0.78%201.92L-0.81%201.99L-0.78%202.07L-0.73%202.15L-0.66%202.19L-0.6%202.18Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M-0.26%202.55L0.04%202.73L0.04%202.28L-0.26%202.1Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.13%202.78L0.43%202.95L0.43%202.5L0.13%202.33Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.52%203L0.82%203.18L0.82%202.72L0.52%202.55Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M0.91%203.23L1.21%203.4L1.21%202.95L0.91%202.78Z%22%20fill%3D%22%2334405c%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%220.19%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+      "collection": "Reticulyne",
+      "isIsometric": true,
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.125%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M11%2022%20V7%20M37%2022%20V7%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%224.25%22%2F%3E%3Cpath%20d%3D%22M11%2022%20V7%20M37%2022%20V7%22%20fill%3D%22none%22%20stroke%3D%22%23c5cdda%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%2222%22%20width%3D%2240%22%20height%3D%2214%22%20rx%3D%223%22%20fill%3D%22%23e9edf3%22%2F%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2229%22%20r%3D%221.3%22%20fill%3D%22%232ea88e%22%2F%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2229%22%20r%3D%221.3%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2229%22%20r%3D%221.3%22%20fill%3D%22%2334405c%22%2F%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2229%22%20r%3D%221.3%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2227%22%20y%3D%2227%22%20width%3D%222.6%22%20height%3D%224%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2230.8%22%20y%3D%2227%22%20width%3D%222.6%22%20height%3D%224%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2234.6%22%20y%3D%2227%22%20width%3D%222.6%22%20height%3D%224%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3Crect%20x%3D%2238.4%22%20y%3D%2227%22%20width%3D%222.6%22%20height%3D%224%22%20rx%3D%220.5%22%20fill%3D%22%2334405c%22%2F%3E%3C%2Fsvg%3E"
+    },
+    {
+      "id": "acme-appliance",
+      "name": "Appliance",
+      "collection": "Acme pack",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M32%2010%2054%2022%2054%2044%2032%2056%2010%2044%2010%2022Z%22%20fill%3D%22%23f2a541%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M10%2022%2032%2034%2054%2022M32%2034V56%22%20fill%3D%22none%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E",
+      "flatUrl": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20x%3D%228%22%20y%3D%2212%22%20width%3D%2232%22%20height%3D%2224%22%20rx%3D%223%22%20fill%3D%22%23f2a541%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%221.5%22%2F%3E%3C%2Fsvg%3E",
+      "isIsometric": true
+    },
+    {
+      "id": "uploaded-gadget",
+      "name": "Gadget",
+      "collection": "My icons",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2222%22%20fill%3D%22%232ea88e%22%20stroke%3D%22%2316213d%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M22%2032h20M32%2022v20%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%2F%3E%3C%2Fsvg%3E"
+    }
+  ]
+}

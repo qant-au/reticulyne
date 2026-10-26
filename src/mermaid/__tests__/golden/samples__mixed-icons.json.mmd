@@ -1,0 +1,16 @@
+---
+title: "Mixed icons"
+---
+flowchart LR
+  router["Router"]
+  switch["Switch"]
+  pc["Desktop PC"]
+  branded["Branded switch"]
+  appliance["Pack appliance"]
+  gadget["Uploaded gadget"]
+  router -->|"Ethernet (copper)"| switch
+  switch -->|"Ethernet (copper)"| pc
+  switch -->|"Uplink"| branded
+  router -.-> appliance
+  pc -.-> gadget
+  linkStyle 3 stroke-dasharray:6 4

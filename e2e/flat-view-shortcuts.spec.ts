@@ -32,16 +32,16 @@ const fixture = (kind: Projection) => {
         name: 'Ground',
         kind,
         items: [
-          { id: 'a', tile: { x: -2, y: 0 } },
-          { id: 'b', tile: { x: 0, y: 0 } },
-          { id: 'c', tile: { x: 2, y: 0 } }
+          { id: 'a', tile: { x: -2, y: 0 }, labelHeight: 20 },
+          { id: 'b', tile: { x: 0, y: 0 }, labelHeight: 20 },
+          { id: 'c', tile: { x: 2, y: 0 }, labelHeight: 20 }
         ]
       },
       {
         id: 'v2',
         name: 'Level 1',
         kind,
-        items: [{ id: 'd', tile: { x: 0, y: 0 } }]
+        items: [{ id: 'd', tile: { x: 0, y: 0 }, labelHeight: 20 }]
       }
     ]
   };

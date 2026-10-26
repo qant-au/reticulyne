@@ -14,7 +14,7 @@ flowchart LR
     payments_fn["Payments function"]
   end
   subgraph async ["Async processing"]
-    events{{"Order events"}}
+    events["Order events"]
     email_queue["Email queue"]
     notify_fn["Notify function"]
   end

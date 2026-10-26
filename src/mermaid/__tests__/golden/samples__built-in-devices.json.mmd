@@ -1,0 +1,40 @@
+---
+title: "Built-in devices"
+---
+flowchart LR
+  ont["Fibre ONT"]
+  firewall["Firewall"]
+  core["Core switch"]
+  poe["PoE switch"]
+  ap["Wi-Fi AP"]
+  laptop["Laptop"]
+  phone["Desk phone"]
+  dome["Reception camera"]
+  bullet["Car park camera"]
+  door["Door controller"]
+  reader["Front door reader"]
+  mfp["Printer"]
+  pc["Reception PC"]
+  subgraph rack ["Comms rack"]
+    server["Server"]
+    nas["NAS"]
+    nvr["NVR"]
+    ups["Rack UPS"]
+  end
+  ont -->|"Fibre"| firewall
+  firewall -->|"Ethernet (copper)"| core
+  core -->|"Ethernet (copper)"| poe
+  core -->|"Ethernet (copper)"| server
+  core -->|"Ethernet (copper)"| nas
+  core -->|"Ethernet (copper)"| nvr
+  ups -->|"Ethernet (copper)"| firewall
+  poe -->|"Ethernet (copper)"| ap
+  ap -->|"Wi-Fi"| laptop
+  poe -->|"Ethernet (copper)"| phone
+  poe -->|"Ethernet (copper)"| dome
+  poe -->|"Ethernet (copper)"| bullet
+  poe -->|"Ethernet (copper)"| door
+  door -->|"OSDP"| reader
+  core -->|"Ethernet (copper)"| mfp
+  core -->|"Ethernet (copper)"| pc
+  style rack fill:#a5b8f3

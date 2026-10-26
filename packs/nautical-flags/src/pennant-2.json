@@ -1,0 +1,19 @@
+{
+  "name": "Numeral Pennant 2",
+  "family": "marine-vehicle",
+  "description": "The numeral 2 (two).",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

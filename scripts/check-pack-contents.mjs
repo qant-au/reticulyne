@@ -23,7 +23,9 @@ const allowedInDist = [
   /\.d\.ts$/,
   /\.m?js\.LICENSE\.txt$/,
   // The scene format's JSON Schema, which a scene's `$schema` points at.
-  /^dist\/schema\/scene-v\d+\.json$/
+  /^dist\/schema\/scene-v\d+\.json$/,
+  // The icon pack format's JSON Schema, for checking a pack outside JS.
+  /^dist\/schema\/icon-pack\.json$/
 ];
 
 const offenders = files.filter((p) => {

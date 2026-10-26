@@ -1,0 +1,19 @@
+{
+  "name": "Tango (T)",
+  "family": "marine-vehicle",
+  "description": "Keep clear of me; I am engaged in pair trawling.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

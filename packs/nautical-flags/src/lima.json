@@ -1,0 +1,19 @@
+{
+  "name": "Lima (L)",
+  "family": "marine-vehicle",
+  "description": "You should stop your vessel instantly.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

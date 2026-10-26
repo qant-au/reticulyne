@@ -1,0 +1,19 @@
+{
+  "name": "Romeo (R)",
+  "family": "marine-vehicle",
+  "description": "No single-flag meaning in the International Code.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

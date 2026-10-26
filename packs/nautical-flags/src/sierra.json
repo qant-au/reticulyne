@@ -1,0 +1,19 @@
+{
+  "name": "Sierra (S)",
+  "family": "marine-vehicle",
+  "description": "I am operating astern propulsion.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

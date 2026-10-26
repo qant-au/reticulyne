@@ -1,0 +1,19 @@
+{
+  "name": "Delta (D)",
+  "family": "marine-vehicle",
+  "description": "Keep clear of me; I am manoeuvring with difficulty.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

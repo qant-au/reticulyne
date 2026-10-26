@@ -1,0 +1,19 @@
+{
+  "name": "Numeral Pennant 6",
+  "family": "marine-vehicle",
+  "description": "The numeral 6 (six).",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

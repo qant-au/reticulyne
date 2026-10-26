@@ -1,0 +1,19 @@
+{
+  "name": "Numeral Pennant 0",
+  "family": "marine-vehicle",
+  "description": "The numeral 0 (zero).",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

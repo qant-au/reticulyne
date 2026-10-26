@@ -1,0 +1,19 @@
+{
+  "name": "Bravo (B)",
+  "family": "marine-vehicle",
+  "description": "I am taking in, discharging or carrying dangerous goods.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

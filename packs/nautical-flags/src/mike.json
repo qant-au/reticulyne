@@ -1,0 +1,19 @@
+{
+  "name": "Mike (M)",
+  "family": "marine-vehicle",
+  "description": "My vessel is stopped and making no way through the water.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Kilo (K)",
+  "family": "marine-vehicle",
+  "description": "I wish to communicate with you.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

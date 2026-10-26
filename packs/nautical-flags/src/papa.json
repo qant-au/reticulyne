@@ -1,0 +1,19 @@
+{
+  "name": "Papa (P)",
+  "family": "marine-vehicle",
+  "description": "All persons should report on board; the vessel is about to proceed to sea.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

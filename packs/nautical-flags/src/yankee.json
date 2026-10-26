@@ -1,0 +1,19 @@
+{
+  "name": "Yankee (Y)",
+  "family": "marine-vehicle",
+  "description": "I am dragging my anchor.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

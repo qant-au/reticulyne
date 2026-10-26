@@ -1,0 +1,19 @@
+{
+  "name": "X-ray (X)",
+  "family": "marine-vehicle",
+  "description": "Stop carrying out your intentions and watch for my signals.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

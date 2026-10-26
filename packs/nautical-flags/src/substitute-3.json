@@ -1,0 +1,19 @@
+{
+  "name": "Third Substitute",
+  "family": "marine-vehicle",
+  "description": "Repeats the third flag of the group above it.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

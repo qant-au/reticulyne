@@ -1,0 +1,59 @@
+{
+  "id": "nautical-flags",
+  "name": "Nautical Flags",
+  "version": "1.0.0",
+  "sourceUrl": "https://github.com/qant-au/reticulyne/tree/main/packs/nautical-flags",
+  "media": [
+    {
+      "id": "halyard",
+      "name": "Halyard",
+      "family": "marine-vehicle",
+      "topology": "point-to-point",
+      "connectors": [
+        "snap-shackle"
+      ]
+    }
+  ],
+  "order": [
+    "alfa",
+    "bravo",
+    "charlie",
+    "delta",
+    "echo",
+    "foxtrot",
+    "golf",
+    "hotel",
+    "india",
+    "juliett",
+    "kilo",
+    "lima",
+    "mike",
+    "november",
+    "oscar",
+    "papa",
+    "quebec",
+    "romeo",
+    "sierra",
+    "tango",
+    "uniform",
+    "victor",
+    "whiskey",
+    "xray",
+    "yankee",
+    "zulu",
+    "pennant-0",
+    "pennant-1",
+    "pennant-2",
+    "pennant-3",
+    "pennant-4",
+    "pennant-5",
+    "pennant-6",
+    "pennant-7",
+    "pennant-8",
+    "pennant-9",
+    "substitute-1",
+    "substitute-2",
+    "substitute-3",
+    "answering-pennant"
+  ]
+}

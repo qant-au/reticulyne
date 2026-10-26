@@ -1,0 +1,19 @@
+{
+  "name": "Juliett (J)",
+  "family": "marine-vehicle",
+  "description": "I am on fire and have dangerous cargo on board; keep well clear.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

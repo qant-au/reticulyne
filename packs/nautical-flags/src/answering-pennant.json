@@ -1,0 +1,19 @@
+{
+  "name": "Answering Pennant",
+  "family": "marine-vehicle",
+  "description": "Hoisted to answer a signal, and as the code pennant.",
+  "ports": [
+    {
+      "id": "hoist-top",
+      "name": "Hoist top",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    },
+    {
+      "id": "hoist-bottom",
+      "name": "Hoist bottom",
+      "medium": "halyard",
+      "connector": "snap-shackle"
+    }
+  ]
+}

@@ -49,6 +49,7 @@ interface Scene {
   layers?: Layer[];         // default []
   icons?: Icon[];           // custom icons, for objects with no element
   colors?: Color[];         // named colours views can refer to
+  externalPacks?: ExternalPack[]; // the icon packs the diagram's icons came from
   links?: ExternalLink[];   // links back to external tools, for the whole scene
 }
 ```
@@ -526,6 +527,32 @@ These are Reticulyne's icon and colour entries. An icon's `url` is what an `iso`
 draws; a `schematic` view draws its `flatUrl`, or its `url` when it has none (see
 [icon packs](icon-packs.md)).
 
+### Packs a diagram uses
+
+```ts
+interface ExternalPack {
+  id: Id;               // the pack's id
+  name: string;         // max 100
+  version?: string;     // max 40
+  sourceUrl: string;    // where to get it; any non-empty text, max 2,000
+  icons: Id[];          // the pack's icons this diagram uses
+}
+```
+
+A diagram drawn with an [icon pack](icon-packs.md) other than Reticulyne's own lists
+that pack here, once, when it is saved or exported. The diagram still carries its own
+copy of every icon it uses in `icons`, so it draws without the pack; the entry is
+there so that someone who opens the file without the pack is told which pack it was
+and where to get it. An editor that opens a file listing a pack it does not have
+keeps the entry on the next save while objects still use that pack's icons.
+
+**An icon nobody has.** `validateScene` refuses an object whose `icon` is not in
+`icons`. The editor is kinder when it opens a file: an icon an object names that the
+file does not carry is taken from the editor's own library when it has one of that
+id, and otherwise put in as a placeholder (a question mark in both views) with the
+same id, and listed so it can be replaced. The placeholder is saved with the diagram,
+which keeps the file valid, and is recognised again when the file is next opened.
+
 ## Writing a scene from code
 
 The format is meant to be written by hand, by a script, and by a language model
@@ -823,6 +850,9 @@ And no object is placed twice in one view.
   silently dropping the field.
 - Migrations are append-only: never edit a released one.
 - Readers accept every version they have a migration for, and refuse anything newer.
+- **Before 1.0, optional additions stay within version 2.** No compatibility is
+  promised before 1.0, so icon `flatUrl`, object `iconOverride` and scene
+  `externalPacks` were added without a bump. The rule above applies from 1.0.
 - **Version 2** adds [mounting and facing](#mounting-and-facing-version-2): placement
   `mountFrom`, `mountOn` and `mirror.z`, and gives `mountMm` a meaning that depends on
   `mountFrom`. Its migration from version 1 is described there.

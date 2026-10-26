@@ -34,7 +34,8 @@ const EXAMPLE_NAMES = [
   'Office network, live',
   'Connector animations',
   'Connector pulse',
-  'Node indicators'
+  'Node indicators',
+  'Icon packs from code'
 ];
 
 test.describe('examples-picker @ :2223', () => {

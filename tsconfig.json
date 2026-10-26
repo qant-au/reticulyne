@@ -21,6 +21,8 @@
     "noUnusedParameters": true,
     "module": "es2020",
     "moduleResolution": "node",
+    // The examples load the Nautical Flags pack file as a module.
+    "resolveJsonModule": true,
     "skipLibCheck": true
   },
   "exclude": ["node_modules", "./dist", "./dist-docker", "./docs"],

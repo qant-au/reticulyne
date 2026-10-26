@@ -9,6 +9,7 @@ import { OfficeNetworkLive } from './OfficeNetworkLive/OfficeNetworkLive';
 import { ConnectorAnimations } from './ConnectorAnimations/ConnectorAnimations';
 import { ConnectorPulse } from './ConnectorPulse/ConnectorPulse';
 import { NodeIndicators } from './NodeIndicators/NodeIndicators';
+import { IconPacks } from './IconPacks/IconPacks';
 import { ExamplesSidebar, SIDEBAR_WIDTH } from './ExamplesSidebar';
 import {
   ExamplesThemeModeProvider,
@@ -40,7 +41,8 @@ const examples = [
   { name: 'Office network, live', component: OfficeNetworkLive },
   { name: 'Connector animations', component: ConnectorAnimations },
   { name: 'Connector pulse', component: ConnectorPulse },
-  { name: 'Node indicators', component: NodeIndicators }
+  { name: 'Node indicators', component: NodeIndicators },
+  { name: 'Icon packs from code', component: IconPacks }
 ];
 
 export const Examples = () => {

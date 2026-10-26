@@ -65,7 +65,8 @@ editor that breaks one of these flows fails the recording.
 - **Labels where you want them.** Each device's label sits at any of eight compass
   points around it, and the whole set can be hidden with a click or `Alt+L`.
 - **Icon packs.** Bring your own icons beside the built-in drawings, each with an
-  isometric and a flat view. See [Icon packs](docs/icon-packs.md).
+  isometric and a flat view and its devices' ports: install a pack from the editor,
+  load it from code, and share diagrams drawn with it. See [Icon packs](docs/icon-packs.md).
 - **Editor modes** for an editor, a viewer and a non-interactive render.
 - **One file format.** Diagrams open and save as the
   [Reticulyne scene format](docs/scene-format.md), one JSON document with a published

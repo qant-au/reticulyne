@@ -16,10 +16,24 @@ potentially breaking and read the release notes before upgrading.
 
 ### Added
 
+- **Icon packs: install, push in from code, share** ([docs/icon-packs.md](docs/icon-packs.md)). A pack is one file holding its icons (isometric and flat), their devices' ports and any media those devices connect on (`media`, new). Every pack now names where it comes from in a required `sourceUrl`.
+  - **Icon packs** in the main menu (`'ACTION.ICON_PACKS'`, on by default, editable only) lists the packs loaded, installs one from a file (every problem listed; a pack of the same id replaced after a confirm naming both versions) and removes one. Removal is refused while a diagram places objects drawn with the pack, and the refusal lists them, with **Show** to go to them.
+  - **From code:** the `iconPacks` prop (`[{ pack, removable?, origin? }]`) and `useReticulyne()`'s `installIconPack`, `removeIconPack` and `getIconPacks`. `removable: false` locks a pack: no Remove, no install over it. The last pack loaded with an id wins otherwise. A pack's devices join the palette with their ports, and its media join the catalogue's. `onIconPackInstall`, `onIconPackRemove`, `iconPackUsage` and `onShowIconPackUsage` let a host keep the user's installs and check its other diagrams.
+  - **Sharing:** a saved or exported diagram lists each pack it used once, in a new optional `externalPacks` field (scene format still version 2). Opened without a pack, or with another version of it, the editor says which, with its source link, and draws the icons from the copies in the file.
+  - **Missing icons:** an object whose icon nobody has now opens as a question-mark placeholder in both views, instead of the editor refusing the whole file, and is listed with **Replace…**, which redraws every object using it in one undo step, ports and connections kept. `validateScene` is unchanged and still refuses such a file.
+  - `scripts/build-pack.mjs` builds a pack file from a folder of drawings and checks it; `dist/schema/icon-pack.json` is the pack's JSON Schema (`ICON_PACK_SCHEMA_URL`); `packMedia()` is exported.
+  - **Nautical Flags**, a demo pack in `packs/nautical-flags`: the 40 flags of the International Code of Signals, joined by a halyard; and an **Icon packs from code** example in the examples app.
+
 - **Mermaid flowcharts in and out** ([docs/mermaid.md](docs/mermaid.md)). **Export as Mermaid** writes the current view as flowchart text (preview, copy, `.mmd` or fenced `.md`), with zones and groups as subgraphs, connector direction, dashes, colours and labels, and a list of what did not carry across. **Import Mermaid** reads pasted text or a `.mmd` / `.md` file and lays the flowchart out on tiles; every problem is an error with a code, a line, a column and a plain message, listed as it is typed, and Import stays off until there are none. Both menu entries are on by default (`'EXPORT.MERMAID'`, `'ACTION.IMPORT_MERMAID'`). `useReticulyne()` gains `exportMermaid()` and `importMermaid()`, and the standalone entry exports `sceneToMermaid`, `mermaidToScene`, `parseMermaid` and the issue codes. The reader is Reticulyne's own (no Mermaid at runtime) and is checked against Mermaid 11 and 12.
 - **An object's own icon images.** The inspector's **Icon images** uploads an isometric and/or a flat image for one object, drawn in place of its icon in that view, and removes it again. The icon in the library, other objects using it and the object's ports are not changed; copy and paste carries the images. Saved as the object's new optional `iconOverride` (`{ url?, flatUrl? }`) in the scene format, still version 2 ([docs/icon-packs.md](docs/icon-packs.md#one-objects-own-images)).
 - **Two sample diagrams and flat pictures.** `samples/built-in-devices.json` (catalogue devices only, joined port to port) and `samples/mixed-icons.json` (built-in, pack, uploaded and overridden icons); every sample now has an isometric and a flat picture, exported by `demos/samples.demo.ts`.
 - **Flowchart drawings and catalogue family.** 39 new drawings, one per flowchart shape (Process, Decision, Terminal Point, Document, Database and the rest), each a catalogue item in a new **Flowchart** palette section.
+
+### Changed
+
+- **Opening a diagram with an unknown icon** shows it as a placeholder and lists it, where it used to be refused as invalid (`onValidationError` is no longer called for that alone). Hosts that relied on the refusal can still check a file with `validateScene`.
+- **The Docker editor's installed packs** now load through `iconPacks`, so their devices' ports reach the palette; packs stored by an older build without a `sourceUrl` are named under the Diagrams button with a Remove, not dropped silently.
+- **Unsaved changes** no longer count the library's icons: loading or installing a pack is not a change to the diagram.
 
 ### Fixed
 

@@ -8,6 +8,8 @@ import { PanelSection } from 'src/kit';
 
 interface Props {
   id?: string;
+  /** Shown in place of the id, when given. */
+  label?: string;
   icons: IconI[];
   onClick?: (icon: IconI) => void;
   onMouseDown?: (icon: IconI) => void;
@@ -16,6 +18,7 @@ interface Props {
 
 export const IconCollection = ({
   id,
+  label,
   icons,
   onClick,
   onMouseDown,
@@ -49,7 +52,7 @@ export const IconCollection = ({
               fontWeight: 600
             }}
           >
-            {id}
+            {label ?? id}
           </Typography>
           {isExpanded ? (
             <ChevronUpIcon color="action" />

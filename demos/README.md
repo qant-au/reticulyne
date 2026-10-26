@@ -13,6 +13,8 @@ that the editor still does what the GIF shows.
 | `nmea-2000` | Drawing an NMEA 2000 network on a boat: a backbone of tees between two terminators, a power injector, and the instruments on the drops | [`nmea2000.demo.ts`](nmea2000.demo.ts) |
 | `mermaid-import` | Importing a Mermaid flowchart: pasted, a typo shown at its line and fixed from the error list, then laid out on the canvas. Shown in [docs/mermaid.md](../docs/mermaid.md) | [`mermaid-import.demo.ts`](mermaid-import.demo.ts) |
 | `mermaid-export` | Exporting the three-tier sample as Mermaid: the preview, the text copied, and Mermaid 12 drawing it. Shown in [docs/mermaid.md](../docs/mermaid.md) | [`mermaid-export.demo.ts`](mermaid-export.demo.ts) |
+| `icon-pack-install` | Installing the Nautical Flags pack from Icon packs, then hoisting Uniform over Whiskey on the pack's own Halyard, in the isometric and flat views. Shown in [docs/icon-packs.md](../docs/icon-packs.md) | [`icon-pack-install.demo.ts`](icon-pack-install.demo.ts) |
+| `icon-pack-walkthrough` | The life of a pack: installed, used and exported; removal refused while a diagram uses it, Show, one flag given a built-in icon and the other deleted, the pack removed; the exported file opened without it (the notice names it and its source), and installed again. Shown in [docs/icon-packs.md](../docs/icon-packs.md) | [`icon-pack-walkthrough.demo.ts`](icon-pack-walkthrough.demo.ts) |
 
 The scenes the build demos draw are saved in [`scenes/`](scenes) once a
 recording passes; the office scene is also written to

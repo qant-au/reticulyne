@@ -1,4 +1,9 @@
-import { expect, type Page, type TestInfo } from '@playwright/test';
+import {
+  expect,
+  type Locator,
+  type Page,
+  type TestInfo
+} from '@playwright/test';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
@@ -97,7 +102,10 @@ export const setLabelPosition = async (
   await page.keyboard.press('Escape');
   await glide(page, screenOf(page, tile), 400);
   await page.mouse.click(...screenOf(page, tile));
-  const open = page.getByRole('button', { name: 'Label position', exact: true });
+  const open = page.getByRole('button', {
+    name: 'Label position',
+    exact: true
+  });
   const ob = (await open.boundingBox())!;
   await glide(page, [ob.x + ob.width / 2, ob.y + ob.height / 2], 400);
   await open.click();
@@ -187,11 +195,7 @@ export const installCursor = async (page: Page) => {
 };
 
 /** Move the pointer from where it is to (x, y) over `ms`, like a hand would. */
-export const glide = async (
-  page: Page,
-  to: [number, number],
-  ms = 500
-) => {
+export const glide = async (page: Page, to: [number, number], ms = 500) => {
   const from = await page.evaluate(() => {
     const el = document.getElementById('__demo-cursor');
     return el
@@ -213,10 +217,18 @@ export const glide = async (
 
 export const openLibrary = async (page: Page) => {
   const palette = page.getByTestId('icon-palette');
-  if (await palette.getByRole('textbox').isVisible().catch(() => false)) {
+  if (
+    await palette
+      .getByRole('textbox')
+      .isVisible()
+      .catch(() => false)
+  ) {
     return palette;
   }
-  const button = page.getByRole('button', { name: 'Icon library', exact: true });
+  const button = page.getByRole('button', {
+    name: 'Icon library',
+    exact: true
+  });
   const box = (await button.boundingBox())!;
   await glide(page, [box.x + box.width / 2, box.y + box.height / 2], 350);
   await button.click();
@@ -314,7 +326,11 @@ export const connect = async (
 };
 
 /** In the selected connector's Ports section, pick a port for one end. */
-export const choosePort = async (page: Page, itemName: string, port: string) => {
+export const choosePort = async (
+  page: Page,
+  itemName: string,
+  port: string
+) => {
   const section = page.getByTestId('connection-ports');
   const select = section.getByRole('combobox', { name: itemName });
   const box = (await select.boundingBox())!;
@@ -322,7 +338,9 @@ export const choosePort = async (page: Page, itemName: string, port: string) => 
   await select.click();
   // Options read "LAN 1 (ethernet-copper)": the port name, then its medium.
   const escaped = port.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const option = page.getByRole('option', { name: new RegExp(`^${escaped} \\(`) });
+  const option = page.getByRole('option', {
+    name: new RegExp(`^${escaped} \\(`)
+  });
   const ob = (await option.boundingBox())!;
   await glide(page, [ob.x + 24, ob.y + ob.height / 2], 300);
   await option.click();
@@ -349,6 +367,7 @@ export const exportScene = async (page: Page) => {
 };
 
 export interface Scene {
+  externalPacks?: { id: string; icons: string[] }[];
   format: string;
   version: number;
   id: string;
@@ -449,7 +468,11 @@ export const saveScene = async (scene: Scene, file: string) => {
 };
 
 /** Keep the recording as demos/out/<name>.webm for encode.mjs. */
-export const saveVideo = async (page: Page, testInfo: TestInfo, name: string) => {
+export const saveVideo = async (
+  page: Page,
+  testInfo: TestInfo,
+  name: string
+) => {
   const video = page.video();
   await page.close();
   if (!video) throw new Error('no video recorded');
@@ -464,8 +487,9 @@ export const startEmpty = async (page: Page, id: string, title: string) => {
   await installCursor(page);
   await page.addInitScript(
     (data) => {
-      (window as unknown as { __RETICULYNE_E2E__: unknown }).__RETICULYNE_E2E__ =
-        { initialData: data };
+      (
+        window as unknown as { __RETICULYNE_E2E__: unknown }
+      ).__RETICULYNE_E2E__ = { initialData: data };
     },
     {
       format: 'reticulyne-scene',
@@ -481,4 +505,37 @@ export const startEmpty = async (page: Page, id: string, title: string) => {
   const o = origin(page);
   await page.mouse.move(o.x, o.y);
   await pause(page, 800);
+};
+
+// Icon packs (icon-pack-*.demo.ts).
+
+export const FLAGS_FILE = join(
+  __dirname,
+  '../packs/nautical-flags/nautical-flags.reticulyne-pack.json'
+);
+
+export const clickAt = async (page: Page, locator: Locator, ms = 450) => {
+  const box = (await locator.boundingBox())!;
+  await glide(page, [box.x + box.width / 2, box.y + box.height / 2], ms);
+  await locator.click();
+};
+
+/** Main menu > Icon packs > Install from file…, with the flags pack file. */
+export const installFlags = async (page: Page) => {
+  await clickAt(page, page.getByRole('button', { name: 'Main menu' }));
+  await pause(page, 300);
+  await clickAt(page, page.getByRole('menuitem', { name: 'Icon packs' }));
+  const dialog = page.getByRole('dialog', { name: 'Icon packs' });
+  await expect(dialog).toBeVisible();
+  await pause(page, 900);
+  const chooser = page.waitForEvent('filechooser');
+  await clickAt(
+    page,
+    dialog.getByRole('button', { name: 'Install from file…' })
+  );
+  await (await chooser).setFiles(FLAGS_FILE);
+  await expect(
+    dialog.getByText('Installed Nautical Flags 1.0.0: 40 icons.')
+  ).toBeVisible();
+  return dialog;
 };

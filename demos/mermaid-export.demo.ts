@@ -39,7 +39,10 @@ test('export a diagram as Mermaid', async ({ page, context }, testInfo) => {
 
   await clickAt(page, page.getByRole('button', { name: 'Main menu' }));
   await pause(page, 400);
-  await clickAt(page, page.getByRole('menuitem', { name: 'Export as Mermaid' }));
+  await clickAt(
+    page,
+    page.getByRole('menuitem', { name: 'Export as Mermaid' })
+  );
   const dialog = page.getByRole('dialog', { name: 'Export as Mermaid' });
   const text = dialog.getByTestId('mermaid-export-text');
   await expect(text).toContainText('subgraph production_zone_1 ["Web tier"]');
@@ -70,14 +73,18 @@ test('export a diagram as Mermaid', async ({ page, context }, testInfo) => {
       <div id="out" style="flex:1;display:flex;align-items:center;justify-content:center;padding:12px"></div>
     </body></html>`
   );
-  await page.addScriptTag({ path: require.resolve('mermaid/dist/mermaid.min.js') });
+  await page.addScriptTag({
+    path: require.resolve('mermaid/dist/mermaid.min.js')
+  });
   const error = await page.evaluate(async (t) => {
-    const m = (window as unknown as {
-      mermaid: {
-        initialize: (c: object) => void;
-        render: (id: string, t: string) => Promise<{ svg: string }>;
-      };
-    }).mermaid;
+    const m = (
+      window as unknown as {
+        mermaid: {
+          initialize: (c: object) => void;
+          render: (id: string, t: string) => Promise<{ svg: string }>;
+        };
+      }
+    ).mermaid;
     m.initialize({ startOnLoad: false, securityLevel: 'strict' });
     try {
       const { svg } = await m.render('demo', t);

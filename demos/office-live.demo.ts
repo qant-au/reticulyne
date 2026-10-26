@@ -9,7 +9,8 @@ import { glide, installCursor, pause, saveVideo } from './lib';
  * the mains fail and the UPS carries the firewall. Served by the examples
  * container, http://localhost:2223.
  */
-const EXAMPLES_URL = process.env.PLAYWRIGHT_EXAMPLES_URL ?? 'http://localhost:2223';
+const EXAMPLES_URL =
+  process.env.PLAYWRIGHT_EXAMPLES_URL ?? 'http://localhost:2223';
 
 test('office network, live', async ({ page }, testInfo) => {
   await installCursor(page);

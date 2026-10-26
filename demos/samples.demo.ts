@@ -25,7 +25,13 @@ const item = (id: string) => {
   return found;
 };
 
-type Place = [id: string, catalogueId: string, name: string, x: number, y: number];
+type Place = [
+  id: string,
+  catalogueId: string,
+  name: string,
+  x: number,
+  y: number
+];
 
 /** A scene of catalogue devices, joined port to port where they share a medium. */
 const build = (
@@ -151,7 +157,9 @@ const builtInDevices = () => {
           transparency: 0.5
         }
       ],
-      textBoxes: [{ id: 'rack-label', tile: { x: -5, y: -8 }, content: 'Comms rack' }]
+      textBoxes: [
+        { id: 'rack-label', tile: { x: -5, y: -8 }, content: 'Comms rack' }
+      ]
     }
   );
 };
@@ -218,7 +226,12 @@ const mixedIcons = () => {
       flatUrl: PACK_FLAT,
       isIsometric: true
     },
-    { id: 'uploaded-gadget', name: 'Gadget', collection: 'My icons', url: UPLOADED }
+    {
+      id: 'uploaded-gadget',
+      name: 'Gadget',
+      collection: 'My icons',
+      url: UPLOADED
+    }
   );
   const view = scene.views![0] as {
     placements: { object: string; tile: { x: number; y: number } }[];
@@ -288,7 +301,9 @@ test('samples: build and export iso and flat pictures', async ({ browser }) => {
     return f.endsWith('.json');
   });
   for (const file of files) {
-    const scene = JSON.parse(readFileSync(join(SAMPLES, file), 'utf8')) as Scene;
+    const scene = JSON.parse(
+      readFileSync(join(SAMPLES, file), 'utf8')
+    ) as Scene;
     const base = file.replace(/\.json$/, '');
     const views = (scene.views ?? []).filter((v) => {
       return v.kind !== 'plan';
@@ -304,7 +319,10 @@ test('samples: build and export iso and flat pictures', async ({ browser }) => {
       }
       const slug =
         views.length > 1
-          ? `${base}-${view.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-floor$/, '')}`
+          ? `${base}-${view.name
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/-floor$/, '')}`
           : base;
       await toView(page, 'Isometric view');
       await exportPng(page, `${slug}.png`);

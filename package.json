@@ -142,7 +142,7 @@
     "uuid": "$uuid",
     "qs": "^6.16.0",
     "js-yaml": "^4.3.2",
-    "dompurify": "^3.4.16",
+    "dompurify": "^3.4.17",
     "http-proxy-middleware": "^2.0.10",
     "brace-expansion@>=1.0.0 <2.0.0": "^1.1.21",
     "brace-expansion@>=2.0.0 <3.0.0": "^2.1.7",

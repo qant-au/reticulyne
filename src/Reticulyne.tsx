@@ -53,9 +53,12 @@ import { initialDataSchema } from 'src/schemas/model';
 import { connectorSchema } from 'src/schemas/connector';
 import { TEMPLATES } from 'src/templates';
 import type { CatalogueItem } from 'src/catalogue/schema';
+import type { IconPackEntry } from 'src/icons/packRegistry';
+import { useIconPackSync } from 'src/hooks/useIconPackSync';
 
 // A stable default, so the effect below does not run on every render.
 const NO_CATALOGUE_ITEMS: CatalogueItem[] = [];
+const NO_ICON_PACKS: IconPackEntry[] = [];
 import { isSceneDocument, redactScene, type Scene } from 'src/core';
 import {
   mermaidToScene,
@@ -94,6 +97,9 @@ const App = ({
   onDiagramReplaced,
   templates = TEMPLATES,
   catalogueItems = NO_CATALOGUE_ITEMS,
+  iconPacks = NO_ICON_PACKS,
+  onIconPackInstall,
+  onIconPackRemove,
   iconCollections,
   onSave,
   autoSaveDebounce = false,
@@ -196,6 +202,16 @@ const App = ({
   useEffect(() => {
     uiStateActions.setCatalogueItems(catalogueItems);
   }, [catalogueItems, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setHostPacks(iconPacks);
+  }, [iconPacks, uiStateActions]);
+
+  useEffect(() => {
+    uiStateActions.setPackHandlers({ onIconPackInstall, onIconPackRemove });
+  }, [onIconPackInstall, onIconPackRemove, uiStateActions]);
+
+  useIconPackSync(iconCollections);
 
   // 1.5: patches held back by a drag or a draw land when it ends.
   usePatchQueueFlush();
@@ -778,6 +794,31 @@ const useReticulyne = () => {
     },
     [currentView, uiStateActions]
   );
+  const installIconPack = useCallback(
+    (value: unknown, options: { removable?: boolean } = {}) => {
+      return uiStateActions.installPack(value, { ...options, origin: 'app' });
+    },
+    [uiStateActions]
+  );
+  const removeIconPack = useCallback(
+    (id: string) => {
+      return uiStateActions.removePack(id);
+    },
+    [uiStateActions]
+  );
+  const getIconPacks = useCallback(() => {
+    return uiStateActions.get().packs.map((p) => {
+      return {
+        id: p.pack.id,
+        name: p.pack.name,
+        ...(p.pack.version ? { version: p.pack.version } : {}),
+        sourceUrl: p.pack.sourceUrl,
+        icons: p.pack.icons.length,
+        origin: p.origin,
+        removable: p.removable
+      };
+    });
+  }, [uiStateActions]);
   const setLabelsVisible = useCallback(
     (visible: boolean): void => {
       uiStateActions.setLabelsVisible(visible);
@@ -1116,6 +1157,22 @@ const useReticulyne = () => {
      * Display only: never saved with the diagram.
      */
     setLabelsVisible,
+
+    // --- icon packs (every editor mode) ---
+    /**
+     * Load an icon pack from code, as the `iconPacks` prop does: validated,
+     * it replaces a loaded pack of its id unless that one is locked.
+     * `removable: false` locks it. Resolves nothing: returns `{ ok, pack }`
+     * or `{ ok: false, errors }`.
+     */
+    installIconPack,
+    /**
+     * Remove a loaded pack. Refused for a locked pack. Its icons leave the
+     * library, except those objects on the canvas still draw with.
+     */
+    removeIconPack,
+    /** The loaded packs, in load order: id, name, version, source, counts. */
+    getIconPacks,
 
     // --- 1.6: selection ---
     /**

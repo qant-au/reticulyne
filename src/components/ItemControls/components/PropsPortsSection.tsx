@@ -20,6 +20,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { MEDIA } from 'src/catalogue/media';
+import type { Medium } from 'src/catalogue/schema';
+import { usePackCatalogue } from 'src/hooks/usePackCatalogue';
 import { useScene } from 'src/hooks/useScene';
 import { useModelItem } from 'src/hooks/useModelItem';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -283,10 +285,10 @@ export const PropsTable = ({
   );
 };
 
-const mediumName = (kind: string | undefined) => {
+const mediumName = (kind: string | undefined, media: Medium[]) => {
   if (!kind) return '';
   return (
-    MEDIA.find((m) => {
+    media.find((m) => {
       return m.id === kind;
     })?.name ?? kind
   );
@@ -296,11 +298,14 @@ const mediumName = (kind: string | undefined) => {
 export const PortsTable = ({
   ports,
   editable,
-  onChange
+  onChange,
+  media = MEDIA
 }: {
   ports: Port[] | undefined;
   editable: boolean;
   onChange: (next: Port[] | undefined) => void;
+  /** The media a port can be on: the built-in ones, plus any pack's. */
+  media?: Medium[];
 }) => {
   const list = ports ?? [];
   const [open, setOpen] = useState<string | null>(null);
@@ -349,7 +354,7 @@ export const PortsTable = ({
           <TableBody>
             {list.map((port) => {
               const expanded = open === port.id;
-              const known = MEDIA.some((m) => {
+              const known = media.some((m) => {
                 return m.id === port.kind;
               });
               return [
@@ -391,7 +396,7 @@ export const PortsTable = ({
                         {port.kind && !known && (
                           <MenuItem value={port.kind}>{port.kind}</MenuItem>
                         )}
-                        {MEDIA.map((m) => {
+                        {media.map((m) => {
                           return (
                             <MenuItem key={m.id} value={m.id}>
                               {m.name}
@@ -401,7 +406,7 @@ export const PortsTable = ({
                       </TextField>
                     ) : (
                       <Typography variant="body2">
-                        {mediumName(port.kind)}
+                        {mediumName(port.kind, media)}
                       </Typography>
                     )}
                   </TableCell>
@@ -515,6 +520,7 @@ export const PortsTable = ({
 
 /** The object's props and ports, as two inspector sections. */
 export const PropsPortsSection = ({ itemId }: { itemId: string }) => {
+  const { media } = usePackCatalogue();
   const modelItem = useModelItem(itemId);
   const { updateModelItem } = useScene();
   const editable = useUiStateStore((state) => {
@@ -542,6 +548,7 @@ export const PropsPortsSection = ({ itemId }: { itemId: string }) => {
           <PortsTable
             ports={modelItem.ports}
             editable={editable}
+            media={media}
             onChange={(ports) => {
               updateModelItem(itemId, { ports });
             }}

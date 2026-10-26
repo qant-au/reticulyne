@@ -6,6 +6,8 @@ import type { RendererProps } from './rendererProps';
 import type { SelectedRef, TourState, TourStep, Viewport } from './imperative';
 import type { DiagramTemplate } from 'src/templates';
 import type { CatalogueItem } from 'src/catalogue/schema';
+import type { IconPack } from 'src/icons/pack';
+import type { IconPackEntry } from 'src/icons/packRegistry';
 import type { Scene } from 'src/core';
 
 export type NodeIndicatorComponent = (props: {
@@ -136,9 +138,30 @@ export interface ReticulyneProps {
    * Catalogue items added to the palette after the built-in ones: devices
    * with their ports, usually an icon pack's (`packCatalogueItems(pack)`).
    * An item whose id a built-in item already has is left out. Each one draws
-   * with the icon it names, so pass the pack's icons in `initialData.icons`.
+   * with the icon it names. A pack passed in `iconPacks` brings its own
+   * items; this is for items that come from elsewhere.
    */
   catalogueItems?: CatalogueItem[];
+  /**
+   * Icon packs the app loads (docs/icon-packs.md). Each pack's icons join
+   * the library, filed under the pack's id; its devices with ports join the
+   * palette; its own media join the catalogue's. A later pack of an id
+   * replaces an earlier one, and so does an install made in the editor,
+   * unless the earlier one is `removable: false`: that pack is locked, and
+   * the editor neither removes it nor installs over it. `origin: 'user'`
+   * marks a pack the user installed and the host kept, so the Icon packs
+   * dialog shows it as theirs.
+   */
+  iconPacks?: IconPackEntry[];
+  /**
+   * A pack was installed in the editor (the Icon packs dialog, or
+   * `useReticulyne().installIconPack`), already validated. Keep it, if
+   * installs should outlast the page, and pass it back in `iconPacks` as
+   * `origin: 'user'`.
+   */
+  onIconPackInstall?: (pack: IconPack) => void;
+  /** A pack was removed in the editor. Forget it, if you kept it. */
+  onIconPackRemove?: (id: string) => void;
   /** 1.6: as `onNodeClick`, for a connector. */
   onConnectorClick?: (id: string) => void;
   /**

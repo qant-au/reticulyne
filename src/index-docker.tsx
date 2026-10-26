@@ -8,9 +8,9 @@ import type { Scene } from 'src/core';
 import { MAIN_MENU_OPTIONS } from 'src/config';
 import type { EditorModeEnum } from 'src/types/common';
 import { icons, colors } from './examples/initialData';
-import { flattenPacks } from 'src/icons/pack';
 import { DiagramShell } from './docker/DiagramShell';
-import { openLocalStore } from './docker/store/localStore';
+import { openLocalStore, type PackStore } from './docker/store/localStore';
+import type { IconPackEntry } from 'src/icons/packRegistry';
 
 // E2E test hook. The Playwright suite injects this global via
 // `page.addInitScript(...)` BEFORE navigation, so the docker editor
@@ -43,6 +43,8 @@ declare global {
       enableAnimation?: boolean;
       /** Start with the labels hidden (the `showLabels` prop). */
       showLabels?: boolean;
+      /** Icon packs the app loads (the `iconPacks` prop). */
+      iconPacks?: IconPackEntry[];
       /**
        * 2.3: give the editor a host onSave for the save-status spec.
        * Saves (scenes) are recorded on window.__RETICULYNE_E2E_SAVES__; delayMs
@@ -117,6 +119,7 @@ const enableAnimation =
 // browser's IndexedDB). The e2e hook's settings pass straight through to it.
 const editorProps = {
   editorMode,
+  ...(e2eConfig?.iconPacks ? { iconPacks: e2eConfig.iconPacks } : {}),
   enableAnimation,
   ...(e2eConfig?.showLabels === undefined
     ? {}
@@ -129,7 +132,11 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const render = (storage: Storage | undefined, bundledIcons: Icon[]) => {
+const render = (
+  storage: Storage | undefined,
+  bundledIcons: Icon[],
+  packStore?: PackStore
+) => {
   const diagramShell = (
     <DiagramShell
       bundledIcons={bundledIcons}
@@ -137,6 +144,7 @@ const render = (storage: Storage | undefined, bundledIcons: Icon[]) => {
       initialData={initialData}
       editorProps={editorProps}
       {...(storage ? { storage } : {})}
+      {...(packStore ? { packStore } : {})}
     />
   );
   // Default shell — the editor fills the viewport, matching the
@@ -189,18 +197,7 @@ const boot = async () => {
         }, LOCAL_STORE_TIMEOUT_MS);
       })
     ]);
-    const installed = flattenPacks(local.packs.list());
-    const bundledIds = new Set(
-      icons.map((icon) => {
-        return icon.id;
-      })
-    );
-    render(local.storage, [
-      ...icons,
-      ...installed.filter((icon) => {
-        return !bundledIds.has(icon.id);
-      })
-    ]);
+    render(local.storage, icons, local.packs);
   } catch (error) {
     console.warn(
       '[reticulyne] IndexedDB is not available; diagrams are kept in localStorage:',

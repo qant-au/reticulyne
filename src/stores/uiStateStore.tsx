@@ -9,6 +9,12 @@ import { UiStateStore } from 'src/types';
 import { INITIAL_UI_STATE } from 'src/config';
 import { TEMPLATES } from 'src/templates';
 import { freshSceneContext } from 'src/scene/convert';
+import {
+  checkInstall,
+  lockedPack,
+  PACK_LOCKED_MESSAGE,
+  resolvePacks
+} from 'src/icons/packRegistry';
 import { createContextualStore } from './createContextualStore';
 
 const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
@@ -57,6 +63,12 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
       announcement: { text: '', seq: 0 },
       templates: TEMPLATES,
       catalogueItems: [],
+      hostPacks: [],
+      installedPacks: [],
+      removedPackIds: [],
+      packs: [],
+      onIconPackInstall: undefined,
+      onIconPackRemove: undefined,
       editingGroupId: null,
       hideRedacted: false,
       showOtherFloors: true,
@@ -255,6 +267,76 @@ const { Provider, useStore } = createContextualStore<UiStateStore>(() => {
         },
         setCatalogueItems: (catalogueItems) => {
           set({ catalogueItems });
+        },
+        setHostPacks: (hostPacks) => {
+          const { installedPacks, removedPackIds } = get();
+          set({
+            hostPacks,
+            packs: resolvePacks(
+              hostPacks,
+              installedPacks,
+              new Set(removedPackIds)
+            )
+          });
+        },
+        installPack: (value, options = {}) => {
+          const { packs, hostPacks, onIconPackInstall } = get();
+          const result = checkInstall(packs, value);
+          if (!result.ok) return result;
+          const { pack } = result;
+          const installedPacks = [
+            ...get().installedPacks.filter((p) => {
+              return p.pack.id !== pack.id;
+            }),
+            {
+              pack,
+              removable: options.removable !== false,
+              origin: options.origin ?? 'user'
+            }
+          ];
+          const removedPackIds = get().removedPackIds.filter((id) => {
+            return id !== pack.id;
+          });
+          set({
+            installedPacks,
+            removedPackIds,
+            packs: resolvePacks(
+              hostPacks,
+              installedPacks,
+              new Set(removedPackIds)
+            )
+          });
+          if ((options.origin ?? 'user') === 'user') onIconPackInstall?.(pack);
+          return result;
+        },
+        removePack: (id) => {
+          const { packs, hostPacks, onIconPackRemove } = get();
+          if (lockedPack(packs, id)) {
+            return { ok: false, errors: [PACK_LOCKED_MESSAGE] };
+          }
+          const installedPacks = get().installedPacks.filter((p) => {
+            return p.pack.id !== id;
+          });
+          const removedPackIds = [
+            ...get().removedPackIds.filter((r) => {
+              return r !== id;
+            }),
+            id
+          ];
+          set({
+            installedPacks,
+            removedPackIds,
+            packs: resolvePacks(
+              hostPacks,
+              installedPacks,
+              new Set(removedPackIds)
+            )
+          });
+          onIconPackRemove?.(id);
+          return { ok: true };
+        },
+        setPackHandlers: ({ onIconPackInstall, onIconPackRemove }) => {
+          set({ onIconPackInstall, onIconPackRemove });
         },
         setOnIconUpload: (onIconUpload) => {
           set({ onIconUpload });

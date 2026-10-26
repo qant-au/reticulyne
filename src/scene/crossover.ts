@@ -6,7 +6,7 @@ import {
   elementIcon,
   itemToSceneObject
 } from 'src/catalogue/place';
-import type { CatalogueItem } from 'src/catalogue/schema';
+import type { CatalogueItem, Medium } from 'src/catalogue/schema';
 import type { ModelItem } from 'src/types/model';
 import { objectToModelItem } from './convert';
 
@@ -92,7 +92,8 @@ export const objectTemplate = (
  */
 export const catalogueTemplate = (
   item: CatalogueItem,
-  icons: { id: string }[]
+  icons: { id: string }[],
+  media?: Medium[]
 ): Omit<ModelItem, 'id'> => {
-  return objectTemplate(itemToSceneObject(item, item.id), icons);
+  return objectTemplate(itemToSceneObject(item, item.id, media), icons);
 };

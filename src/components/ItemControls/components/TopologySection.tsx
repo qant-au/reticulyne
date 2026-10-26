@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { MenuItem, Stack, TextField, Typography } from '@mui/material';
-import { MEDIA } from 'src/catalogue/media';
 import { topologyWarnings } from 'src/catalogue/topology';
+import { usePackCatalogue } from 'src/hooks/usePackCatalogue';
 import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -16,9 +16,10 @@ const useWarnings = () => {
     return state.items;
   });
   const { connections } = useScene();
+  const { media } = usePackCatalogue();
   return useMemo(() => {
-    return topologyWarnings(items, connections);
-  }, [items, connections]);
+    return topologyWarnings(items, connections, media);
+  }, [items, connections, media]);
 };
 
 /** The topology warnings about one object or one connection. */
@@ -63,6 +64,7 @@ export const ConnectionPortsSection = ({
   connectionId?: string;
 }) => {
   const { connections, updateConnection } = useScene();
+  const { media } = usePackCatalogue();
   const items = useModelStore((state) => {
     return state.items;
   });
@@ -125,7 +127,7 @@ export const ConnectionPortsSection = ({
         {connection.kind && (
           <Typography variant="body2" color="text.secondary">
             Medium:{' '}
-            {MEDIA.find((m) => {
+            {media.find((m) => {
               return m.id === connection.kind;
             })?.name ?? connection.kind}
           </Typography>

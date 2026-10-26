@@ -18,6 +18,7 @@ import { useModelStore } from 'src/stores/modelStore';
 import { catalogueTemplate } from 'src/scene/crossover';
 import { schematicIcons } from 'src/catalogue/place';
 import type { CatalogueItem } from 'src/catalogue/schema';
+import { usePackCatalogue } from 'src/hooks/usePackCatalogue';
 import { Panel, PanelHeader, PanelSection } from 'src/kit';
 
 interface Props {
@@ -149,6 +150,7 @@ export const IconSelectionControls = ({
   const modelActions = useModelStore((state) => {
     return state.actions;
   });
+  const { media } = usePackCatalogue();
 
   // The template to place. An item with no built-in drawing draws with its 2D
   // schematic symbol, which the diagram then carries as an icon (a scene may
@@ -156,7 +158,7 @@ export const IconSelectionControls = ({
   // supplied no drawing for keeps the default block, as documented.
   const templateFor = useCallback(
     (item: CatalogueItem) => {
-      const template = catalogueTemplate(item, icons);
+      const template = catalogueTemplate(item, icons, media);
       if (template.icon || item.drawing) return template;
       const [symbol] = schematicIcons([item]);
       if (!symbol) return template;
@@ -170,7 +172,7 @@ export const IconSelectionControls = ({
       }
       return { ...template, icon: symbol.id };
     },
-    [icons, modelActions]
+    [icons, media, modelActions]
   );
 
   const onCatalogueMouseDown = useCallback(

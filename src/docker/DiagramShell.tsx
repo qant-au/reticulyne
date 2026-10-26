@@ -39,6 +39,8 @@ import {
   type DiagramStorage
 } from './diagramStorage';
 import { Surface } from 'src/kit';
+import type { IconPackEntry } from 'src/icons/packRegistry';
+import type { PackStore } from './store/localStore';
 
 // APP-01: the Docker editor as a small app. Diagrams live in this
 // browser's IndexedDB (localStorage where IndexedDB cannot be used); a "Diagrams" menu at the top creates, imports,
@@ -272,6 +274,11 @@ interface ShellProps {
    * reports a write that did not reach the disk), else localStorage.
    */
   storage?: Storage & { flush?: () => Promise<void> };
+  /**
+   * The icon packs installed in this browser. They load as the user's;
+   * an install or removal made in the editor is kept here.
+   */
+  packStore?: PackStore;
 }
 
 export const DiagramShell = ({
@@ -279,8 +286,20 @@ export const DiagramShell = ({
   colors,
   initialData,
   editorProps = {},
-  storage = window.localStorage
+  storage = window.localStorage,
+  packStore
 }: ShellProps) => {
+  // The app's packs (the e2e hook passes some), then the user's, as they
+  // were when the page opened; the editor tracks what changes after that.
+  const appPacks = editorProps.iconPacks;
+  const iconPacks = useMemo((): IconPackEntry[] => {
+    return [
+      ...(appPacks ?? []),
+      ...(packStore?.list() ?? []).map((pack) => {
+        return { pack, origin: 'user' as const };
+      })
+    ];
+  }, [appPacks, packStore]);
   const store: DiagramStorage = useMemo(() => {
     return createDiagramStorage(storage, bundledIcons);
   }, [storage, bundledIcons]);
@@ -478,6 +497,21 @@ export const DiagramShell = ({
           });
         }}
         {...editorProps}
+        iconPacks={iconPacks}
+        onIconPackInstall={(pack) => {
+          packStore?.install(pack).catch((e: unknown) => {
+            setError(
+              e instanceof Error
+                ? e.message
+                : 'The icon pack could not be kept in this browser.'
+            );
+          });
+        }}
+        onIconPackRemove={(id) => {
+          packStore?.remove(id).catch(() => {
+            setError('The icon pack could not be removed from this browser.');
+          });
+        }}
       >
         <DiagramBar
           currentId={current.id}

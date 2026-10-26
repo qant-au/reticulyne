@@ -5,6 +5,7 @@ import {
   sceneFromModel,
   type SceneContext
 } from 'src/scene/convert';
+import { CUSTOM_ICON_COLLECTION } from 'src/utils/iconUpload';
 
 // One save path for the menu's Save, the pill's Retry and
 // auto-save, so all three report the same status. What is saved is a
@@ -15,8 +16,23 @@ import {
 // FNV-1a over the model's JSON. Only used to compare "is this what was
 // saved?", so a 32-bit hash of the serialised model is plenty and keeps
 // the store from holding a second copy of a large diagram.
+//
+// The library the editor offers (built-in drawings, icon packs) is not the
+// diagram's: like a saved file (leanIcons), the fingerprint counts only the
+// icons the diagram uses and the ones uploaded into it, so a pack installed
+// or synced after a load does not read as an unsaved change.
 export const fingerprintModel = (model: Model): string => {
-  const text = JSON.stringify(model);
+  const used = new Set(
+    model.items.map((item) => {
+      return item.icon;
+    })
+  );
+  const text = JSON.stringify({
+    ...model,
+    icons: model.icons.filter((icon) => {
+      return used.has(icon.id) || icon.collection === CUSTOM_ICON_COLLECTION;
+    })
+  });
   let hash = 0x811c9dc5;
   for (let i = 0; i < text.length; i += 1) {
     hash ^= text.charCodeAt(i);

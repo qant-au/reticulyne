@@ -8,6 +8,7 @@ import { catalogueItemSymbol, itemToSceneObject } from 'src/catalogue/place';
 import { FAMILIES, FAMILY_NAMES } from 'src/catalogue/schema';
 import type { CatalogueItem } from 'src/catalogue/schema';
 import { availableIcon } from 'src/scene/crossover';
+import { usePackCatalogue } from 'src/hooks/usePackCatalogue';
 import { DEFAULT_ICON } from 'src/config';
 import type { Icon } from 'src/types';
 import { IconCollection } from './IconCollection';
@@ -38,20 +39,17 @@ export const CatalogueItems = ({ filter, onMouseDown, onClick }: Props) => {
   const extraItems = useUiStateStore((state) => {
     return state.catalogueItems;
   });
-  // The built-in items, then the host's; a built-in id is never replaced.
+  const { items: packItems, media } = usePackCatalogue();
+  // The built-in items, then the host's, then the icon packs'; an id already
+  // taken is never replaced, a built-in one least of all.
   const items = useMemo(() => {
-    const builtIn = new Set(
-      ITEMS.map((item) => {
-        return item.id;
-      })
-    );
-    return [
-      ...ITEMS,
-      ...extraItems.filter((item) => {
-        return !builtIn.has(item.id);
-      })
-    ];
-  }, [extraItems]);
+    const seen = new Set<string>();
+    return [...ITEMS, ...extraItems, ...packItems].filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  }, [extraItems, packItems]);
 
   const tiles = useMemo(() => {
     const urls = new Map(
@@ -60,7 +58,10 @@ export const CatalogueItems = ({ filter, onMouseDown, onClick }: Props) => {
       })
     );
     return items.map((item) => {
-      const icon = availableIcon(itemToSceneObject(item, item.id), icons);
+      const icon = availableIcon(
+        itemToSceneObject(item, item.id, media),
+        icons
+      );
       const symbol = catalogueItemSymbol(item);
       const url =
         (icon && urls.get(icon)) ??
@@ -77,7 +78,7 @@ export const CatalogueItems = ({ filter, onMouseDown, onClick }: Props) => {
         } satisfies Icon
       };
     });
-  }, [icons, items]);
+  }, [icons, items, media]);
 
   const byTile = useMemo(() => {
     return new Map(

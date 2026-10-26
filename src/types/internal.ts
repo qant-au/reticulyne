@@ -28,6 +28,12 @@ import type { QueuedPatch, TourState, TourStep } from './imperative';
 import type { Scene as SceneDocument } from 'src/core';
 import type { SceneContext } from 'src/scene/convert';
 import type { DiagramTemplate } from 'src/templates';
+import type { IconPack, IconPackResult } from 'src/icons/pack';
+import type {
+  IconPackEntry,
+  LoadedPack,
+  PackOrigin
+} from 'src/icons/packRegistry';
 import type { CatalogueItem } from 'src/catalogue/schema';
 import { DialogTypeEnum, type AnchorPosition } from './ui';
 import type {
@@ -376,8 +382,18 @@ export interface UiState {
   showOtherFloors: boolean;
   // 2.14: what "New from template" offers.
   templates: DiagramTemplate[];
-  // Catalogue items the host adds to the palette (an icon pack's devices).
+  // Catalogue items the host adds to the palette.
   catalogueItems: CatalogueItem[];
+  // Icon packs (src/icons/packRegistry.ts): the host's `iconPacks` prop,
+  // the installs and removals made in the editor this session, and the
+  // packs loaded as a result, in load order.
+  hostPacks: IconPackEntry[];
+  installedPacks: LoadedPack[];
+  removedPackIds: string[];
+  packs: LoadedPack[];
+  // The host hears of an install or removal made in the editor, to keep it.
+  onIconPackInstall: ((pack: IconPack) => void) | undefined;
+  onIconPackRemove: ((id: string) => void) | undefined;
   // 2.3: where saving stands. See src/utils/save.ts.
   saveStatus: SaveStatus;
   // SEC-02: host-supplied validation-error callback, mirrored onto the
@@ -472,6 +488,22 @@ export interface UiStateActions {
   setFocusTextBoxId: (id: string | null) => void;
   setTemplates: (templates: DiagramTemplate[]) => void;
   setCatalogueItems: (items: CatalogueItem[]) => void;
+  setHostPacks: (entries: IconPackEntry[]) => void;
+  /**
+   * Validates and installs a pack, unless a locked pack has its id. An
+   * install the user made (origin 'user', the default) is reported to the
+   * host's onIconPackInstall; one the app made through useReticulyne is not.
+   */
+  installPack: (
+    value: unknown,
+    options?: { origin?: PackOrigin; removable?: boolean }
+  ) => IconPackResult;
+  /** Removes a pack, unless it is locked. */
+  removePack: (id: string) => { ok: true } | { ok: false; errors: string[] };
+  setPackHandlers: (handlers: {
+    onIconPackInstall?: (pack: IconPack) => void;
+    onIconPackRemove?: (id: string) => void;
+  }) => void;
   setEditingGroupId: (id: string | null) => void;
   setHideRedacted: (hideRedacted: boolean) => void;
   setShowOtherFloors: (showOtherFloors: boolean) => void;

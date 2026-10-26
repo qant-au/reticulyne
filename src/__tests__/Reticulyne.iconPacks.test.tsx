@@ -4,7 +4,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { useEffect } from 'react';
-import { render, cleanup, act } from '@testing-library/react';
+import { render, cleanup, act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MAIN_MENU_OPTIONS } from 'src/config';
 import Reticulyne, { useReticulyne } from '../Reticulyne';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
@@ -235,4 +237,38 @@ test('a removed pack keeps the icons objects on the canvas still use', () => {
       return icon.id;
     })
   ).toEqual(['nautical-flags-alfa']);
+});
+
+describe('the Icon packs menu entry', () => {
+  const menuHas = async (props: Record<string, unknown>) => {
+    act(() => {
+      render(<Reticulyne initialData={fixtureModel} {...props} />);
+    });
+    // A read-only editor has no main menu at all.
+    const menu = screen.queryByRole('button', { name: /main menu/i });
+    if (!menu) return false;
+    await act(async () => {
+      await userEvent.click(menu);
+    });
+    return screen.queryByText('Icon packs') !== null;
+  };
+
+  test('is in the menu by default when the diagram is editable', async () => {
+    expect(await menuHas({ editorMode: 'EDITABLE' })).toBe(true);
+  });
+
+  test('is left out when the host leaves ACTION.ICON_PACKS out', async () => {
+    expect(
+      await menuHas({
+        editorMode: 'EDITABLE',
+        mainMenuOptions: MAIN_MENU_OPTIONS.filter((o) => {
+          return o !== 'ACTION.ICON_PACKS';
+        })
+      })
+    ).toBe(false);
+  });
+
+  test('is not offered on a read-only diagram', async () => {
+    expect(await menuHas({ editorMode: 'EXPLORABLE_READONLY' })).toBe(false);
+  });
 });

@@ -47,6 +47,21 @@ const KeyboardShortcutsDialog = lazy(() => {
   );
 });
 
+const ExportMermaidDialog = lazy(() => {
+  return import('src/components/ExportMermaidDialog/ExportMermaidDialog').then(
+    (m) => {
+      return { default: m.ExportMermaidDialog };
+    }
+  );
+});
+const ImportMermaidDialog = lazy(() => {
+  return import('src/components/ImportMermaidDialog/ImportMermaidDialog').then(
+    (m) => {
+      return { default: m.ImportMermaidDialog };
+    }
+  );
+});
+
 const ConnectToDialog = lazy(() => {
   return import('src/components/ConnectToDialog/ConnectToDialog').then((m) => {
     return { default: m.ConnectToDialog };
@@ -97,6 +112,12 @@ export const DialogLayer = ({
           <TemplateDialog onClose={onCloseDialog} />
         )}
         {dialog === 'CONNECT_TO' && <ConnectToDialog onClose={onCloseDialog} />}
+        {dialog === 'EXPORT_MERMAID' && (
+          <ExportMermaidDialog onClose={onCloseDialog} />
+        )}
+        {dialog === 'IMPORT_MERMAID' && (
+          <ImportMermaidDialog onClose={onCloseDialog} />
+        )}
         {dialog === 'KEYBOARD_SHORTCUTS' && (
           <KeyboardShortcutsDialog onClose={onCloseDialog} />
         )}

@@ -165,12 +165,14 @@ export const INITIAL_SCENE_STATE = {
 // under FEA4-03: Reticulyne has no Discord channel.
 export const MAIN_MENU_OPTIONS: MainMenuOptions = [
   'ACTION.OPEN',
+  'ACTION.IMPORT_MERMAID',
   'ACTION.NEW_FROM_TEMPLATE',
   'ACTION.RENAME',
   'EXPORT.JSON',
   'EXPORT.PNG',
   'EXPORT.PDF',
   'EXPORT.SVG',
+  'EXPORT.MERMAID',
   'ACTION.CLEAR_CANVAS',
   'LINK.GITHUB',
   'VERSION'

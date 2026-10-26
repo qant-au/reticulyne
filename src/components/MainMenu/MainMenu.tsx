@@ -18,6 +18,8 @@ import TitleIcon from '@mui/icons-material/Title';
 import RenameIcon from '@mui/icons-material/DriveFileRenameOutline';
 import LibraryIcon from '@mui/icons-material/CategoryOutlined';
 import NewFromTemplateIcon from '@mui/icons-material/DashboardCustomizeOutlined';
+import MermaidIcon from '@mui/icons-material/AccountTreeOutlined';
+import ImportMermaidIcon from '@mui/icons-material/InputOutlined';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
 import { useScene } from 'src/hooks/useScene';
@@ -125,6 +127,16 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
     uiStateActions.setDialog('EXPORT_SVG');
   }, [uiStateActions]);
 
+  const onExportAsMermaid = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    uiStateActions.setDialog('EXPORT_MERMAID');
+  }, [uiStateActions]);
+
+  const onImportMermaid = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    uiStateActions.setDialog('IMPORT_MERMAID');
+  }, [uiStateActions]);
+
   // Clear empties the whole diagram and a load cannot be undone, so it
   // asks first, as Excalidraw's "Reset the canvas" does.
   const [confirmClear, setConfirmClear] = useState(false);
@@ -160,6 +172,15 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
   const menuItems: ToolMenuItem[] = [
     ...(has('ACTION.OPEN')
       ? [{ label: 'Open', icon: <FolderOpenIcon />, onClick: onOpenModel }]
+      : []),
+    ...(has('ACTION.IMPORT_MERMAID')
+      ? [
+          {
+            label: 'Import Mermaid',
+            icon: <ImportMermaidIcon />,
+            onClick: onImportMermaid
+          }
+        ]
       : []),
     ...(has('ACTION.NEW_FROM_TEMPLATE') && templates.length > 0
       ? [
@@ -209,6 +230,15 @@ export const MainMenu = ({ showToolButtons = false }: Props = {}) => {
             label: 'Export as SVG',
             icon: <ExportSvgIcon />,
             onClick: onExportAsSvg
+          }
+        ]
+      : []),
+    ...(has('EXPORT.MERMAID')
+      ? [
+          {
+            label: 'Export as Mermaid',
+            icon: <MermaidIcon />,
+            onClick: onExportAsMermaid
           }
         ]
       : []),

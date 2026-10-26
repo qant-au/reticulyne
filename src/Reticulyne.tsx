@@ -56,7 +56,15 @@ import type { CatalogueItem } from 'src/catalogue/schema';
 
 // A stable default, so the effect below does not run on every render.
 const NO_CATALOGUE_ITEMS: CatalogueItem[] = [];
-import { isSceneDocument, type Scene } from 'src/core';
+import { isSceneDocument, redactScene, type Scene } from 'src/core';
+import {
+  mermaidToScene,
+  sceneToMermaid,
+  type MermaidExport,
+  type MermaidExportOptions,
+  type MermaidImportOptions,
+  type MermaidIssue
+} from 'src/mermaid';
 import { leanIcons, sceneFromModel, type LoadHints } from 'src/scene';
 import { ReticulyneErrorBoundary } from 'src/components/ReticulyneErrorBoundary/ReticulyneErrorBoundary';
 
@@ -540,6 +548,41 @@ const useReticulyne = () => {
     [initialDataManager]
   );
 
+  // Mermaid out: the current view (or `options.view`) as flowchart text,
+  // with the Redacted layer left out unless `includeRedacted`.
+  const exportMermaid = useCallback(
+    (
+      options: MermaidExportOptions & { includeRedacted?: boolean } = {}
+    ): MermaidExport => {
+      const { includeRedacted, ...rest } = options;
+      const scene = sceneFromModel(
+        modelFromModelStore(ModelActions.get()),
+        uiStateActions.get().sceneContext
+      );
+      return sceneToMermaid(includeRedacted ? scene : redactScene(scene), {
+        view: uiStateActions.get().view,
+        ...rest
+      });
+    },
+    [ModelActions, uiStateActions]
+  );
+
+  // Mermaid in: the flowchart replaces the diagram, laid out and fitted
+  // to the screen. Refused (ok: false) with the issues when the text has
+  // errors, or when loadModel would refuse.
+  const importMermaid = useCallback(
+    async (
+      text: string,
+      options?: MermaidImportOptions
+    ): Promise<{ ok: boolean; issues: MermaidIssue[] }> => {
+      const result = mermaidToScene(text, options);
+      if (!result.scene) return { ok: false, issues: result.issues };
+      const ok = await loadModel(result.scene, { fitToView: true });
+      return { ok, issues: result.issues };
+    },
+    [loadModel]
+  );
+
   // FEA-06: switch the visible view. The editor has no view-switcher UI,
   // so before this the only way to show a non-default view was to seed
   // `initialData.view`. Navigation, not a mutation, so it is NOT gated on
@@ -979,6 +1022,19 @@ const useReticulyne = () => {
      * with React's `use()` under `<Suspense>`.
      */
     loadModel,
+    /**
+     * The current view as a Mermaid flowchart: `{ text, warnings, stats }`.
+     * The Redacted layer is left out unless `includeRedacted` is set. Options
+     * as `sceneToMermaid` (docs/mermaid.md). Allowed in every editor mode.
+     */
+    exportMermaid,
+    /**
+     * Replace the diagram with a Mermaid flowchart, laid out on tiles.
+     * Resolves `{ ok, issues }`: `ok` false when the text has errors (each
+     * issue has a code, line, column and message) or the load is refused,
+     * as `loadModel` is outside `EDITABLE`.
+     */
+    importMermaid,
     /** The diagram title. */
     getTitle,
     /**

@@ -24,7 +24,10 @@ export const DialogTypeEnum = {
   RENAME_DIAGRAM: 'RENAME_DIAGRAM',
   NEW_FROM_TEMPLATE: 'NEW_FROM_TEMPLATE',
   // Connect the selected node to another, chosen by name.
-  CONNECT_TO: 'CONNECT_TO'
+  CONNECT_TO: 'CONNECT_TO',
+  // Mermaid flowchart text out (with a preview) and in (pasted or opened).
+  EXPORT_MERMAID: 'EXPORT_MERMAID',
+  IMPORT_MERMAID: 'IMPORT_MERMAID'
 } as const;
 
 export const LayerOrderingActionOptions = {

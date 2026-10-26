@@ -91,6 +91,10 @@ interface SceneObject {
   id: Id;
   element?: string;       // a drawing or element id, e.g. 'rack-600x1000-42u'
   icon?: Id;              // an entry in `icons`, when there is no element
+  iconOverride?: {        // this object's own images, over its icon or element
+    url?: string;         // isometric drawing for iso views
+    flatUrl?: string;     // flat drawing for schematic views (at least one of the two)
+  };
   name?: string;          // max 100; shown as the label
   description?: string;   // max 1000
   tags?: string[];        // e.g. ['network', 'poe']; max 20, each max 40
@@ -120,6 +124,14 @@ interface Port {
   name a floor planner's own wall fittings (`door`, `window` and the rest), so a plan can
   be carried in full.
 - An object with neither is drawn as a plain labelled box.
+- **`iconOverride`** replaces how this one object is drawn, view by view, without changing
+  what it is: `url` is drawn in iso views in place of its icon's isometric drawing,
+  `flatUrl` in flat (schematic) views in place of its flat one. Either can be set alone; the
+  other view keeps the icon's own drawing. The icon entry, every other object using it, and
+  the object's `element` and `ports` are untouched, so an override never changes what the
+  object can connect to. Both URLs follow the icon URL rules ([Limits](#limits)). The editor
+  sets it from the inspector's **Icon images** (an upload) and removes it the same way; a
+  copied object keeps it, and a new one placed from the library starts without.
 - **Drawings and the catalogue.** The drawings are how physical things look; the things a
   diagram connects, including virtual ones that never appear on a floor plan, come from
   Reticulyne's [catalogue](catalogue.md), which is where ports, media and protocols are

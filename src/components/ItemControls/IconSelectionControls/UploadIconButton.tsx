@@ -7,10 +7,9 @@ import { iconSchema } from 'src/schemas/icons';
 import {
   CUSTOM_ICON_COLLECTION,
   ICON_UPLOAD_TYPES,
-  MAX_ICON_UPLOAD_BYTES,
   generateId,
   iconNameFromFile,
-  isDrawableImage
+  uploadIconFile
 } from 'src/utils';
 
 // "Upload icon" in the picker. The host stores the file
@@ -37,21 +36,9 @@ export const UploadIconButton = () => {
 
   const upload = async (file: File) => {
     setError(null);
-    if (!ICON_UPLOAD_TYPES.includes(file.type)) {
-      setError('Use an SVG, PNG, JPEG, GIF or WebP image.');
-      return;
-    }
-    if (file.size > MAX_ICON_UPLOAD_BYTES) {
-      setError('That image is over 200 KB.');
-      return;
-    }
     setBusy(true);
     try {
-      if (!(await isDrawableImage(file))) {
-        setError('That file is not an image this browser can show.');
-        return;
-      }
-      const result = await onIconUpload(file);
+      const result = await uploadIconFile(file, onIconUpload);
       const { icons } = modelActions.get();
       // The same image uploaded twice is one icon, not two.
       const existing = icons.find((icon) => {

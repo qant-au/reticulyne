@@ -5,10 +5,12 @@ import { NonIsometricIcon } from 'src/components/SceneLayers/Nodes/Node/IconType
 import { SchematicIcon } from 'src/components/SceneLayers/Nodes/Node/IconTypes/SchematicIcon';
 import { DEFAULT_ICON } from 'src/config';
 import type { Projection } from 'src/types';
+import type { IconOverride } from 'src/core';
 
 export const useIcon = (
   id: string | undefined,
-  projection: Projection = 'iso'
+  projection: Projection = 'iso',
+  override?: IconOverride
 ) => {
   const icons = useModelStore((state) => {
     return state.icons;
@@ -30,6 +32,16 @@ export const useIcon = (
   }, [icons, id]);
 
   const iconComponent = useMemo(() => {
+    // An item's own override comes first, view by view: its flat image in
+    // the flat view, its isometric drawing in the iso view. Neither changes
+    // the icon, so the other view keeps the icon's own drawing.
+    if (projection === 'schematic' && override?.flatUrl) {
+      return <SchematicIcon key={override.flatUrl} url={override.flatUrl} />;
+    }
+    if (projection === 'iso' && override?.url) {
+      return <IsometricIcon key={override.url} url={override.url} />;
+    }
+
     // The flat view draws every node as a 2D symbol: the icon's flat
     // drawing, else its main image.
     const url =
@@ -49,7 +61,7 @@ export const useIcon = (
     }
 
     return <IsometricIcon key={icon.url} url={icon.url} />;
-  }, [icon, projection]);
+  }, [icon, projection, override]);
 
   return {
     icon,

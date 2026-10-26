@@ -35,7 +35,7 @@ const GhostNode = ({
   node: ViewItem;
   projection: Projection;
 }) => {
-  const { iconComponent } = useIcon(item?.icon, projection);
+  const { iconComponent } = useIcon(item?.icon, projection, item?.iconOverride);
   const position = getTilePosition({
     tile: node.tile,
     origin: projection === 'schematic' ? 'CENTER' : 'BOTTOM',

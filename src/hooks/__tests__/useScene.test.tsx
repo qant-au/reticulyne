@@ -723,6 +723,30 @@ describe('useScene', () => {
       expect(pasted!.id).not.toBe(sourceId);
     });
 
+    test('a pasted item keeps its icon override; its icon is unchanged', () => {
+      const slot = setup();
+      const sourceId = slot.current.scene.items[0].id;
+      const iconOverride = { flatUrl: 'data:image/svg+xml,flat' };
+      act(() => {
+        slot.current.scene.updateModelItem(sourceId, { iconOverride });
+      });
+      const source = slot.current.getModel().items.find((i) => {
+        return i.id === sourceId;
+      })!;
+      act(() => {
+        slot.current.scene.copySelection({ type: 'ITEM', id: sourceId });
+      });
+      let pastedRef: { type: string; id: string } | null = null;
+      act(() => {
+        pastedRef = slot.current.scene.paste()?.[0] ?? null;
+      });
+      const pasted = slot.current.getModel().items.find((i) => {
+        return i.id === pastedRef!.id;
+      })!;
+      expect(pasted.iconOverride).toEqual(iconOverride);
+      expect(pasted.icon).toBe(source.icon);
+    });
+
     test('paste can fire repeatedly from one copy, each producing a fresh id', () => {
       const slot = setup();
       const sourceId = slot.current.scene.items[0].id;

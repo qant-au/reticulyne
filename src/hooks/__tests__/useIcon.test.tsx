@@ -135,4 +135,59 @@ describe('useIcon', () => {
       expect(iso.iconComponent).toBeNull();
     });
   });
+  describe('an item icon override', () => {
+    const icon: Icon = {
+      id: 'a',
+      name: 'A',
+      url: 'data:image/svg+xml,iso',
+      flatUrl: 'data:image/svg+xml,flat',
+      isIsometric: true
+    };
+    const views = (override: Parameters<typeof useIcon>[2]) => {
+      const hook = renderHook(
+        () => {
+          const setModel = useModelStore((s) => {
+            return s.actions.set;
+          });
+          return {
+            setModel,
+            flat: useIcon('a', 'schematic', override),
+            iso: useIcon('a', 'iso', override)
+          };
+        },
+        { wrapper: Wrapper }
+      );
+      act(() => {
+        hook.result.current.setModel((state) => {
+          return { ...state, icons: [icon] };
+        });
+      });
+      return hook.result.current;
+    };
+
+    test('replaces only the view it is for', () => {
+      const flatOnly = views({ flatUrl: 'data:image/png;base64,F' });
+      expect(flatOnly.flat.iconComponent?.props.url).toBe(
+        'data:image/png;base64,F'
+      );
+      expect(flatOnly.iso.iconComponent?.props.url).toBe(
+        'data:image/svg+xml,iso'
+      );
+      const isoOnly = views({ url: 'data:image/png;base64,I' });
+      expect(isoOnly.iso.iconComponent?.props.url).toBe(
+        'data:image/png;base64,I'
+      );
+      expect(isoOnly.flat.iconComponent?.props.url).toBe(
+        'data:image/svg+xml,flat'
+      );
+    });
+
+    test('leaves the icon itself as it is', () => {
+      const both = views({
+        url: 'data:image/png;base64,I',
+        flatUrl: 'data:image/png;base64,F'
+      });
+      expect(both.iso.icon).toEqual(icon);
+    });
+  });
 });

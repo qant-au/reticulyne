@@ -14,6 +14,8 @@ export const modelItemSchema = z
     name: constrainedStrings.name,
     description: constrainedStrings.description.optional(),
     icon: id.optional(),
+    // Images laid over this one item's icon (docs/scene-format.md).
+    iconOverride: sceneObjectSchema.shape.iconOverride,
     element: sceneObjectSchema.shape.element,
     props: sceneObjectSchema.shape.props,
     ports: sceneObjectSchema.shape.ports,

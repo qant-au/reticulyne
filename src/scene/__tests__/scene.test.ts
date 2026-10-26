@@ -349,6 +349,7 @@ describe('scene -> model -> scene', () => {
       'name',
       'description',
       'icon',
+      'iconOverride',
       'element',
       'props',
       'ports',

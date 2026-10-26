@@ -127,10 +127,34 @@ export const portSchema = z.strictObject({
   links: links.optional()
 });
 
+const iconUrl = z
+  .string()
+  .max(SCENE_LIMITS.ICON_URL)
+  .refine(
+    isAllowedIconUrl,
+    'An icon url is http(s):, blob:, a relative path or a data:image/ URI'
+  );
+
+// Images laid over one object's icon: an isometric drawing (`url`) and/or a
+// flat one (`flatUrl`), each used in place of the icon's own in that view.
+// The icon itself, the library and the object's ports are untouched.
+export const iconOverrideSchema = z
+  .strictObject({
+    url: iconUrl.optional(),
+    flatUrl: iconUrl.optional()
+  })
+  .refine(
+    (o) => {
+      return o.url !== undefined || o.flatUrl !== undefined;
+    },
+    { message: 'An icon override needs a url or a flatUrl' }
+  );
+
 export const sceneObjectSchema = z.strictObject({
   id: idSchema,
   element: z.string().min(1).max(SCENE_LIMITS.NAME).optional(),
   icon: idSchema.optional(),
+  iconOverride: iconOverrideSchema.optional(),
   name: name.optional(),
   description: description.optional(),
   tags: z.array(z.string().min(1).max(40)).max(SCENE_LIMITS.TAGS).optional(),
@@ -364,14 +388,6 @@ export const layerSchema = z.strictObject({
   visible: z.boolean().optional()
 });
 
-const iconUrl = z
-  .string()
-  .max(SCENE_LIMITS.ICON_URL)
-  .refine(
-    isAllowedIconUrl,
-    'An icon url is http(s):, blob:, a relative path or a data:image/ URI'
-  );
-
 // `url` is the icon's main image: its isometric drawing when `isIsometric`,
 // else a flat one laid onto the tile. `flatUrl` is the icon's flat (2D,
 // schematic) drawing, for the flat view; without one, the flat view draws
@@ -439,6 +455,7 @@ export const sceneSchema = z.preprocess(
 
 export type Scene = z.infer<typeof sceneShapeSchema>;
 export type SceneObject = z.infer<typeof sceneObjectSchema>;
+export type IconOverride = z.infer<typeof iconOverrideSchema>;
 export type Port = z.infer<typeof portSchema>;
 export type Connection = z.infer<typeof connectionSchema>;
 export type ExternalLink = z.infer<typeof externalLinkSchema>;

@@ -141,6 +141,22 @@ your own equipment, a company's house style), build a pack:
 
 Use only icons you have the right to use: many vendor icon sets carry their own licence terms.
 
+## One Object's Own Images
+
+To change how a single object looks without touching the library, select it and use **Icon
+images** in its inspector: **Upload** an isometric image, a flat one, or both. Each replaces
+that object's drawing in its own view only, and **Remove** brings the icon's drawing back.
+
+- The icon in the library, and every other object drawn with it, stays as it is.
+- The object keeps its ports, so what it can connect to does not change.
+- Copy and paste carries the images to the copy; the same device placed again from the
+  library starts with the library's drawing.
+- Uploads go through the host's `onIconUpload`, as **Upload icon** does, with the same
+  checks (SVG, PNG, JPEG, GIF or WebP, at most 200 KB, an image the browser can draw). With
+  no `onIconUpload` there is no Upload, but an object that already has images can still
+  have them removed.
+- In the file they are the object's `iconOverride` ([scene format](scene-format.md#objects)).
+
 ## Packs installed in the Docker editor
 
 The [standalone Docker editor](docker.md) keeps installed packs in the browser's IndexedDB,

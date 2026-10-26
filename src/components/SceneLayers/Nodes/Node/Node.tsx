@@ -36,7 +36,11 @@ const useNodePosition = (node: ViewItem) => {
 export const Node = ({ node, order, isDimmed }: Props) => {
   const modelItem = useModelItem(node.id);
   const { position, projection } = useNodePosition(node);
-  const { iconComponent } = useIcon(modelItem?.icon, projection);
+  const { iconComponent } = useIcon(
+    modelItem?.icon,
+    projection,
+    modelItem?.iconOverride
+  );
   const NodeIndicator = useUiStateStore((state) => {
     return state.nodeIndicatorComponent;
   });

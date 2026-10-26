@@ -80,3 +80,24 @@ export const readIconAsDataUrl = (
     reader.readAsDataURL(file);
   });
 };
+
+/**
+ * A chosen image checked and handed to the host's `onIconUpload`: its URL
+ * and name, or an Error whose message a person can read. Shared by the
+ * picker's "Upload icon" and the inspector's icon image override.
+ */
+export const uploadIconFile = async (
+  file: File,
+  onIconUpload: (file: File) => Promise<{ url: string; name?: string }>
+): Promise<{ url: string; name?: string }> => {
+  if (!ICON_UPLOAD_TYPES.includes(file.type)) {
+    throw new Error('Use an SVG, PNG, JPEG, GIF or WebP image.');
+  }
+  if (file.size > MAX_ICON_UPLOAD_BYTES) {
+    throw new Error('That image is over 200 KB.');
+  }
+  if (!(await isDrawableImage(file))) {
+    throw new Error('That file is not an image this browser can show.');
+  }
+  return onIconUpload(file);
+};

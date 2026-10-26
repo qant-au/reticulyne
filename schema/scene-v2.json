@@ -57,6 +57,20 @@
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{1,64}$"
           },
+          "iconOverride": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "maxLength": 65536
+              },
+              "flatUrl": {
+                "type": "string",
+                "maxLength": 65536
+              }
+            },
+            "additionalProperties": false
+          },
           "name": {
             "type": "string",
             "maxLength": 100

@@ -1,0 +1,35 @@
+---
+title: "NMEA 2000 network"
+---
+flowchart LR
+  ais["AIS Transponder"]
+  gps_2["GPS 2"]
+  plotter_nav["Chartplotter (nav)"]
+  plotter_helm["Chartplotter (helm)"]
+  engine["Engine Gateway (J1939 to NMEA 2000)"]
+  depth["Depth Transducer"]
+  weather["Weather Station"]
+  gps_1["GPS 1"]
+  radar["Radar"]
+  power["NMEA 2000 Power Injector"]
+  term_stern["Terminator (stern)"]
+  tee4_aft["4-Way Tee (aft)"]
+  tee_mid["Tee (mid)"]
+  tee4_fwd["4-Way Tee (fwd)"]
+  tee_bow["Tee (bow)"]
+  term_bow["Terminator (bow)"]
+  ais -->|"NMEA 2000"| tee4_aft
+  gps_2 -->|"NMEA 2000"| tee4_aft
+  plotter_nav -->|"NMEA 2000"| tee4_aft
+  plotter_helm -->|"NMEA 2000"| tee4_aft
+  engine -->|"NMEA 2000"| tee_mid
+  depth -->|"NMEA 2000"| tee4_fwd
+  weather -->|"NMEA 2000"| tee4_fwd
+  gps_1 -->|"NMEA 2000"| tee4_fwd
+  radar -->|"NMEA 2000"| tee4_fwd
+  power -->|"NMEA 2000"| tee_bow
+  tee4_aft -->|"NMEA 2000"| term_stern
+  tee_mid -->|"NMEA 2000"| tee4_aft
+  tee4_fwd -->|"NMEA 2000"| tee_mid
+  tee_bow -->|"NMEA 2000"| tee4_fwd
+  term_bow -->|"NMEA 2000"| tee_bow

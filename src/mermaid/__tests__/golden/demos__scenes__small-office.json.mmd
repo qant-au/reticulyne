@@ -1,0 +1,27 @@
+---
+title: "Small office network"
+---
+flowchart LR
+  laptop["Laptop"]
+  ap_rear["Wi-Fi AP, rear"]
+  ap_front["Wi-Fi AP, front"]
+  ups["UPS (Network Managed)"]
+  nas["NAS"]
+  server["Server"]
+  poe_switch["PoE Switch (8-Port)"]
+  core_switch["Network Switch (24-Port)"]
+  firewall["Firewall (Rack-Mount)"]
+  cellular_router["4G/5G Router"]
+  fibre_ont["Fibre ONT"]
+  ups -->|"Power (AC)"| firewall
+  laptop -->|"Wi-Fi"| ap_rear
+  ap_rear -->|"Ethernet (copper)"| poe_switch
+  ap_front -->|"Ethernet (copper)"| poe_switch
+  ups -->|"Ethernet (copper)"| core_switch
+  nas -->|"Ethernet (copper)"| core_switch
+  server -->|"Ethernet (copper)"| core_switch
+  core_switch -->|"Ethernet (copper)"| poe_switch
+  firewall -->|"Ethernet (copper)"| poe_switch
+  firewall -->|"Ethernet (copper)"| core_switch
+  cellular_router -->|"Ethernet (copper)"| firewall
+  fibre_ont -->|"Ethernet (copper)"| firewall

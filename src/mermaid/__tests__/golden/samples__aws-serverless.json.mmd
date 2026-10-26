@@ -1,0 +1,35 @@
+---
+title: "Serverless orders API on AWS"
+---
+flowchart LR
+  route53["Route 53"]
+  cloudfront["CloudFront"]
+  site[("Static site (S3)")]
+  orders_db[("Orders table")]
+  cloudwatch["CloudWatch"]
+  subgraph api_layer ["API layer"]
+    cognito["Auth & identity"]
+    apigw["API Gateway"]
+    orders_fn["Orders function"]
+    payments_fn["Payments function"]
+  end
+  subgraph async ["Async processing"]
+    events{{"Order events"}}
+    email_queue["Email queue"]
+    notify_fn["Notify function"]
+  end
+  note_aws_note_1["Monitoring (all functions)"]
+  route53 --> cloudfront
+  cloudfront -->|"Static assets"| site
+  cloudfront -->|"/api/*"| apigw
+  apigw -.->|"Authorise"| cognito
+  apigw --> orders_fn
+  apigw --> payments_fn
+  orders_fn <-->|"Read/write"| orders_db
+  payments_fn -->|"Update status"| orders_db
+  payments_fn -->|"OrderPaid"| events
+  events --> email_queue
+  email_queue --> notify_fn
+  note_aws_note_1 ~~~ cloudwatch
+  style api_layer stroke-dasharray:4 4
+  style async stroke-dasharray:4 4

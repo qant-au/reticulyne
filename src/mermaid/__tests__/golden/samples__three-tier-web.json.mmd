@@ -1,0 +1,44 @@
+---
+title: "Three-tier web application"
+---
+flowchart LR
+  users("Users")
+  dns["DNS"]
+  cdn("CDN")
+  queue["Job queue"]
+  worker["Worker"]
+  mail["Email service"]
+  subgraph production_zone_1 ["Web tier"]
+    lb["Load balancer (L7)"]
+    web_1["Web 1"]
+    web_2["Web 2"]
+  end
+  subgraph production_zone_2 ["App tier"]
+    app_1["App 1"]
+    app_2["App 2"]
+  end
+  subgraph production_zone_3 ["Data tier"]
+    cache[("Session cache")]
+    db_primary["DB: primary"]
+    db_replica["DB: replica"]
+  end
+  users -.->|"DNS lookup"| dns
+  users -->|"HTTPS"| cdn
+  cdn -->|"HTTPS"| lb
+  lb --> web_1
+  lb --> web_2
+  web_1 -->|"REST"| app_1
+  web_2 -->|"REST"| app_2
+  app_1 <--> cache
+  app_2 <--> cache
+  app_1 -->|"SQL"| db_primary
+  app_2 -->|"SQL"| db_primary
+  db_primary -.->|"Replication"| db_replica
+  app_2 -->|"Enqueue"| queue
+  queue --> worker
+  worker -->|"Read"| db_replica
+  worker -->|"SMTP"| mail
+  style production_zone_1 fill:#a5b8f3
+  style production_zone_2 fill:#bbadfb
+  style production_zone_3 fill:#a8dc9d
+  linkStyle 11 stroke-dasharray:6 4

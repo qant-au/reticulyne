@@ -1,0 +1,30 @@
+---
+title: "Small office network"
+---
+flowchart LR
+  internet("Internet")
+  firewall["Firewall"]
+  subgraph office_zone_1 ["Office LAN"]
+    router["Router"]
+    switch["Core switch"]
+    wifi["Wi-Fi access point"]
+    laptop["Laptop"]
+    phone["Mobile"]
+    desktop_1["Desktop 1"]
+    desktop_2["Desktop 2"]
+    printer["Printer"]
+    nas["File server (NAS)"]
+  end
+  internet --> firewall
+  firewall --> router
+  router --> switch
+  switch --> wifi
+  wifi -.-> laptop
+  wifi -.-> phone
+  switch --> desktop_1
+  switch --> desktop_2
+  switch --> printer
+  switch --> nas
+  style office_zone_1 fill:#a5b8f3
+  linkStyle 4 stroke-dasharray:6 4
+  linkStyle 5 stroke-dasharray:6 4

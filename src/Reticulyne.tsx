@@ -212,20 +212,64 @@ const App = ({
     uiStateActions.setCatalogueItems(catalogueItems);
   }, [catalogueItems, uiStateActions]);
 
+  // The pack callbacks, kept in a ref: a host that passes them inline gives
+  // new functions on every render, and writing each set to the store set
+  // off a store update per host render, which made drags and keyboard
+  // nudges flaky. The store holds stable wrappers, replaced only when a
+  // callback comes or goes (the dialog reads which ones there are).
+  const packHandlersRef = useRef({
+    onIconPackInstall,
+    onIconPackRemove,
+    iconPackUsage,
+    onShowIconPackUsage
+  });
   useEffect(() => {
-    uiStateActions.setPackHandlers({
+    packHandlersRef.current = {
       onIconPackInstall,
       onIconPackRemove,
       iconPackUsage,
       onShowIconPackUsage
+    };
+  });
+  const hasInstall = onIconPackInstall !== undefined;
+  const hasRemove = onIconPackRemove !== undefined;
+  const hasUsage = iconPackUsage !== undefined;
+  const hasShow = onShowIconPackUsage !== undefined;
+  useEffect(() => {
+    const current = () => {
+      return packHandlersRef.current;
+    };
+    uiStateActions.setPackHandlers({
+      ...(hasInstall
+        ? {
+            onIconPackInstall: (pack) => {
+              return current().onIconPackInstall?.(pack);
+            }
+          }
+        : {}),
+      ...(hasRemove
+        ? {
+            onIconPackRemove: (id) => {
+              return current().onIconPackRemove?.(id);
+            }
+          }
+        : {}),
+      ...(hasUsage
+        ? {
+            iconPackUsage: (packId, iconIds) => {
+              return current().iconPackUsage?.(packId, iconIds) ?? [];
+            }
+          }
+        : {}),
+      ...(hasShow
+        ? {
+            onShowIconPackUsage: (diagramId, objectIds) => {
+              current().onShowIconPackUsage?.(diagramId, objectIds);
+            }
+          }
+        : {})
     });
-  }, [
-    onIconPackInstall,
-    onIconPackRemove,
-    iconPackUsage,
-    onShowIconPackUsage,
-    uiStateActions
-  ]);
+  }, [hasInstall, hasRemove, hasUsage, hasShow, uiStateActions]);
 
   useIconPackSync(iconCollections);
 

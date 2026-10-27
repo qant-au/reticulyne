@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://reticulyne.com"><img src="docs/images/og.png" alt="Reticulyne: networks, drawn. Open source, by Adam Burgess." width="720"></a>
+  <a href="https://reticulyne.com"><img src="docs/images/og.png" alt="Reticulyne: what’s wired to what. Open source, by Adam Burgess." width="720"></a>
 </p>
 
 # Reticulyne

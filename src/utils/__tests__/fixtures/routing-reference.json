@@ -1,0 +1,2864 @@
+[
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-1",
+  "rectangle": {
+   "from": {
+    "x": -15,
+    "y": -1
+   },
+   "to": {
+    "x": -9,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-2",
+  "rectangle": {
+   "from": {
+    "x": -11,
+    "y": -1
+   },
+   "to": {
+    "x": -9,
+    "y": 6
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 6
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-3",
+  "rectangle": {
+   "from": {
+    "x": -11,
+    "y": -1
+   },
+   "to": {
+    "x": -5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-4",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -6
+   },
+   "to": {
+    "x": -5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 6
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-5",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -4
+   },
+   "to": {
+    "x": 0,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 2,
+    "y": 3
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-6",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -1
+   },
+   "to": {
+    "x": 0,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 5,
+    "y": 4
+   },
+   {
+    "x": 6,
+    "y": 4
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-7",
+  "rectangle": {
+   "from": {
+    "x": -2,
+    "y": -4
+   },
+   "to": {
+    "x": 5,
+    "y": -2
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-8",
+  "rectangle": {
+   "from": {
+    "x": -2,
+    "y": -4
+   },
+   "to": {
+    "x": 5,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 7
+   },
+   {
+    "x": 2,
+    "y": 6
+   },
+   {
+    "x": 3,
+    "y": 5
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 5,
+    "y": 3
+   },
+   {
+    "x": 6,
+    "y": 2
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-9",
+  "rectangle": {
+   "from": {
+    "x": -2,
+    "y": 2
+   },
+   "to": {
+    "x": 5,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-10",
+  "rectangle": {
+   "from": {
+    "x": 3,
+    "y": 2
+   },
+   "to": {
+    "x": 9,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "aws-serverless.json",
+  "view": "aws",
+  "connector": "aws-link-11",
+  "rectangle": {
+   "from": {
+    "x": 7,
+    "y": 2
+   },
+   "to": {
+    "x": 13,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "ont--firewall",
+  "rectangle": {
+   "from": {
+    "x": -13,
+    "y": -1
+   },
+   "to": {
+    "x": -7,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "firewall--core",
+  "rectangle": {
+   "from": {
+    "x": -9,
+    "y": -1
+   },
+   "to": {
+    "x": -3,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "core--poe",
+  "rectangle": {
+   "from": {
+    "x": -5,
+    "y": -1
+   },
+   "to": {
+    "x": 1,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "core--server",
+  "rectangle": {
+   "from": {
+    "x": -5,
+    "y": -5
+   },
+   "to": {
+    "x": -3,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "core--nas",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -5
+   },
+   "to": {
+    "x": -3,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 3,
+    "y": 5
+   },
+   {
+    "x": 2,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "core--nvr",
+  "rectangle": {
+   "from": {
+    "x": -5,
+    "y": -5
+   },
+   "to": {
+    "x": -1,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 2,
+    "y": 4
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "ups--firewall",
+  "rectangle": {
+   "from": {
+    "x": -9,
+    "y": -5
+   },
+   "to": {
+    "x": -7,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "poe--ap",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -1
+   },
+   "to": {
+    "x": 5,
+    "y": 5
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 5,
+    "y": 5
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "ap--laptop",
+  "rectangle": {
+   "from": {
+    "x": 3,
+    "y": 3
+   },
+   "to": {
+    "x": 9,
+    "y": 5
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "poe--phone",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -1
+   },
+   "to": {
+    "x": 5,
+    "y": 2
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 2
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "poe--dome",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -3
+   },
+   "to": {
+    "x": 5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "poe--bullet",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -6
+   },
+   "to": {
+    "x": 5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 6
+   },
+   {
+    "x": 2,
+    "y": 5
+   },
+   {
+    "x": 3,
+    "y": 4
+   },
+   {
+    "x": 4,
+    "y": 3
+   },
+   {
+    "x": 5,
+    "y": 2
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "poe--door",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -1
+   },
+   "to": {
+    "x": 1,
+    "y": 6
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 6
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "door--reader",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": 4
+   },
+   "to": {
+    "x": 1,
+    "y": 10
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "core--mfp",
+  "rectangle": {
+   "from": {
+    "x": -5,
+    "y": -1
+   },
+   "to": {
+    "x": -3,
+    "y": 5
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   }
+  ]
+ },
+ {
+  "sample": "built-in-devices.json",
+  "view": "site",
+  "connector": "core--pc",
+  "rectangle": {
+   "from": {
+    "x": -9,
+    "y": -1
+   },
+   "to": {
+    "x": -3,
+    "y": 5
+   }
+  },
+  "tiles": [
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 2,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   }
+  ]
+ },
+ {
+  "sample": "mixed-icons.json",
+  "view": "site",
+  "connector": "router--switch",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -1
+   },
+   "to": {
+    "x": -1,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "mixed-icons.json",
+  "view": "site",
+  "connector": "switch--pc",
+  "rectangle": {
+   "from": {
+    "x": -3,
+    "y": -1
+   },
+   "to": {
+    "x": 3,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 5,
+    "y": 4
+   }
+  ]
+ },
+ {
+  "sample": "mixed-icons.json",
+  "view": "site",
+  "connector": "switch--branded",
+  "rectangle": {
+   "from": {
+    "x": -3,
+    "y": -4
+   },
+   "to": {
+    "x": 3,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 2,
+    "y": 3
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "mixed-icons.json",
+  "view": "site",
+  "connector": "router--appliance",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -5
+   },
+   "to": {
+    "x": -5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "mixed-icons.json",
+  "view": "site",
+  "connector": "pc--gadget",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": 2
+   },
+   "to": {
+    "x": 7,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-1",
+  "rectangle": {
+   "from": {
+    "x": -11,
+    "y": -1
+   },
+   "to": {
+    "x": -5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-2",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -1
+   },
+   "to": {
+    "x": -1,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-3",
+  "rectangle": {
+   "from": {
+    "x": -3,
+    "y": -1
+   },
+   "to": {
+    "x": 3,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-4",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -6
+   },
+   "to": {
+    "x": 3,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 6
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-5",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -6
+   },
+   "to": {
+    "x": 7,
+    "y": -4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-6",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -9
+   },
+   "to": {
+    "x": 7,
+    "y": -4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 2,
+    "y": 3
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-7",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -2
+   },
+   "to": {
+    "x": 8,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 4,
+    "y": 2
+   },
+   {
+    "x": 5,
+    "y": 2
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-8",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -1
+   },
+   "to": {
+    "x": 8,
+    "y": 3
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 2
+   },
+   {
+    "x": 6,
+    "y": 3
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-9",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -1
+   },
+   "to": {
+    "x": 5,
+    "y": 6
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 2,
+    "y": 5
+   },
+   {
+    "x": 3,
+    "y": 6
+   }
+  ]
+ },
+ {
+  "sample": "office-network.json",
+  "view": "office",
+  "connector": "office-link-10",
+  "rectangle": {
+   "from": {
+    "x": -2,
+    "y": -1
+   },
+   "to": {
+    "x": 3,
+    "y": 6
+   }
+  },
+  "tiles": [
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 2,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 6
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-1",
+  "rectangle": {
+   "from": {
+    "x": -15,
+    "y": -5
+   },
+   "to": {
+    "x": -9,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 2,
+    "y": 4
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 2
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-2",
+  "rectangle": {
+   "from": {
+    "x": -15,
+    "y": -1
+   },
+   "to": {
+    "x": -9,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-3",
+  "rectangle": {
+   "from": {
+    "x": -11,
+    "y": -1
+   },
+   "to": {
+    "x": -5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-4",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -4
+   },
+   "to": {
+    "x": -1,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 2,
+    "y": 3
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-5",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -1
+   },
+   "to": {
+    "x": -1,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 5,
+    "y": 4
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-6",
+  "rectangle": {
+   "from": {
+    "x": -3,
+    "y": -4
+   },
+   "to": {
+    "x": 4,
+    "y": -2
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-7",
+  "rectangle": {
+   "from": {
+    "x": -3,
+    "y": 2
+   },
+   "to": {
+    "x": 4,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-8",
+  "rectangle": {
+   "from": {
+    "x": 2,
+    "y": -7
+   },
+   "to": {
+    "x": 9,
+    "y": -2
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 2,
+    "y": 3
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-9",
+  "rectangle": {
+   "from": {
+    "x": 2,
+    "y": -7
+   },
+   "to": {
+    "x": 9,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 10
+   },
+   {
+    "x": 2,
+    "y": 9
+   },
+   {
+    "x": 3,
+    "y": 8
+   },
+   {
+    "x": 4,
+    "y": 7
+   },
+   {
+    "x": 5,
+    "y": 6
+   },
+   {
+    "x": 6,
+    "y": 5
+   },
+   {
+    "x": 6,
+    "y": 4
+   },
+   {
+    "x": 6,
+    "y": 3
+   },
+   {
+    "x": 6,
+    "y": 2
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-10",
+  "rectangle": {
+   "from": {
+    "x": 2,
+    "y": -4
+   },
+   "to": {
+    "x": 9,
+    "y": 0
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 2
+   },
+   {
+    "x": 6,
+    "y": 3
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-11",
+  "rectangle": {
+   "from": {
+    "x": 2,
+    "y": -2
+   },
+   "to": {
+    "x": 9,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 2,
+    "y": 4
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 2
+   },
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 6,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-12",
+  "rectangle": {
+   "from": {
+    "x": 7,
+    "y": -2
+   },
+   "to": {
+    "x": 13,
+    "y": 0
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-13",
+  "rectangle": {
+   "from": {
+    "x": 2,
+    "y": 2
+   },
+   "to": {
+    "x": 9,
+    "y": 5
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 6,
+    "y": 2
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-14",
+  "rectangle": {
+   "from": {
+    "x": 7,
+    "y": 3
+   },
+   "to": {
+    "x": 13,
+    "y": 5
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-15",
+  "rectangle": {
+   "from": {
+    "x": 11,
+    "y": -2
+   },
+   "to": {
+    "x": 13,
+    "y": 5
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 6
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "three-tier-web.json",
+  "view": "production",
+  "connector": "production-link-16",
+  "rectangle": {
+   "from": {
+    "x": 11,
+    "y": 3
+   },
+   "to": {
+    "x": 13,
+    "y": 9
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-1",
+  "rectangle": {
+   "from": {
+    "x": -11,
+    "y": -1
+   },
+   "to": {
+    "x": -5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-2",
+  "rectangle": {
+   "from": {
+    "x": -7,
+    "y": -1
+   },
+   "to": {
+    "x": -1,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-3",
+  "rectangle": {
+   "from": {
+    "x": -3,
+    "y": -1
+   },
+   "to": {
+    "x": 3,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-4",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -4
+   },
+   "to": {
+    "x": 7,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 2,
+    "y": 3
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-5",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -1
+   },
+   "to": {
+    "x": 7,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 5,
+    "y": 4
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-6",
+  "rectangle": {
+   "from": {
+    "x": 5,
+    "y": -4
+   },
+   "to": {
+    "x": 11,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 5,
+    "y": 4
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-7",
+  "rectangle": {
+   "from": {
+    "x": 5,
+    "y": -1
+   },
+   "to": {
+    "x": 11,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 2,
+    "y": 3
+   },
+   {
+    "x": 3,
+    "y": 2
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-8",
+  "rectangle": {
+   "from": {
+    "x": 1,
+    "y": -1
+   },
+   "to": {
+    "x": 3,
+    "y": 6
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 6
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "ground",
+  "connector": "ground-link-9",
+  "rectangle": {
+   "from": {
+    "x": -3,
+    "y": -1
+   },
+   "to": {
+    "x": 3,
+    "y": 6
+   }
+  },
+  "tiles": [
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 2,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 6
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "level-1",
+  "connector": "level-1-link-1",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -5
+   },
+   "to": {
+    "x": 5,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 2,
+    "y": 4
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 2
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "level-1",
+  "connector": "level-1-link-2",
+  "rectangle": {
+   "from": {
+    "x": -5,
+    "y": -5
+   },
+   "to": {
+    "x": 1,
+    "y": 1
+   }
+  },
+  "tiles": [
+   {
+    "x": 5,
+    "y": 5
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 1
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "level-1",
+  "connector": "level-1-link-3",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -1
+   },
+   "to": {
+    "x": 5,
+    "y": 3
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 3
+   },
+   {
+    "x": 5,
+    "y": 3
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "level-1",
+  "connector": "level-1-link-4",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -1
+   },
+   "to": {
+    "x": 5,
+    "y": 6
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 4,
+    "y": 4
+   },
+   {
+    "x": 5,
+    "y": 5
+   },
+   {
+    "x": 5,
+    "y": 6
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "level-1",
+  "connector": "level-1-link-5",
+  "rectangle": {
+   "from": {
+    "x": -1,
+    "y": -1
+   },
+   "to": {
+    "x": 1,
+    "y": 6
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 1,
+    "y": 2
+   },
+   {
+    "x": 1,
+    "y": 3
+   },
+   {
+    "x": 1,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 5
+   },
+   {
+    "x": 1,
+    "y": 6
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "level-1",
+  "connector": "level-1-link-6",
+  "rectangle": {
+   "from": {
+    "x": -5,
+    "y": -1
+   },
+   "to": {
+    "x": 1,
+    "y": 4
+   }
+  },
+  "tiles": [
+   {
+    "x": 5,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 2
+   },
+   {
+    "x": 3,
+    "y": 3
+   },
+   {
+    "x": 2,
+    "y": 4
+   },
+   {
+    "x": 1,
+    "y": 4
+   }
+  ]
+ },
+ {
+  "sample": "two-floor-building.json",
+  "view": "level-1",
+  "connector": "level-1-link-7",
+  "rectangle": {
+   "from": {
+    "x": 3,
+    "y": -5
+   },
+   "to": {
+    "x": 9,
+    "y": -3
+   }
+  },
+  "tiles": [
+   {
+    "x": 1,
+    "y": 1
+   },
+   {
+    "x": 2,
+    "y": 1
+   },
+   {
+    "x": 3,
+    "y": 1
+   },
+   {
+    "x": 4,
+    "y": 1
+   },
+   {
+    "x": 5,
+    "y": 1
+   }
+  ]
+ }
+]

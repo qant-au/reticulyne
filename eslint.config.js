@@ -86,6 +86,53 @@ module.exports = tseslint.config(
     }
   },
   {
+    // The read-only viewer (@reticulyne/editor/viewer) loads no React, MUI,
+    // stores or the editor's heavier libraries. This rule covers its own
+    // imports; src/viewer/__tests__/imports.test.ts walks the rest.
+    files: ['src/viewer/**/*.ts'],
+    ignores: ['src/viewer/**/__tests__/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                'react',
+                'react-dom',
+                'react/*',
+                'react-dom/*',
+                '@mui/*',
+                '@emotion/*',
+                'zustand',
+                'zustand/*',
+                '@tiptap/*',
+                'gsap',
+                'chroma-js',
+                'immer',
+                'html-to-image',
+                'jspdf',
+                'src/stores/*',
+                'src/hooks/*',
+                'src/components/*',
+                'src/interaction/*'
+              ],
+              message:
+                'The read-only viewer must not load React, MUI, the stores or the editor libraries (see docs/viewer.md).'
+            },
+            {
+              // The utils barrel and common.ts load chroma-js, immer and the
+              // exporters; import the util module itself.
+              regex: '^src/utils(/index|/common)?$',
+              message:
+                'Import the util module itself: the utils barrel and common.ts load chroma-js, immer and the exporters.'
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
     files: ['src/**/__tests__/**/*.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
     languageOptions: {
       globals: {

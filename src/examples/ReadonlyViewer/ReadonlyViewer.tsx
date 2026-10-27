@@ -7,9 +7,11 @@ import {
   MenuItem,
   Select,
   Stack,
+  ThemeProvider,
   Typography,
   useMediaQuery
 } from '@mui/material';
+import { createReticulyneTheme } from 'src/styles/theme';
 import {
   renderDiagram,
   type Viewer,
@@ -31,11 +33,20 @@ export const ReadonlyViewer = () => {
   const [sampleId, setSampleId] = useState(SAMPLES[0].id);
   const [views, setViews] = useState<ViewerView[]>([]);
   const [viewId, setViewId] = useState('');
-  const [projection, setProjection] = useState<ViewerProjection | ''>('');
+  // 'saved': each view drawn as it was saved (MUI shows an empty value as
+  // a blank select, so it is not the empty string).
+  const [projection, setProjection] = useState<ViewerProjection | 'saved'>(
+    'saved'
+  );
   const { themeMode } = useExamplesThemeMode();
   const prefersDark = useMediaQuery('(prefers-color-scheme: dark)');
   const theme =
     themeMode === 'auto' ? (prefersDark ? 'dark' : 'light') : themeMode;
+
+  // The toolbar takes the examples' theme, as the canvas does.
+  const muiTheme = useMemo(() => {
+    return createReticulyneTheme(theme);
+  }, [theme]);
 
   const sample = useMemo(() => {
     return (
@@ -66,88 +77,95 @@ export const ReadonlyViewer = () => {
   }, [theme, sample]);
 
   useEffect(() => {
-    void viewer.current?.setProjection(projection || undefined);
+    void viewer.current?.setProjection(
+      projection === 'saved' ? undefined : projection
+    );
   }, [projection, sample]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Stack
-        direction="row"
-        spacing={2}
-        useFlexGap
-        sx={{
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          px: 2,
-          py: 1,
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper'
-        }}
-      >
-        <FormControl size="small" sx={{ minWidth: 200 }}>
-          <InputLabel id="viewer-sample">Diagram</InputLabel>
-          <Select
-            labelId="viewer-sample"
-            label="Diagram"
-            value={sampleId}
-            onChange={(e) => {
-              setSampleId(e.target.value);
-            }}
-          >
-            {SAMPLES.map((s) => {
-              return (
-                <MenuItem key={s.id} value={s.id}>
-                  {s.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-        {views.length > 1 && (
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel id="viewer-floor">Floor</InputLabel>
+      <ThemeProvider theme={muiTheme}>
+        <Stack
+          direction="row"
+          spacing={2}
+          useFlexGap
+          sx={{
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            // On a phone the closed sidebar's open button sits at the top
+            // left, over the first picker; leave it room.
+            pl: { xs: 7, sm: 2 },
+            pr: 2,
+            py: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper'
+          }}
+        >
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel id="viewer-sample">Diagram</InputLabel>
             <Select
-              labelId="viewer-floor"
-              label="Floor"
-              value={viewId}
+              labelId="viewer-sample"
+              label="Diagram"
+              value={sampleId}
               onChange={(e) => {
-                setViewId(e.target.value);
-                void viewer.current?.setView(e.target.value);
+                setSampleId(e.target.value);
               }}
             >
-              {views.map((v) => {
+              {SAMPLES.map((s) => {
                 return (
-                  <MenuItem key={v.id} value={v.id}>
-                    {v.name}
+                  <MenuItem key={s.id} value={s.id}>
+                    {s.name}
                   </MenuItem>
                 );
               })}
             </Select>
           </FormControl>
-        )}
-        <FormControl size="small" sx={{ minWidth: 180 }}>
-          <InputLabel id="viewer-projection">Drawn</InputLabel>
-          <Select
-            labelId="viewer-projection"
-            label="Drawn"
-            value={projection}
-            onChange={(e) => {
-              setProjection(e.target.value as ViewerProjection | '');
-            }}
-          >
-            <MenuItem value="">Each view as saved</MenuItem>
-            <MenuItem value="iso">Isometric</MenuItem>
-            <MenuItem value="flat">Flat</MenuItem>
-          </Select>
-        </FormControl>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          The viewer draws read-only, with no React.{' '}
-          <Link href="viewer.html" target="_blank" rel="noopener">
-            Open it on a page of its own
-          </Link>
-        </Typography>
-      </Stack>
+          {views.length > 1 && (
+            <FormControl size="small" sx={{ minWidth: 160 }}>
+              <InputLabel id="viewer-floor">Floor</InputLabel>
+              <Select
+                labelId="viewer-floor"
+                label="Floor"
+                value={viewId}
+                onChange={(e) => {
+                  setViewId(e.target.value);
+                  void viewer.current?.setView(e.target.value);
+                }}
+              >
+                {views.map((v) => {
+                  return (
+                    <MenuItem key={v.id} value={v.id}>
+                      {v.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          )}
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel id="viewer-projection">Drawn</InputLabel>
+            <Select
+              labelId="viewer-projection"
+              label="Drawn"
+              value={projection}
+              onChange={(e) => {
+                setProjection(e.target.value as ViewerProjection | 'saved');
+              }}
+            >
+              <MenuItem value="saved">Each view as saved</MenuItem>
+              <MenuItem value="iso">Isometric</MenuItem>
+              <MenuItem value="flat">Flat</MenuItem>
+            </Select>
+          </FormControl>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            The viewer draws read-only, with no React.{' '}
+            <Link href="viewer.html" target="_blank" rel="noopener">
+              Open it on a page of its own
+            </Link>
+          </Typography>
+        </Stack>
+      </ThemeProvider>
       <Box
         ref={box}
         data-testid="viewer-example"

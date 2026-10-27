@@ -17,6 +17,15 @@ import type { ReticulyneProps, InitialData, Model, Scene } from '@reticulyne/edi
 callable inside `<Reticulyne>`'s subtree). The package also re-exports the schemas and
 reducers from `src/standaloneExports.ts`.
 
+To show a diagram read only without React, use the viewer entry instead:
+
+```ts
+import { renderDiagram, ViewerError } from '@reticulyne/editor/viewer';
+import type { Viewer, ViewerOptions, ViewerView } from '@reticulyne/editor/viewer';
+```
+
+Its options and the `Viewer` it returns are in [Read-only viewer](viewer.md).
+
 ## `<Reticulyne>` props
 
 Every prop is optional.

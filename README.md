@@ -68,6 +68,9 @@ editor that breaks one of these flows fails the recording.
   isometric and a flat view and its devices' ports: install a pack from the editor,
   load it from code, and share diagrams drawn with it. See [Icon packs](docs/icon-packs.md).
 - **Editor modes** for an editor, a viewer and a non-interactive render.
+- **A read-only viewer with no React.** `@reticulyne/editor/viewer` draws a diagram on any
+  page in about 47 KB, as the editor's own read-only render draws it. See
+  [Read-only viewer](docs/viewer.md).
 - **One file format.** Diagrams open and save as the
   [Reticulyne scene format](docs/scene-format.md), one JSON document with a published
   schema that also carries floor plans and object details the editor does not show.
@@ -114,6 +117,7 @@ for versions and browser support. To run the editor on its own instead, see
 - [Icon packs](docs/icon-packs.md): icons with isometric and flat drawings, bundled and your own
 - [Scene format](docs/scene-format.md): the file format
 - [Mermaid](docs/mermaid.md): flowcharts in and out, every shape, link and error
+- [Read-only viewer](docs/viewer.md): draw a diagram on any page, with no React
 - [Keyboard shortcuts](docs/keymap.md): the full keymap
 - [Standalone Docker](docs/docker.md): run the editor as a self-hosted app
 - [Demos](demos/README.md): how the recordings above are made

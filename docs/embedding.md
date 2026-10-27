@@ -153,6 +153,10 @@ The renderer uses a `ResizeObserver` on its DOM root, so it responds to layout c
 | `EXPLORABLE_READONLY` | Pan, zoom, selection | No add/edit controls; selection-inspector still rendered | Rejected — `setTitle` and `loadModel` log a dev-mode warning and return; `applyPatch` and `Connector.update` are accepted, for live data |
 | `NON_INTERACTIVE` | None | None visible | Rejected |
 
+To show a diagram read only on a page with no React or MUI, use the
+[read-only viewer](viewer.md) (`@reticulyne/editor/viewer`) instead: it draws what
+`NON_INTERACTIVE` draws, in about 47 KB and with no peer dependencies.
+
 The data-layer guard is enforced inside `useReticulyne` — calling `useReticulyne().setTitle(...)` or `useReticulyne().loadModel(...)` from outside `EDITABLE` mode is a silent no-op (with a dev-mode `console.warn`). Read access via `getModel()` is always allowed.
 
 ## Wheel / trackpad input

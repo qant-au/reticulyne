@@ -1,5 +1,5 @@
 import type { Icon } from 'src/types/model';
-import { svgDataUrl } from './builtin';
+import { svgDataUrl } from './drawingIcons';
 
 // An object whose icon is neither in its diagram nor in the editor's
 // library (a pack that is not installed, a file edited by hand) would make

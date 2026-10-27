@@ -20,7 +20,7 @@ import { CONNECTOR_SEARCH_OFFSET, UNPROJECTED_TILE_SIZE } from 'src/config';
 import { CoordsUtils } from './CoordsUtils';
 import { findPath } from './pathfinder';
 import { directionOf } from './router';
-import { getItemByIdOrThrow } from './common';
+import { getItemByIdOrThrow } from './basics';
 import {
   getBoundingBox,
   getBoundingBoxSize,

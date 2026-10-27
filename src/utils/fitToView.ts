@@ -8,7 +8,7 @@
 import { Coords, Size, View } from 'src/types';
 import { PROJECT_BOUNDING_BOX_PADDING, MAX_ZOOM } from 'src/config';
 import { CoordsUtils } from './CoordsUtils';
-import { clamp } from './common';
+import { clamp } from './basics';
 import { getBoundingBox, getBoundingBoxSize, sortByPosition } from './geometry';
 import { getTilePosition, getTileScrollPosition } from './coordinates';
 import { getConnectorPath } from './connector';

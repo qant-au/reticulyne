@@ -20,7 +20,7 @@ import type {
   TextBox,
   View
 } from 'src/types/model';
-import { generateId } from 'src/utils/common';
+import { generateId } from 'src/utils/basics';
 import { CUSTOM_ICON_COLLECTION } from 'src/utils/iconUpload';
 
 // Reticulyne's model <-> the scene format, the file format.

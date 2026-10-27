@@ -3,6 +3,7 @@ import {
   type PaletteMode,
   type ThemeOptions
 } from '@mui/material';
+import { defaultColor, diagramBg } from './palette';
 
 // Reticulyne's look (decision D12: one UI library,
 // MUI, with the shared parts here). Started from Reticulyne's theme.
@@ -26,13 +27,12 @@ declare module '@mui/material/styles' {
 }
 
 export const kitVars = (mode: PaletteMode = 'light'): CustomThemeVars => {
-  const isDark = mode === 'dark';
   return {
     appPadding: { x: 40, y: 40 },
     toolMenu: { height: 40 },
     customPalette: {
-      diagramBg: isDark ? '#1a1d24' : '#f6faff',
-      defaultColor: isDark ? '#5b6ab1' : '#a5b8f3'
+      diagramBg: diagramBg(mode),
+      defaultColor: defaultColor(mode)
     }
   };
 };

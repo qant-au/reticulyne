@@ -1,15 +1,16 @@
 import chroma from 'chroma-js';
 import { Icon, EditorModeEnum, Mode } from 'src/types';
-import { v4 as uuid } from 'uuid';
 import { CUSTOM_ICON_COLLECTION } from './iconUpload';
 
-export const generateId = () => {
-  return uuid();
-};
-
-export const clamp = (num: number, min: number, max: number) => {
-  return Math.max(Math.min(num, max), min);
-};
+// The dependency-free helpers live in basics.ts (see there for why).
+export {
+  generateId,
+  clamp,
+  toPx,
+  getItemByIdOrThrow,
+  getItemById,
+  getItemByIndexOrThrow
+} from './basics';
 
 export const getRandom = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min) + min);
@@ -49,10 +50,6 @@ export const getColorVariant = (
 
 export const setWindowCursor = (cursor: string) => {
   window.document.body.style.cursor = cursor;
-};
-
-export const toPx = (value: number | string) => {
-  return `${value}px`;
 };
 
 export const categoriseIcons = (icons: Icon[]) => {
@@ -135,39 +132,3 @@ export const connectorsFirst = <T extends { type: string }>(
     return Number(b.type === 'CONNECTOR') - Number(a.type === 'CONNECTOR');
   });
 };
-
-export function getItemByIdOrThrow<T extends { id: string }>(
-  values: T[],
-  id: string
-): { value: T; index: number } {
-  const index = values.findIndex((val) => {
-    return val.id === id;
-  });
-
-  if (index === -1) {
-    throw new Error(`Item with id "${id}" not found.`);
-  }
-
-  return { value: values[index], index };
-}
-
-export function getItemById<T extends { id: string }>(
-  values: T[],
-  id: string
-): T | null {
-  return (
-    values.find((val) => {
-      return val.id === id;
-    }) ?? null
-  );
-}
-
-export function getItemByIndexOrThrow<T>(items: T[], index: number): T {
-  const item = items[index];
-
-  if (!item) {
-    throw new Error(`Item with index "${index}" not found.`);
-  }
-
-  return item;
-}

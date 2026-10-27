@@ -5,7 +5,9 @@
 //
 // Extracted from src/utils/renderer.ts under QUA4-07.
 
-import { Coords, Size, TextBox, ProjectionOrientationEnum } from 'src/types';
+import type { Coords, Size, TextBox } from 'src/types';
+// The enum from its own module: the types barrel loads the schemas.
+import { ProjectionOrientationEnum } from 'src/types/common';
 import {
   TEXTBOX_PADDING,
   TEXTBOX_DEFAULTS,
@@ -14,7 +16,7 @@ import {
   DEFAULT_FONT_FAMILY
 } from 'src/config';
 import { CoordsUtils } from './CoordsUtils';
-import { toPx } from './common';
+import { toPx } from './basics';
 
 interface FontProps {
   fontWeight: number | string;

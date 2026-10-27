@@ -8,9 +8,10 @@
 //
 // Extracted from src/utils/renderer.ts under QUA4-07.
 
-import { produce } from 'immer';
-import { Coords, Projection, ProjectionOrientationEnum } from 'src/types';
-import { clamp } from './common';
+import type { Coords, Projection } from 'src/types';
+// The enum from its own module: the types barrel loads the schemas.
+import { ProjectionOrientationEnum } from 'src/types/common';
+import { clamp } from './basics';
 import {
   ZOOM_INCREMENT,
   MAX_ZOOM,
@@ -48,9 +49,8 @@ export const getIsoMatrix = (
 
   switch (orientation) {
     case ProjectionOrientationEnum.Y:
-      return produce(isoProjectionBaseValues, (draft) => {
-        draft[1] = -draft[1];
-        draft[2] = -draft[2];
+      return isoProjectionBaseValues.map((value, i) => {
+        return i === 1 || i === 2 ? -value : value;
       });
     case ProjectionOrientationEnum.X:
     default:

@@ -10,8 +10,10 @@ import {
   Rectangle,
   Colors
 } from 'src/types';
-import { CoordsUtils } from 'src/utils';
-import { customVars } from './styles/theme';
+// Direct imports, not the utils barrel or the MUI theme: the read-only
+// viewer (src/viewer) reaches this file and must load no React or MUI.
+import { CoordsUtils } from './utils/CoordsUtils';
+import { DEFAULT_COLOR_VALUE } from './kit/palette';
 
 export const UNPROJECTED_TILE_SIZE = 100;
 
@@ -50,7 +52,7 @@ export const SCHEMATIC_TILE_SIZE = {
 
 export const DEFAULT_COLOR: Colors[0] = {
   id: '__DEFAULT__',
-  value: customVars.customPalette.defaultColor
+  value: DEFAULT_COLOR_VALUE
 };
 
 export const DEFAULT_FONT_FAMILY = 'Roboto, Arial, sans-serif';

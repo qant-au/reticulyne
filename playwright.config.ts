@@ -26,6 +26,13 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] }
+    },
+    // The read-only viewer's pixel comparison with the editor runs in
+    // WebKit too (npx playwright install webkit).
+    {
+      name: 'webkit',
+      testMatch: /viewer-parity\.spec\.ts/,
+      use: { ...devices['Desktop Safari'] }
     }
   ]
 });

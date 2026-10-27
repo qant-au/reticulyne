@@ -13,6 +13,7 @@
     "src/index.tsx",
     "src/index-docker.tsx",
     "src/examples/**",
+    "src/viewer/demo/**",
     "src/fixtures/**",
     "src/vendor/**",
     "src/**/__tests__/**",

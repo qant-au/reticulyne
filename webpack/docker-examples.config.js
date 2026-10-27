@@ -16,7 +16,14 @@ const base = require('./base.config.js');
 
 module.exports = merge(base, {
   mode: 'production',
-  entry: './src/index.tsx',
+  // The examples app, plus two pages of their own: viewer.html, the
+  // read-only viewer with no React (src/viewer/demo), and parity.html, the
+  // editor's read-only render that e2e/viewer-parity.spec.ts compares it to.
+  entry: {
+    main: './src/index.tsx',
+    viewer: './src/viewer/demo/viewerPage.ts',
+    parity: './src/examples/parity/parityPage.tsx'
+  },
   output: {
     path: path.resolve(__dirname, '../dist-docker-examples'),
     // Content-hashed, as in docker.config.js: nginx caches .js as immutable.
@@ -26,7 +33,20 @@ module.exports = merge(base, {
   plugins: [
     new HtmlWebPackPlugin({
       title: 'Examples | Reticulyne',
-      template: path.resolve(__dirname, '../src/index.html')
+      template: path.resolve(__dirname, '../src/index.html'),
+      chunks: ['main']
+    }),
+    new HtmlWebPackPlugin({
+      title: 'Viewer | Reticulyne',
+      filename: 'viewer.html',
+      template: path.resolve(__dirname, '../src/viewer/demo/viewer.html'),
+      chunks: ['viewer']
+    }),
+    new HtmlWebPackPlugin({
+      title: 'Parity | Reticulyne',
+      filename: 'parity.html',
+      template: path.resolve(__dirname, '../src/index.html'),
+      chunks: ['parity']
     })
   ]
 });

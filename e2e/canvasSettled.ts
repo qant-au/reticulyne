@@ -15,10 +15,24 @@ import { Page } from '@playwright/test';
  * animation frames in a row.
  */
 export const waitForCanvasSettled = async (page: Page, frames = 3) => {
-  await page.waitForSelector('[role="application"]');
+  await settle(page, '[role="application"]', frames);
+};
+
+/**
+ * The same wait for the read-only viewer (src/viewer), which has no
+ * application role: its `ready` promise has resolved (images decoded,
+ * fitted, labels laid out) and nothing in it has moved for `frames` frames.
+ */
+export const waitForViewerSettled = async (page: Page, frames = 3) => {
+  await page.waitForSelector('[data-reticulyne-viewer][data-viewer-ready]');
+  await settle(page, '[data-reticulyne-viewer]', frames);
+};
+
+const settle = async (page: Page, root: string, frames: number) => {
+  await page.waitForSelector(root);
   await page.waitForFunction(
-    (need) => {
-      const app = document.querySelector('[role="application"]');
+    ({ need, selector }) => {
+      const app = document.querySelector(selector);
       if (!app) return false;
       const w = window as unknown as {
         __canvasSettled?: { last: string; same: number };
@@ -37,8 +51,15 @@ export const waitForCanvasSettled = async (page: Page, frames = 3) => {
       const loaded = imgs.every((img) => {
         return img.complete && img.naturalWidth > 0;
       });
-      const layers = Array.from(app.querySelectorAll(':scope svg, :scope img'));
-      const now = layers.map(box).join('|');
+      // The drawings, and the label buttons: a label can show Show more for
+      // a frame or two while it is first measured. The element count
+      // catches anything added or removed.
+      const layers = Array.from(
+        app.querySelectorAll(':scope svg, :scope img, :scope button')
+      );
+      const now = `${app.getElementsByTagName('*').length}:${layers
+        .map(box)
+        .join('|')}`;
       const prev = w.__canvasSettled;
       const same = loaded && prev && prev.last === now ? prev.same + 1 : 0;
       w.__canvasSettled = { last: now, same };
@@ -48,7 +69,7 @@ export const waitForCanvasSettled = async (page: Page, frames = 3) => {
       }
       return false;
     },
-    frames,
+    { need: frames, selector: root },
     { polling: 'raf' }
   );
 };

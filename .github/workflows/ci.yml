@@ -54,6 +54,11 @@ jobs:
         # scripts/check-pack-contents.mjs.
         run: node scripts/check-pack-contents.mjs
 
+      - name: Viewer bundle budget
+        # @reticulyne/editor/viewer: under 60 KB gzipped, no React, MUI,
+        # Emotion or Zustand (scripts/check-viewer-bundle.mjs).
+        run: node scripts/check-viewer-bundle.mjs
+
   # End-to-end (Playwright) — label-gated, mandatory on release.
   #
   # Runs when the triggering commit message (push) or PR title
@@ -91,8 +96,9 @@ jobs:
           restore-keys: |
             playwright-${{ runner.os }}-
 
-      - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Playwright Chromium and WebKit
+        # WebKit runs the viewer's pixel comparison (e2e/viewer-parity.spec.ts).
+        run: npx playwright install --with-deps chromium webkit
 
       - name: Build reticulyne Docker images
         run: |

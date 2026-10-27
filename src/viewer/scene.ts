@@ -86,9 +86,9 @@ export const withBuiltins = (
 };
 
 /** The built-in drawings, loaded only when a diagram uses one. */
+// In the library builds this import stays external (webpack/drawings.js):
+// the drawings ship once, as dist/drawings.js and dist/esm/drawings.mjs.
 export const loadDrawings = async () => {
-  const { DRAWINGS } = await import(
-    /* webpackChunkName: "drawings" */ 'src/icons/drawings'
-  );
+  const { DRAWINGS } = await import('src/icons/drawings');
   return DRAWINGS;
 };

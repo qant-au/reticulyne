@@ -22,6 +22,8 @@ module.exports = merge(base, {
   entry: {
     index: './src/Reticulyne.tsx',
     standaloneExports: './src/standaloneExports.ts',
+    // The read-only viewer (@reticulyne/editor/viewer): no React or MUI.
+    viewer: './src/viewer/index.ts',
     // As in prod.config.js: one copy of the drawings, imported by both entries.
     drawings: './src/icons/drawings.ts'
   },

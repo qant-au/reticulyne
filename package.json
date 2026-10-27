@@ -30,6 +30,12 @@
       "require": "./dist/standaloneExports.js",
       "default": "./dist/standaloneExports.js"
     },
+    "./viewer": {
+      "types": "./dist/viewer/index.d.ts",
+      "import": "./dist/esm/viewer.mjs",
+      "require": "./dist/viewer.js",
+      "default": "./dist/viewer.js"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": [

@@ -11,6 +11,8 @@ module.exports = merge(base, {
   entry: {
     'index': './src/Reticulyne.tsx',
     '/standaloneExports': './src/standaloneExports.ts',
+    // The read-only viewer (@reticulyne/editor/viewer): no React or MUI.
+    viewer: './src/viewer/index.ts',
     // The built-in drawings (1.3 MB of SVG) as their own module, which both
     // entries require through the external below instead of each carrying a
     // copy.

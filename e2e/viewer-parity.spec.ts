@@ -17,7 +17,8 @@ import { waitForCanvasSettled, waitForViewerSettled } from './canvasSettled';
  * pixels may differ.
  */
 
-const EXAMPLES = process.env.EXAMPLES_BASE_URL ?? 'http://localhost:2223';
+const EXAMPLES =
+  process.env.RETICULYNE_EXAMPLES_BASE_URL ?? 'http://localhost:2223';
 const SIZE = { width: 1280, height: 800 };
 const DELTA = 48;
 const MAX_DIFF = 0.015;

@@ -10,6 +10,7 @@ import { ConnectorAnimations } from './ConnectorAnimations/ConnectorAnimations';
 import { ConnectorPulse } from './ConnectorPulse/ConnectorPulse';
 import { NodeIndicators } from './NodeIndicators/NodeIndicators';
 import { IconPacks } from './IconPacks/IconPacks';
+import { ReadonlyViewer } from './ReadonlyViewer/ReadonlyViewer';
 import { ExamplesSidebar, SIDEBAR_WIDTH } from './ExamplesSidebar';
 import {
   ExamplesThemeModeProvider,
@@ -42,7 +43,8 @@ const examples = [
   { name: 'Connector animations', component: ConnectorAnimations },
   { name: 'Connector pulse', component: ConnectorPulse },
   { name: 'Node indicators', component: NodeIndicators },
-  { name: 'Icon packs from code', component: IconPacks }
+  { name: 'Icon packs from code', component: IconPacks },
+  { name: 'Read-only viewer', component: ReadonlyViewer }
 ];
 
 export const Examples = () => {

@@ -45,9 +45,14 @@ if (e2e) {
   window.__RETICULYNE_VIEWER__ = renderDiagram(box, e2e.scene, e2e.options);
 } else {
   const field = (label: string, control: HTMLElement) => {
-    const wrap = document.createElement('label');
+    const wrap = document.createElement('div');
     setStyle(wrap, { display: 'flex', alignItems: 'center', gap: 6 });
-    wrap.append(label, control);
+    const text = document.createElement('label');
+    const id = `viewer-${label.toLowerCase()}`;
+    control.setAttribute('id', id);
+    text.htmlFor = id;
+    text.textContent = label;
+    wrap.append(text, control);
     return wrap;
   };
   const select = (options: [string, string][]) => {

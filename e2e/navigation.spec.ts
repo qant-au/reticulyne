@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * Find, the mini-map and alignment guides.
@@ -40,6 +41,7 @@ const load = async (page: Page, editorMode = 'EDITABLE') => {
     { url: tinyIconSvg, mode: editorMode }
   );
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   return { x: vp.width / 2, y: vp.height / 2 };

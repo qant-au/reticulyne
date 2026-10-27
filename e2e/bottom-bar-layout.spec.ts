@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * The bottom bar: the zoom row (zoom, fit, 2D toggle, Layers, ?) stays on
@@ -30,6 +31,7 @@ const open = async (page: Page, width: number, height: number) => {
       };
   }, TITLE);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page.getByRole('application')).toBeVisible();
 };
 

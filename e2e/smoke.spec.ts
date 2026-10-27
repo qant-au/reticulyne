@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * Smoke check: load the standalone editor served at the configured
@@ -25,6 +26,7 @@ test('loads the editor and accepts a mouse move + click', async ({ page }) => {
   });
 
   await page.goto('/');
+  await waitForCanvasSettled(page);
 
   await expect(page).toHaveTitle(/Reticulyne/);
 

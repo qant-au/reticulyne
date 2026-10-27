@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * "New from template" replaces the diagram with a starter,
@@ -7,6 +8,7 @@ import { readFile } from 'node:fs/promises';
  */
 test('start a diagram from the Kubernetes template', async ({ page }) => {
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
 
   await page.getByRole('button', { name: 'Main menu' }).click();
@@ -35,6 +37,7 @@ test('undo after picking a template does not crash the editor', async ({
   page
 }) => {
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
 
   // Some history on the diagram being replaced.
@@ -57,6 +60,7 @@ test('undo after picking a template does not crash the editor', async ({
 
 test('Clear asks first; Cancel keeps the diagram', async ({ page }) => {
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await page.getByRole('button', { name: 'Main menu' }).click();
   await page.getByRole('menuitem', { name: 'New from template' }).click();
   await page.getByRole('button', { name: 'Kubernetes service' }).click();

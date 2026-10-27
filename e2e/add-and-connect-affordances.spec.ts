@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * Connector hotspots and double-click to add.
@@ -33,6 +34,7 @@ const load = async (page: Page) => {
       };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   return { x: vp.width / 2, y: vp.height / 2 };
@@ -154,6 +156,7 @@ const loadTwoNodes = async (page: Page) => {
       };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   return { x: vp.width / 2, y: vp.height / 2 };

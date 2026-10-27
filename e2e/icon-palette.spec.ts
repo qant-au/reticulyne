@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * the persistent icon library: open it from the toolbar,
@@ -29,6 +30,7 @@ const load = async (page: Page, editorMode = 'EDITABLE') => {
     { url: tinyIconSvg, mode: editorMode }
   );
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
 };
 

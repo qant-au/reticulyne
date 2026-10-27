@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * Worklist 20: UXA-02 (Space+drag pan), UXA-03 (Alt+drag duplicate),
@@ -30,6 +31,7 @@ const load = async (page: Page) => {
       };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   return { x: vp.width / 2, y: vp.height / 2 };

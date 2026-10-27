@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * The marquee catches what is wholly inside the rectangle the pointer
@@ -49,6 +50,7 @@ test.beforeEach(async ({ page }) => {
       };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page.getByText('Firewall', { exact: true })).toBeVisible();
 });
 

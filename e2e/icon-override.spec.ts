@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { BUILTIN_PACK } from '../src/icons/builtin';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * Icon images (rtl-060): an uploaded image overrides one object's
@@ -49,6 +50,7 @@ const load = async (page: Page) => {
     }
   );
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page.getByRole('application')).toBeVisible();
 };
 

@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * FEA5-01 — wheel input semantics.
@@ -29,6 +30,7 @@ async function readZoomPercent(page: Page): Promise<number> {
 test.describe('FEA5-01 — wheel input semantics', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    await waitForCanvasSettled(page);
     await expect(page).toHaveTitle(/Reticulyne/);
     // Park the cursor in the middle of the canvas so wheel events
     // land on the renderer, not on the toolbar.

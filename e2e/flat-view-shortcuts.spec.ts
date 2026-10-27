@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * The keyboard and the pointer work the same in the flat view as in the
@@ -53,6 +54,7 @@ const load = async (page: Page, kind: Projection) => {
       { initialData: data };
   }, fixture(kind));
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page.getByText('Bravo', { exact: true })).toBeVisible();
   const vp = page.viewportSize()!;
   await page.mouse.move(vp.width / 2, vp.height / 2);

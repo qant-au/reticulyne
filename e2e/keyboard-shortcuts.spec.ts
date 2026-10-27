@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * FEA5-02 — keyboard shortcuts, as realigned onto Excalidraw's by UXA-01.
@@ -32,6 +33,7 @@ const readZoomPercent = async (page: Page): Promise<number> => {
 test.describe('FEA5-02 — keyboard shortcuts', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    await waitForCanvasSettled(page);
     await expect(page).toHaveTitle(/Reticulyne/);
     // Park focus on the canvas — keyboard handlers attach to window
     // so any focus that isn't an editable surface will do, but

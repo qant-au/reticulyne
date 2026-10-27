@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * a collapsed group is one box. Sweep 2026-09-30: a press off the
@@ -50,6 +51,7 @@ test.beforeEach(async ({ page }) => {
       };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page.getByText('Desk pair (2)')).toBeVisible();
 });
 

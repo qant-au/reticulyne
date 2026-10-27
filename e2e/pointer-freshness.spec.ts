@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * Worklist 29. Mode handlers used to see the pointer as of the last
@@ -31,6 +32,7 @@ const load = async (page: Page) => {
       };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   return { x: vp.width / 2, y: vp.height / 2 };

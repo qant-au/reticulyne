@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * APP-01: the Docker editor keeps diagrams in IndexedDB, with a
@@ -306,6 +307,7 @@ test('a click just after the Diagrams menu closes reaches the canvas', async ({
   page
 }) => {
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page.getByRole('application')).toBeVisible();
   const vp = page.viewportSize()!;
   const at = { x: vp.width / 2 + 200, y: vp.height / 2 + 100 };

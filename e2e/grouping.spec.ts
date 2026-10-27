@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * group, select as a unit, drag as a unit, name, enter with
@@ -37,6 +38,7 @@ const load = async (page: Page) => {
     };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   const c = { x: vp.width / 2, y: vp.height / 2 };

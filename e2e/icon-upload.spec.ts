@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * the Docker shell passes readIconAsDataUrl as onIconUpload,
@@ -24,6 +25,7 @@ const load = async (page: Page) => {
     };
   });
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
 };
 

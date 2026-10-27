@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * The catalogue in the icon library: an item placed from it becomes an
@@ -40,6 +41,7 @@ const dragFromCatalogue = async (page: Page, search: string, name: RegExp) => {
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   await page.getByRole('button', { name: 'Icon library', exact: true }).click();
   await expect(page.getByTestId('icon-palette')).toBeVisible();

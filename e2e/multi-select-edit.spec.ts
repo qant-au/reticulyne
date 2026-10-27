@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * Worklist 19 — multi-select follow-ups: bulk colour and a multi-item
@@ -56,6 +57,7 @@ const load = async (page: Page) => {
       };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   // Keyboard shortcuts need the pointer over the canvas.

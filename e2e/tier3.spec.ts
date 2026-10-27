@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * The hover tooltip and align / distribute.
@@ -48,6 +49,7 @@ const load = async (page: Page, nodes: Node[], editorMode = 'EDITABLE') => {
   );
   await page.goto('/');
   await expect(page).toHaveTitle(/Reticulyne/);
+  await waitForCanvasSettled(page);
   const vp = page.viewportSize()!;
   return { x: vp.width / 2, y: vp.height / 2 };
 };

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * BUG5-09 regression: the renderer's wheel listener calls
@@ -25,6 +26,7 @@ test.describe('BUG5-09 — wheel events do not scroll an embedding parent', () =
       };
     });
     await page.goto('/');
+    await waitForCanvasSettled(page);
     await expect(page).toHaveTitle(/Reticulyne/);
 
     const scrollParent = page.getByTestId('scroll-parent');

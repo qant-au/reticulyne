@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * 1.4 — real multi-select, driven through the browser.
@@ -28,6 +29,7 @@ const CANVAS = { left: 300, top: 120, right: 1240, bottom: 620 };
 
 const openEditor = async (page: Page) => {
   await page.goto(`${BASE}/`);
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   // Wait for the diagram to have rendered something selectable.
   await expect(page.locator('svg').first()).toBeVisible();

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * FEA5-03 — undo/redo keyboard binding smoke test.
@@ -26,6 +27,7 @@ test.describe('FEA5-03 — undo / redo keybindings', () => {
     });
 
     await page.goto('/');
+    await waitForCanvasSettled(page);
     await expect(page).toHaveTitle(/Reticulyne/);
 
     // Park focus on the canvas so the window-level keydown handler

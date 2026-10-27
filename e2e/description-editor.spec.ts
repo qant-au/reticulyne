@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * TipTap description editor (DEP-04-follow-up). Two guarantees that only the
@@ -71,6 +72,7 @@ test('read-only description renders via the schema and drops XSS', async ({
   }, tinyIconSvg);
 
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
 
   const view = page.locator('.reticulyne-markdown-view').first();
@@ -131,6 +133,7 @@ test('selecting a node mounts the editable editor and the bold toolbar works', a
   }, tinyIconSvg);
 
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
 
   // The single node fits-to-view at the canvas centre; clicking it selects it
@@ -177,6 +180,7 @@ test('a click low in the description box types into it', async ({ page }) => {
     };
   }, tinyIconSvg);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   await page.mouse.click(vp.width / 2, vp.height / 2 + 3);

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * The flat view is the same diagram as the isometric one in everything but
@@ -39,6 +40,7 @@ const importSample = async (page: Page, file: string) => {
     buffer: await readFile(`${__dirname}/../samples/${file}`)
   });
   await page.keyboard.press('Escape');
+  await waitForCanvasSettled(page);
 };
 
 const toView = async (page: Page, projection: Projection) => {
@@ -118,6 +120,7 @@ for (const projection of PROJECTIONS) {
       views: [{ id: 'v', kind: projection, name: 'Main', placements: [] }]
     });
     await page.goto('/');
+    await waitForCanvasSettled(page);
     await expect(page).toHaveTitle(/Reticulyne/);
     await page
       .getByRole('button', { name: 'Icon library', exact: true })
@@ -314,6 +317,7 @@ for (const projection of PROJECTIONS) {
     const errors = noErrors(page);
     await hook(page, glyphScene(projection), { enableAnimation: true });
     await page.goto('/');
+    await waitForCanvasSettled(page);
     await expect(page.getByText('A', { exact: true }).first()).toBeVisible();
 
     const motion = page.locator('animateMotion').first();
@@ -416,6 +420,7 @@ test('a read-only viewer draws a flat view with the flat drawings', async ({
   };
   await hook(page, naming('iso'), { editorMode: 'EXPLORABLE_READONLY' });
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(
     page.getByText('Device A', { exact: true }).first()
   ).toBeVisible();
@@ -423,6 +428,7 @@ test('a read-only viewer draws a flat view with the flat drawings', async ({
 
   await hook(page, naming('schematic'), { editorMode: 'EXPLORABLE_READONLY' });
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(
     page.getByText('Device A', { exact: true }).first()
   ).toBeVisible();
@@ -455,6 +461,7 @@ test('dragging a node in the flat view moves it by whole square tiles, and undo 
     ]
   });
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page.getByText('Node A', { exact: true })).toBeVisible();
   const vp = page.viewportSize()!;
   const centre = { x: vp.width / 2, y: vp.height / 2 };

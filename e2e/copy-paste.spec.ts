@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * FEA5-04 — copy/paste keyboard binding smoke test.
@@ -27,6 +28,7 @@ test.describe('FEA5-04 — copy / paste keybindings', () => {
     });
 
     await page.goto('/');
+    await waitForCanvasSettled(page);
     await expect(page).toHaveTitle(/Reticulyne/);
 
     const vp = page.viewportSize();

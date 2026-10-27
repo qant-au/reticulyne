@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * onNodeClick / onConnectorClick. Node A sits on the centre
@@ -49,6 +50,7 @@ const load = async (page: Page, editorMode = 'EDITABLE') => {
     { url: tinyIconSvg, mode: editorMode }
   );
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   return { x: vp.width / 2, y: vp.height / 2 };

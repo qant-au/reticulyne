@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { waitForCanvasSettled } from './canvasSettled';
 
 /**
  * UXA-06 — layer ordering, driven through the browser.
@@ -47,6 +48,7 @@ const load = async (page: Page, order: (keyof typeof RECTS)[], mode: Mode) => {
       d;
   }, data);
   await page.goto('/');
+  await waitForCanvasSettled(page);
   await expect(page).toHaveTitle(/Reticulyne/);
   const vp = page.viewportSize()!;
   const centre = { x: vp.width / 2, y: vp.height / 2 };

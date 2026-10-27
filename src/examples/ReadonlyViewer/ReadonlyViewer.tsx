@@ -92,9 +92,9 @@ export const ReadonlyViewer = () => {
           sx={{
             flexWrap: 'wrap',
             alignItems: 'center',
-            // On a phone the closed sidebar's open button sits at the top
-            // left, over the first picker; leave it room.
-            pl: { xs: 7, sm: 2 },
+            // A closed sidebar leaves its open button at the top left, over
+            // the first picker, at any width; leave it room.
+            pl: 7,
             pr: 2,
             py: 1,
             borderBottom: 1,

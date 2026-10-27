@@ -190,6 +190,9 @@ test.describe('examples-picker @ :2223', () => {
     await page.goto(BASE);
 
     for (let i = 0; i < EXAMPLE_NAMES.length; i += 1) {
+      // The read-only viewer is not the editor and has no zoom readout; it
+      // fits itself, which viewer-demo.spec.ts checks.
+      if (EXAMPLE_NAMES[i] === 'Read-only viewer') continue;
       await page.getByTestId(`sidebar-item-${i}`).click();
       const zoomReadout = page.locator('text=/^\\d+%$/').first();
       await expect(

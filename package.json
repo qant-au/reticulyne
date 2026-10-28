@@ -95,7 +95,7 @@
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "lint-staged": "^17.6.0",
-    "mermaid": "12.1.0",
+    "mermaid": "^12.2.0",
     "mermaid11": "npm:mermaid@11.17.2",
     "nodemon": "^3.1.14",
     "prettier": "^3.8.3",
@@ -133,7 +133,7 @@
     "immer": "^11.1.8",
     "jspdf": "^4.2.1",
     "uuid": "^14.0.2",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "peerDependencies": {
     "@emotion/react": "^11.14.0",
@@ -146,14 +146,17 @@
   },
   "overrides": {
     "uuid": "$uuid",
-    "qs": "^6.16.0",
+    "qs": "^6.17.0",
     "js-yaml": "^4.3.2",
-    "dompurify": "^3.4.16",
+    "dompurify": "^3.4.17",
     "http-proxy-middleware": "^2.0.10",
     "brace-expansion@>=1.0.0 <2.0.0": "^1.1.21",
     "brace-expansion@>=2.0.0 <3.0.0": "^2.1.7",
     "brace-expansion@>=3.0.0 <5.0.7": "^5.0.12",
-    "fast-uri": "^3.1.8"
+    "fast-uri": "^3.1.9",
+    "@tiptap/html": {
+      "happy-dom": "^21.0.4"
+    }
   },
   "browserslist": {
     "production": [

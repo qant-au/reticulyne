@@ -41,6 +41,10 @@ potentially breaking and read the release notes before upgrading.
 - **Labels clear their drawings.** A placement with no `labelHeight` of its own (a hand-written or imported scene, a Mermaid import) drew its label 20 px up, on the top of every taller drawing; it now starts at 80, where a placed item's label does.
 - **Sample icons.** The samples' Wi-Fi access points drew as server towers, a NAS and two databases as storage arrays, a cache as a database and an event topic as an alert; each now draws as the device it names.
 
+### Security
+
+- **Dependencies.** `zod` now requires `^4.6.7` (GHSA-mrhx-c7xc-m3w5). The lockfile takes `dompurify` 3.4.17, `happy-dom` 21.0.4 under `@tiptap/html` (by a scoped override, since `@tiptap/html` still declares `^20`), and `mermaid` 12.2.0, `fast-uri` 3.1.9, `qs` 6.17.0 and `body-parser` 2.4.0 in the dev tree. `npm audit --omit=dev` is clean.
+
 ## [0.8.0] - 2026-10-21
 
 ### Changed

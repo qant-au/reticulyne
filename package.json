@@ -156,6 +156,9 @@
     "fast-uri": "^3.1.9",
     "@tiptap/html": {
       "happy-dom": "^21.0.4"
+    },
+    "mermaid11": {
+      "katex": "^0.18.10"
     }
   },
   "browserslist": {

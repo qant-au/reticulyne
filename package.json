@@ -160,7 +160,18 @@
     "mermaid11": {
       "katex": "^0.18.10"
     },
-    "minimatch@>=7.0.0 <11.0.1": "^11.0.1"
+    "nodemon": {
+      "minimatch": "^11.0.1"
+    },
+    "test-exclude": {
+      "minimatch": "^11.0.1"
+    },
+    "glob": {
+      "minimatch": "^11.0.1"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.1"
+    }
   },
   "browserslist": {
     "production": [

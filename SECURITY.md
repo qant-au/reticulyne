@@ -85,6 +85,12 @@ The following `npm audit` advisories are knowingly carried in the published pack
 - **Reach:** dev tooling only. `braces@3.0.3` comes in through `nodemon` (chokidar), `tsc-alias` (globby, fast-glob, micromatch) and `webpack-dev-server` (http-proxy-middleware, micromatch), which together make up the ten entries `npm audit` lists. None of them ships in `dist/`, and they only expand the repository's own glob patterns, never untrusted input.
 - **Status:** **accepted 2026-10-19, no fix exists.** The advisory covers every `braces` release, including the latest (3.0.3). The fix npm suggests (`npm audit fix --force`) downgrades `nodemon` to 1.x, which is worse. Revisit when `braces` publishes a fixed release, then add an `overrides` entry.
 
+### `GHSA-gcqx-w48m-w2h4`: `deepmerge`, prototype poisoning in `mergeObject()`
+
+- **Severity (audit):** low, in the full `npm audit` only. `npm audit --omit=dev` (the CI gate) is clean.
+- **Reach:** dev tooling only. `deepmerge@4.3.1` comes in through `jest-config` (`jest → @jest/core → jest-config`), which merges the repository's own Jest configuration, never untrusted input. Nothing of it ships in `dist/`. `npm audit` lists six entries for it because it also names every dependent (`jest`, `jest-cli`, `@jest/core`, `jest-config`, `ts-jest`).
+- **Status:** **accepted 2026-11-16, no fix exists.** The advisory covers every release from 4.2.0, including the latest (4.3.1, March 2023). The fix npm suggests (`npm audit fix --force`) downgrades `jest` to 25, which is worse. Revisit when `deepmerge` publishes a fixed release or Jest drops it, then add an `overrides` entry.
+
 ### Source maps in the published package (SEC-05)
 
 The tarball ships `dist/*.js.map` deliberately. The repository is public and MIT-licensed, so the maps disclose nothing that the source does not, and they give embedders readable stack traces. `scripts/check-pack-contents.mjs` (run by CI and before every publish) allows only bundles, their maps, type declarations and webpack's licence banners inside `dist/`, so nothing else can ride along unnoticed.
@@ -121,10 +127,10 @@ The CSP above is only applied by the standalone Docker image. A consumer embeddi
 
 This file is updated in lockstep with `npm audit`. After every dependency bump, re-run `npm audit --omit=dev` and update the residual list accordingly.
 
-Current counts (measured 2026-10-20):
+Current counts (measured 2026-11-16):
 
 - `npm audit --omit=dev`: **0 vulnerabilities.**
-- `npm audit` (including dev): **10 high, all one advisory**, [`GHSA-vfj7-8cjw-p6xm`](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) in `braces`. Dev tooling only, no fixed release; accepted 2026-10-19 (see its entry above).
+- `npm audit` (including dev): **6 low, all one advisory**, [`GHSA-gcqx-w48m-w2h4`](https://github.com/advisories/GHSA-gcqx-w48m-w2h4) in `deepmerge`. Dev tooling only, no fixed release; accepted 2026-11-16 (see its entry above). The `braces` advisory no longer appears.
 - **Dependabot board: 0 open alerts.**
 - **CI note:** the pipeline gates on `npm audit --omit=dev --audit-level=moderate`; there is currently nothing at or above that threshold.
 
@@ -208,3 +214,7 @@ No new overrides were added; `undici`, `browserslist`, `nanoid` and `baseline-br
 ### `SEC7-01` — overrode transitive `qs` to clear `GHSA-q8mj-m7cp-5q26`
 
 `webpack-dev-server@5.2.4 → express@4.22.2 → qs@6.15.1` pinned a version in the vulnerable range (`>=6.11.1 <=6.15.1`) of `GHSA-q8mj-m7cp-5q26` / `CVE-2026-8723` (a `TypeError` in `qs.stringify` when called with `arrayFormat: 'comma'` + `encodeValuesOnly: true` on arrays containing `null`/`undefined`). The advisory is **dev-only** (the chain isn't reachable from the published `dist/`) and Express only uses `qs` for query _parsing_ — the vulnerable _stringify_ path with that exact options combination is never invoked in practice — but Dependabot kept re-opening the alert after every routine dep bump that nudged the lockfile back onto `6.15.1`. Added `"qs": "^6.15.2"` to the existing top-level `overrides` block in `package.json` so every transitive `qs` resolution dedupes onto `6.15.2` (the upstream-patched release). `npm ls qs` now returns a single `qs@6.15.2` entry under both Express paths, `npm audit` no longer reports the advisory, and the Dependabot alert auto-closes once the lockfile lands on `main`. The `^6.15.2` shape (matching the existing `uuid` override) also means any future qs patch within the 6.x line is picked up automatically on the next `npm install`, so this entry should stay closed.
+
+### `DEP-16` — overrode transitive `glob` to clear `GHSA-3g3m-2fjr-6pw4`
+
+[`GHSA-3g3m-2fjr-6pw4`](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4) (moderate, an `AbortSignal` cancellation bypass that lets a timed-out walk keep traversing the filesystem) covers `glob` 9.0.0 to 14.0.1, with no backport to earlier majors. The tree carried two copies, both dev-only: `glob@13.0.6` under `jest` (`@jest/reporters`, `jest-config`, `jest-runtime`) and `glob@10.5.0` under `babel-plugin-istanbul → test-exclude`. Added `"glob@>=9.0.0 <14.0.2": "^14.0.2"` to `overrides`, in the same range-keyed form as `brace-expansion`. Both consumers use only the named `glob` export, which 14.x keeps; the move also drops glob 10's own dependency subtree (`jackspeak`, `@isaacs/cliui`, `foreground-child` and the rest). `npm ls glob` now returns a single `glob@14.0.6`, and `jest --coverage` (the path through `test-exclude`), lint and the build all pass.
